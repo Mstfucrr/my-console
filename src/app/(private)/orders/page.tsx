@@ -1,3 +1,5 @@
+import OrdersView from '@/modules/orders'
+
 export default function OrdersPage() {
-  return <div>OrdersPage</div>
+  return <OrdersView />
 }

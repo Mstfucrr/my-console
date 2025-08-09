@@ -19,7 +19,7 @@ export function MenuItem({ item }: MenuItemProps) {
         <Button
           variant='ghost'
           className={cn(
-            'hover:bg-primary hover:text-primary-foreground flex h-10 w-full items-center gap-2 rounded-xl px-3 text-base font-medium',
+            'hover:bg-primary hover:text-primary-foreground flex h-10 w-full items-center gap-2 rounded-xl px-3 text-base font-medium md:text-sm',
             { 'bg-primary text-primary-foreground': isActive }
           )}
         >
