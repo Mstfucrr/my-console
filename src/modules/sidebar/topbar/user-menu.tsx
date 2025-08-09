@@ -29,7 +29,7 @@ const UserMenu = ({ name, restaurant }: UserMenuProps) => {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align='end' sideOffset={8} className='w-40 p-0'>
+      <PopoverContent align='end' sideOffset={8} className='w-full p-0 max-md:w-40'>
         <div className='border-t'>
           <Link href='/profile' className='hover:bg-muted flex items-center gap-2 px-4 py-2 text-sm'>
             <UserIcon className='size-4' />

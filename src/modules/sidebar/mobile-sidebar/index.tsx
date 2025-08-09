@@ -1,6 +1,7 @@
 'use client'
 import { SiteLogoBig } from '@/components/svg'
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIsDesktop } from '@/hooks/use-media-query'
 import { menusConfig } from '@/modules/sidebar/menus'
 import { useSidebar } from '@/store/sidebar'
@@ -8,13 +9,11 @@ import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
-import SidebarContent from '../common/sidebar-content'
+import { MenuItem } from '../common/menu-item'
 import UserMenu from '../topbar/user-menu'
 
 const MobileSidebar = () => {
   const { mobileMenu, setMobileMenu } = useSidebar()
-  const menus = menusConfig?.sidebarNav || []
-
   const isDesktop = useIsDesktop()
 
   useEffect(() => {
@@ -24,14 +23,26 @@ const MobileSidebar = () => {
   return (
     <>
       <motion.div
-        variants={{ hidden: { height: 0, opacity: 0 }, visible: { height: 'auto', opacity: 1 } }}
+        variants={{ hidden: { height: 0 }, visible: { height: 'auto' } }}
         initial='hidden'
         animate={mobileMenu ? 'visible' : 'hidden'}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
         className='bg-primary-10 fixed top-14 z-50 w-full overflow-hidden shadow-md backdrop-blur-xl'
       >
-        <div className='max-h-[70vh] overflow-y-auto pt-2'>
-          <SidebarContent menus={menus} />
+        <div className='overflow-y-auto pt-2'>
+          <div className='flex h-full w-full flex-col pb-5'>
+            <ScrollArea className='mt-2 max-h-[calc(100%-100px)] flex-1 px-4 pb-2'>
+              <div className='flex h-full flex-1 items-center'>
+                <nav className='flex h-full w-full items-center'>
+                  <ul className='flex w-full flex-col items-center gap-2 pt-5'>
+                    {menusConfig.map(item => (
+                      <MenuItem key={item.href} item={item} />
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </motion.div>
 
