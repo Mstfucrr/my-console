@@ -35,7 +35,7 @@ const Topbar = () => {
                         variant='ghost'
                         className={cn(
                           'hover:bg-primary hover:text-primary-foreground flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium',
-                          { 'text-primary': isActive }
+                          { 'bg-primary text-primary-foreground': isActive }
                         )}
                       >
                         {item.Icon && <item.Icon className='size-5' />}
