@@ -23,18 +23,12 @@ export function OrderDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent size='4xl'>
-        <DialogHeader>
-          <div className='flex items-center gap-4'>
-            <div>
-              <DialogTitle>Sipariş Detayı</DialogTitle>
-              <DialogDescription>{order?.id}</DialogDescription>
-            </div>
-            {order && <StatusBadge status={order.status} withIcon={false} />}
-          </div>
+      <DialogContent size='4xl' className='p-1'>
+        <DialogHeader className='p-6'>
+          <DialogTitle>Sipariş Detayı</DialogTitle>
+          <DialogDescription>{order?.id}</DialogDescription>
         </DialogHeader>
-
-        <ScrollArea className='max-h-[70vh]'>
+        <ScrollArea className='max-h-[70vh] p-6'>
           {order && (
             <div className='space-y-4'>
               {showCourierTracking && (
@@ -65,7 +59,7 @@ export function OrderDetailDialog({
                     </CardHeader>
                     <CardContent className='space-y-2 text-sm'>
                       <InfoRow label='Sipariş ID' value={order.id} />
-                      <InfoRow label='Durum' value={<StatusBadge status={order.status} withIcon={false} />} />
+                      <InfoRow label='Durum' value={<StatusBadge status={order.status} />} />
                       <InfoRow label='Oluşturulma' value={formatDateTR(order.createdAt)} />
                       <InfoRow label='Son Güncelleme' value={formatDateTR(order.updatedAt)} />
                       <InfoRow

@@ -13,7 +13,7 @@ export function OrderCard({ order, onViewDetails }: { order: Order; onViewDetail
           <div className='min-w-0 flex-1'>
             <div className='mb-1 flex flex-wrap items-center gap-2'>
               <div className='text-foreground truncate text-sm font-medium'>{order.id}</div>
-              <StatusBadge status={order.status} withIcon={false} />
+              <StatusBadge status={order.status} />
             </div>
             <div className='flex flex-wrap items-center justify-between gap-4'>
               <div className='text-muted-foreground flex flex-col gap-2 py-1 text-xs'>

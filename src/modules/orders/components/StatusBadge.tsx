@@ -24,7 +24,7 @@ export function StatusIcon({ status, className }: { status: OrderStatus; classNa
     return <CheckCircle2 className={className ?? 'size-4 text-green-500'} />
   if (status === 'cancelled') return <Clock className={className ?? 'size-4'} />
   if (status === 'pending') return <Clock className={className ?? 'size-4 text-amber-500'} />
-  if (status === 'preparing') return <Clock className={className ?? 'size-4 text-amber-400'} />
+  if (status === 'preparing') return <Clock className={className ?? 'size-4 text-cyan-500'} />
   return <Clock className={className ?? 'size-4 text-amber-400'} />
 }
 
@@ -38,7 +38,7 @@ export function StatusBadge({
   className?: string
 }) {
   return (
-    <Badge color={statusBadgeColor(status)} className={cn('gap-1', className)}>
+    <Badge color={statusBadgeColor(status)} variant='outline' className={cn('gap-1', className)}>
       {withIcon && <StatusIcon status={status} />}
       {statusLabelMap[status]}
     </Badge>
