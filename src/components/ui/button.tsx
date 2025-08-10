@@ -20,8 +20,9 @@ const buttonVariants = cva(
       },
       variant: {
         outline: 'hover:text-primary-foreground border border-current bg-transparent',
-        soft: 'bg-opacity-10 hover:text-primary-foreground',
-        ghost: 'hover:text-primary-foreground bg-transparent text-current'
+        soft: 'hover:text-primary-foreground bg-current/15',
+        ghost: 'hover:text-primary-foreground bg-transparent text-current',
+        link: '!bg-transparent text-current/80 hover:text-current'
       },
       size: {
         default: 'h-10 px-4 py-[10px]',
@@ -29,8 +30,10 @@ const buttonVariants = cva(
         lg: 'h-11 rounded-md px-[18px] py-[10px] text-base',
         xl: 'h-12 rounded-md px-6 py-3 text-base',
         md: 'h-9 rounded-md px-4 py-2',
-        xs: 'h-9 rounded-md px-[14px] py-[6px]',
-        icon: 'h-10 w-10'
+        xs: 'h-8 rounded-md px-[12px] py-[4px] text-xs',
+        icon: 'h-10 w-10',
+        'icon-sm': 'h-8 w-8',
+        'icon-xs': 'h-6 w-6'
       }
     },
     compoundVariants: [

@@ -9,7 +9,7 @@ import { OrderCard } from '@/modules/orders/components/OrderCard'
 import { OrderDetailDialog } from '@/modules/orders/components/OrderDetailDialog'
 import { OrderFilters } from '@/modules/orders/components/OrderFilters'
 import { ordersService } from '@/modules/orders/service'
-import type { FilterOptions, Order, PaginationOptions } from '@/modules/orders/types'
+import type { FilterOptions, Order, PaginationOptions } from '@/modules/types'
 import { AlertTriangle, Car, CheckCircle2, Loader2, ShoppingCart, XCircle } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import type { OrderLog } from '@/modules/orders/types'
+import type { OrderLog } from '@/modules/types'
 import { formatDateTR } from '../utils'
 import { StatusIcon } from './StatusBadge'
 

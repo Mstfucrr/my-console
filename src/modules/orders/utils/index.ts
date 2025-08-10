@@ -6,7 +6,7 @@ function formatDateTR(dateString: string) {
   return new Date(dateString).toLocaleString('tr-TR')
 }
 
-import type { OrderStatus } from '../types'
+import type { OrderStatus } from '../../types'
 
 const statusLabelMap: Record<OrderStatus, string> = {
   pending: 'Beklemede',

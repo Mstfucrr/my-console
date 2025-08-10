@@ -1,5 +1,5 @@
-import type { Restaurant } from '@/modules/orders/types'
-import { mockRestaurants } from '@/modules/orders/mockData'
+import { mockRestaurants } from '@/modules/mockData'
+import type { Restaurant } from '@/modules/types'
 
 export const restaurantsService = {
   async getRestaurants(): Promise<{ success: boolean; data: Restaurant[] }> {

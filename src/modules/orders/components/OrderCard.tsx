@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import type { Order } from '@/modules/orders/types'
+import type { Order } from '@/modules/types'
 import { MapPin, Phone, User } from 'lucide-react'
 import { formatDateTR } from '../utils'
 import { StatusBadge } from './StatusBadge'

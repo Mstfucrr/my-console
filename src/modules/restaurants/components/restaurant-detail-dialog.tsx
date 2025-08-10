@@ -12,7 +12,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import type { Restaurant } from '@/modules/orders/types'
+import type { Restaurant } from '@/modules/types'
 import { AlertTriangle, BarChart3, CheckCircle2, Clock, MapPin, Phone, StoreIcon as Shop, XCircle } from 'lucide-react'
 
 export function RestaurantDetailDialog({

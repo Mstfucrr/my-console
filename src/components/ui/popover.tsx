@@ -18,7 +18,7 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[999] w-72 rounded-md border p-4 shadow-md outline-none',
+        'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[9999] w-72 rounded-md border p-4 shadow-md outline-none',
         className
       )}
       {...props}
@@ -38,9 +38,12 @@ interface CustomPopoverProps {
 const CustomPopover: React.FC<CustomPopoverProps> = ({ children, open = false, onClose, className, trigger }) => {
   const popoverRef = React.useRef<HTMLDivElement>(null)
 
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement
-    if (popoverRef.current && !popoverRef.current.contains(target) && !target.closest('.custom-popover-container')) {
+  const handleClickOutside = (event: any) => {
+    if (
+      popoverRef.current &&
+      !popoverRef.current.contains(event.target) &&
+      !event.target.closest('.custom-popover-container')
+    ) {
       onClose()
     }
   }
@@ -59,7 +62,7 @@ const CustomPopover: React.FC<CustomPopoverProps> = ({ children, open = false, o
       {open && (
         <div
           className={cn(
-            'custom-popover-container bg-popover border-default-200 divide-default-100 absolute left-0 z-[999] w-56 divide-y rounded-md border shadow-lg focus:outline-none',
+            'custom-popover-container divide-default-100 border-default-200 bg-popover absolute left-0 z-[999] w-56 divide-y rounded-md border shadow-lg focus:outline-none',
             className
           )}
         >

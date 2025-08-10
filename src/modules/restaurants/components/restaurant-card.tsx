@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import type { Restaurant } from '@/modules/orders/types'
+import type { Restaurant } from '@/modules/types'
 import { Calendar, Eye, MapPin, Pencil, Phone, Settings, StoreIcon as Shop } from 'lucide-react'
 
 export function RestaurantCard({
