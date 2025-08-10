@@ -166,7 +166,7 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
             <BasicDataTable
               columns={columns}
               data={mappings}
-              isLoading={isLoading}
+              isLoading={isLoading || isFetching}
               columnVisibilityTriggerProps={{
                 size: 'xs'
               }}
@@ -176,7 +176,7 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
                     <Plus className='mr-2 h-4 w-4' />
                     Yeni Eşleştirme
                   </Button>
-                  <RefreshButton size='xs' onClick={() => refetch()} isLoading={isFetching} />
+                  <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
                 </div>
               }
             />

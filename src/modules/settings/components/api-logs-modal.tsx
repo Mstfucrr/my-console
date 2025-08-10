@@ -138,7 +138,7 @@ export default function ApiLogsModal({ open, onClose }: Props) {
               total={total}
               onPageChange={setPage}
               onPageSizeChange={setPageSize}
-              isLoading={isLoading}
+              isLoading={isLoading || isFetching}
               columnVisibilityTriggerProps={{
                 size: 'xs'
               }}
@@ -180,7 +180,7 @@ export default function ApiLogsModal({ open, onClose }: Props) {
                       <Button variant='soft' color='secondary' size='xs' onClick={() => setFilters({ success: 'all' })}>
                         Temizle
                       </Button>
-                      <RefreshButton size='xs' onClick={() => refetch()} isLoading={isFetching} />
+                      <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
                     </div>
                   </div>
                 </div>

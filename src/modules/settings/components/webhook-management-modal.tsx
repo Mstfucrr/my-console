@@ -180,7 +180,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
             <BasicDataTable
               columns={columns}
               data={webhooks}
-              isLoading={isLoading}
+              isLoading={isLoading || isFetching}
               columnVisibilityTriggerProps={{
                 size: 'xs'
               }}
