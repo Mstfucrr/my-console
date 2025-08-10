@@ -1,5 +1,5 @@
-import { mockOrders } from '@/modules/orders/mockData'
-import type { FilterOptions, Order, PaginatedResponse, PaginationOptions } from '@/modules/orders/types'
+import { mockOrders } from '@/modules/mockData'
+import type { FilterOptions, Order, PaginatedResponse, PaginationOptions } from '@/modules/types'
 
 function matchesSearch(order: Order, search?: string) {
   if (!search) return true

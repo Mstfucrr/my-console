@@ -1,6 +1,6 @@
 import { Badge, type BadgeProps } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import type { OrderStatus } from '@/modules/orders/types'
+import type { OrderStatus } from '@/modules/types'
 import { CarFrontIcon, CheckCircle2, Clock } from 'lucide-react'
 import { statusLabelMap } from '../utils'
 

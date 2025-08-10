@@ -1,9 +1,9 @@
 import { InputColor, InputVariant, Radius, Shadow } from '@/lib/type'
 import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
+import type { LucideIcon } from 'lucide-react'
 import * as React from 'react'
 
-//py-[10px]
 export const inputVariants = cva(
   'bg-background border-default-300 read-only:bg-background h-9 w-full px-3 text-sm transition duration-300 file:border-0 file:bg-transparent file:text-sm file:font-medium read-only:leading-9 disabled:cursor-not-allowed disabled:opacity-50',
   {
@@ -120,25 +120,38 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>,
   radius?: Radius
   shadow?: Shadow
   size?: 'sm' | 'md' | 'lg' | 'xl' | null
+  Icon?: LucideIcon
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, size, color, radius, variant, shadow, removeWrapper = false, ...props }, ref) => {
+  ({ className, type, size, color, radius, variant, shadow, removeWrapper = false, Icon, ...props }, ref) => {
     if (removeWrapper)
       return (
-        <input
-          type={type}
-          className={cn(inputVariants({ color, size, radius, variant, shadow }), className)}
-          ref={ref}
-          {...props}
-        />
+        <div className='relative'>
+          {Icon && (
+            <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
+              <Icon className='size-4' />
+            </div>
+          )}
+          <input
+            type={type}
+            className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
+            ref={ref}
+            {...props}
+          />
+        </div>
       )
 
     return (
-      <div className='w-full flex-1'>
+      <div className='relative w-full flex-1'>
+        {Icon && (
+          <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
+            <Icon className='size-4' />
+          </div>
+        )}
         <input
           type={type}
-          className={cn(inputVariants({ color, size, radius, variant, shadow }), className)}
+          className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
           ref={ref}
           {...props}
         />

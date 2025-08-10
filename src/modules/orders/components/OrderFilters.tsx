@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { FilterOptions, OrderStatus } from '@/modules/orders/types'
+import type { FilterOptions, OrderStatus } from '@/modules/types'
 import { useMemo } from 'react'
 
 const statuses: { value: OrderStatus; label: string }[] = [
