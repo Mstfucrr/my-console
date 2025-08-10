@@ -18,7 +18,7 @@ const MobileSidebar = () => {
 
   useEffect(() => {
     if (isDesktop) setMobileMenu(false)
-  }, [isDesktop])
+  }, [isDesktop, setMobileMenu])
 
   return (
     <>

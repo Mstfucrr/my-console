@@ -16,7 +16,7 @@ import type { FiyuuPaymentType, PaymentMapping } from '@/modules/types'
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, ArrowRight, CreditCard, Pencil, Plus, Trash2, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { settingsService } from '../service'
 
@@ -79,17 +79,21 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
       }
       setFormOpen(false)
       refetch()
-    } catch (e: any) {
-      toast.error(e?.message ?? 'İşlem başarısız')
+    } catch (e: unknown) {
+      const error = e as Error
+      toast.error(error?.message ?? 'İşlem başarısız')
     }
   }
 
-  const handleDelete = async (mp: PaymentMapping) => {
-    if (!confirm('Bu eşleştirmeyi silmek istediğinize emin misiniz?')) return
-    await settingsService.deleteMapping(mp.id)
-    toast.success('Eşleştirme silindi.')
-    refetch()
-  }
+  const handleDelete = useCallback(
+    async (mp: PaymentMapping) => {
+      if (!confirm('Bu eşleştirmeyi silmek istediğinize emin misiniz?')) return
+      await settingsService.deleteMapping(mp.id)
+      toast.success('Eşleştirme silindi.')
+      refetch()
+    },
+    [refetch]
+  )
 
   const getFiyuuPaymentLabel = (type: FiyuuPaymentType) => {
     const t = PAYMENT_TYPES.find(p => p.value === type)
@@ -144,7 +148,7 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
         size: 160
       }
     ],
-    []
+    [handleDelete]
   )
 
   return (
@@ -153,14 +157,14 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
         <DialogHeader className='p-6 pb-0'>
           <DialogTitle className='flex items-center gap-2'>
             <CreditCard className='h-5 w-5 text-orange-500' />
-            {'Ödeme Tipi Eşleştirme'}
+            Ödeme Tipi Eşleştirme
           </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className='max-h-[70vh] p-6 pt-0'>
           <div className='space-y-4'>
             <BasicDataTable
-              columns={columns as any}
+              columns={columns}
               data={mappings}
               isLoading={isLoading}
               columnVisibilityTriggerProps={{

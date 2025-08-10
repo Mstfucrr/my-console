@@ -22,7 +22,7 @@ import { Button } from '../button'
 import { DataTablePagination } from './pagination'
 import { DataTableToolbar } from './toolbar'
 
-export type BasicDataTableProps<TData, TValue = unknown> = {
+export type BasicDataTableProps<TData, TValue = never> = {
   // data and columns
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -44,7 +44,7 @@ export type BasicDataTableProps<TData, TValue = unknown> = {
   // row selection
   enableRowSelection?: boolean
   selectedRowIds?: Record<string, boolean>
-  onRowSelectionChange?: (updater: any) => void
+  onRowSelectionChange?: (updater: Record<string, boolean>) => void
 
   // sorting and filters (controlled optional)
   sorting?: SortingState
@@ -73,7 +73,7 @@ export type BasicDataTableProps<TData, TValue = unknown> = {
   columnVisibilityTriggerProps?: React.ComponentProps<typeof Button>
 }
 
-export function BasicDataTable<TData extends { id?: string }, TValue = unknown>({
+export function BasicDataTable<TData extends { id?: string }, TValue = never>({
   columns,
   data,
   className,
@@ -263,10 +263,6 @@ export function BasicDataTable<TData extends { id?: string }, TValue = unknown>(
         canNext={canNext}
         onPrev={() => (manualPagination ? onPageChange?.(page - 1) : table.previousPage())}
         onNext={() => (manualPagination ? onPageChange?.(page + 1) : table.nextPage())}
-        pageButtons={
-          // Only render page number buttons when page count is reasonable
-          totalPages <= 7 ? Array.from({ length: totalPages }, (_, i) => i + 1) : undefined
-        }
         onPageClick={p => (manualPagination ? onPageChange?.(p) : table.setPageIndex(p - 1))}
         leftInfo={
           manualPagination
@@ -279,7 +275,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = unknown>(
 }
 
 // Helpers
-export function createSelectableColumns<TData, TValue = unknown>(
+export function createSelectableColumns<TData, TValue = never>(
   columns: ColumnDef<TData, TValue>[]
 ): ColumnDef<TData, TValue>[] {
   const selectCol: ColumnDef<TData, TValue> = {

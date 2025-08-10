@@ -42,7 +42,7 @@ const VerfiyForm = () => {
     if (isTimerComplete) {
       setOtp(otpArray)
     }
-  }, [isTimerComplete])
+  }, [isTimerComplete, otpArray])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { value } = e.target

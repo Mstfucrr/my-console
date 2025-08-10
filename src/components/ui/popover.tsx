@@ -38,15 +38,19 @@ interface CustomPopoverProps {
 const CustomPopover: React.FC<CustomPopoverProps> = ({ children, open = false, onClose, className, trigger }) => {
   const popoverRef = React.useRef<HTMLDivElement>(null)
 
-  const handleClickOutside = (event: any) => {
-    if (
-      popoverRef.current &&
-      !popoverRef.current.contains(event.target) &&
-      !event.target.closest('.custom-popover-container')
-    ) {
-      onClose()
-    }
-  }
+  const handleClickOutside = React.useCallback(
+    (event: MouseEvent) => {
+      const target = event.target as Node
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(target) &&
+        !(target as Element).closest?.('.custom-popover-container')
+      ) {
+        onClose()
+      }
+    },
+    [onClose]
+  )
 
   React.useEffect(() => {
     document?.addEventListener('click', handleClickOutside)
@@ -54,7 +58,7 @@ const CustomPopover: React.FC<CustomPopoverProps> = ({ children, open = false, o
     return () => {
       document?.removeEventListener('click', handleClickOutside)
     }
-  }, [onClose])
+  }, [handleClickOutside])
 
   return (
     <div className='relative' ref={popoverRef}>

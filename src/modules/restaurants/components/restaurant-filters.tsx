@@ -84,7 +84,7 @@ export function RestaurantFilters({
             )}
             {filters.search && (
               <Badge color='info' variant='outline' className='text-xs'>
-                Arama: "{filters.search}"
+                Arama: &quot;{filters.search}&quot;
               </Badge>
             )}
           </div>

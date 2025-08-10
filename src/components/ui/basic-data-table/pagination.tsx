@@ -11,7 +11,6 @@ export type DataTablePaginationProps = {
   onPrev: () => void
   onNext: () => void
   onPageClick?: (page: number) => void
-  pageButtons?: number[]
   leftInfo?: string
   className?: string
 }
@@ -24,7 +23,6 @@ export function DataTablePagination({
   onPrev,
   onNext,
   onPageClick,
-  pageButtons,
   leftInfo,
   className
 }: DataTablePaginationProps) {

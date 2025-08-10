@@ -83,17 +83,10 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
       }
       setFormOpen(false)
       refetch()
-    } catch (e: any) {
-      toast.error(e?.message ?? 'İşlem başarısız')
+    } catch (e: unknown) {
+      const error = e as Error
+      toast.error(error?.message ?? 'İşlem başarısız')
     }
-  }
-
-  const handleDelete = async (wh: Webhook) => {
-    // Simple confirm
-    if (!confirm("Bu webhook'u silmek istediğinize emin misiniz?")) return
-    await settingsService.deleteWebhook(wh.id)
-    toast.success('Webhook silindi.')
-    refetch()
   }
 
   const columns: ColumnDef<Webhook>[] = useMemo(
@@ -169,7 +162,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
         size: 160
       }
     ],
-    []
+    [refetch]
   )
 
   return (
@@ -206,7 +199,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
               <AlertCircle className='!size-5' />
               <AlertTitle>Webhook Bilgisi</AlertTitle>
               <AlertDescription>
-                Webhook'lar, sipariş durumu değişikliklerinde sisteminize bildirim gönderir. URL&apos;inizin HTTPS
+                Webhook&apos;lar, sipariş durumu değişikliklerinde sisteminize bildirim gönderir. URL&apos;inizin HTTPS
                 olması ve POST isteklerini kabul etmesi gerekir.
               </AlertDescription>
             </Alert>

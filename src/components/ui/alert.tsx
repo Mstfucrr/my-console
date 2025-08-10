@@ -93,9 +93,6 @@ const alertVariants = cva(
   }
 )
 
-// Define interface for variant props
-interface AlertVariantProps extends VariantProps<typeof alertVariants> {}
-
 // Define interface for remaining HTML attributes
 interface AlertHTMLProps extends React.HTMLAttributes<HTMLDivElement> {
   dismissible?: boolean
@@ -103,7 +100,7 @@ interface AlertHTMLProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 // Merge both interfaces to create final AlertProps
-type AlertProps = AlertVariantProps & AlertHTMLProps
+type AlertProps = VariantProps<typeof alertVariants> & AlertHTMLProps
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, color, variant, dismissible, onDismiss, children, ...props }, ref) => {

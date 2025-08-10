@@ -32,7 +32,7 @@ export default function RestaurantsView() {
     staleTime: 60_000
   })
 
-  const restaurants = restaurantsResponse?.data ?? []
+  const restaurants = useMemo(() => restaurantsResponse?.data ?? [], [restaurantsResponse?.data])
 
   const stats = useMemo(() => {
     const total = restaurants.length
