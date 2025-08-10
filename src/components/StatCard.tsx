@@ -22,7 +22,7 @@ export default function StatCard({
           <div>
             <div className='text-muted-foreground text-xs'>{title}</div>
             <div className='flex items-center gap-2'>
-              <Icon className={cn('text-primary size-7', color)} />
+              <Icon className={cn('text-primary size-5', color)} />
               <div className='text-foreground mt-1 text-2xl font-medium'>{value} Adet</div>
             </div>
             <div className='text-muted-foreground mt-1 text-xs'>{hint}</div>

@@ -77,7 +77,10 @@ export default function DashboardView() {
       <Card className='mb-6'>
         <CardHeader className='flex flex-row items-center justify-between'>
           <div>
-            <CardTitle className='mb-1 text-2xl'>Dashboard</CardTitle>
+            <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
+              <BarChart2 className='text-blue-500' />
+              Dashboard
+            </CardTitle>
             <p className='text-muted-foreground text-sm'>İşletmenizin güncel durumunu takip edin</p>
           </div>
           <div className='flex items-center gap-2'>

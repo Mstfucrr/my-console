@@ -3,6 +3,7 @@
 
 import StatCard from '@/components/StatCard'
 import { Button } from '@/components/ui/button'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { OrderCard } from '@/modules/orders/components/OrderCard'
@@ -75,9 +76,7 @@ export default function OrdersView() {
             </p>
           </div>
           <div className='flex items-center gap-2'>
-            <Button size='xs' variant='outline' onClick={() => loadOrders()}>
-              Yenile
-            </Button>
+            <RefreshButton size='xs' onClick={loadOrders} isLoading={isLoading} />
           </div>
         </CardHeader>
       </Card>
@@ -147,9 +146,7 @@ export default function OrdersView() {
             <div className='text-muted-foreground flex h-48 flex-col items-center justify-center gap-2 text-sm'>
               Kayıt bulunamadı.
               <div className='flex items-center gap-2'>
-                <Button size='xs' variant='outline' onClick={loadOrders}>
-                  Yenile
-                </Button>
+                <RefreshButton size='xs' onClick={loadOrders} isLoading={isLoading} />
                 <Button size='xs' variant='outline' color='secondary' onClick={clearFilters}>
                   Filtreleri Temizle
                 </Button>

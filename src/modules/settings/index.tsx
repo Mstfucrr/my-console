@@ -32,7 +32,7 @@ export default function SettingsView() {
   }, [])
 
   return (
-    <div className='mx-auto max-w-[1200px] px-4 py-6'>
+    <div className='p-6'>
       {/* Header */}
       <Card className='mb-6'>
         <CardHeader className='flex flex-col gap-1 md:flex-row md:items-center md:justify-between'>

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import StatCard from '@/components/StatCard'
 import { Button } from '@/components/ui/button'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Restaurant } from '@/modules/types'
 import { RestaurantCard } from './components/restaurant-card'
@@ -154,10 +155,7 @@ export default function RestaurantsView() {
                 <>
                   <div>Seçili filtrelere uygun restoran bulunamadı.</div>
                   <div className='flex items-center gap-2'>
-                    <Button size='xs' variant='outline' onClick={loadRestaurants}>
-                      <RefreshCw className='mr-1 h-4 w-4' />
-                      Yenile
-                    </Button>
+                    <RefreshButton size='xs' onClick={loadRestaurants} isLoading={isLoading} />
                     <Button size='xs' variant='outline' onClick={clearFilters}>
                       Filtreleri Temizle
                     </Button>
