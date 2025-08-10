@@ -1,7 +1,8 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, CheckCircle2, Loader2, Plus, RefreshCw, StoreIcon as Shop, XCircle } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import StatCard from '@/components/StatCard'
 import { Button } from '@/components/ui/button'
@@ -14,34 +15,24 @@ import { RestaurantFilters } from './components/restaurant-filters'
 import { restaurantsService } from './service'
 
 export default function RestaurantsView() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string>('')
   const [filters, setFilters] = useState<{ search?: string; status?: 'active' | 'inactive' | undefined }>({})
 
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-  const loadRestaurants = async () => {
-    setIsLoading(true)
-    setError('')
-    try {
-      const res = await restaurantsService.getRestaurants()
-      if (res.success) {
-        setRestaurants(res.data)
-      } else {
-        setError('Restoranlar yüklenirken bir hata oluştu.')
-      }
-    } catch (_e) {
-      setError('Bağlantı hatası. Lütfen tekrar deneyin.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const {
+    data: restaurantsResponse,
+    isLoading,
+    isFetching,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['restaurants'],
+    queryFn: () => restaurantsService.getRestaurants(),
+    staleTime: 60_000
+  })
 
-  useEffect(() => {
-    loadRestaurants()
-  }, [])
+  const restaurants = restaurantsResponse?.data ?? []
 
   const stats = useMemo(() => {
     const total = restaurants.length
@@ -128,9 +119,9 @@ export default function RestaurantsView() {
           <CardContent className='flex items-center justify-between gap-3 p-4'>
             <div className='text-destructive flex items-center gap-2'>
               <AlertTriangle className='h-4 w-4' />
-              <div className='text-sm'>{error}</div>
+              <div className='text-sm'>{error.message}</div>
             </div>
-            <Button size='xs' variant='outline' onClick={loadRestaurants}>
+            <Button size='xs' variant='outline' onClick={() => refetch()}>
               <RefreshCw className='mr-1 h-4 w-4' />
               Yeniden Dene
             </Button>
@@ -155,7 +146,7 @@ export default function RestaurantsView() {
                 <>
                   <div>Seçili filtrelere uygun restoran bulunamadı.</div>
                   <div className='flex items-center gap-2'>
-                    <RefreshButton size='xs' onClick={loadRestaurants} isLoading={isLoading} />
+                    <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
                     <Button size='xs' variant='outline' onClick={clearFilters}>
                       Filtreleri Temizle
                     </Button>

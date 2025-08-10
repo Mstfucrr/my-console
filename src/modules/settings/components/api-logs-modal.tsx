@@ -13,9 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import type { APILog, PaginatedResponse } from '@/modules/types'
+import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, Bug, CheckCircle2, Search, X, XCircle } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { settingsService } from '../service'
 
 type Props = {
@@ -24,34 +25,29 @@ type Props = {
 }
 
 export default function ApiLogsModal({ open, onClose }: Props) {
-  const [logs, setLogs] = useState<APILog[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [filters, setFilters] = useState<{ success?: 'all' | 'true' | 'false'; endpoint?: string }>({
     success: 'all'
   })
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [total, setTotal] = useState(0)
 
   const [selectedLog, setSelectedLog] = useState<APILog | null>(null)
   const [detailTab, setDetailTab] = useState<'genel' | 'request' | 'response'>('genel')
 
-  const load = async () => {
-    setIsLoading(true)
-    try {
-      const res: PaginatedResponse<APILog> = await settingsService.getLogs(filters, page, pageSize)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setLogs(res.data)
-      setTotal(res.total)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const {
+    data: logsResponse,
+    isLoading,
+    isFetching,
+    refetch
+  } = useQuery<PaginatedResponse<APILog>>({
+    queryKey: ['api-logs', filters, page, pageSize],
+    queryFn: () => settingsService.getLogs(filters, page, pageSize),
+    enabled: open,
+    staleTime: 30_000
+  })
 
-  useEffect(() => {
-    if (open) load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, page, pageSize, filters])
+  const logs = logsResponse?.data ?? []
+  const total = logsResponse?.total ?? 0
 
   const columns: ColumnDef<APILog>[] = useMemo(
     () => [
@@ -184,7 +180,7 @@ export default function ApiLogsModal({ open, onClose }: Props) {
                       <Button variant='soft' color='secondary' size='xs' onClick={() => setFilters({ success: 'all' })}>
                         Temizle
                       </Button>
-                      <RefreshButton size='xs' onClick={load} isLoading={isLoading} />
+                      <RefreshButton size='xs' onClick={() => refetch()} isLoading={isFetching} />
                     </div>
                   </div>
                 </div>

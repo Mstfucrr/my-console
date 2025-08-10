@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { AlertTriangle, BarChart2, Loader2, Settings, Store } from 'lucide-react'
 import StatCard from '../../components/StatCard'
@@ -25,6 +25,7 @@ export default function DashboardView() {
   const {
     data: stats,
     isLoading,
+    isFetching,
     refetch
   } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats', dateRange],
@@ -62,9 +63,7 @@ export default function DashboardView() {
         <Card>
           <CardContent className='flex h-48 flex-col items-center justify-center gap-3'>
             <div className='text-muted-foreground text-sm'>Dashboard verileri yüklenemedi.</div>
-            <LoadingButton color='primary' onClick={() => refetch()}>
-              Yeniden Dene
-            </LoadingButton>
+            <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
           </CardContent>
         </Card>
       </div>

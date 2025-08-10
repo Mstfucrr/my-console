@@ -116,6 +116,7 @@ export const settingsService = {
   // Webhooks
   async getWebhooks(): Promise<Webhook[]> {
     ensureSeed()
+    await new Promise(r => setTimeout(r, 1000))
     return lsGet<Webhook[]>(LS_KEYS.WEBHOOKS)
   },
   async createWebhook(values: { url: string; events: WebhookEvent[]; isActive: boolean }): Promise<Webhook> {

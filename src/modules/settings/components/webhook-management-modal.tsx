@@ -14,9 +14,10 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import type { Webhook, WebhookEvent } from '@/modules/types'
+import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, CheckCircle2, Link2, Pencil, Plus, Trash2, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { settingsService } from '../service'
 
@@ -33,29 +34,23 @@ const EVENT_OPTIONS: { value: WebhookEvent; label: string }[] = [
 ]
 
 export default function WebhookManagementModal({ open, onClose }: Props) {
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Webhook | null>(null)
   const [url, setUrl] = useState('')
   const [selectedEvents, setSelectedEvents] = useState<WebhookEvent[]>([])
   const [isActive, setIsActive] = useState(true)
 
-  const load = async () => {
-    setIsLoading(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      const items = await settingsService.getWebhooks()
-      setWebhooks(items)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (open) load()
-  }, [open])
+  const {
+    data: webhooks = [],
+    isLoading,
+    isFetching,
+    refetch
+  } = useQuery<Webhook[]>({
+    queryKey: ['settings-webhooks'],
+    queryFn: () => settingsService.getWebhooks(),
+    enabled: open,
+    staleTime: 30_000
+  })
 
   const openCreate = () => {
     setEditing(null)
@@ -87,7 +82,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
         toast.success('Webhook oluşturuldu.')
       }
       setFormOpen(false)
-      load()
+      refetch()
     } catch (e: any) {
       toast.error(e?.message ?? 'İşlem başarısız')
     }
@@ -98,7 +93,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
     if (!confirm("Bu webhook'u silmek istediğinize emin misiniz?")) return
     await settingsService.deleteWebhook(wh.id)
     toast.success('Webhook silindi.')
-    load()
+    refetch()
   }
 
   const columns: ColumnDef<Webhook>[] = useMemo(
@@ -162,7 +157,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
               onDelete={() => {
                 settingsService.deleteWebhook(row.original.id).then(() => {
                   toast.success('Webhook silindi.')
-                  load()
+                  refetch()
                 })
               }}
             >
@@ -202,7 +197,7 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
                     <Plus className='mr-2 h-4 w-4' />
                     Yeni Webhook
                   </Button>
-                  <RefreshButton size='xs' onClick={load} isLoading={isLoading} />
+                  <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
                 </div>
               }
             />

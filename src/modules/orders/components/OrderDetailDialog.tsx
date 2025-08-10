@@ -24,11 +24,11 @@ export function OrderDetailDialog({
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
       <DialogContent size='4xl' className='p-1'>
-        <DialogHeader className='p-6'>
+        <DialogHeader className='p-6 pb-0'>
           <DialogTitle>Sipariş Detayı</DialogTitle>
           <DialogDescription>{order?.id}</DialogDescription>
         </DialogHeader>
-        <ScrollArea className='max-h-[70vh] p-6'>
+        <ScrollArea className='max-h-[70vh] p-6 pt-0'>
           {order && (
             <div className='space-y-4'>
               {showCourierTracking && (

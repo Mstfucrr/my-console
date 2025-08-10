@@ -5,8 +5,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { useQuery } from '@tanstack/react-query'
 import { AlertCircle, CheckCircle2, CreditCard, Eye, Info, Link2, Settings } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ApiLogsModal from './components/api-logs-modal'
 import PaymentMappingModal from './components/payment-mapping-modal'
 import WebhookManagementModal from './components/webhook-management-modal'
@@ -17,19 +18,20 @@ export default function SettingsView() {
   const [webhookModalVisible, setWebhookModalVisible] = useState(false)
   const [paymentMappingVisible, setPaymentMappingVisible] = useState(false)
 
-  const [activeWebhooks, setActiveWebhooks] = useState(0)
-  const [mappingCount, setMappingCount] = useState(0)
+  const { data: webhooks = [] } = useQuery({
+    queryKey: ['settings-webhooks'],
+    queryFn: () => settingsService.getWebhooks(),
+    staleTime: 60_000
+  })
 
-  useEffect(() => {
-    // Load small stats
-    const fetchStats = async () => {
-      const wh = await settingsService.getWebhooks()
-      setActiveWebhooks(wh.filter(w => w.isActive).length)
-      const mp = await settingsService.getMappings()
-      setMappingCount(mp.length)
-    }
-    fetchStats()
-  }, [])
+  const { data: mappings = [] } = useQuery({
+    queryKey: ['settings-mappings'],
+    queryFn: () => settingsService.getMappings(),
+    staleTime: 60_000
+  })
+
+  const activeWebhooks = webhooks.filter(w => w.isActive).length
+  const mappingCount = mappings.length
 
   return (
     <div className='p-6'>

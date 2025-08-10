@@ -48,8 +48,8 @@ export function RestaurantDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={v => !v && onClose()}>
-      <DialogContent size='4xl'>
-        <DialogHeader>
+      <DialogContent size='4xl' className='p-0'>
+        <DialogHeader className='p-6 pb-0'>
           <div className='flex items-center gap-3'>
             <Shop className='h-5 w-5 text-amber-400' />
             <div>
@@ -60,7 +60,7 @@ export function RestaurantDetailDialog({
           </div>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[70vh]'>
+        <ScrollArea className='max-h-[70vh] p-6 py-0'>
           <div className='space-y-4'>
             {!restaurant.isActive && (
               <div className='border-warning bg-warning/10 text-warning flex items-center gap-2 rounded-md border p-3 text-sm'>
@@ -243,7 +243,7 @@ export function RestaurantDetailDialog({
           </div>
         </ScrollArea>
 
-        <DialogFooter className='mt-2'>
+        <DialogFooter className='p-2 pt-0'>
           <Button variant='outline' onClick={onClose}>
             Kapat
           </Button>

@@ -12,10 +12,11 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { FiyuuPaymentType, PaymentMapping } from '@/modules/types'
+import type { FiyuuPaymentType, PaymentMapping } from '@/modules/types'
+import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, ArrowRight, CreditCard, Pencil, Plus, Trash2, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { settingsService } from '../service'
 
@@ -32,27 +33,22 @@ const PAYMENT_TYPES: { value: FiyuuPaymentType; label: string; icon: string }[] 
 ]
 
 export default function PaymentMappingModal({ open, onClose }: Props) {
-  const [mappings, setMappings] = useState<PaymentMapping[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<PaymentMapping | null>(null)
   const [clientValue, setClientValue] = useState('')
   const [fiyuuValue, setFiyuuValue] = useState<FiyuuPaymentType | ''>('')
 
-  const load = async () => {
-    setIsLoading(true)
-    try {
-      const items = await settingsService.getMappings()
-      setMappings(items)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (open) load()
-  }, [open])
+  const {
+    data: mappings = [],
+    isLoading,
+    isFetching,
+    refetch
+  } = useQuery<PaymentMapping[]>({
+    queryKey: ['settings-mappings'],
+    queryFn: () => settingsService.getMappings(),
+    enabled: open,
+    staleTime: 30_000
+  })
 
   const openCreate = () => {
     setEditing(null)
@@ -82,10 +78,17 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
         toast.success('Eşleştirme oluşturuldu.')
       }
       setFormOpen(false)
-      load()
+      refetch()
     } catch (e: any) {
       toast.error(e?.message ?? 'İşlem başarısız')
     }
+  }
+
+  const handleDelete = async (mp: PaymentMapping) => {
+    if (!confirm('Bu eşleştirmeyi silmek istediğinize emin misiniz?')) return
+    await settingsService.deleteMapping(mp.id)
+    toast.success('Eşleştirme silindi.')
+    refetch()
   }
 
   const getFiyuuPaymentLabel = (type: FiyuuPaymentType) => {
@@ -132,17 +135,7 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
               <Pencil className='h-4 w-4' />
               <span className='sr-only'>Düzenle</span>
             </Button>
-            <DeleteButton
-              isIconButton
-              variant='ghost'
-              size='icon-sm'
-              onDelete={() => {
-                settingsService.deleteMapping(row.original.id).then(() => {
-                  toast.success('Eşleştirme silindi.')
-                  load()
-                })
-              }}
-            >
+            <DeleteButton isIconButton variant='ghost' size='icon-sm' onDelete={() => handleDelete(row.original)}>
               <Trash2 className='h-4 w-4 text-red-600' />
               <span className='sr-only'>Sil</span>
             </DeleteButton>
@@ -179,7 +172,7 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
                     <Plus className='mr-2 h-4 w-4' />
                     Yeni Eşleştirme
                   </Button>
-                  <RefreshButton size='xs' onClick={load} isLoading={isLoading} />
+                  <RefreshButton size='xs' onClick={() => refetch()} isLoading={isFetching} />
                 </div>
               }
             />

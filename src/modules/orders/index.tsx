@@ -11,36 +11,29 @@ import { OrderDetailDialog } from '@/modules/orders/components/OrderDetailDialog
 import { OrderFilters } from '@/modules/orders/components/OrderFilters'
 import { ordersService } from '@/modules/orders/service'
 import type { FilterOptions, Order, PaginationOptions } from '@/modules/types'
+import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, Car, CheckCircle2, Loader2, ShoppingCart, XCircle } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 export default function OrdersView() {
-  const [orders, setOrders] = useState<Order[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string>('')
   const [filters, setFilters] = useState<FilterOptions>({})
   const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 10 })
-  const [total, setTotal] = useState<number>(0)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
 
-  const loadOrders = async () => {
-    setIsLoading(true)
-    setError('')
-    try {
-      const res = await ordersService.getOrders(filters, pagination)
-      setOrders(res.data)
-      setTotal(res.total)
-    } catch (e) {
-      setError('Siparişler yüklenemedi. Lütfen tekrar deneyin.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const {
+    data: ordersResponse,
+    isLoading,
+    isFetching,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['orders', filters, pagination],
+    queryFn: () => ordersService.getOrders(filters, pagination)
+  })
 
-  useEffect(() => {
-    loadOrders()
-  }, [filters, pagination.page, pagination.limit])
+  const orders = ordersResponse?.data ?? []
+  const total = ordersResponse?.total ?? 0
 
   const stats = useMemo(() => {
     const totalCount = orders.length
@@ -76,7 +69,7 @@ export default function OrdersView() {
             </p>
           </div>
           <div className='flex items-center gap-2'>
-            <RefreshButton size='xs' onClick={loadOrders} isLoading={isLoading} />
+            <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
           </div>
         </CardHeader>
       </Card>
@@ -123,9 +116,9 @@ export default function OrdersView() {
           <CardContent className='flex items-center justify-between gap-3 p-4'>
             <div className='text-destructive flex items-center gap-2'>
               <AlertTriangle className='h-4 w-4' />
-              <div className='text-sm'>{error}</div>
+              <div className='text-sm'>{error.message || 'Siparişler yüklenemedi. Lütfen tekrar deneyin.'}</div>
             </div>
-            <LoadingButton size='xs' onClick={loadOrders}>
+            <LoadingButton size='xs' onClick={() => refetch()}>
               Yeniden Dene
             </LoadingButton>
           </CardContent>
@@ -146,7 +139,7 @@ export default function OrdersView() {
             <div className='text-muted-foreground flex h-48 flex-col items-center justify-center gap-2 text-sm'>
               Kayıt bulunamadı.
               <div className='flex items-center gap-2'>
-                <RefreshButton size='xs' onClick={loadOrders} isLoading={isLoading} />
+                <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
                 <Button size='xs' variant='outline' color='secondary' onClick={clearFilters}>
                   Filtreleri Temizle
                 </Button>
