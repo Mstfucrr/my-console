@@ -110,6 +110,7 @@ export const settingsService = {
     const total = data.length
     const start = (page - 1) * pageSize
     const pageData = data.slice(start, start + pageSize)
+    await new Promise(r => setTimeout(r, 1000))
     return { data: pageData, total, page, limit: pageSize, totalPages: Math.ceil(total / pageSize) }
   },
 
@@ -152,6 +153,7 @@ export const settingsService = {
   // Payment mappings
   async getMappings(): Promise<PaymentMapping[]> {
     ensureSeed()
+    await new Promise(r => setTimeout(r, 1000))
     return lsGet<PaymentMapping[]>(LS_KEYS.MAPPINGS)
   },
   async createMapping(values: { clientValue: string; fiyuuValue: FiyuuPaymentType }): Promise<PaymentMapping> {
