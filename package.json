@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "next start",
-    "dev": "env-cmd -f .env.local next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "lint": "next lint",
     "format": "prettier --write .",
