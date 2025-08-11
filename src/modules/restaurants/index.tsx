@@ -1,10 +1,11 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, CheckCircle2, Loader2, Plus, RefreshCw, StoreIcon as Shop, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Info, Loader2, Plus, RefreshCw, StoreIcon as Shop, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import StatCard from '@/components/StatCard'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -177,18 +178,18 @@ export default function RestaurantsView() {
       {/* Info box */}
       <Card className='mt-4'>
         <CardContent className='space-y-2 p-4'>
-          <div className='text-foreground font-medium'>Restoran Yönetimi Özellikleri</div>
-          <div className='text-muted-foreground text-sm'>
-            <ul className='list-disc pl-5'>
-              <li>✅ Restoran listesi görüntüleme</li>
-              <li>✅ Detaylı restoran bilgileri</li>
-              <li>✅ Durum bazlı filtreleme</li>
-              <li>✅ Arama fonksiyonu</li>
-            </ul>
-          </div>
-          <div className='text-muted-foreground text-xs'>
-            Yakında eklenecek: Yeni restoran ekleme, düzenleme, çalışma saatleri yönetimi, teslimat bölgesi ayarlama.
-          </div>
+          <Alert color='info' variant='outline'>
+            <Info className='!size-6' />
+            <AlertTitle>Restoran Yönetimi Özellikleri</AlertTitle>
+            <AlertDescription>
+              <ul className='list-disc pl-5'>
+                <li>✅ Restoran listesi görüntüleme</li>
+                <li>✅ Detaylı restoran bilgileri</li>
+                <li>✅ Durum bazlı filtreleme</li>
+                <li>✅ Arama fonksiyonu</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
 
