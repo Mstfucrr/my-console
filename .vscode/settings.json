@@ -18,5 +18,9 @@
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "always"
   },
-  "eslint.validate": ["javascript", "typescript"]
+  "eslint.validate": ["javascript", "typescript"],
+  "[svg]": {
+    "editor.defaultFormatter": "jock.svg"
+  },
+  "svg.preview.background": "custom"
 }

@@ -1,0 +1,24 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+        d="M15 8H19.323C19.732 8 20.1 8.249 20.251 8.629L21.857 12.643C21.951 12.879 22 13.131 22 13.385V19.333C22 19.885 21.552 20.333 21 20.333H19.169"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M15.9999 20.42H8.16992" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path d="M22 15H18V11H21.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path d="M12.556 6H14C14.552 6 15 6.448 15 7V16H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M7.73867 2.05C5.98767 2.318 4.55567 3.75 4.28767 5.501C3.85767 8.311 6.24367 10.697 9.05367 10.267C10.8047 9.999 12.2367 8.567 12.5047 6.816C12.9357 4.006 10.5487 1.62 7.73867 2.05Z"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+        d="M18.7041 19.2959C19.3226 19.9144 19.3226 20.9174 18.7041 21.536C18.0855 22.1546 17.0825 22.1546 16.4639 21.536C15.8454 20.9174 15.8454 19.9144 16.4639 19.2959C17.0825 18.6773 18.0855 18.6773 18.7041 19.2959"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+        d="M7.70405 19.2959C8.32264 19.9144 8.32264 20.9174 7.70405 21.536C7.08546 22.1546 6.08253 22.1546 5.46394 21.536C4.84535 20.9174 4.84535 19.9144 5.46394 19.2959C6.08253 18.6773 7.08546 18.6773 7.70405 19.2959"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M5 20.416H3C2.448 20.416 2 19.968 2 19.416V7C2 6.448 2.448 6 3 6H4.238" stroke="currentColor"
+        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M10 6.00006H8V4.15906" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+</svg>
