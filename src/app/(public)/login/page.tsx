@@ -59,9 +59,9 @@ const LoginFormContent = () => {
               }}
               transition={{ duration: 0.6, type: 'spring' }}
             >
-              <div className='flex flex-col items-center justify-center gap-6 text-white'>
-                <SiteLogoMin className='w-60 text-white' />
-                <div className='text-2xl font-bold 2xl:text-3xl'>
+              <div className='flex flex-col items-center justify-center text-white'>
+                <SiteLogoMin className='w-40 text-white' />
+                <div className='text-2xl font-bold 2xl:text-xl'>
                   <b>Console&apos;a</b> Hoşgeldiniz
                 </div>
               </div>

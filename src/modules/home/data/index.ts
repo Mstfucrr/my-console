@@ -1,4 +1,4 @@
-import { Car, CheckCircle2, ShoppingCart, XCircle } from 'lucide-react'
+import { Bike, CheckCircle2, ShoppingCart, XCircle } from 'lucide-react'
 import type { DashboardStats, Stats } from '../types'
 
 export const dashboardMockData: DashboardStats = {
@@ -50,7 +50,7 @@ export const dashboardStats: Stats[] = [
   {
     title: 'Yolda',
     value: 18,
-    Icon: Car,
+    Icon: Bike,
     color: 'text-amber-500',
     hint: 'Şu anda kurye ile'
   },

@@ -71,9 +71,9 @@ export default function DashboardView() {
   }
 
   return (
-    <div className='p-6'>
+    <div className='flex flex-col gap-6 p-6'>
       {/* Header */}
-      <Card className='mb-6'>
+      <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
           <div>
             <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
@@ -99,14 +99,45 @@ export default function DashboardView() {
       </Card>
 
       {/* Stats */}
-      <div className='mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {dashboardStats.map(stat => (
           <StatCard key={stat.title} {...stat} />
         ))}
       </div>
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+            <QuickAction
+              href='/orders'
+              Icon={BarChart2}
+              title='Son Siparişler'
+              subtitle='Aktif siparişleri görüntüle'
+              color='text-blue-600'
+            />
+            <QuickAction
+              href='/restaurants'
+              Icon={Store}
+              title='Restoranlarım'
+              subtitle='Şube bilgilerini kontrol et'
+              color='text-green-600'
+            />
+            <QuickAction
+              href='/settings'
+              Icon={Settings}
+              title='Entegrasyon'
+              subtitle='API ve webhook ayarları'
+              color='text-amber-500'
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Chart + Errors */}
-      <div className='mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Sipariş Durumu Dağılımı</CardTitle>
@@ -152,38 +183,6 @@ export default function DashboardView() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            <QuickAction
-              href='/orders'
-              Icon={BarChart2}
-              title='Son Siparişler'
-              subtitle='Aktif siparişleri görüntüle'
-              color='text-blue-600'
-            />
-            <QuickAction
-              href='/restaurants'
-              Icon={Store}
-              title='Restoranlarım'
-              subtitle='Şube bilgilerini kontrol et'
-              color='text-green-600'
-            />
-            <QuickAction
-              href='/settings'
-              Icon={Settings}
-              title='Entegrasyon'
-              subtitle='API ve webhook ayarları'
-              color='text-amber-500'
-            />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

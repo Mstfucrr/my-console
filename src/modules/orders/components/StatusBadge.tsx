@@ -1,7 +1,7 @@
 import { Badge, type BadgeProps } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { OrderStatus } from '@/modules/types'
-import { CarFrontIcon, CheckCircle2, Clock } from 'lucide-react'
+import { Bike, CarFrontIcon, CheckCircle2, Clock } from 'lucide-react'
 import { statusLabelMap } from '../utils'
 
 export function statusBadgeColor(status: OrderStatus): BadgeProps['color'] {
@@ -18,7 +18,7 @@ export function statusBadgeColor(status: OrderStatus): BadgeProps['color'] {
 }
 
 export function StatusIcon({ status, className }: { status: OrderStatus; className?: string }) {
-  if (status === 'on_way') return <CarFrontIcon className={className ?? 'size-4 text-red-500'} />
+  if (status === 'on_way') return <Bike className={className ?? 'size-4 text-red-500'} />
   if (status === 'picked_up') return <CarFrontIcon className={className ?? 'size-4 text-purple-500'} />
   if (status === 'delivered' || status === 'ready')
     return <CheckCircle2 className={className ?? 'size-4 text-green-500'} />

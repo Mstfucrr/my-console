@@ -12,7 +12,7 @@ import { OrderFilters } from '@/modules/orders/components/OrderFilters'
 import { ordersService } from '@/modules/orders/service'
 import type { FilterOptions, Order, PaginationOptions } from '@/modules/types'
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, Car, CheckCircle2, Loader2, ShoppingCart, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Loader2, Package, ShoppingCart, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 export default function OrdersView() {
@@ -90,7 +90,7 @@ export default function OrdersView() {
           hint='Teslim edilen siparişler'
           color='text-green-600'
         />
-        <StatCard title='Yolda' value={stats.onWay} Icon={Car} hint='Yoldaki siparişler' color='text-amber-500' />
+        <StatCard title='Yolda' value={stats.onWay} Icon={Package} hint='Yoldaki siparişler' color='text-amber-500' />
         <StatCard
           title='İptal'
           value={stats.cancelled}
@@ -147,10 +147,11 @@ export default function OrdersView() {
             </div>
           ) : (
             <div>
-              {orders.map(o => (
-                <OrderCard key={o.id} order={o} onViewDetails={onViewDetails} />
-              ))}
-
+              <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+                {orders.map(o => (
+                  <OrderCard key={o.id} order={o} onViewDetails={onViewDetails} />
+                ))}
+              </div>
               {/* Pagination */}
               {total > pagination.limit && (
                 <div className='mt-4 flex items-center justify-center gap-2'>

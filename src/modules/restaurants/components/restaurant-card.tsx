@@ -54,7 +54,7 @@ export function RestaurantCard({
             {/* hizmet içi, hizmet dışı */}
             {restaurant.isActive ? (
               <Badge color='success' variant='outline' className='text-xs'>
-                Hizmet İçi
+                Hizmet Veriyor
               </Badge>
             ) : (
               <Badge color='secondary' variant='outline' className='text-xs'>
