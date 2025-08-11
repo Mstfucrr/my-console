@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import type { Webhook, WebhookEvent } from '@/modules/types'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, CheckCircle2, Link2, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -49,7 +49,8 @@ export default function WebhookManagementModal({ open, onClose }: Props) {
     queryKey: ['settings-webhooks'],
     queryFn: () => settingsService.getWebhooks(),
     enabled: open,
-    staleTime: 30_000
+    staleTime: 30_000,
+    placeholderData: keepPreviousData
   })
 
   const openCreate = () => {

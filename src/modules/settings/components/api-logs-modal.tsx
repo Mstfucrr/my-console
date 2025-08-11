@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import type { APILog, PaginatedResponse } from '@/modules/types'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, Bug, CheckCircle2, Search, X, XCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -43,7 +43,8 @@ export default function ApiLogsModal({ open, onClose }: Props) {
     queryKey: ['api-logs', filters, page, pageSize],
     queryFn: () => settingsService.getLogs(filters, page, pageSize),
     enabled: open,
-    staleTime: 30_000
+    staleTime: 30_000,
+    placeholderData: keepPreviousData
   })
 
   const logs = logsResponse?.data ?? []
@@ -138,7 +139,7 @@ export default function ApiLogsModal({ open, onClose }: Props) {
               total={total}
               onPageChange={setPage}
               onPageSizeChange={setPageSize}
-              isLoading={isLoading || isFetching}
+              isLoading={isLoading || isFetching || isFetching}
               columnVisibilityTriggerProps={{
                 size: 'xs'
               }}

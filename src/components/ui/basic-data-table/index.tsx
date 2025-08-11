@@ -16,6 +16,7 @@ import {
   type SortingState,
   type VisibilityState
 } from '@tanstack/react-table'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import * as React from 'react'
 import { Button } from '../button'
@@ -71,6 +72,29 @@ export type BasicDataTableProps<TData, TValue = never> = {
 
   // column visibility trigger props
   columnVisibilityTriggerProps?: React.ComponentProps<typeof Button>
+}
+
+function TableOverlayLoader({ label }: { label?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      className='absolute inset-0 z-20 flex flex-col items-center justify-center backdrop-blur-xs transition-all'
+    >
+      <motion.div
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
+        className='flex items-center gap-3 rounded-md px-4 py-2 shadow-md'
+      >
+        <Loader2 className='text-primary size-8 animate-spin' />
+        {label && <span className='text-primary text-base font-medium'>{label}</span>}
+      </motion.div>
+    </motion.div>
+  )
 }
 
 export function BasicDataTable<TData extends { id?: string }, TValue = never>({
@@ -198,6 +222,9 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
     if (searchColumn) searchColumn.setFilterValue(value)
   }
 
+  // Yeni: Loader'ı data varsa ve isLoading ise tablo üstüne absolute olarak göster
+  const showOverlayLoader = isLoading && data && data.length > 0
+
   return (
     <div className={cn('space-y-3', className)}>
       <DataTableToolbar
@@ -213,7 +240,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
         }}
       />
 
-      <div className={cn('rounded-md border', tableClassName)}>
+      <div className={cn('relative rounded-md border', tableClassName)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
@@ -228,7 +255,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
           </TableHeader>
 
           <TableBody>
-            {isLoading ? (
+            {isLoading && (!data || data.length === 0) ? (
               <TableRow>
                 <TableCell colSpan={computedColumns.length} className='text-muted-foreground h-24 text-center'>
                   <div className='flex items-center justify-center gap-2'>
@@ -254,6 +281,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
             )}
           </TableBody>
         </Table>
+        <AnimatePresence>{showOverlayLoader && <TableOverlayLoader label={loadingLabel} />}</AnimatePresence>
       </div>
 
       <DataTablePagination

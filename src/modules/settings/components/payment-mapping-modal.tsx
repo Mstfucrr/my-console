@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import type { FiyuuPaymentType, PaymentMapping } from '@/modules/types'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, ArrowRight, CreditCard, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
@@ -47,7 +47,8 @@ export default function PaymentMappingModal({ open, onClose }: Props) {
     queryKey: ['settings-mappings'],
     queryFn: () => settingsService.getMappings(),
     enabled: open,
-    staleTime: 30_000
+    staleTime: 30_000,
+    placeholderData: keepPreviousData
   })
 
   const openCreate = () => {
