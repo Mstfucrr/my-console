@@ -13,6 +13,13 @@ export interface FilterOption {
   label: string
 }
 
+export interface FilterProperties {
+  status?: string
+  search?: string
+  dateFrom?: string
+  dateTo?: string
+}
+
 export interface FilterConfig {
   title: string
   icon: LucideIcon
@@ -143,11 +150,11 @@ export function DateFilters({
   )
 }
 
-export function ActiveFiltersDisplay({
+export function ActiveFiltersDisplay<T extends FilterProperties>({
   filters,
   statusOptions
 }: {
-  filters: Record<string, any>
+  filters: T
   statusOptions?: FilterOption[]
 }) {
   return (

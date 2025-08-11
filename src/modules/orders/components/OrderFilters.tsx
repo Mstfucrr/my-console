@@ -35,11 +35,6 @@ export function OrderFilters({
     [filters]
   )
 
-  const activeCount = useMemo(
-    () => (hasActiveFilters ? Object.values(filters).filter(Boolean).length : 0),
-    [filters, hasActiveFilters]
-  )
-
   const config = {
     title: 'Sipariş Filtreleme ve Arama',
     icon: ShoppingBag,
@@ -55,7 +50,6 @@ export function OrderFilters({
       onFiltersChange={onFiltersChange}
       onClearFilters={onClearFilters}
       hasActiveFilters={hasActiveFilters}
-      activeFiltersCount={activeCount}
     >
       <div className='flex w-full gap-3'>
         <div className='flex flex-auto flex-col items-start gap-3 sm:flex-row sm:items-center'>
