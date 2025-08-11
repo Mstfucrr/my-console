@@ -27,7 +27,7 @@ const LogInForm = () => {
     resolver: zodResolver(schema),
     mode: 'all',
     defaultValues: {
-      identifier: 'asd@fiyuu.com.tr',
+      identifier: 'efsane@fiyuu.com.tr',
       password: '11111-222224!'
     }
   })
@@ -72,7 +72,7 @@ const LogInForm = () => {
           />
 
           <div className='mt-5 mb-6 flex flex-wrap gap-2'>
-            <Link href='/auth/forgot3' className='text-primary flex-none text-sm'>
+            <Link href='#' className='text-primary flex-none text-sm'>
               Şifremi unuttum?
             </Link>
           </div>

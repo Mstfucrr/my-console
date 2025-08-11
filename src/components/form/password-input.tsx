@@ -16,8 +16,10 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
       <Input type={showPassword ? 'text' : 'password'} {...props} />
       <Button
         variant='ghost'
-        className='absolute top-1/2 right-0 -translate-y-1/2'
+        className='absolute top-1/2 right-0 mr-2 -translate-y-1/2'
         onClick={() => setShowPassword(!showPassword)}
+        size='icon-sm'
+        type='button'
       >
         {showPassword ? <EyeOff /> : <Eye />}
       </Button>
