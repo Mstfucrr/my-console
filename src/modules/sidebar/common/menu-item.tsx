@@ -18,8 +18,9 @@ export function MenuItem({ item }: MenuItemProps) {
       <Link href={item.href} className='w-full'>
         <Button
           variant='ghost'
+          size='sm'
           className={cn(
-            'hover:bg-primary hover:text-primary-foreground flex h-10 w-full items-center gap-2 rounded-xl px-3 text-base font-medium md:text-sm',
+            'hover:bg-primary hover:text-primary-foreground flex w-full items-center gap-2 rounded-xl text-base font-semibold md:text-sm',
             { 'bg-primary text-primary-foreground': isActive }
           )}
         >
