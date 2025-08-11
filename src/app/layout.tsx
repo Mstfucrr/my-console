@@ -1,5 +1,5 @@
 import '@/styles/globals.css'
-import { Poppins } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 
 import { cn } from '@/lib/utils'
 import QueryProvider from '@/provider/QueryProvider'
@@ -7,10 +7,10 @@ import type { Metadata } from 'next'
 import { ToastContainer } from 'react-toastify'
 
 // Initialize Poppins font
-const poppins = Poppins({
+const openSans = Open_Sans({
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-poppins',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-open-sans',
   display: 'swap'
 })
 
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='tr'>
-      <body className={cn(poppins.className, 'antialiased')}>
+      <body className={cn(openSans.className, 'antialiased')}>
         <QueryProvider>{children}</QueryProvider>
         <ToastContainer autoClose={2500} />
       </body>

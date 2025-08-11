@@ -74,7 +74,7 @@ export default function DashboardView() {
     <div className='flex flex-col gap-6 p-6'>
       {/* Header */}
       <Card>
-        <CardHeader className='flex flex-row items-center justify-between'>
+        <CardHeader className='mb-0 flex flex-row items-center justify-between'>
           <div>
             <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
               <BarChart2 className='text-blue-500' />
