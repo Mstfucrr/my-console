@@ -65,7 +65,7 @@ export default function RestaurantsView() {
     setIsModalOpen(true)
   }
 
-  const clearFilters = () => setFilters({})
+  const clearFilters = () => setFilters({ status: 'all' })
 
   return (
     <div className='p-6'>
