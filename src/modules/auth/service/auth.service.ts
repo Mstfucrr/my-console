@@ -1,5 +1,4 @@
 export interface ILoginRequest {
-  account: string
   identifier: string
   password: string
   fiyuu_cookie?: string

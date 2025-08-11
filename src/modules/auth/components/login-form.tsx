@@ -9,7 +9,6 @@ import { z } from 'zod'
 import { useAuthContext } from '../context/AuthContext'
 
 const schema = z.object({
-  account: z.string().min(1, { message: 'Hesap adı zorunludur.' }),
   identifier: z.string().min(1, { message: 'E-posta zorunludur.' }).email({ message: 'Geçerli bir e-posta giriniz.' }),
   password: z.string().min(1, { message: 'Şifre zorunludur.' })
 })
@@ -24,7 +23,6 @@ const LogInForm = () => {
     resolver: zodResolver(schema),
     mode: 'all',
     defaultValues: {
-      account: 'fiyuu',
       identifier: 'asd@fiyuu.com.tr',
       password: '123123'
     }
@@ -42,15 +40,6 @@ const LogInForm = () => {
     <div className='w-full'>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='mt-8 flex flex-col gap-2 2xl:mt-7'>
-          <FormInputField
-            name='account'
-            control={control}
-            label='Hesap Adı'
-            type='text'
-            id='account'
-            size={!isDesktop2xl ? 'xl' : 'lg'}
-            disabled={loginPending}
-          />
           <FormInputField
             name='identifier'
             control={control}

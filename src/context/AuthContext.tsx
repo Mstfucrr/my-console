@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token')
     setIsAuthenticated(false)
-    router.push('/signout')
+    router.push('/login')
   }
 
   return <AuthContext.Provider value={{ isAuthenticated, logout }}>{children}</AuthContext.Provider>
