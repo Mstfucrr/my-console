@@ -28,17 +28,10 @@ export interface FilterCardProps<T> {
   onFiltersChange: (filters: T) => void
   onClearFilters: () => void
   hasActiveFilters: boolean
-  activeFiltersCount?: number
   children?: ReactNode
 }
 
-export function FilterCard<T>({
-  config,
-  onClearFilters,
-  hasActiveFilters,
-  activeFiltersCount,
-  children
-}: FilterCardProps<T>) {
+export function FilterCard<T>({ config, onClearFilters, hasActiveFilters, children }: FilterCardProps<T>) {
   const { title, icon: Icon, tipText } = config
 
   return (
