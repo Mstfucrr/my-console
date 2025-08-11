@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Search, StoreIcon as Shop, XCircle } from 'lucide-react'
 
 export function RestaurantFilters({
@@ -11,11 +12,11 @@ export function RestaurantFilters({
   onFiltersChange,
   onClearFilters
 }: {
-  filters: { search?: string; status?: 'active' | 'inactive' | undefined }
-  onFiltersChange: (f: { search?: string; status?: 'active' | 'inactive' | undefined }) => void
+  filters: { search?: string; status?: 'all' | 'active' | 'inactive' | undefined }
+  onFiltersChange: (f: { search?: string; status?: 'all' | 'active' | 'inactive' | undefined }) => void
   onClearFilters: () => void
 }) {
-  const hasActiveFilters = Boolean(filters.search || filters.status)
+  const hasActiveFilters = Boolean(filters.search || filters.status !== 'all')
 
   return (
     <Card className='mb-4'>
@@ -35,37 +36,32 @@ export function RestaurantFilters({
         <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
           <div>
             <label className='text-muted-foreground mb-1 block text-xs'>Restoran Adı / Adres</label>
-            <div className='relative'>
-              <Search className='text-muted-foreground pointer-events-none absolute top-1/2 left-2 h-4 w-4 -translate-y-1/2' />
-              <Input
-                className='pl-8'
-                placeholder='Restoran ara...'
-                value={filters.search ?? ''}
-                onChange={e => onFiltersChange({ ...filters, search: e.target.value })}
-              />
-            </div>
+            <Input
+              Icon={Search}
+              placeholder='Restoran ara...'
+              value={filters.search ?? ''}
+              onChange={e => onFiltersChange({ ...filters, search: e.target.value })}
+              size='sm'
+            />
           </div>
           <div>
             <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>
             <div className='flex flex-wrap items-center gap-2'>
-              <Button
-                size='xs'
-                variant={filters.status === 'active' ? undefined : 'outline'}
-                onClick={() =>
-                  onFiltersChange({ ...filters, status: filters.status === 'active' ? undefined : 'active' })
+              <Select
+                value={filters.status}
+                onValueChange={value =>
+                  onFiltersChange({ ...filters, status: value as 'all' | 'active' | 'inactive' | undefined })
                 }
               >
-                🟢 Aktif
-              </Button>
-              <Button
-                size='xs'
-                variant={filters.status === 'inactive' ? undefined : 'outline'}
-                onClick={() =>
-                  onFiltersChange({ ...filters, status: filters.status === 'inactive' ? undefined : 'inactive' })
-                }
-              >
-                ⚪ Pasif
-              </Button>
+                <SelectTrigger className='w-[180px]' size='sm'>
+                  <SelectValue placeholder='Durum' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>Tümü</SelectItem>
+                  <SelectItem value='active'>Aktif</SelectItem>
+                  <SelectItem value='inactive'>Pasif</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

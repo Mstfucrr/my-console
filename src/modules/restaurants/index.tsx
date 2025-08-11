@@ -15,7 +15,9 @@ import { RestaurantFilters } from './components/restaurant-filters'
 import { restaurantsService } from './service'
 
 export default function RestaurantsView() {
-  const [filters, setFilters] = useState<{ search?: string; status?: 'active' | 'inactive' | undefined }>({})
+  const [filters, setFilters] = useState<{ search?: string; status?: 'all' | 'active' | 'inactive' | undefined }>({
+    status: 'all'
+  })
 
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -50,7 +52,7 @@ export default function RestaurantsView() {
           ok &&
           (r.name.toLowerCase().includes(q) || r.address.toLowerCase().includes(q) || r.phone.toLowerCase().includes(q))
       }
-      if (filters.status) {
+      if (filters.status !== 'all') {
         ok = ok && (filters.status === 'active' ? r.isActive : !r.isActive)
       }
       return ok
@@ -142,7 +144,7 @@ export default function RestaurantsView() {
             </div>
           ) : filteredRestaurants.length === 0 ? (
             <div className='text-muted-foreground flex flex-col items-center justify-center gap-3 py-12 text-center text-sm'>
-              {filters.search || filters.status ? (
+              {filters.search || filters.status !== 'all' ? (
                 <>
                   <div>Seçili filtrelere uygun restoran bulunamadı.</div>
                   <div className='flex items-center gap-2'>

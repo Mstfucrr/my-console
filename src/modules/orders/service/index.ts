@@ -28,7 +28,7 @@ function withinDateRange(order: Order, from?: string, to?: string) {
 function applyFilters(data: Order[], filters: FilterOptions): Order[] {
   const { status, search, dateFrom, dateTo } = filters
   return data.filter(o => {
-    const statusOk = status ? o.status === status : true
+    const statusOk = status === 'all' ? true : o.status === status
     const searchOk = matchesSearch(o, search)
     const dateOk = withinDateRange(o, dateFrom, dateTo)
     return statusOk && searchOk && dateOk

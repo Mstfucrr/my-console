@@ -16,7 +16,7 @@ import { AlertTriangle, Car, CheckCircle2, Loader2, ShoppingCart, XCircle } from
 import { useMemo, useState } from 'react'
 
 export default function OrdersView() {
-  const [filters, setFilters] = useState<FilterOptions>({})
+  const [filters, setFilters] = useState<FilterOptions>({ status: 'all' })
   const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 10 })
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
@@ -51,7 +51,7 @@ export default function OrdersView() {
   }
 
   const clearFilters = () => {
-    setFilters({})
+    setFilters({ status: 'all' })
     setPagination(p => ({ ...p, page: 1 }))
   }
 

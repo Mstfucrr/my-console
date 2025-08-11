@@ -244,9 +244,6 @@ export function RestaurantDetailDialog({
         </ScrollArea>
 
         <DialogFooter className='p-2 pt-0'>
-          <Button variant='outline' onClick={onClose}>
-            Kapat
-          </Button>
           <Button disabled>Düzenle (Yakında)</Button>
         </DialogFooter>
       </DialogContent>

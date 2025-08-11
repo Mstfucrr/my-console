@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import type { Restaurant } from '@/modules/types'
 import { Calendar, Eye, MapPin, Pencil, Phone, Settings, StoreIcon as Shop } from 'lucide-react'
 
@@ -20,21 +20,18 @@ export function RestaurantCard({
 
   return (
     <Card className='hover:bg-background relative transition-colors'>
-      <CardContent className='p-4'>
-        <div className='absolute top-3 right-3'>
-          <Badge color={restaurant.isActive ? 'success' : 'secondary'} variant='outline' className='text-xs'>
-            {restaurant.isActive ? 'Aktif' : 'Pasif'}
-          </Badge>
-        </div>
-
-        {/* Header */}
-        <div className='mb-3 flex items-start gap-2'>
+      <CardHeader className='flex flex-row items-start justify-between pb-2'>
+        <div className='flex items-start gap-2'>
           <Shop className='mt-0.5 h-5 w-5 shrink-0 text-amber-400' />
           <div className='min-w-0'>
             <div className='text-foreground truncate text-base font-semibold'>{restaurant.name}</div>
           </div>
         </div>
-
+        <Badge color={restaurant.isActive ? 'success' : 'secondary'} variant='outline' className='text-xs'>
+          {restaurant.isActive ? 'Aktif' : 'Pasif'}
+        </Badge>
+      </CardHeader>
+      <CardContent className='pt-0'>
         {/* Info */}
         <div className='text-muted-foreground space-y-2 text-sm'>
           <div className='flex items-start gap-2'>
@@ -50,11 +47,23 @@ export function RestaurantCard({
             <div>Kayıt: {createdText}</div>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className='border-default-200 mt-3 flex items-center justify-between border-t pt-3'>
-          <div className='text-muted-foreground text-[11px]'>ID: {restaurant.id}</div>
-          <div className='flex items-center gap-2'>
+      </CardContent>
+      <CardFooter className='border-default-200 mt-3 border-t px-0 pt-3'>
+        <div className='flex w-full flex-col gap-2'>
+          <div className='flex items-center justify-between gap-2 px-4'>
+            {/* hizmet içi, hizmet dışı */}
+            {restaurant.isActive ? (
+              <Badge color='success' variant='outline' className='text-xs'>
+                Hizmet İçi
+              </Badge>
+            ) : (
+              <Badge color='secondary' variant='outline' className='text-xs'>
+                Hizmet Dışı
+              </Badge>
+            )}
+            <div className='text-muted-foreground text-[11px]'>ID: {restaurant.id}</div>
+          </div>
+          <div className='flex w-full items-center justify-around gap-2 border-t px-4 pt-4'>
             <Button size='xs' variant='outline' onClick={() => onViewDetails(restaurant)}>
               <Eye className='mr-1 h-3.5 w-3.5' />
               Detay
@@ -75,7 +84,7 @@ export function RestaurantCard({
             </Button>
           </div>
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   )
 }
