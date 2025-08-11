@@ -4,7 +4,9 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { z } from 'zod'
 import { useAuthContext } from '../context/AuthContext'
 
@@ -17,23 +19,33 @@ type LoginFormType = z.infer<typeof schema>
 
 const LogInForm = () => {
   const {
-    loginMutation: { mutateAsync: login, isPending: loginPending }
+    loginMutation: { mutateAsync: login, isPending: loginPending },
+    handleOtp
   } = useAuthContext()
+
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
     mode: 'all',
     defaultValues: {
       identifier: 'asd@fiyuu.com.tr',
-      password: '123123'
+      password: '11111-222224!'
     }
   })
 
   const { handleSubmit, control } = form
 
   const isDesktop2xl = useMediaQuery('(max-width: 1530px)')
+  const router = useRouter()
 
   const onSubmit = async (data: LoginFormType) => {
-    await login(data)
+    try {
+      const { otp } = await login(data)
+      if (otp) handleOtp()
+      else router.push('/')
+    } catch (error) {
+      console.error('login error', error)
+      toast.error('Giriş bilgileri hatalı. Lütfen tekrar deneyiniz.')
+    }
   }
 
   return (

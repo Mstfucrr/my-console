@@ -1,7 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { createContext, useContext, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -38,6 +38,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //     setIsAuthenticated(true)
   //   }
   // }, [])
+
+  const pathname = usePathname()
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      setIsAuthenticated(true)
+    } else {
+      setIsAuthenticated(false)
+      router.push('/login')
+    }
+  }, [pathname])
 
   const logout = () => {
     localStorage.removeItem('token')

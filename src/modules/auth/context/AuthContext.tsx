@@ -8,14 +8,14 @@ import {
   IVerifyOtpResponse
 } from '@/modules/auth/service/auth.service'
 import { useMutation, UseMutationResult } from '@tanstack/react-query'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 interface IAuthContext {
   isOtp: boolean
-  loginData: ILoginResponse | undefined
   loginMutation: UseMutationResult<ILoginResponse, Error, ILoginRequest>
   verifyOtpMutation: UseMutationResult<IVerifyOtpResponse, Error, IVerifyOtpRequest>
-  setCookieMutation: UseMutationResult<ILoginResponse, Error, ISetCookieRequest>
+  setCookieMutation: UseMutationResult<{ cookie: string }, Error, ISetCookieRequest>
+  handleOtp: () => void
 }
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined)
@@ -37,20 +37,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     mutationFn: authService.setCookie
   })
 
-  const { data: loginData } = loginMutation
-
-  useEffect(() => {
-    if (!loginData) return
-    console.log('1')
-    if (loginData.otp) {
-      handleOtp()
-      console.log('2')
-    }
-    console.log('3')
-  }, [loginData])
-
   return (
-    <AuthContext.Provider value={{ isOtp, loginData, loginMutation, verifyOtpMutation, setCookieMutation }}>
+    <AuthContext.Provider value={{ isOtp, loginMutation, verifyOtpMutation, setCookieMutation, handleOtp }}>
       {children}
     </AuthContext.Provider>
   )

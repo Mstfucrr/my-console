@@ -24,7 +24,7 @@ export interface IVerifyOtpResponse {
 }
 
 export interface ISetCookieRequest {
-  ticket: string
+  action_cookie: string
 }
 
 class AuthService {
@@ -36,7 +36,7 @@ class AuthService {
       }
     }
     console.log('getSigninCookie response', response)
-    await new Promise(resolve => setTimeout(resolve, 2500))
+    await new Promise(resolve => setTimeout(resolve, 1500))
     return response.data
   }
 
@@ -51,7 +51,7 @@ class AuthService {
         otpTimeout: 60
       }
     }
-    await new Promise(resolve => setTimeout(resolve, 2500))
+    await new Promise(resolve => setTimeout(resolve, 1500))
     return response.data
   }
 
@@ -63,22 +63,19 @@ class AuthService {
         action_cookie: '1234567890'
       }
     }
-    await new Promise(resolve => setTimeout(resolve, 2500))
+    await new Promise(resolve => setTimeout(resolve, 1500))
     return response.data
   }
 
-  async setCookie(request: ISetCookieRequest): Promise<ILoginResponse> {
+  async setCookie(request: ISetCookieRequest): Promise<{ cookie: string }> {
     console.log('setCookie request', request)
     const response = {
       data: {
-        otp: true,
-        phoneNumber: '1234567890',
-        installationId: '1234567890',
-        redirectUrl: 'https://fiyuu.com',
-        otpTimeout: 60
+        cookie: '1234567890'
       }
     }
-    await new Promise(resolve => setTimeout(resolve, 2500))
+    localStorage.setItem('token', response.data.cookie)
+
     return response.data
   }
 }

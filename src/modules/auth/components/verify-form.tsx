@@ -8,6 +8,7 @@ import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
 
 const VerfiyForm = () => {
   // const { loginData } = useAuthContext()
@@ -16,7 +17,7 @@ const VerfiyForm = () => {
     phoneNumber: '1234567890',
     installationId: '1234567890'
   }
-  const { verifyOtpMutation } = useAuthContext()
+  const { verifyOtpMutation, setCookieMutation } = useAuthContext()
   const totalOtpField = 6
   const otpArray: string[] = Array.from({ length: totalOtpField }, () => '')
   const [otp, setOtp] = useState<string[]>(otpArray)
@@ -82,10 +83,19 @@ const VerfiyForm = () => {
     inputRefs.current[0]?.focus()
     if (!loginData.installationId) return
 
-    await verifyOtp({
+    const { action_cookie, isOtpValid } = await verifyOtp({
       installationId: loginData.installationId,
       otp: enteredOtp,
       phoneNumber: loginData.phoneNumber
+    })
+
+    if (!isOtpValid) {
+      toast.error('Kod geçersiz. Lütfen tekrar deneyiniz.')
+      return
+    }
+
+    await setCookieMutation.mutateAsync({
+      action_cookie
     })
 
     router.push('/')
