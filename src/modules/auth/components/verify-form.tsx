@@ -124,6 +124,7 @@ const VerfiyForm = () => {
               onChange={e => handleChange(e, index)}
               onKeyDown={event => handleKeyDown(index, event)}
               disabled={isTimerComplete || isVerifyOtpPending}
+              autoFocus={index === 0}
               maxLength={1}
               className='size-12 rounded border-gray-300 text-center text-2xl font-semibold text-gray-900 max-sm:size-10'
               ref={ref => {
