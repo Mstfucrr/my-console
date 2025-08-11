@@ -295,7 +295,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
         leftInfo={
           manualPagination
             ? `${(page - 1) * pageSize + (data.length ? 1 : 0)}-${Math.min(page * pageSize, total ?? 0)} / ${total ?? 0}`
-            : `${table.getFilteredSelectedRowModel().rows.length} / ${table.getFilteredRowModel().rows.length} satır seçili`
+            : undefined
         }
       />
     </div>

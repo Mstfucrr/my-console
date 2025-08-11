@@ -47,6 +47,11 @@ export default function ApiLogsModal({ open, onClose }: Props) {
     placeholderData: keepPreviousData
   })
 
+  const handleFiltersChange = (filters: { success?: 'all' | 'true' | 'false'; endpoint?: string }) => {
+    setFilters(f => ({ ...f, ...filters }))
+    setPage(1)
+  }
+
   const logs = logsResponse?.data ?? []
   const total = logsResponse?.total ?? 0
 
@@ -149,10 +154,9 @@ export default function ApiLogsModal({ open, onClose }: Props) {
                     <Select
                       value={filters.success}
                       onValueChange={value =>
-                        setFilters(f => ({
-                          ...f,
+                        handleFiltersChange({
                           success: value as 'all' | 'true' | 'false'
-                        }))
+                        })
                       }
                     >
                       <SelectTrigger className='w-[140px]' size='sm'>
@@ -175,7 +179,7 @@ export default function ApiLogsModal({ open, onClose }: Props) {
                           Icon={Search}
                           placeholder='Endpoint...'
                           value={filters.endpoint ?? ''}
-                          onChange={e => setFilters(f => ({ ...f, endpoint: e.target.value }))}
+                          onChange={e => handleFiltersChange({ endpoint: e.target.value })}
                         />
                       </div>
                       <Button variant='soft' color='secondary' size='xs' onClick={() => setFilters({ success: 'all' })}>
