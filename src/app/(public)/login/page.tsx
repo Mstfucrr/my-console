@@ -57,7 +57,7 @@ const LoginFormContent = () => {
                 left: !isOtp ? '50%' : '0%',
                 borderRadius: isOtp ? '0% 30% 30% 0%' : '30% 0% 0% 30%'
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.6, type: 'spring' }}
             >
               <div className='flex flex-col items-center justify-center gap-6 text-white'>
                 <SiteLogoMin className='w-60 text-white' />
