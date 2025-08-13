@@ -25,6 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='tr'>
+      <head>
+        {process.env.NODE_ENV === 'development' && (
+          <script crossOrigin='anonymous' src='//unpkg.com/react-scan/dist/auto.global.js' />
+        )}
+      </head>
       <body className={cn(openSans.className, 'antialiased')}>
         <QueryProvider>{children}</QueryProvider>
         <ToastContainer autoClose={2500} />

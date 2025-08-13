@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils'
 import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { ChangeEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type ChangeEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 
 const VerfiyForm = () => {
   // const { loginData } = useAuthContext()
   const loginData = {
-    otpTimeout: 55,
+    otpTimeout: 30,
     phoneNumber: '1234567890',
     installationId: '1234567890'
   }
@@ -109,11 +109,14 @@ const VerfiyForm = () => {
   const maskedPhoneNumber = `**** *** ${loginData.phoneNumber.slice(-4)}`
 
   return (
-    <div className='mx-auto w-auto p-2 md:p-6'>
-      <p className='text-center text-lg font-semibold text-gray-800'>{maskedPhoneNumber}</p>
-      <p className='mt-1 text-center text-sm text-gray-600'>Numarasına gelen 6 haneli kodu giriniz.</p>
-      <form className='mt-6'>
-        <div className='flex justify-center gap-3'>
+    <div className='w-full'>
+      <div className='mb-6 text-center'>
+        <p className='text-lg font-medium text-gray-800'>{maskedPhoneNumber}</p>
+        <p className='mt-1 text-sm text-gray-600'>Numarasına gelen 6 haneli kodu giriniz.</p>
+      </div>
+
+      <form className='space-y-6'>
+        <div className='flex justify-center gap-2'>
           {otpFields.map(index => (
             <Input
               key={`otp-code-${index}`}
@@ -126,7 +129,7 @@ const VerfiyForm = () => {
               disabled={isTimerComplete || isVerifyOtpPending}
               autoFocus={index === 0}
               maxLength={1}
-              className='size-12 rounded border-gray-300 text-center text-2xl font-semibold text-gray-900 max-sm:size-10'
+              className='focus:border-primary h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
               ref={ref => {
                 if (ref) {
                   inputRefs.current[index] = ref
@@ -138,7 +141,7 @@ const VerfiyForm = () => {
         <div className='mt-6'>
           <div className='relative z-1'>
             <motion.div
-              className='bg-primary absolute z-[-1] h-full w-full rounded-l-md'
+              className='bg-primary absolute z-[-1] h-full w-full rounded-xl'
               initial={{ width: '100%' }}
               animate={{ width: isVerifyOtpPending ? '100%' : `${(timer / loginData.otpTimeout) * 100}%` }}
               transition={{ duration: 1 }}
@@ -166,9 +169,6 @@ const VerfiyForm = () => {
           </div>
         </div>
       </form>
-      <p className='mt-4 text-center text-sm text-gray-500'>
-        {isTimerComplete ? 'Zaman doldu. Lütfen tekrar deneyiniz.' : `${timer} saniye içinde giriş yapınız.`}
-      </p>
     </div>
   )
 }
