@@ -15,7 +15,7 @@ AlertDialogPortal.displayName = AlertDialogPrimitive.Portal.displayName
 const AlertDialogOverlay = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
->(({ className, children, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
       'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm',
@@ -95,8 +95,8 @@ const AlertDialogDescription = React.forwardRef<
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName
 
 interface AlertDialogActionProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
-  color?: any
-  variant?: any
+  color?: 'default' | 'primary' | 'secondary' | 'warning' | 'destructive' | 'success' | 'info'
+  variant?: 'outline' | 'soft' | 'ghost' | 'link'
 }
 
 const AlertDialogAction = React.forwardRef<
@@ -108,8 +108,8 @@ const AlertDialogAction = React.forwardRef<
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 interface AlertDialogCancelProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
-  color?: any
-  variant?: any
+  color?: 'default' | 'primary' | 'secondary' | 'warning' | 'destructive' | 'success' | 'info'
+  variant?: 'outline' | 'soft' | 'ghost' | 'link'
 }
 
 const AlertDialogCancel = React.forwardRef<

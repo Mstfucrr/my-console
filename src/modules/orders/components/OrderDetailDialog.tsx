@@ -220,10 +220,10 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                 </CardHeader>
                 <CardContent>
                   <Timeline position='right' className='mt-4'>
-                    {order.logs.map((log, index) => (
+                    {order.logs.map((log, logIndex) => (
                       <TimelineItem
                         key={log.timestamp}
-                        className={cn(index === order.logs.length - 1 ? 'pb-0' : 'pb-5')}
+                        className={cn(logIndex === order.logs.length - 1 ? 'pb-0' : 'pb-5')}
                       >
                         <TimelineSeparator>
                           <TimelineDot className='bg-transparent'>
@@ -231,7 +231,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                               {getTimelineIcon(log.status)}
                             </div>
                           </TimelineDot>
-                          {index !== order.logs.length - 1 && <TimelineConnector />}
+                          {logIndex !== order.logs.length - 1 && <TimelineConnector />}
                         </TimelineSeparator>
                         <TimelineContent>
                           <div className='space-y-1'>
