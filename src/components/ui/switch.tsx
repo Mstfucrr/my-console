@@ -71,4 +71,4 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
 )
 Switch.displayName = SwitchPrimitives.Root.displayName
 
-export { Switch }
+export { Switch, type SwitchProps }

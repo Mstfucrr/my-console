@@ -156,7 +156,7 @@ export interface ApiResponse<T> {
 
 // Filtreleme ve Sayfalama
 export interface FilterOptions {
-  status?: OrderStatus | 'all'
+  status?: OrderStatus | Array<OrderStatus> | 'all'
   dateFrom?: string
   dateTo?: string
   search?: string

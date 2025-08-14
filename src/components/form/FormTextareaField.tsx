@@ -1,27 +1,24 @@
-import { PasswordInput } from '@/components/form/password-input'
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input, InputProps } from '@/components/ui/input'
+import { Textarea, TextareaProps } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
 
-interface FormInputFieldProps<T extends FieldValues> extends InputProps {
+interface FormTextareaFieldProps<T extends FieldValues> extends Omit<TextareaProps, 'value' | 'onChange'> {
   name: FieldPath<T>
   control: Control<T>
   label?: string
-  type?: string
   placeholder?: string
   formItemClassName?: string
 }
 
-export default function FormInputField<T extends FieldValues>({
+export default function FormTextareaField<T extends FieldValues>({
   name,
   control,
   label,
-  type = 'text',
   placeholder,
   formItemClassName,
   ...props
-}: FormInputFieldProps<T>) {
+}: FormTextareaFieldProps<T>) {
   const {
     field,
     fieldState: { error }
@@ -35,22 +32,7 @@ export default function FormInputField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        {type === 'password' ? (
-          <PasswordInput
-            {...field}
-            {...props}
-            placeholder={placeholder}
-            className={cn('w-full', error && 'border-red-500')}
-          />
-        ) : (
-          <Input
-            {...field}
-            {...props}
-            type={type}
-            placeholder={placeholder}
-            className={cn('w-full', error && 'border-red-500')}
-          />
-        )}
+        <Textarea {...field} {...props} placeholder={placeholder} className={cn('w-full', error && 'border-red-500')} />
       </FormControl>
       {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
     </FormItem>

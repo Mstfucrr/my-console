@@ -1,64 +1,135 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import StatCard from '@/components/StatCard'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { LoadingButton } from '@/components/ui/loading-button'
-import { OrderCard } from '@/modules/orders/components/OrderCard'
-import { OrderDetailDialog } from '@/modules/orders/components/OrderDetailDialog'
-import { OrderFilters } from '@/modules/orders/components/OrderFilters'
-import { ordersService } from '@/modules/orders/service'
-import type { FilterOptions, Order, PaginationOptions } from '@/modules/types'
-import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, CheckCircle2, Loader2, Package, ShoppingCart, XCircle } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import type { Order, PaginationOptions } from '@/modules/types'
+import { AlertTriangle, CheckCircle2, Clock, Loader2, Plus, ShoppingCart, Truck, XCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { CreateOrderModal } from './components/CreateOrderModal'
+import { OrderCard } from './components/OrderCard'
+import { OrderDetailDialog } from './components/OrderDetailDialog'
+import { ordersService } from './service'
 
 export default function OrdersView() {
-  const [filters, setFilters] = useState<FilterOptions>({ status: 'all' })
-  const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 10 })
+  const [activeOrders, setActiveOrders] = useState<Order[]>([])
+  const [completedOrders, setCompletedOrders] = useState<Order[]>([])
+  const [isLoadingActive, setIsLoadingActive] = useState(true)
+  const [isLoadingCompleted, setIsLoadingCompleted] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false)
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
+  const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
+    page: 1,
+    limit: 6
+  })
+  const [completedTotal, setCompletedTotal] = useState(0)
+  const [error, setError] = useState<string>('')
 
-  const {
-    data: ordersResponse,
-    isLoading,
-    isFetching,
-    error,
-    refetch
-  } = useQuery({
-    queryKey: ['orders', filters, pagination],
-    queryFn: () => ordersService.getOrders(filters, pagination)
+  // İstatistikler için state
+  const [stats, setStats] = useState({
+    total: 0,
+    delivered: 0,
+    onWay: 0,
+    cancelled: 0
   })
 
-  const orders = ordersResponse?.data ?? []
-  const total = ordersResponse?.total ?? 0
+  const loadActiveOrders = async () => {
+    setIsLoadingActive(true)
+    setError('')
 
-  const stats = useMemo(() => {
-    const totalCount = orders.length
-    return {
-      total: totalCount,
-      delivered: orders.filter(o => o.status === 'delivered').length,
-      onWay: orders.filter(o => o.status === 'on_way').length,
-      cancelled: orders.filter(o => o.status === 'cancelled').length
+    try {
+      // Aktif siparişler (tamamlanan ve iptal edilen hariç)
+      const activeResponse = await ordersService.getOrders(
+        { status: ['pending', 'preparing', 'ready', 'picked_up', 'on_way'] },
+        { page: 1, limit: 50 }
+      )
+
+      setActiveOrders(activeResponse.data.slice(0, 8)) // İlk 8 aktif siparişi göster (2x4 grid)
+    } catch (err) {
+      setError('Aktif siparişler yüklenirken bir hata oluştu.')
+    } finally {
+      setIsLoadingActive(false)
     }
-  }, [orders])
-
-  const onViewDetails = (order: Order) => {
-    setSelectedOrder(order)
-    setIsDetailOpen(true)
   }
 
-  const clearFilters = () => {
-    setFilters({ status: 'all' })
-    setPagination(p => ({ ...p, page: 1 }))
+  const loadCompletedOrders = async () => {
+    setIsLoadingCompleted(true)
+
+    try {
+      // Tamamlanan siparişler (delivered ve cancelled)
+      const completedResponse = await ordersService.getOrders(
+        { status: ['delivered', 'cancelled'] },
+        completedPagination
+      )
+
+      setCompletedOrders(completedResponse.data)
+      setCompletedTotal(completedResponse.total)
+    } catch (err) {
+      setError('Tamamlanan siparişler yüklenirken bir hata oluştu.')
+    } finally {
+      setIsLoadingCompleted(false)
+    }
+  }
+
+  const loadAllStats = async () => {
+    try {
+      // Tüm siparişleri getir istatistikler için
+      const allResponse = await ordersService.getOrders({ status: 'all' }, { page: 1, limit: 1000 })
+
+      const allOrders = allResponse.data
+      setStats({
+        total: allOrders.length,
+        delivered: allOrders.filter(o => o.status === 'delivered').length,
+        onWay: allOrders.filter(o => o.status === 'on_way').length,
+        cancelled: allOrders.filter(o => o.status === 'cancelled').length
+      })
+    } catch (err) {
+      // Stats yükleneme hatası önemli değil
+    }
+  }
+
+  useEffect(() => {
+    loadActiveOrders()
+    loadCompletedOrders()
+    loadAllStats()
+  }, [])
+
+  useEffect(() => {
+    loadCompletedOrders()
+  }, [completedPagination])
+
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedOrder(null)
+    setIsModalVisible(false)
+  }
+
+  const handleCompletedPageChange = (page: number) => {
+    setCompletedPagination(prev => ({ ...prev, page }))
+  }
+
+  const handleCreateOrderSuccess = () => {
+    loadActiveOrders() // Refresh active orders list
+    loadAllStats() // Refresh stats
+  }
+
+  const refreshAllData = () => {
+    loadActiveOrders()
+    loadCompletedOrders()
+    loadAllStats()
   }
 
   return (
-    <div className='p-6'>
-      {/* Header */}
-      <Card className='mb-6'>
+    <div className='flex flex-col gap-6 p-6'>
+      {/* Sayfa Başlığı */}
+      <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
           <div>
             <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
@@ -68,14 +139,15 @@ export default function OrdersView() {
               Tüm siparişlerinizi buradan takip edebilir ve yönetebilirsiniz
             </p>
           </div>
-          <div className='flex items-center gap-2'>
-            <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
-          </div>
+          <Button onClick={() => setIsCreateModalVisible(true)} color='success'>
+            <Plus className='mr-2 h-4 w-4' />
+            Yeni Sipariş Ekle
+          </Button>
         </CardHeader>
       </Card>
 
-      {/* Stats */}
-      <div className='mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4'>
+      {/* İstatistik Kartları */}
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4'>
         <StatCard
           title='Toplam'
           value={stats.total}
@@ -90,7 +162,7 @@ export default function OrdersView() {
           hint='Teslim edilen siparişler'
           color='text-green-600'
         />
-        <StatCard title='Yolda' value={stats.onWay} Icon={Package} hint='Yoldaki siparişler' color='text-amber-500' />
+        <StatCard title='Yolda' value={stats.onWay} Icon={Truck} hint='Yoldaki siparişler' color='text-amber-500' />
         <StatCard
           title='İptal'
           value={stats.cancelled}
@@ -100,79 +172,102 @@ export default function OrdersView() {
         />
       </div>
 
-      {/* Filters */}
-      <OrderFilters
-        filters={filters}
-        onFiltersChange={f => {
-          setFilters(f)
-          setPagination(p => ({ ...p, page: 1 }))
-        }}
-        onClearFilters={clearFilters}
-      />
-
-      {/* Error */}
+      {/* Hata Mesajı */}
       {error && (
-        <Card className='border-destructive mb-4'>
-          <CardContent className='flex items-center justify-between gap-3 p-4'>
-            <div className='text-destructive flex items-center gap-2'>
-              <AlertTriangle className='h-4 w-4' />
-              <div className='text-sm'>{error.message || 'Siparişler yüklenemedi. Lütfen tekrar deneyin.'}</div>
-            </div>
-            <LoadingButton size='xs' onClick={() => refetch()}>
-              Yeniden Dene
-            </LoadingButton>
-          </CardContent>
-        </Card>
+        <Alert className='border-destructive mb-4'>
+          <AlertTriangle className='h-4 w-4' />
+          <AlertDescription className='flex items-center justify-between'>
+            <span>{error}</span>
+            <RefreshButton onClick={refreshAllData} />
+          </AlertDescription>
+        </Alert>
       )}
 
-      {/* List */}
+      {/* Aktif Siparişler - Üst Kısım */}
       <Card>
-        <CardHeader>
-          <CardTitle className='text-base'>Siparişler ({total})</CardTitle>
+        <CardHeader className='rounded-t-lg bg-amber-50'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='flex items-center gap-2 text-lg font-bold'>
+              <Clock className='text-amber-500' /> İşlem Devam Eden Siparişler
+            </CardTitle>
+            <RefreshButton onClick={loadActiveOrders} isLoading={isLoadingActive} />
+          </div>
         </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className='text-muted-foreground flex h-48 items-center justify-center gap-2 text-sm'>
-              <Loader2 className='size-5 animate-spin' /> Siparişler yükleniyor...
+        <CardContent className='p-6 pt-0'>
+          {isLoadingActive ? (
+            <div className='flex h-48 items-center justify-center'>
+              <div className='text-center'>
+                <Loader2 className='text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin' />
+                <p className='text-muted-foreground'>Aktif siparişler yükleniyor...</p>
+              </div>
             </div>
-          ) : orders.length === 0 ? (
-            <div className='text-muted-foreground flex h-48 flex-col items-center justify-center gap-2 text-sm'>
-              Kayıt bulunamadı.
-              <div className='flex items-center gap-2'>
-                <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
-                <Button size='xs' variant='outline' color='secondary' onClick={clearFilters}>
-                  Filtreleri Temizle
-                </Button>
+          ) : activeOrders.length === 0 ? (
+            <div className='flex h-48 items-center justify-center'>
+              <div className='text-center'>
+                <ShoppingCart className='text-muted-foreground mx-auto mb-4 h-12 w-12' />
+                <p className='text-muted-foreground'>Aktif sipariş yok</p>
               </div>
             </div>
           ) : (
-            <div>
-              <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-                {orders.map(o => (
-                  <OrderCard key={o.id} order={o} onViewDetails={onViewDetails} />
-                ))}
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+              {activeOrders.map(order => (
+                <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Tamamlanan Siparişler - Alt Kısım */}
+      <Card>
+        <CardHeader className='rounded-t-lg bg-gray-50'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='flex items-center gap-2 text-lg font-bold'>
+              <CheckCircle2 className='text-green-600' /> Tamamlanan Siparişler
+            </CardTitle>
+            <RefreshButton size='sm' onClick={loadCompletedOrders} isLoading={isLoadingCompleted} />
+          </div>
+        </CardHeader>
+        <CardContent className='p-6 pt-0'>
+          {isLoadingCompleted ? (
+            <div className='flex h-48 items-center justify-center'>
+              <div className='text-center'>
+                <Loader2 className='text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin' />
+                <p className='text-muted-foreground'>Tamamlanan siparişler yükleniyor...</p>
               </div>
-              {/* Pagination */}
-              {total > pagination.limit && (
-                <div className='mt-4 flex items-center justify-center gap-2'>
+            </div>
+          ) : completedOrders.length === 0 ? (
+            <div className='flex h-48 items-center justify-center'>
+              <div className='text-center'>
+                <CheckCircle2 className='text-muted-foreground mx-auto mb-4 h-12 w-12' />
+                <p className='text-muted-foreground'>Tamamlanan sipariş bulunamadı</p>
+              </div>
+            </div>
+          ) : (
+            <div className='space-y-3'>
+              {completedOrders.map(order => (
+                <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
+              ))}
+
+              {/* Sayfalama - Sadece tamamlanan siparişler için */}
+              {completedTotal > completedPagination.limit && (
+                <div className='mt-6 flex items-center justify-center gap-2'>
                   <Button
-                    size='xs'
                     variant='outline'
-                    disabled={pagination.page === 1}
-                    onClick={() => setPagination(p => ({ ...p, page: Math.max(1, p.page - 1) }))}
+                    size='sm'
+                    disabled={completedPagination.page === 1}
+                    onClick={() => handleCompletedPageChange(completedPagination.page - 1)}
                   >
                     Önceki
                   </Button>
-                  <div className='text-muted-foreground text-xs'>
-                    Sayfa {pagination.page} / {Math.max(1, Math.ceil(total / pagination.limit))}
-                  </div>
+                  <span className='text-muted-foreground text-sm'>
+                    Sayfa {completedPagination.page} / {Math.ceil(completedTotal / completedPagination.limit)}
+                  </span>
                   <Button
-                    size='xs'
                     variant='outline'
-                    disabled={pagination.page >= Math.ceil(total / pagination.limit)}
-                    onClick={() =>
-                      setPagination(p => ({ ...p, page: Math.min(Math.ceil(total / p.limit), p.page + 1) }))
-                    }
+                    size='sm'
+                    disabled={completedPagination.page >= Math.ceil(completedTotal / completedPagination.limit)}
+                    onClick={() => handleCompletedPageChange(completedPagination.page + 1)}
                   >
                     Sonraki
                   </Button>
@@ -183,7 +278,15 @@ export default function OrdersView() {
         </CardContent>
       </Card>
 
-      <OrderDetailDialog order={selectedOrder} open={isDetailOpen} onClose={() => setIsDetailOpen(false)} />
+      {/* Sipariş Detay Modalı */}
+      <OrderDetailDialog order={selectedOrder} open={isModalVisible} onClose={handleCloseModal} />
+
+      {/* Yeni Sipariş Oluştur Modalı */}
+      <CreateOrderModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        onSuccess={handleCreateOrderSuccess}
+      />
     </div>
   )
 }

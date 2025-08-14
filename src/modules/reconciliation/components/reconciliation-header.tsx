@@ -23,7 +23,7 @@ export default function ReconciliationHeader({ onRefresh, isLoading }: Reconcili
           </p>
         </div>
         <div className='flex items-center gap-2'>
-          <Button variant='outline' size='md'>
+          <Button variant='outline'>
             <Download className='mr-2 h-4 w-4' />
             Rapor İndir
           </Button>

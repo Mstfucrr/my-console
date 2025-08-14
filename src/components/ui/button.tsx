@@ -142,7 +142,7 @@ const buttonVariants = cva(
 
     defaultVariants: {
       color: 'default',
-      size: 'default'
+      size: 'xs'
     }
   }
 )
