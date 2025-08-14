@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { LucideIcon, XCircle } from 'lucide-react'
+import { Check, LucideIcon, XCircle } from 'lucide-react'
 import { ReactNode } from 'react'
 
 export interface FilterOption {
@@ -34,11 +34,20 @@ export interface FilterCardProps<T> {
   filters: T
   onFiltersChange: (filters: T) => void
   onClearFilters: () => void
+  onApply?: () => void
   hasActiveFilters: boolean
+  hasPendingChanges?: boolean
   children?: ReactNode
 }
 
-export function FilterCard<T>({ config, onClearFilters, hasActiveFilters, children }: FilterCardProps<T>) {
+export function FilterCard<T>({
+  config,
+  onClearFilters,
+  onApply,
+  hasActiveFilters,
+  hasPendingChanges = false,
+  children
+}: FilterCardProps<T>) {
   const { title, icon: Icon, tipText } = config
 
   return (
@@ -48,12 +57,20 @@ export function FilterCard<T>({ config, onClearFilters, hasActiveFilters, childr
           <Icon className='text-amber-400' />
           <CardTitle className='text-base'>{title}</CardTitle>
         </div>
-        {hasActiveFilters && (
-          <Button size='xs' variant='outline' onClick={onClearFilters}>
-            <XCircle className='mr-1 h-4 w-4' />
-            Temizle
-          </Button>
-        )}
+        <div className='flex items-center gap-2'>
+          {hasPendingChanges && onApply && (
+            <Button size='xs' onClick={onApply}>
+              <Check className='mr-1 h-4 w-4' />
+              Uygula
+            </Button>
+          )}
+          {hasActiveFilters && (
+            <Button size='xs' variant='outline' onClick={onClearFilters}>
+              <XCircle className='mr-1 h-4 w-4' />
+              Temizle
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className='space-y-3'>
         {children}
@@ -76,13 +93,26 @@ export function SearchInput({
 }: {
   placeholder: string
   value: string
-  onChange: (value: string) => void
+  onChange: (value: string | undefined) => void
   Icon: LucideIcon
 }) {
   return (
     <div>
       <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>
-      <Input Icon={Icon} placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} size='sm' />
+      <div className='relative'>
+        <Input Icon={Icon} placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} size='sm' />
+        {value && value.length > 0 && (
+          <Button
+            size='icon-xs'
+            variant='ghost'
+            onClick={() => onChange(undefined)}
+            className='absolute top-0 right-0 h-full'
+          >
+            <XCircle className='h-4 w-4' />
+            <span className='sr-only'>Temizle</span>
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

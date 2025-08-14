@@ -8,6 +8,7 @@ import {
   StatusSelect,
   type FilterOption
 } from '@/components/ui/filter-card'
+import { useFilter } from '@/hooks/use-filter'
 import { format } from 'date-fns'
 import { Filter, Search } from 'lucide-react'
 import { useMemo } from 'react'
@@ -36,24 +37,27 @@ export function ReconciliationFilters({
   onFiltersChange: (f: ReconciliationFilterProperties) => void
   onClearFilters: () => void
 }) {
-  const hasActiveFilters = useMemo(
-    () => Boolean(filters.status !== 'all' || filters.search || filters.dateFrom || filters.dateTo),
-    [filters]
-  )
+  const {
+    pendingFilters,
+    hasActiveFilters,
+    hasPendingChanges,
+    handleApplyFilters,
+    handleClearFilters,
+    updatePendingFilters
+  } = useFilter(filters, onFiltersChange, onClearFilters)
 
-  // Convert filters to DateRange for the picker
+  // Convert pending filters to DateRange for the picker
   const dateRange: DateRange | undefined = useMemo(() => {
-    if (!filters.dateFrom && !filters.dateTo) return undefined
+    if (!pendingFilters.dateFrom && !pendingFilters.dateTo) return undefined
     return {
-      from: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
-      to: filters.dateTo ? new Date(filters.dateTo) : undefined
+      from: pendingFilters.dateFrom ? new Date(pendingFilters.dateFrom) : undefined,
+      to: pendingFilters.dateTo ? new Date(pendingFilters.dateTo) : undefined
     }
-  }, [filters.dateFrom, filters.dateTo])
+  }, [pendingFilters.dateFrom, pendingFilters.dateTo])
 
   // Handle date range change
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    onFiltersChange({
-      ...filters,
+    updatePendingFilters({
       dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
       dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined
     })
@@ -71,24 +75,26 @@ export function ReconciliationFilters({
       }}
       filters={filters}
       onFiltersChange={onFiltersChange}
-      onClearFilters={onClearFilters}
+      onClearFilters={handleClearFilters}
+      onApply={handleApplyFilters}
       hasActiveFilters={hasActiveFilters}
+      hasPendingChanges={hasPendingChanges}
     >
       <div className='flex w-full flex-col gap-4 lg:flex-row lg:items-end'>
         <div className='flex flex-1 flex-col gap-3 sm:flex-row sm:items-end'>
           <div className='flex-1'>
             <SearchInput
               placeholder='Mutabakat kaydı ara...'
-              value={filters.search ?? ''}
-              onChange={value => onFiltersChange({ ...filters, search: value })}
+              value={pendingFilters.search ?? ''}
+              onChange={value => updatePendingFilters({ search: value })}
               Icon={Search}
             />
           </div>
           <div className='min-w-[140px]'>
             <StatusSelect
               options={statuses}
-              value={filters.status ?? 'all'}
-              onChange={value => onFiltersChange({ ...filters, status: value })}
+              value={pendingFilters.status ?? 'all'}
+              onChange={value => updatePendingFilters({ status: value })}
               placeholder='Durum seçin'
             />
           </div>

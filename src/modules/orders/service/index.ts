@@ -43,7 +43,7 @@ export const ordersService = {
     const end = start + pagination.limit
     const pageData = filtered.slice(start, end)
     // Simulate latency
-    await new Promise(r => setTimeout(r, 1000))
+    await new Promise(r => setTimeout(r, 3000))
     return {
       data: pageData,
       total,
