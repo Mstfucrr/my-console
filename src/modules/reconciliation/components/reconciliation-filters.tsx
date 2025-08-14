@@ -8,30 +8,32 @@ import {
   StatusSelect,
   type FilterOption
 } from '@/components/ui/filter-card'
-import type { FilterOptions, OrderStatus } from '@/modules/types'
 import { format } from 'date-fns'
-import { Search, ShoppingBag } from 'lucide-react'
+import { Filter, Search } from 'lucide-react'
 import { useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 const statuses: FilterOption[] = [
-  { value: 'all', label: 'Tümü' },
+  { value: 'all', label: 'Tüm Durumlar' },
+  { value: 'completed', label: 'Tamamlandı' },
   { value: 'pending', label: 'Beklemede' },
-  { value: 'preparing', label: 'Hazırlanıyor' },
-  { value: 'ready', label: 'Hazır' },
-  { value: 'picked_up', label: 'Kurye aldı' },
-  { value: 'on_way', label: 'Yolda' },
-  { value: 'delivered', label: 'Teslim edildi' },
-  { value: 'cancelled', label: 'İptal edildi' }
+  { value: 'failed', label: 'Başarısız' }
 ]
 
-export function OrderFilters({
+export interface ReconciliationFilterProperties {
+  status: string
+  search: string
+  dateFrom?: string
+  dateTo?: string
+}
+
+export function ReconciliationFilters({
   filters,
   onFiltersChange,
   onClearFilters
 }: {
-  filters: FilterOptions
-  onFiltersChange: (f: FilterOptions) => void
+  filters: ReconciliationFilterProperties
+  onFiltersChange: (f: ReconciliationFilterProperties) => void
   onClearFilters: () => void
 }) {
   const hasActiveFilters = useMemo(
@@ -60,11 +62,12 @@ export function OrderFilters({
   return (
     <FilterCard
       config={{
-        title: 'Sipariş Filtreleme ve Arama',
-        icon: ShoppingBag,
-        searchPlaceholder: 'Sipariş No / Müşteri / Adres...',
+        title: 'Mutabakat Filtreleri',
+        icon: Filter,
+        searchPlaceholder: 'Mutabakat kaydı ara...',
         statusOptions: statuses,
-        showDateFilters: true
+        showDateFilters: true,
+        tipText: 'Tarih aralığı ve durum filtrelerini kullanarak mutabakat kayıtlarını filtreleyebilirsiniz.'
       }}
       filters={filters}
       onFiltersChange={onFiltersChange}
@@ -75,7 +78,7 @@ export function OrderFilters({
         <div className='flex flex-1 flex-col gap-3 sm:flex-row sm:items-end'>
           <div className='flex-1'>
             <SearchInput
-              placeholder='Sipariş No / Müşteri / Adres...'
+              placeholder='Mutabakat kaydı ara...'
               value={filters.search ?? ''}
               onChange={value => onFiltersChange({ ...filters, search: value })}
               Icon={Search}
@@ -85,7 +88,7 @@ export function OrderFilters({
             <StatusSelect
               options={statuses}
               value={filters.status ?? 'all'}
-              onChange={value => onFiltersChange({ ...filters, status: value as OrderStatus | undefined })}
+              onChange={value => onFiltersChange({ ...filters, status: value })}
               placeholder='Durum seçin'
             />
           </div>

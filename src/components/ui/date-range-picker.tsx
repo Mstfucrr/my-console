@@ -4,7 +4,7 @@ import { tr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
@@ -20,8 +20,9 @@ export function DateRangePicker({
   dateRange,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
-  className
-}: DateRangePickerProps) {
+  className,
+  ...props
+}: DateRangePickerProps & ButtonProps) {
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>
@@ -31,6 +32,7 @@ export function DateRangePicker({
             variant='outline'
             size='sm'
             className={cn('w-full justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}
+            {...props}
           >
             <CalendarIcon className='mr-2 h-4 w-4' />
             {dateRange?.from ? (

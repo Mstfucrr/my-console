@@ -22,11 +22,12 @@ const VerfiyForm = () => {
   const otpArray: string[] = Array.from({ length: totalOtpField }, () => '')
   const [otp, setOtp] = useState<string[]>(otpArray)
   const otpFields = Array.from({ length: totalOtpField }, (_, index) => index)
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
   const [timer, setTimer] = useState(loginData.otpTimeout)
 
   const { mutateAsync: verifyOtp, isPending: isVerifyOtpPending } = verifyOtpMutation
+  const { mutateAsync: setCookie, isPending: isSetCookiePending } = setCookieMutation
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -76,13 +77,8 @@ const VerfiyForm = () => {
 
   const router = useRouter()
 
-  const handleSubmit = async () => {
-    if (!loginData || loginData.otpTimeout === 0) return
+  async function verifyOtpAndSetCookie() {
     const enteredOtp = otp.join('')
-    setOtp(otpArray)
-    inputRefs.current[0]?.focus()
-    if (!loginData.installationId) return
-
     const { action_cookie, isOtpValid } = await verifyOtp({
       installationId: loginData.installationId,
       otp: enteredOtp,
@@ -94,8 +90,20 @@ const VerfiyForm = () => {
       return
     }
 
-    await setCookieMutation.mutateAsync({
+    await setCookie({
       action_cookie
+    })
+  }
+
+  const handleSubmit = async () => {
+    if (!loginData || loginData.otpTimeout === 0) return
+    setOtp(otpArray)
+    inputRefs.current[0]?.focus()
+
+    await toast.promise(verifyOtpAndSetCookie, {
+      pending: 'Kod doğrulanıyor...',
+      success: 'Başarılıyla giriş yaptınız.',
+      error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
     })
 
     router.push('/')
@@ -126,14 +134,12 @@ const VerfiyForm = () => {
               value={otp[index]}
               onChange={e => handleChange(e, index)}
               onKeyDown={event => handleKeyDown(index, event)}
-              disabled={isTimerComplete || isVerifyOtpPending}
+              disabled={isTimerComplete || isVerifyOtpPending || isSetCookiePending}
               autoFocus={index === 0}
               maxLength={1}
               className='focus:border-primary h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
-              ref={ref => {
-                if (ref) {
-                  inputRefs.current[index] = ref
-                }
+              ref={(ref: HTMLInputElement | null) => {
+                inputRefs.current[index] = ref
               }}
             />
           ))}
@@ -143,7 +149,9 @@ const VerfiyForm = () => {
             <motion.div
               className='bg-primary absolute z-[-1] h-full w-full rounded-xl'
               initial={{ width: '100%' }}
-              animate={{ width: isVerifyOtpPending ? '100%' : `${(timer / loginData.otpTimeout) * 100}%` }}
+              animate={{
+                width: isVerifyOtpPending || isSetCookiePending ? '100%' : `${(timer / loginData.otpTimeout) * 100}%`
+              }}
               transition={{ duration: 1 }}
             />
             {!isTimerComplete ? (
@@ -154,7 +162,7 @@ const VerfiyForm = () => {
                 size='lg'
                 onClick={handleSubmit}
                 disabled={!isOtpComplete}
-                isLoading={isVerifyOtpPending}
+                isLoading={isVerifyOtpPending || isSetCookiePending}
                 loadingText='Doğrulanıyor...'
               >
                 <Badge className='text-lg'>

@@ -75,6 +75,7 @@ class AuthService {
       }
     }
     localStorage.setItem('token', response.data.cookie)
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
     return response.data
   }

@@ -13,9 +13,9 @@ export const menusConfig: MenuItem[] = [
     href: '/orders'
   },
   {
-    title: 'Restoranlarım',
+    title: 'Mutabakat İşlemleri',
     Icon: Store,
-    href: '/restaurants'
+    href: '/reconciliation'
   },
   {
     title: 'Ayarlar',
