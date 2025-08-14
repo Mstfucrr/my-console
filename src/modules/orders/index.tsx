@@ -48,7 +48,7 @@ export default function OrdersView() {
       )
 
       setActiveOrders(activeResponse.data.slice(0, 8)) // İlk 8 aktif siparişi göster (2x4 grid)
-    } catch (err) {
+    } catch {
       setError('Aktif siparişler yüklenirken bir hata oluştu.')
     } finally {
       setIsLoadingActive(false)
@@ -67,7 +67,7 @@ export default function OrdersView() {
 
       setCompletedOrders(completedResponse.data)
       setCompletedTotal(completedResponse.total)
-    } catch (err) {
+    } catch {
       setError('Tamamlanan siparişler yüklenirken bir hata oluştu.')
     } finally {
       setIsLoadingCompleted(false)
@@ -86,7 +86,7 @@ export default function OrdersView() {
         onWay: allOrders.filter(o => o.status === 'on_way').length,
         cancelled: allOrders.filter(o => o.status === 'cancelled').length
       })
-    } catch (err) {
+    } catch {
       // Stats yükleneme hatası önemli değil
     }
   }
@@ -99,7 +99,7 @@ export default function OrdersView() {
 
   useEffect(() => {
     loadCompletedOrders()
-  }, [completedPagination])
+  }, [completedPagination.page, completedPagination.limit])
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order)

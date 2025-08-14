@@ -67,20 +67,6 @@ const getTimelineIcon = (status: string) => {
   return iconMap[status] || <Clock className='h-3 w-3' />
 }
 
-const getTimelineColor = (status: string) => {
-  const colorMap: Record<string, 'default' | 'primary' | 'secondary' | 'warning' | 'destructive' | 'success' | 'info'> =
-    {
-      pending: 'warning',
-      preparing: 'info',
-      ready: 'success',
-      picked_up: 'primary',
-      on_way: 'primary',
-      delivered: 'success',
-      cancelled: 'destructive'
-    }
-  return colorMap[status] || 'default'
-}
-
 export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
   if (!order) return null
 
@@ -235,7 +221,10 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                 <CardContent>
                   <Timeline position='right' className='mt-4'>
                     {order.logs.map((log, index) => (
-                      <TimelineItem key={index}>
+                      <TimelineItem
+                        key={log.timestamp}
+                        className={cn(index === order.logs.length - 1 ? 'pb-0' : 'pb-5')}
+                      >
                         <TimelineSeparator>
                           <TimelineDot className='bg-transparent'>
                             <div className={cn('h-max rounded-full p-1', getStatusColor(log.status))}>

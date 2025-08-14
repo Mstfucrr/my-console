@@ -76,26 +76,10 @@ interface TimelineProps extends React.HTMLAttributes<HTMLOListElement>, VariantP
   icon?: boolean
   alternativeLabel?: boolean
   gap?: boolean
-  size?: any
+  size?: 'sm' | 'md' | 'lg'
 }
 const Timeline = React.forwardRef<HTMLOListElement, TimelineProps>(
-  (
-    {
-      className,
-      children,
-      position,
-      disabled,
-
-      size,
-      current,
-      content,
-      icon,
-      alternativeLabel,
-      gap,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, children, position, disabled, gap, ...props }, ref) => {
     const childItem = React.Children.toArray(children)
     return (
       <ol
@@ -112,17 +96,12 @@ const Timeline = React.forwardRef<HTMLOListElement, TimelineProps>(
           return React.cloneElement(child as React.ReactElement, {
             ...props,
             isLast,
-
             disabled: disabled && !isLast,
             index: index,
-            current: current,
-
             gap: gap,
             position: position,
             even: even,
-            odd: odd,
-            alternativeLabel: alternativeLabel,
-            content: content
+            odd: odd
           })
         })}
       </ol>
@@ -148,26 +127,7 @@ interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement>, Variant
 }
 
 const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
-  (
-    {
-      className,
-      children,
-      variant,
-      size,
-      isLast,
-
-      current,
-      index,
-      icon,
-      gap,
-      position,
-      alternativeLabel,
-      even,
-      odd,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, children, variant, gap, position, even, odd, ...props }, ref) => {
     return (
       <li
         ref={ref}
