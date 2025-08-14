@@ -193,7 +193,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                 </CardHeader>
                 <CardContent>
                   <div className='max-h-48 space-y-3 overflow-y-auto'>
-                    {order.items.map((item, index) => (
+                    {order.items.map(item => (
                       <div key={item.id} className='flex items-start justify-between border-b pb-3 last:border-b-0'>
                         <div className='flex-1'>
                           <span className='font-medium'>
