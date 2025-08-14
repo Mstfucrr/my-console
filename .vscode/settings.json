@@ -7,8 +7,11 @@
     "typescriptreact": "typescriptreact",
     "javascriptreact": "javascriptreact"
   },
-  "tailwindCSS.classAttributes": ["className", "class", "styles", ".*Variants", ".*Styles"],
-  "tailwindCSS.experimental.classRegex": [["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]],
+  "tailwindCSS.classAttributes": ["class", "className", "classNames", ".*Variants", ".*Styles"],
+  "tailwindCSS.experimental.classRegex": [
+    ["(cn|clsx|cva|twMerge|tv|buttonVariants)\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["classNames\\s*:\\s*\\{[\\s\\S]*?\\}", "[\"'`]([^\"'`]*?)[\"'`]"]
+  ],
   "npm.packageManager": "pnpm",
   "eslint.format.enable": true,
   "prettier.requireConfig": true,

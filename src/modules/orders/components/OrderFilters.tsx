@@ -1,14 +1,18 @@
+'use client'
+
+import { DateRangePicker } from '@/components/ui/date-range-picker'
 import {
   ActiveFiltersDisplay,
-  DateFilters,
   FilterCard,
   SearchInput,
   StatusSelect,
   type FilterOption
 } from '@/components/ui/filter-card'
 import type { FilterOptions, OrderStatus } from '@/modules/types'
+import { format } from 'date-fns'
 import { Search, ShoppingBag } from 'lucide-react'
 import { useMemo } from 'react'
+import type { DateRange } from 'react-day-picker'
 
 const statuses: FilterOption[] = [
   { value: 'all', label: 'Tümü' },
@@ -35,24 +39,40 @@ export function OrderFilters({
     [filters]
   )
 
-  const config = {
-    title: 'Sipariş Filtreleme ve Arama',
-    icon: ShoppingBag,
-    searchPlaceholder: 'Sipariş No / Müşteri / Adres...',
-    statusOptions: statuses,
-    showDateFilters: true
+  // Convert filters to DateRange for the picker
+  const dateRange: DateRange | undefined = useMemo(() => {
+    if (!filters.dateFrom && !filters.dateTo) return undefined
+    return {
+      from: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
+      to: filters.dateTo ? new Date(filters.dateTo) : undefined
+    }
+  }, [filters.dateFrom, filters.dateTo])
+
+  // Handle date range change
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    onFiltersChange({
+      ...filters,
+      dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
+      dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined
+    })
   }
 
   return (
     <FilterCard
-      config={config}
+      config={{
+        title: 'Sipariş Filtreleme ve Arama',
+        icon: ShoppingBag,
+        searchPlaceholder: 'Sipariş No / Müşteri / Adres...',
+        statusOptions: statuses,
+        showDateFilters: true
+      }}
       filters={filters}
       onFiltersChange={onFiltersChange}
       onClearFilters={onClearFilters}
       hasActiveFilters={hasActiveFilters}
     >
-      <div className='flex w-full gap-3'>
-        <div className='flex flex-auto flex-col items-start gap-3 sm:flex-row sm:items-center'>
+      <div className='flex w-full flex-col gap-4 lg:flex-row lg:items-end'>
+        <div className='flex flex-1 flex-col gap-3 sm:flex-row sm:items-end'>
           <div className='flex-1'>
             <SearchInput
               placeholder='Sipariş No / Müşteri / Adres...'
@@ -61,7 +81,7 @@ export function OrderFilters({
               Icon={Search}
             />
           </div>
-          <div className='flex flex-wrap items-center gap-2'>
+          <div className='min-w-[140px]'>
             <StatusSelect
               options={statuses}
               value={filters.status ?? 'all'}
@@ -70,13 +90,15 @@ export function OrderFilters({
             />
           </div>
         </div>
-        <div className='flex flex-wrap items-center justify-between gap-2'>
-          <DateFilters
-            dateFrom={filters.dateFrom ?? ''}
-            dateTo={filters.dateTo ?? ''}
-            onDateFromChange={value => onFiltersChange({ ...filters, dateFrom: value })}
-            onDateToChange={value => onFiltersChange({ ...filters, dateTo: value })}
-          />
+        <div className='flex items-end'>
+          <div>
+            <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
+              placeholder='Tarih aralığı seçin'
+            />
+          </div>
         </div>
       </div>
 
