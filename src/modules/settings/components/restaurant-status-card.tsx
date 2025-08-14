@@ -37,7 +37,7 @@ export default function RestaurantStatusCard({ isOpen, onStatusChange }: Restaur
   }
 
   return (
-    <Card className='mb-6'>
+    <Card>
       <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
         <CardTitle className='flex items-center gap-2'>
           <Store className={`h-5 w-5 ${isOpen ? 'text-green-600' : 'text-red-600'}`} />

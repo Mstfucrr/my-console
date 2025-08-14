@@ -153,9 +153,9 @@ export default function SettingsView() {
   }
 
   return (
-    <div className='p-6'>
+    <div className='flex flex-col gap-6 p-6'>
       {/* Page Header */}
-      <Card className='mb-6'>
+      <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2 text-2xl'>
             <Settings className='h-6 w-6 text-yellow-500' />
@@ -169,7 +169,7 @@ export default function SettingsView() {
       <RestaurantStatusCard isOpen={isRestaurantOpen} onStatusChange={handleStatusChange} />
 
       {/* Main Settings Grid */}
-      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
         <IntegrationSettingsCard integrations={integrations} onIntegrationUpdate={handleIntegrationUpdate} />
 
         <WorkingAreaSettingsCard workingAreas={workingAreas} onWorkingAreaUpdate={handleWorkingAreaUpdate} />
