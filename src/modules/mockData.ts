@@ -49,6 +49,8 @@ export const mockOrders: Order[] = [
     updatedAt: '2024-01-25T19:15:00Z',
     totalAmount: 85.5,
     restaurant: mockRestaurants[0],
+    paymentMethod: 'card',
+    integration: 'yemeksepeti',
     items: [
       { id: '1', name: 'Margarita Pizza', quantity: 1, price: 45.0 },
       { id: '2', name: 'Coca Cola 330ml', quantity: 2, price: 12.5 },
@@ -102,6 +104,8 @@ export const mockOrders: Order[] = [
     customerName: 'Fatma Demir',
     customerPhone: '+90 535 987 65 43',
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:42 Kadıköy/İstanbul',
+    paymentMethod: 'cash',
+    integration: 'getir',
     status: 'delivered',
     createdAt: '2024-01-25T17:45:00Z',
     updatedAt: '2024-01-25T18:30:00Z',
@@ -167,6 +171,8 @@ export const mockOrders: Order[] = [
     updatedAt: '2024-01-25T19:25:00Z',
     totalAmount: 125.75,
     restaurant: mockRestaurants[1],
+    paymentMethod: 'online',
+    integration: 'trendyol_go',
     items: [
       { id: '7', name: 'Karışık Izgara', quantity: 2, price: 55.0 },
       { id: '8', name: 'Fanta 330ml', quantity: 2, price: 12.5 },
@@ -186,6 +192,96 @@ export const mockOrders: Order[] = [
         status: 'preparing',
         message: 'Sipariş hazırlanmaya başlandı',
         timestamp: '2024-01-25T19:25:00Z'
+      }
+    ]
+  },
+  {
+    id: 'ORD-2024-004',
+    customerName: 'Ayşe Özdemir',
+    customerPhone: '+90 542 789 32 14',
+    customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:58 Kadıköy/İstanbul',
+    status: 'delivered',
+    createdAt: '2024-01-25T16:30:00Z',
+    updatedAt: '2024-01-25T17:45:00Z',
+    totalAmount: 78.25,
+    restaurant: mockRestaurants[0],
+    paymentMethod: 'card',
+    integration: 'migros_yemek',
+    items: [
+      { id: '10', name: 'Tavuk Döner', quantity: 1, price: 35.0 },
+      { id: '11', name: 'Ayran', quantity: 2, price: 8.5 },
+      { id: '12', name: 'Çorba', quantity: 1, price: 18.75 }
+    ],
+    logs: [
+      {
+        id: '14',
+        orderId: 'ORD-2024-004',
+        status: 'pending',
+        message: 'Sipariş alındı',
+        timestamp: '2024-01-25T16:30:00Z'
+      },
+      {
+        id: '15',
+        orderId: 'ORD-2024-004',
+        status: 'delivered',
+        message: 'Sipariş teslim edildi',
+        timestamp: '2024-01-25T17:45:00Z'
+      }
+    ]
+  },
+  {
+    id: 'ORD-2024-005',
+    customerName: 'Emre Kaya',
+    customerPhone: '+90 555 123 98 76',
+    customerAddress: 'Kozyatağı Mah. Değirmen Sok. No:23 Kadıköy/İstanbul',
+    status: 'pending',
+    createdAt: '2024-01-25T19:45:00Z',
+    updatedAt: '2024-01-25T19:45:00Z',
+    totalAmount: 89.5,
+    restaurant: mockRestaurants[1],
+    paymentMethod: 'cash',
+    integration: 'tikla_gelsin',
+    items: [
+      { id: '13', name: 'Lahmacun', quantity: 3, price: 25.0 },
+      { id: '14', name: 'Şalgam', quantity: 1, price: 14.5 }
+    ],
+    logs: [
+      {
+        id: '16',
+        orderId: 'ORD-2024-005',
+        status: 'pending',
+        message: 'Sipariş alındı',
+        timestamp: '2024-01-25T19:45:00Z'
+      }
+    ]
+  },
+  {
+    id: 'ORD-2024-006',
+    customerName: 'Zeynep Arslan',
+    customerPhone: '+90 533 456 78 90',
+    customerAddress: 'Sahrayıcedit Mah. Söğütlüçeşme Cad. No:67 Kadıköy/İstanbul',
+    status: 'cancelled',
+    createdAt: '2024-01-25T15:20:00Z',
+    updatedAt: '2024-01-25T15:35:00Z',
+    totalAmount: 45.0,
+    restaurant: mockRestaurants[0],
+    paymentMethod: 'online',
+    integration: 'manuel',
+    items: [{ id: '15', name: 'Hamburger', quantity: 1, price: 45.0 }],
+    logs: [
+      {
+        id: '17',
+        orderId: 'ORD-2024-006',
+        status: 'pending',
+        message: 'Sipariş alındı',
+        timestamp: '2024-01-25T15:20:00Z'
+      },
+      {
+        id: '18',
+        orderId: 'ORD-2024-006',
+        status: 'cancelled',
+        message: 'Sipariş iptal edildi',
+        timestamp: '2024-01-25T15:35:00Z'
       }
     ]
   }
@@ -273,6 +369,8 @@ export const mockDashboardStats: DashboardStats = {
   deliveredOrders: 12,
   onWayOrders: 2,
   cancelledOrders: 1,
+  totalRevenue: 3250.75,
+  pendingPayments: 1875.4,
   ordersByStatus: [
     { status: 'delivered', count: 12, percentage: 80 },
     { status: 'on_way', count: 2, percentage: 13.3 },
@@ -288,6 +386,27 @@ export const mockDashboardStats: DashboardStats = {
       request: '{"url":"invalid-url"}',
       response: '{"error":"Invalid webhook URL format"}'
     }
+  ],
+  recentOrders: mockOrders.slice(0, 2),
+  hourlyOrdersChart: [
+    { label: '09:00', value: 2 },
+    { label: '10:00', value: 5 },
+    { label: '11:00', value: 8 },
+    { label: '12:00', value: 12 },
+    { label: '13:00', value: 15 },
+    { label: '14:00', value: 10 },
+    { label: '15:00', value: 7 },
+    { label: '16:00', value: 9 }
+  ],
+  hourlyRevenueChart: [
+    { label: '09:00', value: 125.5 },
+    { label: '10:00', value: 320.75 },
+    { label: '11:00', value: 450.25 },
+    { label: '12:00', value: 680.9 },
+    { label: '13:00', value: 850.4 },
+    { label: '14:00', value: 520.65 },
+    { label: '15:00', value: 380.3 },
+    { label: '16:00', value: 475.85 }
   ]
 }
 

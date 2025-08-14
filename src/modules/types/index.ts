@@ -31,6 +31,8 @@ export interface Order {
   courierLocation?: CourierLocation
   restaurant: Restaurant
   logs: OrderLog[]
+  paymentMethod: 'cash' | 'card' | 'online'
+  integration: 'yemeksepeti' | 'getir' | 'trendyol_go' | 'migros_yemek' | 'tikla_gelsin' | 'manuel'
 }
 
 export interface OrderItem {
@@ -70,8 +72,18 @@ export interface DashboardStats {
   deliveredOrders: number
   onWayOrders: number
   cancelledOrders: number
+  totalRevenue: number
+  pendingPayments: number
   ordersByStatus: OrderStatusCount[]
   recentApiErrors: APIError[]
+  recentOrders: Order[]
+  hourlyOrdersChart: ChartDataPoint[]
+  hourlyRevenueChart: ChartDataPoint[]
+}
+
+export interface ChartDataPoint {
+  label: string
+  value: number
 }
 
 export interface OrderStatusCount {
@@ -144,7 +156,7 @@ export interface ApiResponse<T> {
 
 // Filtreleme ve Sayfalama
 export interface FilterOptions {
-  status?: OrderStatus | 'all'
+  status?: OrderStatus | OrderStatus[]
   dateFrom?: string
   dateTo?: string
   search?: string
