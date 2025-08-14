@@ -70,6 +70,7 @@ export default function RestaurantStatusCard({ isOpen, onStatusChange }: Restaur
                         variant='outline'
                         className='w-full justify-start'
                         onClick={() => handleStatusChange(duration.value)}
+                        key={duration.value}
                       >
                         <span className='text-xs'>{duration.label}</span>
                       </Button>
