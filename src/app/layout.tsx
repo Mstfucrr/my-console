@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import { Open_Sans } from 'next/font/google'
+import Script from 'next/script'
 
 import { cn } from '@/lib/utils'
 import QueryProvider from '@/provider/QueryProvider'
@@ -27,7 +28,7 @@ export default function RootLayout({
     <html lang='tr'>
       <head>
         {process.env.NODE_ENV === 'development' && (
-          <script crossOrigin='anonymous' src='//unpkg.com/react-scan/dist/auto.global.js' />
+          <Script src='//unpkg.com/react-scan/dist/auto.global.js' crossOrigin='anonymous' />
         )}
       </head>
       <body className={cn(openSans.className, 'antialiased')}>

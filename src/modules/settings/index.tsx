@@ -1,201 +1,190 @@
 'use client'
 
-import StatCard from '@/components/StatCard'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, CheckCircle2, CreditCard, Eye, Info, Link2, Settings } from 'lucide-react'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Settings } from 'lucide-react'
 import { useState } from 'react'
-import ApiLogsModal from './components/api-logs-modal'
-import PaymentMappingModal from './components/payment-mapping-modal'
-import WebhookManagementModal from './components/webhook-management-modal'
-import { settingsService } from './service'
+import IntegrationSettingsCard from './components/integration-settings-card'
+import PaymentSettingsCard from './components/payment-settings-card'
+import RestaurantInfoCard from './components/restaurant-info-card'
+import RestaurantStatusCard from './components/restaurant-status-card'
+import WorkingAreaSettingsCard from './components/working-area-settings-card'
+import WorkingHoursCard from './components/working-hours-card'
+import WorkingStyleCard from './components/working-style-card'
+
+interface Integration {
+  id: string
+  name: string
+  icon: string
+  isActive: boolean
+  webhookUrl?: string
+  apiKey?: string
+  orderCount: number
+}
+
+interface WorkingArea {
+  id: string
+  name: string
+  type: 'polygon' | 'neighborhood'
+  coordinates?: number[][]
+  neighborhoods?: string[]
+  isActive: boolean
+}
+
+interface PaymentType {
+  id: string
+  name: string
+  type: 'cash' | 'card' | 'online'
+  isActive: boolean
+  terminalId?: string
+  commissionRate?: number
+}
+
+interface WorkingHour {
+  day: string
+  isOpen: boolean
+  openTime: string | null
+  closeTime: string | null
+}
+
+interface RestaurantInfo {
+  iban: string
+  taxNumber: string
+  title: string
+  address: string
+  phone: string
+  email: string
+}
 
 export default function SettingsView() {
-  const [apiLogsVisible, setApiLogsVisible] = useState(false)
-  const [webhookModalVisible, setWebhookModalVisible] = useState(false)
-  const [paymentMappingVisible, setPaymentMappingVisible] = useState(false)
+  const [isRestaurantOpen, setIsRestaurantOpen] = useState(true)
 
-  const { data: webhooks = [] } = useQuery({
-    queryKey: ['settings-webhooks'],
-    queryFn: () => settingsService.getWebhooks(),
-    staleTime: 60_000
+  const [integrations, setIntegrations] = useState<Integration[]>([
+    {
+      id: '1',
+      name: 'Yemeksepeti',
+      icon: '🥘',
+      isActive: true,
+      webhookUrl: 'https://api.example.com/webhook/ys',
+      apiKey: 'ys_****',
+      orderCount: 234
+    },
+    {
+      id: '2',
+      name: 'Getir',
+      icon: '⚡',
+      isActive: true,
+      webhookUrl: 'https://api.example.com/webhook/getir',
+      apiKey: 'gt_****',
+      orderCount: 156
+    },
+    { id: '3', name: 'Trendyol Go', icon: '🛒', isActive: false, webhookUrl: '', apiKey: '', orderCount: 0 },
+    { id: '4', name: 'Migros Yemek', icon: '🛍️', isActive: false, webhookUrl: '', apiKey: '', orderCount: 0 }
+  ])
+
+  const [workingAreas, setWorkingAreas] = useState<WorkingArea[]>([
+    {
+      id: '1',
+      name: 'Kadıköy Merkez',
+      type: 'neighborhood',
+      neighborhoods: ['Caferağa', 'Fenerbahçe', 'Göztepe'],
+      isActive: true
+    },
+    { id: '2', name: 'Bağdat Caddesi Çevresi', type: 'polygon', coordinates: [], isActive: true }
+  ])
+
+  const [paymentTypes, setPaymentTypes] = useState<PaymentType[]>([
+    { id: '1', name: 'Nakit', type: 'cash', isActive: true },
+    { id: '2', name: 'Kredi Kartı', type: 'card', isActive: true, terminalId: 'TRM001', commissionRate: 2.5 },
+    { id: '3', name: 'Yemek Kartı', type: 'card', isActive: false, terminalId: '', commissionRate: 3.0 }
+  ])
+
+  const [workingHours, setWorkingHours] = useState<WorkingHour[]>([
+    { day: 'Pazartesi', isOpen: true, openTime: '09:00', closeTime: '22:00' },
+    { day: 'Salı', isOpen: true, openTime: '09:00', closeTime: '22:00' },
+    { day: 'Çarşamba', isOpen: true, openTime: '09:00', closeTime: '22:00' },
+    { day: 'Perşembe', isOpen: true, openTime: '09:00', closeTime: '22:00' },
+    { day: 'Cuma', isOpen: true, openTime: '09:00', closeTime: '22:00' },
+    { day: 'Cumartesi', isOpen: true, openTime: '10:00', closeTime: '23:00' },
+    { day: 'Pazar', isOpen: false, openTime: null, closeTime: null }
+  ])
+
+  const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo>({
+    iban: 'TR12 3456 7890 1234 5678 90',
+    taxNumber: '1234567890',
+    title: 'Lezzet Durağı Restaurant',
+    address: 'Kadıköy Mah. Bağdat Cad. No:123 İstanbul',
+    phone: '+90 216 123 45 67',
+    email: 'info@lezzetduragi.com'
   })
 
-  const { data: mappings = [] } = useQuery({
-    queryKey: ['settings-mappings'],
-    queryFn: () => settingsService.getMappings(),
-    staleTime: 60_000
-  })
+  const [workingStyle, setWorkingStyle] = useState<'kontor' | 'unlimited'>('kontor')
 
-  const activeWebhooks = webhooks.filter(w => w.isActive).length
-  const mappingCount = mappings.length
+  // Event handlers
+  const handleStatusChange = (isOpen: boolean, duration?: string) => {
+    setIsRestaurantOpen(isOpen)
+    if (!isOpen && duration) {
+      console.log(`Restaurant kapatıldı: ${duration}`)
+      // TODO: Set timer based on duration
+    }
+  }
+
+  const handleIntegrationUpdate = (id: string, data: Partial<Integration>) => {
+    setIntegrations(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
+  }
+
+  const handleWorkingAreaUpdate = (id: string, data: Partial<WorkingArea>) => {
+    setWorkingAreas(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
+  }
+
+  const handlePaymentTypeUpdate = (id: string, data: Partial<PaymentType>) => {
+    setPaymentTypes(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
+  }
+
+  const handleWorkingHoursUpdate = (hours: WorkingHour[]) => {
+    setWorkingHours(hours)
+  }
+
+  const handleRestaurantInfoUpdate = (info: RestaurantInfo) => {
+    setRestaurantInfo(info)
+  }
+
+  const handleWorkingStyleChange = (style: 'kontor' | 'unlimited') => {
+    setWorkingStyle(style)
+  }
 
   return (
     <div className='p-6'>
-      {/* Header */}
+      {/* Page Header */}
       <Card className='mb-6'>
-        <CardHeader className='flex flex-col gap-1 md:flex-row md:items-center md:justify-between'>
-          <div>
-            <CardTitle className='flex items-center gap-2 text-2xl'>
-              <Settings className='h-6 w-6 text-yellow-500' />
-              Ayarlar
-            </CardTitle>
-            <CardDescription>API entegrasyonları, webhook&apos;lar ve sistem ayarlarınızı yönetin</CardDescription>
-          </div>
-          <div className='flex gap-2'>
-            <Button variant='outline' onClick={() => setApiLogsVisible(true)}>
-              <Eye className='mr-2 h-4 w-4' />
-              API Loglarını İncele
-            </Button>
-          </div>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2 text-2xl'>
+            <Settings className='h-6 w-6 text-yellow-500' />
+            Restoran Ayarları
+          </CardTitle>
+          <CardDescription>Restoranınızın tüm operasyonel ayarlarını buradan yönetebilirsiniz</CardDescription>
         </CardHeader>
       </Card>
 
-      {/* Stats */}
-      <div className='mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        <StatCard title='API Durumu' value={1} Icon={CheckCircle2} hint='Aktif' color='text-green-600' />
-        <StatCard
-          title="Aktif Webhook'lar"
-          value={activeWebhooks}
-          Icon={Link2}
-          hint='Çalışıyor'
-          color='text-blue-600'
-        />
-        <StatCard
-          title='Ödeme Eşleştirmeleri'
-          value={mappingCount}
-          Icon={CreditCard}
-          hint='Tanımlı'
-          color='text-orange-500'
-        />
+      {/* Restaurant Status */}
+      <RestaurantStatusCard isOpen={isRestaurantOpen} onStatusChange={handleStatusChange} />
+
+      {/* Main Settings Grid */}
+      <div className='mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+        <IntegrationSettingsCard integrations={integrations} onIntegrationUpdate={handleIntegrationUpdate} />
+
+        <WorkingAreaSettingsCard workingAreas={workingAreas} onWorkingAreaUpdate={handleWorkingAreaUpdate} />
+
+        <PaymentSettingsCard paymentTypes={paymentTypes} onPaymentTypeUpdate={handlePaymentTypeUpdate} />
+
+        <WorkingHoursCard workingHours={workingHours} onWorkingHoursUpdate={handleWorkingHoursUpdate} />
       </div>
 
-      {/* Modules */}
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
-        <Card className='h-full'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0'>
-            <CardTitle className='flex items-center gap-2 text-base'>
-              <span className='text-blue-600'>
-                <Eye className='h-5 w-5' />
-              </span>
-              API Logları
-            </CardTitle>
-            <Button variant='ghost' size='xs' onClick={() => setApiLogsVisible(true)}>
-              Görüntüle
-            </Button>
-          </CardHeader>
-          <CardContent className='space-y-3 text-sm'>
-            <p className='text-muted-foreground'>API isteklerinizi ve yanıtlarını inceleyin</p>
-            <ul className='list-disc space-y-1 pl-5'>
-              <li>İstek/yanıt logları</li>
-              <li>Hata takibi ve debugging</li>
-              <li>Performans metrikleri</li>
-              <li>Detaylı filtreleme</li>
-            </ul>
-            <Alert color='warning' variant='outline'>
-              <AlertCircle />
-              <AlertTitle>Son 24 Saat</AlertTitle>
-              <AlertDescription>Örnek: 3 hatalı API isteği tespit edildi</AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
+      {/* Bottom Section - Restaurant Info and Working Style */}
+      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+        <RestaurantInfoCard restaurantInfo={restaurantInfo} onRestaurantInfoUpdate={handleRestaurantInfoUpdate} />
 
-        <Card className='h-full'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0'>
-            <CardTitle className='flex items-center gap-2 text-base'>
-              <span className='text-green-600'>
-                <Link2 className='h-5 w-5' />
-              </span>
-              Webhook Yönetimi
-            </CardTitle>
-            <Button variant='ghost' size='xs' onClick={() => setWebhookModalVisible(true)}>
-              Yönet
-            </Button>
-          </CardHeader>
-          <CardContent className='space-y-3 text-sm'>
-            <p className='text-muted-foreground'>Webhook URL&apos;lerinizi yönetin</p>
-            <ul className='list-disc space-y-1 pl-5'>
-              <li>URL yönetimi</li>
-              <li>Event konfigürasyonu</li>
-              <li>Test fonksiyonları (yakında)</li>
-              <li>Tetikleme geçmişi</li>
-            </ul>
-            <Alert color='success' variant='outline'>
-              <CheckCircle2 />
-              <AlertTitle>2 Aktif Webhook</AlertTitle>
-              <AlertDescription>Tüm webhook&apos;lar düzgün çalışıyor</AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-
-        <Card className='h-full'>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0'>
-            <CardTitle className='flex items-center gap-2 text-base'>
-              <span className='text-orange-500'>
-                <CreditCard className='h-5 w-5' />
-              </span>
-              Ödeme Eşleştirme
-            </CardTitle>
-            <Button variant='ghost' size='xs' onClick={() => setPaymentMappingVisible(true)}>
-              Yönet
-            </Button>
-          </CardHeader>
-          <CardContent className='space-y-3 text-sm'>
-            <p className='text-muted-foreground'>Ödeme tiplerini eşleştirin</p>
-            <ul className='list-disc space-y-1 pl-5'>
-              <li>Ödeme tipi mapping</li>
-              <li>Otomatik dönüşüm</li>
-              <li>Kural yönetimi</li>
-              <li>Eşleştirme listesi</li>
-            </ul>
-            <Alert color='info' variant='outline'>
-              <Info />
-              <AlertTitle>3 Eşleştirme</AlertTitle>
-              <AlertDescription>Nakit, kart ve online ödeme tanımlı</AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
+        <WorkingStyleCard workingStyle={workingStyle} onWorkingStyleChange={handleWorkingStyleChange} />
       </div>
-
-      {/* Info */}
-      <Card className='mt-6'>
-        <CardContent className='space-y-3 p-6'>
-          <Alert color='success' variant='outline'>
-            <CheckCircle2 className='!size-6' />
-            <AlertTitle>Entegrasyon Modülleri Aktif</AlertTitle>
-            <AlertDescription>
-              <div className='mt-2'>
-                <ul className='list-disc space-y-1 pl-5'>
-                  <li>API Logları - İstek/yanıt takibi ve hata analizi</li>
-                  <li>Webhook Yönetimi - Event konfigürasyonu ve URL yönetimi</li>
-                  <li>Ödeme Eşleştirme - Otomatik ödeme tipi dönüşümü</li>
-                  <li>Sistem İzleme - Gerçek zamanlı durum takibi</li>
-                </ul>
-                <div className='mt-3 flex flex-wrap gap-2'>
-                  <Button size='sm' onClick={() => setApiLogsVisible(true)}>
-                    API Loglarını İncele
-                  </Button>
-                  <Button size='sm' variant='outline' onClick={() => setWebhookModalVisible(true)}>
-                    Webhook&apos;ları Yönet
-                  </Button>
-                  <Button size='sm' variant='outline' onClick={() => setPaymentMappingVisible(true)}>
-                    Ödeme Eşleştirmeleri
-                  </Button>
-                </div>
-              </div>
-            </AlertDescription>
-          </Alert>
-          <Separator />
-        </CardContent>
-      </Card>
-
-      {/* Modals */}
-      <ApiLogsModal open={apiLogsVisible} onClose={() => setApiLogsVisible(false)} />
-      <WebhookManagementModal open={webhookModalVisible} onClose={() => setWebhookModalVisible(false)} />
-      <PaymentMappingModal open={paymentMappingVisible} onClose={() => setPaymentMappingVisible(false)} />
     </div>
   )
 }

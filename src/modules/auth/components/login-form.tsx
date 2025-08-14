@@ -1,7 +1,6 @@
 'use client'
 import FormInputField from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
-import { useMediaQuery } from '@/hooks/use-media-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -34,7 +33,6 @@ const LogInForm = () => {
 
   const { handleSubmit, control } = form
 
-  const isDesktop2xl = useMediaQuery('(max-width: 1530px)')
   const router = useRouter()
 
   const onSubmit = async (data: LoginFormType) => {
