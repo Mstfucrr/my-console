@@ -1,5 +1,5 @@
-import { CheckCircle, Clock, AlertTriangle, DollarSign } from "lucide-react"
-import StatCard from "@/components/StatCard"
+import { CheckCircle, Clock, AlertTriangle, DollarSign } from 'lucide-react'
+import StatCard from '@/components/StatCard'
 
 interface ReconciliationStats {
   totalSettled: number
@@ -16,37 +16,37 @@ interface ReconciliationStatsProps {
 
 export default function ReconciliationStats({ stats }: ReconciliationStatsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
       <StatCard
-        title="Ödenen Tutar"
+        title='Ödenen Tutar'
         value={stats.totalSettled}
         Icon={CheckCircle}
-        hint="Bu ay ödenen toplam"
-        color="text-green-600"
+        hint='Bu ay ödenen toplam'
+        color='text-green-600'
       />
 
       <StatCard
-        title="Bekleyen Ödeme"
+        title='Bekleyen Ödeme'
         value={stats.totalPending}
         Icon={Clock}
-        hint="Ödeme bekleyen tutar"
-        color="text-yellow-600"
+        hint='Ödeme bekleyen tutar'
+        color='text-yellow-600'
       />
 
       <StatCard
-        title="Başarısız Ödeme"
+        title='Başarısız Ödeme'
         value={stats.totalFailed}
         Icon={AlertTriangle}
-        hint="Sorunlu ödemeler"
-        color="text-red-600"
+        hint='Sorunlu ödemeler'
+        color='text-red-600'
       />
 
       <StatCard
-        title="Net Ciro"
+        title='Net Ciro'
         value={stats.netRevenue}
         Icon={DollarSign}
-        hint="Komisyon sonrası net"
-        color="text-purple-600"
+        hint='Komisyon sonrası net'
+        color='text-purple-600'
       />
     </div>
   )

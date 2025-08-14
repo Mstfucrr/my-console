@@ -5,7 +5,7 @@ export interface ReconciliationRecord {
   totalAmount: number
   platformFee: number
   netAmount: number
-  status: "completed" | "pending" | "failed"
+  status: 'completed' | 'pending' | 'failed'
   paymentMethod: string
   settlementDate?: string
 }
