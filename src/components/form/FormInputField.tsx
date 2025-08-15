@@ -13,7 +13,7 @@ interface FormInputFieldProps<T extends FieldValues> extends InputProps {
   formItemClassName?: string
 }
 
-export default function FormInputField<T extends FieldValues>({
+export function FormInputField<T extends FieldValues>({
   name,
   control,
   label,

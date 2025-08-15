@@ -11,7 +11,7 @@ interface FormTextareaFieldProps<T extends FieldValues> extends Omit<TextareaPro
   formItemClassName?: string
 }
 
-export default function FormTextareaField<T extends FieldValues>({
+export function FormTextareaField<T extends FieldValues>({
   name,
   control,
   label,

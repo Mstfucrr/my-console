@@ -10,7 +10,7 @@ interface FormSwitchFieldProps<T extends FieldValues> extends Omit<SwitchProps, 
   formItemClassName?: string
 }
 
-export default function FormSwitchField<T extends FieldValues>({
+export function FormSwitchField<T extends FieldValues>({
   name,
   control,
   label,

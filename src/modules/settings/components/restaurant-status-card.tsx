@@ -80,7 +80,7 @@ export default function RestaurantStatusCard({ isOpen, onStatusChange }: Restaur
               </PopoverContent>
             </Popover>
           ) : (
-            <Button variant='outline' color='destructive' onClick={handleStatusToggle} className='ml-4'>
+            <Button variant='outline' color='success' onClick={handleStatusToggle} className='ml-4'>
               <Play className='mr-2 h-4 w-4' />
               Restoranı Aç
             </Button>

@@ -17,7 +17,7 @@ interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 
   formItemClassName?: string
 }
 
-export default function FormSelectField<T extends FieldValues>({
+export function FormSelectField<T extends FieldValues>({
   name,
   control,
   label,
