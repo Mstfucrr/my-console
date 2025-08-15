@@ -138,9 +138,7 @@ const VerfiyForm = () => {
               autoFocus={index === 0}
               maxLength={1}
               className='focus:border-primary h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
-              ref={(ref: HTMLInputElement | null) => {
-                inputRefs.current[index] = ref
-              }}
+              ref={ref => (inputRefs.current[index] = ref)}
             />
           ))}
         </div>

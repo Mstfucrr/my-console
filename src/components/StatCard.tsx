@@ -30,9 +30,9 @@ export default function StatCard({
               ) : (
                 <Icon className={cn('text-primary size-5', color)} />
               )}
-              <div className='text-foreground text-2xl font-medium'>
+              <span className='text-foreground font-medium xl:text-2xl'>
                 {type === 'currency' ? formatCurrencyTRY(value) : value} {type === 'currency' ? '' : 'Adet'}
-              </div>
+              </span>
             </div>
             <div className='text-muted-foreground mt-1 text-xs'>{hint}</div>
           </div>

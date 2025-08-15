@@ -69,7 +69,7 @@ export default function BasicDonut({ series, labels, colors, height = 320, width
   }
 
   return (
-    <div ref={chartRef} style={{ width: width || '100%' }}>
+    <div ref={chartRef} className='flex items-center justify-center' style={{ width: width || '100%' }}>
       <Chart options={chartOptions} series={series} type='donut' height={height} width={width || chartWidth} />
     </div>
   )

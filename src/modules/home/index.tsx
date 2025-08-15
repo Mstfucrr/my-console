@@ -111,7 +111,7 @@ export default function DashboardView() {
     <div className='flex flex-col gap-6 p-6'>
       {/* Header */}
       <Card>
-        <CardHeader className='mb-0 flex flex-row items-center justify-between'>
+        <CardHeader className='mb-0 flex flex-row flex-wrap items-center justify-between gap-2'>
           <div>
             <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
               <BarChart2 className='text-blue-500' />
@@ -140,7 +140,7 @@ export default function DashboardView() {
           <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-4'>
+          <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
             <QuickAction
               href='/orders'
               Icon={BarChart2}
@@ -174,7 +174,7 @@ export default function DashboardView() {
       </Card>
 
       {/* Stats */}
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6'>
+      <div className='grid grid-cols-2 gap-4 lg:grid-cols-6'>
         <StatCard
           title='Toplam Sipariş'
           value={stats.todayOrders}

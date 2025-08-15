@@ -1,5 +1,5 @@
 'use client'
-import { FormInputField } from '@/components/form'
+import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'

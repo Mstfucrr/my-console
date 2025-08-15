@@ -1,6 +1,9 @@
 'use client'
 
-import { FormInputField, FormSelectField, FormSwitchField, FormTextareaField } from '@/components/form'
+import { FormInputField } from '@/components/form/FormInputField'
+import { FormSelectField } from '@/components/form/FormSelectField'
+import { FormSwitchField } from '@/components/form/FormSwitchField'
+import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
