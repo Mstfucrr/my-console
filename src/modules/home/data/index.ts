@@ -1,34 +1,50 @@
+import { mockOrders } from '@/modules/mockData'
 import { Bike, CheckCircle2, ShoppingCart, XCircle } from 'lucide-react'
 import type { DashboardStats, Stats } from '../types'
 
-export const dashboardMockData: DashboardStats = {
-  todayOrders: 120,
-  deliveredOrders: 72,
-  onWayOrders: 18,
-  cancelledOrders: 6,
+export const mockDashboardStats: DashboardStats = {
+  todayOrders: 15,
+  deliveredOrders: 12,
+  onWayOrders: 2,
+  cancelledOrders: 1,
+  totalRevenue: 3250.75,
+  pendingPayments: 1875.4,
   ordersByStatus: [
-    { status: 'delivered', count: 72, percentage: (72 / 120) * 100 },
-    { status: 'on_way', count: 18, percentage: (18 / 120) * 100 },
-    { status: 'cancelled', count: 6, percentage: (6 / 120) * 100 },
-    { status: 'preparing', count: 12, percentage: (12 / 120) * 100 },
-    { status: 'ready', count: 7, percentage: (7 / 120) * 100 },
-    { status: 'pending', count: 5, percentage: (5 / 120) * 100 }
+    { status: 'delivered', count: 12, percentage: 80 },
+    { status: 'on_way', count: 2, percentage: 13.3 },
+    { status: 'cancelled', count: 1, percentage: 6.7 }
   ],
   recentApiErrors: [
     {
       id: '1',
-      endpoint: '/api/orders',
-      errorMessage: 'Timeout while fetching orders',
-      timestamp: new Date().toISOString(),
-      statusCode: 504
-    },
-    {
-      id: '2',
-      endpoint: '/api/restaurants',
-      errorMessage: 'Unauthorized access token',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-      statusCode: 401
+      timestamp: '2024-01-25T19:20:00Z',
+      endpoint: '/api/webhooks',
+      statusCode: 400,
+      errorMessage: 'Invalid webhook URL format',
+      request: '{"url":"invalid-url"}',
+      response: '{"error":"Invalid webhook URL format"}'
     }
+  ],
+  recentOrders: mockOrders.slice(0, 2),
+  hourlyOrdersChart: [
+    { label: '09:00', value: 2 },
+    { label: '10:00', value: 5 },
+    { label: '11:00', value: 8 },
+    { label: '12:00', value: 12 },
+    { label: '13:00', value: 15 },
+    { label: '14:00', value: 10 },
+    { label: '15:00', value: 7 },
+    { label: '16:00', value: 9 }
+  ],
+  hourlyRevenueChart: [
+    { label: '09:00', value: 125.5 },
+    { label: '10:00', value: 320.75 },
+    { label: '11:00', value: 450.25 },
+    { label: '12:00', value: 680.9 },
+    { label: '13:00', value: 850.4 },
+    { label: '14:00', value: 520.65 },
+    { label: '15:00', value: 380.3 },
+    { label: '16:00', value: 475.85 }
   ]
 }
 

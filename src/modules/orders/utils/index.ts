@@ -1,5 +1,5 @@
 function formatCurrencyTRY(amount: number) {
-  return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount)
+  return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`
 }
 
 function formatDateTR(dateString: string) {

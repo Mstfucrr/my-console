@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { formatCurrencyTRY } from '@/modules/orders/utils'
 import type { LucideIcon } from 'lucide-react'
 
 export default function StatCard({
@@ -7,13 +8,15 @@ export default function StatCard({
   value,
   Icon,
   hint,
-  color
+  color,
+  type = 'number'
 }: {
   title: string
   value: number
-  Icon: LucideIcon
+  Icon: LucideIcon | string
   hint: string
   color: string
+  type?: 'number' | 'currency'
 }) {
   return (
     <Card>
@@ -21,9 +24,15 @@ export default function StatCard({
         <div className='flex items-center justify-between'>
           <div>
             <div className='text-muted-foreground text-xs'>{title}</div>
-            <div className='flex items-center gap-2'>
-              <Icon className={cn('text-primary size-5', color)} />
-              <div className='text-foreground mt-1 text-2xl font-medium'>{value} Adet</div>
+            <div className='mt-1 flex items-center gap-2'>
+              {typeof Icon === 'string' ? (
+                <span className={cn('text-primary text-2xl', color)}>{Icon}</span>
+              ) : (
+                <Icon className={cn('text-primary size-5', color)} />
+              )}
+              <div className='text-foreground text-2xl font-medium'>
+                {type === 'currency' ? formatCurrencyTRY(value) : value} {type === 'currency' ? '' : 'Adet'}
+              </div>
             </div>
             <div className='text-muted-foreground mt-1 text-xs'>{hint}</div>
           </div>

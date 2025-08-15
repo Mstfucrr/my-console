@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'focus:ring-ring inline-flex items-center rounded-full border px-2.5 py-[2px] text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none',
+  'focus:ring-ring inline-flex items-center rounded-md border px-2 py-[2px] text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none',
   {
     variants: {
       color: {
@@ -25,37 +25,37 @@ const badgeVariants = cva(
       {
         variant: 'outline',
         color: 'destructive',
-        className: 'text-destructive'
+        className: 'text-destructive bg-destructive/5'
       },
       {
         variant: 'outline',
         color: 'success',
-        className: 'text-success'
+        className: 'text-success bg-success/5'
       },
       {
         variant: 'outline',
         color: 'info',
-        className: 'text-info'
+        className: 'text-info bg-info/5'
       },
       {
         variant: 'outline',
         color: 'warning',
-        className: 'text-warning'
+        className: 'text-warning bg-warning/5'
       },
       {
         variant: 'outline',
         color: 'dark',
-        className: 'text-accent-foreground'
+        className: 'text-accent-foreground bg-accent-foreground/5'
       },
       {
         variant: 'outline',
         color: 'secondary',
-        className: 'text-muted-foreground border-default-500 dark:bg-transparent'
+        className: 'text-muted-foreground border-default-500 bg-secondary/5 dark:bg-transparent'
       },
       {
         variant: 'outline',
         color: 'default',
-        className: 'text-primary'
+        className: 'text-primary bg-primary/5'
       },
       // soft button variant
       {

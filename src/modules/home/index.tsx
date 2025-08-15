@@ -8,11 +8,14 @@ import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { AlertTriangle, BarChart2, Loader2, Settings, Store } from 'lucide-react'
+import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, Settings, ShoppingCart } from 'lucide-react'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
+import { LineChart } from './components/LineChart'
+
+import { CreateOrderModal } from '../orders/components/CreateOrderModal'
+import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import QuickAction from './components/QuickAction'
-import { dashboardStats } from './data'
 import { dashboardService } from './service'
 import type { DashboardStats } from './types'
 import { statusColor, statusLabel } from './utils'
@@ -21,6 +24,7 @@ type DateRange = 'today' | 'week' | 'month'
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange>('today')
+  const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
     data: stats,
@@ -41,6 +45,15 @@ export default function DashboardView() {
       color: statusColor(s.status)
     }))
   }, [stats])
+
+  const getChartTitle = (baseTitle: string) => {
+    const titles = {
+      today: `${baseTitle} (Saatlik)`,
+      week: `${baseTitle} (Günlük)`,
+      month: `${baseTitle} (Haftalık)`
+    }
+    return titles[dateRange] || baseTitle
+  }
 
   if (isLoading) {
     return (
@@ -70,6 +83,30 @@ export default function DashboardView() {
     )
   }
 
+  const getStatusBadgeColor = (status: string) => {
+    const colorMap: Record<string, string> = {
+      delivered: 'bg-green-100 text-green-800',
+      on_way: 'bg-orange-100 text-orange-800',
+      cancelled: 'bg-red-100 text-red-800',
+      preparing: 'bg-blue-100 text-blue-800',
+      ready: 'bg-green-100 text-green-800',
+      pending: 'bg-yellow-100 text-yellow-800'
+    }
+    return colorMap[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  const getStatusLabel = (status: string) => {
+    const labelMap: Record<string, string> = {
+      delivered: 'Teslim',
+      on_way: 'Yolda',
+      cancelled: 'İptal',
+      preparing: 'Hazırlanıyor',
+      ready: 'Hazır',
+      pending: 'Beklemede'
+    }
+    return labelMap[status] || status
+  }
+
   return (
     <div className='flex flex-col gap-6 p-6'>
       {/* Header */}
@@ -86,9 +123,8 @@ export default function DashboardView() {
             {(['today', 'week', 'month'] as const).map(range => (
               <Button
                 key={range}
-                size='xs'
-                color={dateRange === range ? 'primary' : 'secondary'}
-                variant={dateRange === range ? undefined : 'outline'}
+                size='sm'
+                variant={dateRange === range ? 'outline' : 'outline'}
                 onClick={() => setDateRange(range)}
               >
                 {range === 'today' ? 'Bugün' : range === 'week' ? 'Bu Hafta' : 'Bu Ay'}
@@ -98,19 +134,13 @@ export default function DashboardView() {
         </CardHeader>
       </Card>
 
-      {/* Stats */}
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-        {dashboardStats.map(stat => (
-          <StatCard key={stat.title} {...stat} />
-        ))}
-      </div>
       {/* Quick Actions */}
       <Card>
         <CardHeader>
           <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-4'>
             <QuickAction
               href='/orders'
               Icon={BarChart2}
@@ -119,16 +149,23 @@ export default function DashboardView() {
               color='text-blue-600'
             />
             <QuickAction
-              href='/restaurants'
-              Icon={Store}
-              title='Restoranlarım'
-              subtitle='Şube bilgilerini kontrol et'
+              onClick={() => setIsCreateOrderModalVisible(true)}
+              Icon={ShoppingCart}
+              title='Yeni Sipariş Ekle'
+              subtitle='Manuel sipariş oluştur'
               color='text-green-600'
+            />
+            <QuickAction
+              href='/reconciliation'
+              Icon={CheckCircle}
+              title='Mutabakat İşlemleri'
+              subtitle='Günlük mutabakatlar'
+              color='text-orange-600'
             />
             <QuickAction
               href='/settings'
               Icon={Settings}
-              title='Entegrasyon'
+              title='Ayarlar'
               subtitle='API ve webhook ayarları'
               color='text-amber-500'
             />
@@ -136,7 +173,55 @@ export default function DashboardView() {
         </CardContent>
       </Card>
 
-      {/* Chart + Errors */}
+      {/* Stats */}
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6'>
+        <StatCard
+          title='Toplam Sipariş'
+          value={stats.todayOrders}
+          Icon={ShoppingCart}
+          hint='Bugün alınan sipariş sayısı'
+          color='text-blue-600'
+        />
+        <StatCard
+          title='Teslim Edildi'
+          value={stats.deliveredOrders}
+          Icon={CheckCircle}
+          hint='Başarıyla teslim edilen'
+          color='text-green-600'
+        />
+        <StatCard
+          title='Yolda'
+          value={stats.onWayOrders}
+          Icon={BarChart2}
+          hint='Şu anda kurye ile'
+          color='text-amber-500'
+        />
+        <StatCard
+          title='İptal Edildi'
+          value={stats.cancelledOrders}
+          Icon={Clock}
+          hint='İptal edilen siparişler'
+          color='text-red-600'
+        />
+        <StatCard
+          title='Toplam Ciro'
+          value={stats.totalRevenue}
+          Icon={CreditCard}
+          hint='Bugünkü toplam ciro'
+          color='text-purple-600'
+          type='currency'
+        />
+        <StatCard
+          title='Tahsilat Bekleyen'
+          value={stats.pendingPayments}
+          Icon={Clock}
+          hint='Ödeme bekleyen bakiye'
+          color='text-yellow-600'
+          type='currency'
+        />
+      </div>
+
+      {/* Chart + Recent Orders */}
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <Card>
           <CardHeader>
@@ -151,38 +236,83 @@ export default function DashboardView() {
 
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>Son API Hataları</CardTitle>
+            <CardTitle className='text-base'>Son Siparişler</CardTitle>
+            <p className='text-muted-foreground text-sm'>En son alınan siparişler</p>
           </CardHeader>
           <CardContent>
-            {stats.recentApiErrors.length > 0 ? (
+            {stats.recentOrders.length > 0 ? (
               <div className='flex flex-col gap-3'>
-                {stats.recentApiErrors.map(err => (
-                  <div key={err.id} className='border-destructive/20 flex flex-col gap-1 rounded-md border p-3'>
-                    <div className='flex items-center gap-2'>
-                      <AlertTriangle className='text-destructive h-4 w-4' />
-                      <span className='font-medium'>{err.endpoint}</span>
+                {stats.recentOrders.map(order => (
+                  <div key={order.id} className='flex items-center justify-between rounded-lg border p-3'>
+                    <div className='flex-1'>
+                      <div className='mb-1 flex items-center gap-2'>
+                        <span className='font-medium'>#{order.id}</span>
+                        <span
+                          className={cn(
+                            'rounded-full px-2 py-1 text-xs font-medium',
+                            getStatusBadgeColor(order.status)
+                          )}
+                        >
+                          {getStatusLabel(order.status)}
+                        </span>
+                      </div>
+                      <div className='text-muted-foreground text-sm'>{order.customerName}</div>
+                      <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
                     </div>
-                    <div className='text-destructive text-sm'>{err.errorMessage}</div>
-                    <div className='text-muted-foreground text-xs'>
-                      {new Date(err.timestamp).toLocaleString('tr-TR')} - Kod: {err.statusCode}
+                    <div className='text-right'>
+                      <div className='text-warning font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                     </div>
                   </div>
                 ))}
-                <Link href='/settings/api-logs' className={cn('w-full')}>
-                  <Button variant='outline' className='w-full'>
-                    Tüm API Loglarını Görüntüle
+                <Link href='/orders' className='w-full'>
+                  <Button variant='outline' className='mt-2 w-full bg-transparent'>
+                    Tüm Siparişleri Görüntüle
                   </Button>
                 </Link>
               </div>
             ) : (
               <div className='flex h-64 flex-col items-center justify-center text-center'>
-                <div className='mb-2 text-4xl'>🎉</div>
-                <div className='text-muted-foreground'>Son 24 saatte API hatası yok!</div>
+                <div className='mb-2 text-4xl'>📦</div>
+                <div className='text-muted-foreground'>Henüz sipariş yok!</div>
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Line Charts */}
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base'>{getChartTitle('Sipariş Sayısı')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='h-80'>
+              <LineChart data={stats.hourlyOrdersChart} title='Sipariş Sayısı' color='#2196F3' height={300} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base'>{getChartTitle('Ciro')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='h-80'>
+              <LineChart data={stats.hourlyRevenueChart} title='Ciro (₺)' color='#FFD100' height={300} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Create Order Modal */}
+      <CreateOrderModal
+        visible={isCreateOrderModalVisible}
+        onClose={() => setIsCreateOrderModalVisible(false)}
+        onSuccess={() => {
+          refetch() // Dashboard'ı yenile
+        }}
+      />
     </div>
   )
 }

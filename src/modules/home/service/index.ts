@@ -1,4 +1,4 @@
-import { dashboardMockData } from '../data'
+import { mockDashboardStats } from '../data'
 import type { DashboardStats } from '../types'
 
 class DashboardService {
@@ -6,7 +6,7 @@ class DashboardService {
     void _dateRange
     // Simulated API: return a single source of truth after 2000ms
     await new Promise(resolve => setTimeout(resolve, 1000))
-    return dashboardMockData
+    return mockDashboardStats
   }
 }
 

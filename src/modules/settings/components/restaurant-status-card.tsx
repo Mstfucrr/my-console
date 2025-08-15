@@ -55,7 +55,7 @@ export default function RestaurantStatusCard({ isOpen, onStatusChange }: Restaur
           {isOpen ? (
             <Popover open={statusPopoverOpen} onOpenChange={setStatusPopoverOpen}>
               <PopoverTrigger asChild>
-                <Button variant='outline' color='success' className='ml-4'>
+                <Button variant='outline' color='destructive' className='ml-4'>
                   <Pause className='mr-2 h-4 w-4' />
                   Restoranı Kapat
                 </Button>

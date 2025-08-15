@@ -1,5 +1,5 @@
-import { CheckCircle, Clock, AlertTriangle, DollarSign } from 'lucide-react'
 import StatCard from '@/components/StatCard'
+import { AlertTriangle, CheckCircle, Clock, DollarSign } from 'lucide-react'
 
 interface ReconciliationStats {
   totalSettled: number
@@ -47,6 +47,7 @@ export default function ReconciliationStats({ stats }: ReconciliationStatsProps)
         Icon={DollarSign}
         hint='Komisyon sonrası net'
         color='text-purple-600'
+        type='currency'
       />
     </div>
   )

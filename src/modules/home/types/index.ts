@@ -1,3 +1,4 @@
+import { APIError, ChartDataPoint, Order, OrderStatusCount } from '@/modules/types'
 import { LucideIcon } from 'lucide-react'
 
 export type OrderStatus = 'delivered' | 'on_way' | 'cancelled' | 'preparing' | 'ready' | 'pending'
@@ -16,13 +17,18 @@ export type RecentApiError = {
   statusCode: number
 }
 
-export type DashboardStats = {
+export interface DashboardStats {
   todayOrders: number
   deliveredOrders: number
   onWayOrders: number
   cancelledOrders: number
-  ordersByStatus: OrdersByStatus[]
-  recentApiErrors: RecentApiError[]
+  totalRevenue: number
+  pendingPayments: number
+  ordersByStatus: OrderStatusCount[]
+  recentApiErrors: APIError[]
+  recentOrders: Order[]
+  hourlyOrdersChart: ChartDataPoint[]
+  hourlyRevenueChart: ChartDataPoint[]
 }
 
 export type Stats = {
