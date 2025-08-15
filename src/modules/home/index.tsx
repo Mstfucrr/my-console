@@ -124,7 +124,7 @@ export default function DashboardView() {
               <Button
                 key={range}
                 size='sm'
-                variant={dateRange === range ? 'outline' : 'outline'}
+                variant={dateRange === range ? undefined : 'outline'}
                 onClick={() => setDateRange(range)}
               >
                 {range === 'today' ? 'Bugün' : range === 'week' ? 'Bu Hafta' : 'Bu Ay'}
