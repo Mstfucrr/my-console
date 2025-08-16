@@ -223,3 +223,13 @@
   background-color: var(--color-primary);
   border-radius: 4px;
 }
+
+/* Hide scrollbar for scrollbar-hide class */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
