@@ -10,7 +10,9 @@ import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { MenuItem } from '../common/menu-item'
-import UserMenu from '../topbar/user-menu'
+import { NotificationsPopover } from '../common/notifications-popover'
+import { SupportDialog } from '../common/support-dialog'
+import UserMenu from '../common/user-menu'
 
 const MobileSidebar = () => {
   const { mobileMenu, setMobileMenu } = useSidebar()
@@ -52,6 +54,8 @@ const MobileSidebar = () => {
         </Link>
 
         <div className='flex items-center gap-2'>
+          <NotificationsPopover />
+          <SupportDialog />
           <UserMenu />
           <Button
             variant='outline'

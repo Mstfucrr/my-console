@@ -4,7 +4,9 @@ import { SiteLogoBig } from '@/components/svg'
 import { menusConfig } from '@/modules/sidebar/menus'
 import Link from 'next/link'
 import { MenuItem } from '../common/menu-item'
-import UserMenu from './user-menu'
+import { NotificationsPopover } from '../common/notifications-popover'
+import { SupportDialog } from '../common/support-dialog'
+import UserMenu from '../common/user-menu'
 
 const Topbar = () => {
   return (
@@ -24,7 +26,9 @@ const Topbar = () => {
           </nav>
         </div>
 
-        <div className='ml-auto flex items-center'>
+        <div className='ml-auto flex items-center gap-2'>
+          <NotificationsPopover />
+          <SupportDialog />
           <UserMenu />
         </div>
       </div>
