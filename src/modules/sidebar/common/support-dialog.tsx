@@ -56,23 +56,10 @@ export function SupportDialog() {
       toast.success('Mesajınız başarıyla gönderildi! En kısa sürede dönüş yapılacaktır.')
       setOpen(false)
       form.reset()
-    } catch (error) {
+    } catch {
       toast.error('Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.')
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case 'low':
-        return 'Düşük'
-      case 'medium':
-        return 'Orta'
-      case 'high':
-        return 'Yüksek'
-      default:
-        return ''
     }
   }
 
