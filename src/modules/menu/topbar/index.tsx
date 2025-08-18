@@ -1,7 +1,7 @@
 'use client'
 
 import { SiteLogoBig } from '@/components/svg'
-import { menusConfig } from '@/modules/sidebar/menus'
+import { menusConfig } from '@/modules/menu/menus'
 import Link from 'next/link'
 import { MenuItem } from '../common/menu-item'
 import { NotificationsPopover } from '../common/notifications-popover'

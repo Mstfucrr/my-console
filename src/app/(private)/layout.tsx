@@ -3,7 +3,7 @@ import LayoutLoader from '@/components/layout-loader'
 import { AuthProvider } from '@/context/AuthContext'
 import { useMounted } from '@/hooks/use-mounted'
 import { cn } from '@/lib/utils'
-import Sidebar from '@/modules/sidebar'
+import Menu from '@/modules/menu'
 import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 
@@ -12,9 +12,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   if (!mounted) return <LayoutLoader />
 
+  const pathname = usePathname()
+  const isOnboarding = pathname.includes('/onboarding') // TODO: Daha sonra ayrı olacak
+
   return (
     <AuthProvider>
-      <Sidebar />
+      {!isOnboarding && <Menu />}
       <div className={cn('pt-16 transition-all duration-150')}>
         <div className='flex flex-col gap-4 pb-0'>
           <LayoutWrapper>

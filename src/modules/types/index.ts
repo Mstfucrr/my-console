@@ -5,6 +5,7 @@ export interface User {
   name: string
   companyName: string
   role: string
+  needsOnboarding?: boolean
 }
 
 export interface LoginRequest {
@@ -29,6 +30,7 @@ export interface Order {
   totalAmount: number
   items: OrderItem[]
   courierLocation?: CourierLocation
+  courierInfo?: CourierInfo
   restaurant: Restaurant
   logs: OrderLog[]
   paymentMethod: 'cash' | 'card' | 'online'
@@ -57,9 +59,21 @@ export interface CourierLocation {
   lastUpdated: string
 }
 
+export interface CourierInfo {
+  id: string
+  name: string
+  phone: string
+  vehicleType: 'motorcycle' | 'bicycle' | 'car'
+  licensePlate?: string
+  rating: number
+  totalDeliveries: number
+  currentLocation?: CourierLocation
+}
+
 export type OrderStatus =
   | 'pending' // Beklemede
   | 'preparing' // Hazırlanıyor
+  | 'prepared' // Hazırlandı
   | 'ready' // Hazır
   | 'picked_up' // Kurye aldı
   | 'on_way' // Yolda
