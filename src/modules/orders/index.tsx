@@ -1,5 +1,6 @@
 'use client'
 
+import { PageHeader } from '@/components/page-header'
 import { Pagination } from '@/components/pagination'
 import StatCard from '@/components/StatCard'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -113,22 +114,18 @@ export default function OrdersView() {
   return (
     <div className='flex flex-col gap-6 p-6'>
       {/* Sayfa Başlığı */}
-      <Card>
-        <CardHeader className='flex flex-row items-center justify-between'>
-          <div>
-            <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
-              <ShoppingCart className='text-amber-400' /> Siparişler
-            </CardTitle>
-            <p className='text-muted-foreground text-sm'>
-              Tüm siparişlerinizi buradan takip edebilir ve yönetebilirsiniz
-            </p>
-          </div>
+      <PageHeader
+        title='Siparişler'
+        description='Tüm siparişlerinizi buradan takip edebilir ve yönetebilirsiniz'
+        icon={ShoppingCart}
+        iconColor='text-amber-400'
+        actions={
           <Button onClick={() => setIsCreateModalVisible(true)} color='success'>
             <Plus className='mr-2 h-4 w-4' />
             Yeni Sipariş Ekle
           </Button>
-        </CardHeader>
-      </Card>
+        }
+      />
 
       {/* İstatistik Kartları */}
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4'>

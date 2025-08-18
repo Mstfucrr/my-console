@@ -1,0 +1,46 @@
+'use client'
+
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { LucideIcon } from 'lucide-react'
+import { ReactNode } from 'react'
+
+interface PageHeaderProps {
+  title: string
+  description?: string
+  icon: LucideIcon
+  iconColor?: string
+  actions?: ReactNode
+  onRefresh?: () => void
+  isLoading?: boolean
+  showRefreshButton?: boolean
+}
+
+export function PageHeader({
+  title,
+  description,
+  icon: Icon,
+  iconColor = 'text-blue-500',
+  actions,
+  onRefresh,
+  isLoading = false,
+  showRefreshButton = false
+}: PageHeaderProps) {
+  return (
+    <Card>
+      <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2'>
+        <div>
+          <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
+            <Icon className={iconColor} />
+            {title}
+          </CardTitle>
+          {description && <p className='text-muted-foreground text-sm'>{description}</p>}
+        </div>
+        <div className='flex items-center gap-2'>
+          {actions}
+          {showRefreshButton && onRefresh && <RefreshButton size='xs' onClick={onRefresh} isLoading={isLoading} />}
+        </div>
+      </CardHeader>
+    </Card>
+  )
+}

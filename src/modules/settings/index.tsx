@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageHeader } from '@/components/page-header'
 import { Settings } from 'lucide-react'
 import { useState } from 'react'
 import IntegrationSettingsCard from './components/integration-settings-card'
@@ -155,15 +155,12 @@ export default function SettingsView() {
   return (
     <div className='flex flex-col gap-6 p-6'>
       {/* Page Header */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2 text-2xl'>
-            <Settings className='h-6 w-6 text-yellow-500' />
-            Restoran Ayarları
-          </CardTitle>
-          <CardDescription>Restoranınızın tüm operasyonel ayarlarını buradan yönetebilirsiniz</CardDescription>
-        </CardHeader>
-      </Card>
+      <PageHeader
+        title='Restoran Ayarları'
+        description='Restoranınızın tüm operasyonel ayarlarını buradan yönetebilirsiniz'
+        icon={Settings}
+        iconColor='text-yellow-500'
+      />
 
       {/* Restaurant Status */}
       <RestaurantStatusCard isOpen={isRestaurantOpen} onStatusChange={handleStatusChange} />

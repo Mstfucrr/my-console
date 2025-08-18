@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
+import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -110,20 +111,16 @@ export default function DashboardView() {
   return (
     <div className='flex flex-col gap-6 p-6'>
       {/* Header */}
-      <Card>
-        <CardHeader className='mb-0 flex flex-row flex-wrap items-center justify-between gap-2'>
-          <div>
-            <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
-              <BarChart2 className='text-blue-500' />
-              Dashboard
-            </CardTitle>
-            <p className='text-muted-foreground text-sm'>İşletmenizin güncel durumunu takip edin</p>
-          </div>
+      <PageHeader
+        title='Dashboard'
+        description='İşletmenizin güncel durumunu takip edin'
+        icon={BarChart2}
+        iconColor='text-blue-500'
+        actions={
           <div className='flex items-center gap-2'>
             {(['today', 'week', 'month'] as const).map(range => (
               <Button
                 key={range}
-                size='sm'
                 variant={dateRange === range ? undefined : 'outline'}
                 onClick={() => setDateRange(range)}
               >
@@ -131,8 +128,8 @@ export default function DashboardView() {
               </Button>
             ))}
           </div>
-        </CardHeader>
-      </Card>
+        }
+      />
 
       {/* Quick Actions */}
       <Card>
