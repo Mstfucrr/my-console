@@ -1,23 +1,21 @@
 'use client'
 
+import { Pagination } from '@/components/pagination'
 import StatCard from '@/components/StatCard'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Order, PaginationOptions } from '@/modules/types'
+import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, CheckCircle2, Clock, Loader2, Plus, ShoppingCart, Truck, XCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CreateOrderModal } from './components/CreateOrderModal'
 import { OrderCard } from './components/OrderCard'
 import { OrderDetailDialog } from './components/OrderDetailDialog'
 import { ordersService } from './service'
 
 export default function OrdersView() {
-  const [activeOrders, setActiveOrders] = useState<Order[]>([])
-  const [completedOrders, setCompletedOrders] = useState<Order[]>([])
-  const [isLoadingActive, setIsLoadingActive] = useState(true)
-  const [isLoadingCompleted, setIsLoadingCompleted] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
@@ -25,81 +23,63 @@ export default function OrdersView() {
     page: 1,
     limit: 6
   })
-  const [completedTotal, setCompletedTotal] = useState(0)
-  const [error, setError] = useState<string>('')
 
-  // İstatistikler için state
-  const [stats, setStats] = useState({
-    total: 0,
-    delivered: 0,
-    onWay: 0,
-    cancelled: 0
-  })
-
-  const loadActiveOrders = async () => {
-    setIsLoadingActive(true)
-    setError('')
-
-    try {
-      // Aktif siparişler (tamamlanan ve iptal edilen hariç)
-      const activeResponse = await ordersService.getOrders(
+  // Active orders query
+  const {
+    data: activeOrdersData,
+    isLoading: isLoadingActive,
+    isFetching: isFetchingActive,
+    error: activeOrdersError,
+    refetch: refetchActiveOrders
+  } = useQuery({
+    queryKey: ['activeOrders'],
+    queryFn: async () => {
+      const response = await ordersService.getOrders(
         { status: ['pending', 'preparing', 'ready', 'picked_up', 'on_way'] },
         { page: 1, limit: 50 }
       )
-
-      setActiveOrders(activeResponse.data.slice(0, 8)) // İlk 8 aktif siparişi göster (2x4 grid)
-    } catch {
-      setError('Aktif siparişler yüklenirken bir hata oluştu.')
-    } finally {
-      setIsLoadingActive(false)
+      return response.data.slice(0, 8) // İlk 8 aktif siparişi göster (2x4 grid)
     }
-  }
+  })
 
-  const loadCompletedOrders = async () => {
-    setIsLoadingCompleted(true)
-
-    try {
-      // Tamamlanan siparişler (delivered ve cancelled)
-      const completedResponse = await ordersService.getOrders(
-        { status: ['delivered', 'cancelled'] },
-        completedPagination
-      )
-
-      setCompletedOrders(completedResponse.data)
-      setCompletedTotal(completedResponse.total)
-    } catch {
-      setError('Tamamlanan siparişler yüklenirken bir hata oluştu.')
-    } finally {
-      setIsLoadingCompleted(false)
+  // Completed orders query
+  const {
+    data: completedOrdersData,
+    isLoading: isLoadingCompleted,
+    isFetching: isFetchingCompleted,
+    error: completedOrdersError,
+    refetch: refetchCompletedOrders
+  } = useQuery({
+    queryKey: ['completedOrders', completedPagination.page, completedPagination.limit],
+    queryFn: async () => {
+      const response = await ordersService.getOrders({ status: ['delivered', 'cancelled'] }, completedPagination)
+      return response
     }
-  }
+  })
 
-  const loadAllStats = async () => {
-    try {
-      // Tüm siparişleri getir istatistikler için
-      const allResponse = await ordersService.getOrders({ status: 'all' }, { page: 1, limit: 1000 })
-
-      const allOrders = allResponse.data
-      setStats({
+  // Stats query
+  const { data: statsData, error: statsError } = useQuery({
+    queryKey: ['ordersStats'],
+    queryFn: async () => {
+      const response = await ordersService.getOrders({ status: 'all' }, { page: 1, limit: 1000 })
+      const allOrders = response.data
+      return {
         total: allOrders.length,
         delivered: allOrders.filter(o => o.status === 'delivered').length,
         onWay: allOrders.filter(o => o.status === 'on_way').length,
         cancelled: allOrders.filter(o => o.status === 'cancelled').length
-      })
-    } catch {
-      // Stats yükleneme hatası önemli değil
+      }
     }
-  }
+  })
 
-  useEffect(() => {
-    loadActiveOrders()
-    loadCompletedOrders()
-    loadAllStats()
-  }, [])
+  // Extract data with fallbacks
+  const activeOrders = activeOrdersData || []
+  const completedOrders = completedOrdersData?.data || []
+  const completedTotal = completedOrdersData?.total || 0
+  const stats = statsData || { total: 0, delivered: 0, onWay: 0, cancelled: 0 }
 
-  useEffect(() => {
-    loadCompletedOrders()
-  }, [completedPagination.page, completedPagination.limit])
+  // Combine errors
+  const error = activeOrdersError?.message || completedOrdersError?.message || statsError?.message || ''
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order)
@@ -115,15 +95,19 @@ export default function OrdersView() {
     setCompletedPagination(prev => ({ ...prev, page }))
   }
 
+  const handleCompletedPageClick = (page: number) => {
+    setCompletedPagination(prev => ({ ...prev, page }))
+  }
+
   const handleCreateOrderSuccess = () => {
-    loadActiveOrders() // Refresh active orders list
-    loadAllStats() // Refresh stats
+    refetchActiveOrders() // Refresh active orders list
+    // Stats will be automatically refetched when needed
   }
 
   const refreshAllData = () => {
-    loadActiveOrders()
-    loadCompletedOrders()
-    loadAllStats()
+    refetchActiveOrders()
+    refetchCompletedOrders()
+    // Stats will be automatically refetched when needed
   }
 
   return (
@@ -190,11 +174,11 @@ export default function OrdersView() {
             <CardTitle className='flex items-center gap-2 text-lg font-bold'>
               <Clock className='text-amber-500' /> İşlem Devam Eden Siparişler
             </CardTitle>
-            <RefreshButton onClick={loadActiveOrders} isLoading={isLoadingActive} />
+            <RefreshButton onClick={refetchActiveOrders} isLoading={isFetchingActive} />
           </div>
         </CardHeader>
         <CardContent className='p-6 pt-0'>
-          {isLoadingActive ? (
+          {isLoadingActive || isFetchingActive ? (
             <div className='flex h-48 items-center justify-center'>
               <div className='text-center'>
                 <Loader2 className='text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin' />
@@ -225,11 +209,11 @@ export default function OrdersView() {
             <CardTitle className='flex items-center gap-2 text-lg font-bold'>
               <CheckCircle2 className='text-green-600' /> Tamamlanan Siparişler
             </CardTitle>
-            <RefreshButton size='sm' onClick={loadCompletedOrders} isLoading={isLoadingCompleted} />
+            <RefreshButton size='sm' onClick={refetchCompletedOrders} isLoading={isFetchingCompleted} />
           </div>
         </CardHeader>
         <CardContent className='p-6 pt-0'>
-          {isLoadingCompleted ? (
+          {isLoadingCompleted || isFetchingCompleted ? (
             <div className='flex h-48 items-center justify-center'>
               <div className='text-center'>
                 <Loader2 className='text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin' />
@@ -245,32 +229,25 @@ export default function OrdersView() {
             </div>
           ) : (
             <div className='space-y-3'>
-              {completedOrders.map(order => (
-                <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
-              ))}
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                {completedOrders.map(order => (
+                  <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
+                ))}
+              </div>
 
               {/* Sayfalama - Sadece tamamlanan siparişler için */}
               {completedTotal > completedPagination.limit && (
-                <div className='mt-6 flex items-center justify-center gap-2'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    disabled={completedPagination.page === 1}
-                    onClick={() => handleCompletedPageChange(completedPagination.page - 1)}
-                  >
-                    Önceki
-                  </Button>
-                  <span className='text-muted-foreground text-sm'>
-                    Sayfa {completedPagination.page} / {Math.ceil(completedTotal / completedPagination.limit)}
-                  </span>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    disabled={completedPagination.page >= Math.ceil(completedTotal / completedPagination.limit)}
-                    onClick={() => handleCompletedPageChange(completedPagination.page + 1)}
-                  >
-                    Sonraki
-                  </Button>
+                <div className='mt-6'>
+                  <Pagination
+                    page={completedPagination.page}
+                    totalPages={Math.ceil(completedTotal / completedPagination.limit)}
+                    canPrev={completedPagination.page > 1}
+                    canNext={completedPagination.page < Math.ceil(completedTotal / completedPagination.limit)}
+                    onPrev={() => handleCompletedPageChange(completedPagination.page - 1)}
+                    onNext={() => handleCompletedPageChange(completedPagination.page + 1)}
+                    onPageClick={handleCompletedPageClick}
+                    leftInfo={`${completedTotal} tamamlanan sipariş`}
+                  />
                 </div>
               )}
             </div>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-export type DataTablePaginationProps = {
+export type PaginationProps = {
   page: number
   totalPages: number
   canPrev: boolean
@@ -15,7 +15,7 @@ export type DataTablePaginationProps = {
   className?: string
 }
 
-export function DataTablePagination({
+export function Pagination({
   page,
   totalPages,
   canPrev,
@@ -25,7 +25,7 @@ export function DataTablePagination({
   onPageClick,
   leftInfo,
   className
-}: DataTablePaginationProps) {
+}: PaginationProps) {
   // örneğin 5. sayfadaysa şu şekilde gösterilecek:
   // 1 ... 4 5 6 ... 10
   const visiblePageButtons: (number | '...')[] = []

@@ -19,8 +19,8 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import * as React from 'react'
-import { Button } from '../button'
-import { DataTablePagination } from './pagination'
+import { Pagination } from '../pagination'
+import { Button } from '../ui/button'
 import { DataTableToolbar } from './toolbar'
 
 export type BasicDataTableProps<TData, TValue = never> = {
@@ -284,7 +284,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
         <AnimatePresence>{showOverlayLoader && <TableOverlayLoader label={loadingLabel} />}</AnimatePresence>
       </div>
 
-      <DataTablePagination
+      <Pagination
         page={manualPagination ? page : table.getState().pagination.pageIndex + 1}
         totalPages={totalPages}
         canPrev={canPrev}

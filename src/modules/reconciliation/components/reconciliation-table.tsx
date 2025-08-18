@@ -1,5 +1,5 @@
+import { BasicDataTable } from '@/components/basic-data-table'
 import { Badge, BadgeProps } from '@/components/ui/badge'
-import { BasicDataTable } from '@/components/ui/basic-data-table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { ColumnDef } from '@tanstack/react-table'
 
