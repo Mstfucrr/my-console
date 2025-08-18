@@ -16,11 +16,11 @@ export default function CompletionStep() {
         <CheckCircle className='text-success mx-auto mb-4 h-16 w-16' />
         <h3 className='text-foreground mb-2 text-2xl font-semibold'>Tebrikler! Onboarding Tamamlandı</h3>
         <p className='text-muted-foreground mb-6'>
-          Hesabınız başarıyla oluşturuldu. Artık Fiyuu Portal'ı kullanmaya başlayabilirsiniz.
+          Hesabınız başarıyla oluşturuldu. Artık Fiyuu Portal&apos;ı kullanmaya başlayabilirsiniz.
         </p>
 
         <Button onClick={handleComplete} className='font-semibold' color='primary' size='lg'>
-          Dashboard'a Git
+          Dashboard&apos;a Git
         </Button>
       </Card>
     </div>

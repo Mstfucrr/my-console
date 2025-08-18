@@ -9,11 +9,10 @@ import { usePathname } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const mounted = useMounted()
-
-  if (!mounted) return <LayoutLoader />
-
   const pathname = usePathname()
   const isOnboarding = pathname.includes('/onboarding') // TODO: Daha sonra ayrı olacak
+
+  if (!mounted) return <LayoutLoader />
 
   return (
     <AuthProvider>

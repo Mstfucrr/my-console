@@ -17,7 +17,9 @@ export default function AddressInfoStep() {
   const companyAddress = watch('companyAddress')
   const companyCity = watch('companyCity')
   const companyDistrict = watch('companyDistrict')
+  const billingCity = watch('billingCity')
 
+  // Effect for syncing billing fields if sameAsCompany is true
   useEffect(() => {
     if (sameAsCompany) {
       setValue('billingAddress', companyAddress || '')
@@ -27,19 +29,19 @@ export default function AddressInfoStep() {
     }
   }, [sameAsCompany, companyAddress, companyCity, companyDistrict, setValue])
 
+  // Effect for updating selectedCompanyCity when companyCity changes
   useEffect(() => {
-    const currentCompanyCity = watch('companyCity')
-    if (currentCompanyCity !== selectedCompanyCity) {
-      setSelectedCompanyCity(currentCompanyCity)
+    if (companyCity !== selectedCompanyCity) {
+      setSelectedCompanyCity(companyCity)
     }
-  }, [watch('companyCity'), selectedCompanyCity])
+  }, [companyCity, selectedCompanyCity])
 
+  // Effect for updating selectedBillingCity when billingCity changes
   useEffect(() => {
-    const currentBillingCity = watch('billingCity')
-    if (currentBillingCity !== selectedBillingCity) {
-      setSelectedBillingCity(currentBillingCity)
+    if (billingCity !== selectedBillingCity) {
+      setSelectedBillingCity(billingCity)
     }
-  }, [watch('billingCity'), selectedBillingCity])
+  }, [billingCity, selectedBillingCity])
 
   return (
     <div className='space-y-6'>
