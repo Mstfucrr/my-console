@@ -48,7 +48,7 @@ export function DataTableToolbar<TData>({
       {enableColumnVisibility && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='outline' size='sm' {...columnVisibilityTriggerProps}>
+            <Button variant='outline' {...columnVisibilityTriggerProps}>
               Sütunlar
               <ChevronDown className='ml-2 h-4 w-4' />
             </Button>
