@@ -53,14 +53,14 @@ export default function RestaurantInfoCard({ restaurantInfo, onRestaurantInfoUpd
   return (
     <>
       <Card>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='flex items-center gap-2'>
+        <CardHeader className='flex flex-row items-center justify-between gap-2 space-y-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 max-sm:text-base'>
             <Building className='h-5 w-5 text-red-600' />
             Restoran Bilgileri
           </CardTitle>
-          <Button size='xs' variant='outline' onClick={() => setModalOpen(true)}>
-            <Edit className='mr-2 h-4 w-4' />
-            Düzenle
+          <Button className='flex items-center gap-2' variant='outline' onClick={() => setModalOpen(true)}>
+            <Edit className='h-4 w-4' />
+            <span className='max-sm:hidden'>Düzenle</span>
           </Button>
         </CardHeader>
         <CardContent className='space-y-4'>

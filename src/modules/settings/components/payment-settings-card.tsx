@@ -23,14 +23,14 @@ export default function PaymentSettingsCard({ paymentTypes, onPaymentTypeUpdate 
   return (
     <>
       <Card className='h-[320px]'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='flex items-center gap-2'>
+        <CardHeader className='flex flex-row items-center justify-between gap-2 space-y-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 max-sm:text-base'>
             <CreditCard className='h-5 w-5 text-purple-600' />
             Ödeme Tipi Ayarları
           </CardTitle>
-          <Button size='xs' variant='outline' disabled>
-            <Edit className='mr-2 h-4 w-4' />
-            Ayarla (Yakında)
+          <Button className='flex items-center gap-2' variant='outline' disabled>
+            <Edit className='h-4 w-4' />
+            <span className='max-sm:hidden'>Ayarla</span> (Yakında)
           </Button>
         </CardHeader>
         <CardContent>
