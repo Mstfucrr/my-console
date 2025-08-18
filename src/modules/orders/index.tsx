@@ -112,7 +112,7 @@ export default function OrdersView() {
   }
 
   return (
-    <div className='flex flex-col gap-6 p-6'>
+    <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       {/* Sayfa Başlığı */}
       <PageHeader
         title='Siparişler'

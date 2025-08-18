@@ -84,7 +84,7 @@ export default function ReconciliationView() {
   })
 
   return (
-    <div className='space-y-6 p-6'>
+    <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       <ReconciliationHeader onRefresh={loadReconciliationData} isLoading={isLoading} />
 
       <ReconciliationStats stats={stats} />

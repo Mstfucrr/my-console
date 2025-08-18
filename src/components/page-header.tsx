@@ -27,7 +27,7 @@ export function PageHeader({
   showRefreshButton = false
 }: PageHeaderProps) {
   return (
-    <Card>
+    <Card className='max-sm:mt-5'>
       <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2'>
         <div>
           <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>

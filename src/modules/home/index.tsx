@@ -109,7 +109,7 @@ export default function DashboardView() {
   }
 
   return (
-    <div className='flex flex-col gap-6 p-6'>
+    <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       {/* Header */}
       <PageHeader
         title='Dashboard'
