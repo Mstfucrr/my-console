@@ -17,7 +17,7 @@ const fadeUp = {
 export default function OnboardingHeader({ currentStep }: OnboardingHeaderProps) {
   return (
     <Card className='p-4 sm:p-6'>
-      <div className='space-y-4'>
+      <div className='max-sm:space-y-4'>
         {/* Steps */}
         <motion.div
           className='flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6'

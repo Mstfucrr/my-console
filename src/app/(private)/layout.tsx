@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       {!isOnboarding && <Menu />}
-      <div className={cn('pt-16 transition-all duration-150')}>
+      <div className={cn('transition-all duration-150', isOnboarding ? 'pt-10' : 'pt-16')}>
         <div className='flex flex-col gap-4 pb-0'>
           <LayoutWrapper>
             <div className='container mx-auto'>{children}</div>

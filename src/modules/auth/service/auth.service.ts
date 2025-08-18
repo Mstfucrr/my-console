@@ -27,6 +27,20 @@ export interface ISetCookieRequest {
   action_cookie: string
 }
 
+export interface ISignupRequest {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  companyName: string
+  city: string
+  address: string
+}
+
+export interface ISignupResponse {
+  cookie: string
+}
+
 class AuthService {
   async getSigninCookie(): Promise<{ cookie: string }> {
     console.log('getSigninCookie request')
@@ -77,6 +91,22 @@ class AuthService {
     localStorage.setItem('token', response.data.cookie)
     await new Promise(resolve => setTimeout(resolve, 1500))
 
+    return response.data
+  }
+
+  async signup(request: ISignupRequest): Promise<ISignupResponse> {
+    console.log('signup request', request)
+    const response = {
+      data: {
+        cookie: '1234567890',
+        otp: true,
+        phoneNumber: '1234567890',
+        installationId: '1234567890',
+        redirectUrl: 'https://fiyuu.com',
+        otpTimeout: 60
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 1500))
     return response.data
   }
 }

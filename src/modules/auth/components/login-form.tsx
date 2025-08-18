@@ -47,7 +47,7 @@ const LogInForm = () => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full space-y-4'>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
           <FormInputField
@@ -80,6 +80,12 @@ const LogInForm = () => {
           </LoadingButton>
         </form>
       </FormProvider>
+      <div className='text-muted-foreground text-center text-sm'>
+        Hesabınız yok mu?{' '}
+        <Link href='/signup' className='text-primary hover:underline'>
+          Hesap oluştur
+        </Link>
+      </div>
     </div>
   )
 }
