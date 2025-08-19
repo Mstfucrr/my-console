@@ -19,9 +19,9 @@ type Props = {
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
-    onEdit: (item: PaymentType) => void
+    onEdit: (item: TData) => void
     onToggleActive: (id: string, checked: boolean) => void
-    onDelete: (item: PaymentType) => void
+    onDelete: (item: TData) => void
   }
 }
 
