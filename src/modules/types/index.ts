@@ -188,3 +188,7 @@ export interface PaginatedResponse<T> {
   limit: number
   totalPages: number
 }
+
+export type OrderStatusStats = Record<OrderStatus, number> & {
+  total: number
+}

@@ -31,6 +31,7 @@ interface FormCommandSelectFieldProps<T extends FieldValues> {
   formItemClassName?: string
   required?: boolean
   disabled?: boolean
+  onValueChange?: (value: string) => void
 }
 
 export function FormCommandSelectField<T extends FieldValues>({
@@ -43,7 +44,8 @@ export function FormCommandSelectField<T extends FieldValues>({
   emptyMessage = 'Sonuç bulunamadı.',
   formItemClassName,
   required,
-  disabled
+  disabled,
+  onValueChange
 }: FormCommandSelectFieldProps<T>) {
   const [open, setOpen] = useState(false)
 
@@ -63,7 +65,7 @@ export function FormCommandSelectField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} modal onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <CommandTrigger
               aria-expanded={open}
@@ -77,10 +79,10 @@ export function FormCommandSelectField<T extends FieldValues>({
           </PopoverTrigger>
           <PopoverContent className='w-full p-0' align='start'>
             <Command>
-              <CommandInput placeholder={searchPlaceholder} />
+              <CommandInput placeholder={searchPlaceholder} autoFocus />
               <CommandList>
-                <CommandEmpty>{emptyMessage}</CommandEmpty>
-                <CommandGroup>
+                <CommandEmpty className='p-2 text-xs'>{emptyMessage}</CommandEmpty>
+                <CommandGroup className='max-h-[200px] overflow-y-auto'>
                   {options.map(option => (
                     <CommandItem
                       key={option.value}
@@ -88,6 +90,7 @@ export function FormCommandSelectField<T extends FieldValues>({
                       onSelect={selected => {
                         if (option.disabled) return
                         onChange(selected === value ? '' : selected)
+                        onValueChange?.(selected)
                         setOpen(false)
                       }}
                       disabled={option.disabled}

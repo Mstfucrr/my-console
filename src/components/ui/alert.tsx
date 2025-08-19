@@ -41,7 +41,7 @@ const alertVariants = cva(
       {
         variant: 'outline',
         color: 'warning',
-        className: 'text-warning bg-warning/5'
+        className: 'bg-warning/20 text-warning-foreground border-warning'
       },
       {
         variant: 'outline',

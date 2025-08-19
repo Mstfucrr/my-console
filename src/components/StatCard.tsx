@@ -2,24 +2,20 @@ import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/modules/orders/utils'
 import type { LucideIcon } from 'lucide-react'
+import type { HTMLAttributes } from 'react'
 
-export default function StatCard({
-  title,
-  value,
-  Icon,
-  hint,
-  color,
-  type = 'number'
-}: {
+interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   title: string
   value: number
   Icon: LucideIcon | string
   hint: string
   color: string
   type?: 'number' | 'currency'
-}) {
+}
+
+export default function StatCard({ title, value, Icon, hint, color, type = 'number', ...props }: StatCardProps) {
   return (
-    <Card>
+    <Card {...props}>
       <CardContent className='p-4'>
         <div className='flex items-center justify-between'>
           <div>

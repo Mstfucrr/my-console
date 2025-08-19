@@ -3,13 +3,19 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import type { Order } from '@/modules/types'
-import { Clock, CreditCard, Eye, MapPin, Phone, User } from 'lucide-react'
+import { ConfirmButton } from '@/components/ui/confirm-button'
+import { cn } from '@/lib/utils'
+import { orderStatusLabels } from '@/modules/mockData'
+import type { Order, OrderStatus } from '@/modules/types'
+import { Check, Clock, CreditCard, Eye, Flame, MapPin, Phone, Send, User, X } from 'lucide-react'
 import { formatDateTR } from '../utils'
 
 interface OrderCardProps {
   order: Order
   onViewDetails: (order: Order) => void
+  onStatusUpdate?: (orderId: string, newStatus: OrderStatus) => void
+  onCancel?: (orderId: string) => void
+  showActions?: boolean
 }
 
 const getStatusColor = (status: string) => {
@@ -23,19 +29,6 @@ const getStatusColor = (status: string) => {
     cancelled: 'bg-gray-100 text-gray-800'
   }
   return colorMap[status] || 'bg-gray-100 text-gray-800'
-}
-
-const getStatusLabel = (status: string) => {
-  const labelMap: Record<string, string> = {
-    pending: 'Beklemede',
-    preparing: 'Hazırlanıyor',
-    ready: 'Hazır',
-    picked_up: 'Alındı',
-    on_way: 'Yolda',
-    delivered: 'Teslim Edildi',
-    cancelled: 'İptal Edildi'
-  }
-  return labelMap[status] || status
 }
 
 const getPaymentMethodLabel = (method: string) => {
@@ -92,7 +85,7 @@ const getIntegrationIcon = (integration: string) => {
   return iconMap[integration] || '📦'
 }
 
-export function OrderCard({ order, onViewDetails }: OrderCardProps) {
+export function OrderCard({ order, onViewDetails, onStatusUpdate, onCancel, showActions = false }: OrderCardProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('tr-TR', {
       style: 'currency',
@@ -100,15 +93,91 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
     }).format(amount)
   }
 
+  // Check if order needs urgent attention (pending status)
+  const isUrgent = order.status === 'pending'
+
+  // Get next status actions based on current status
+  const getActionButtons = () => {
+    if (!showActions || !onStatusUpdate) return null
+
+    const buttons = []
+
+    switch (order.status) {
+      case 'pending':
+        buttons.push(
+          <Button
+            key='accept'
+            onClick={() => onStatusUpdate(order.id, 'preparing')}
+            className='bg-green-600 hover:bg-green-700'
+          >
+            <Check className='mr-1 h-3 w-3' />
+            Kabul Et
+          </Button>
+        )
+        if (onCancel) {
+          buttons.push(
+            <ConfirmButton
+              key='cancel'
+              confirmationMessage='Siparişi iptal et?'
+              confirmButtonMessage='Evet'
+              cancelButtonMessage='Hayır'
+              variant='outline'
+              onConfirm={() => onCancel(order.id)}
+            >
+              <X className='mr-1 h-3 w-3' />
+              İptal
+            </ConfirmButton>
+          )
+        }
+        break
+
+      case 'preparing':
+        buttons.push(
+          <Button
+            key='prepared'
+            onClick={() => onStatusUpdate(order.id, 'prepared')}
+            className='bg-blue-600 hover:bg-blue-700'
+          >
+            <Flame className='mr-1 h-3 w-3' />
+            Hazırlandı
+          </Button>
+        )
+        break
+
+      case 'prepared':
+        buttons.push(
+          <Button
+            key='send'
+            onClick={() => onStatusUpdate(order.id, 'ready')}
+            className='bg-amber-600 text-white hover:bg-amber-700'
+          >
+            <Send className='mr-1 h-3 w-3' />
+            Fiyuu Gönder
+          </Button>
+        )
+        break
+    }
+
+    return buttons
+  }
+
   return (
-    <Card className='mb-3 transition-shadow hover:shadow-md'>
+    <Card className={cn('mb-3 transition-shadow hover:shadow-md', isUrgent && 'border-red-500 bg-red-50')}>
       <CardContent className='p-4'>
         <div className='flex items-start justify-between gap-4'>
           <div className='min-w-0 flex-1'>
             {/* Sipariş ID ve Durum */}
             <div className='mb-2 flex flex-wrap items-center gap-2'>
-              <h3 className='text-foreground truncate text-sm font-medium'>{order.id}</h3>
-              <Badge className={getStatusColor(order.status)}>{getStatusLabel(order.status)}</Badge>
+              <h3 className='text-foreground flex items-center gap-2 truncate text-sm font-medium'>
+                {order.id}
+                {isUrgent && <span className='animate-pulse text-red-500'>🔥</span>}
+              </h3>
+              <Badge className={getStatusColor(order.status)}>{orderStatusLabels[order.status as OrderStatus]}</Badge>
+              {isUrgent && (
+                <Badge variant='outline' className='border-red-600 text-xs font-bold text-red-600'>
+                  ACİL!
+                </Badge>
+              )}
             </div>
 
             {/* Ödeme Yöntemi ve Entegrasyon */}
@@ -154,11 +223,14 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
             {/* Restoran Bilgisi */}
             <div className='text-muted-foreground mb-2 text-xs'>{order.restaurant.name}</div>
 
-            {/* Detay Butonu */}
-            <Button size='sm' variant='outline' onClick={() => onViewDetails(order)} className='w-full'>
-              <Eye className='mr-1 h-3 w-3' />
-              Detay
-            </Button>
+            {/* Action Buttons veya Detay Butonu */}
+            <div className='flex flex-col items-end gap-2'>
+              <div className='flex flex-row flex-wrap gap-2'>{getActionButtons()}</div>
+              <Button variant='outline' onClick={() => onViewDetails(order)}>
+                <Eye className='mr-1 h-3 w-3' />
+                Detay
+              </Button>
+            </div>
           </div>
         </div>
 

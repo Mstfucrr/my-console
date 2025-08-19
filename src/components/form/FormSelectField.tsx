@@ -2,6 +2,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, type SelectProps } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
+import { ScrollArea } from '../ui/scroll-area'
 
 interface SelectOption {
   value: string
@@ -15,6 +16,7 @@ interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 
   placeholder?: string
   options: SelectOption[]
   formItemClassName?: string
+  onValueChange?: (value: string) => void
 }
 
 export function FormSelectField<T extends FieldValues>({
@@ -24,12 +26,18 @@ export function FormSelectField<T extends FieldValues>({
   placeholder,
   options,
   formItemClassName,
+  onValueChange,
   ...props
 }: FormSelectFieldProps<T>) {
   const {
     field: { value, onChange },
     fieldState: { error }
   } = useController({ name, control })
+
+  const handleValueChange = (value: string) => {
+    onValueChange?.(value)
+    onChange(value)
+  }
 
   return (
     <FormItem className={formItemClassName}>
@@ -39,16 +47,24 @@ export function FormSelectField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        <Select value={value} onValueChange={onChange} {...props}>
+        <Select value={value} onValueChange={handleValueChange} {...props}>
           <SelectTrigger className={cn('w-full', error && 'border-red-500')}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
-            {options.map(option => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
+            {options.length > 0 ? (
+              <ScrollArea className='max-h-48 overflow-y-auto'>
+                {options.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </ScrollArea>
+            ) : (
+              <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
+                Bir sonuç bulunamadı.
+              </div>
+            )}
           </SelectContent>
         </Select>
       </FormControl>

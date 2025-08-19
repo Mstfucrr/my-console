@@ -1,5 +1,6 @@
 'use client'
 
+import { FormCommandSelectField } from '@/components/form/FormCommandSelectField'
 import { FormInputField } from '@/components/form/FormInputField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { FormSwitchField } from '@/components/form/FormSwitchField'
@@ -18,48 +19,333 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
 
+// Türkiye şehir, ilçe, mahalle verileri
+const addressData: {
+  cities: string[]
+  districts: { [key: string]: string[] }
+  neighborhoods: { [key: string]: string[] }
+} = {
+  cities: [
+    'Adana',
+    'Adıyaman',
+    'Afyonkarahisar',
+    'Ağrı',
+    'Amasya',
+    'Ankara',
+    'Antalya',
+    'Artvin',
+    'Aydın',
+    'Balıkesir',
+    'Bilecik',
+    'Bingöl',
+    'Bitlis',
+    'Bolu',
+    'Burdur',
+    'Bursa',
+    'Çanakkale',
+    'Çankırı',
+    'Çorum',
+    'Denizli',
+    'Diyarbakır',
+    'Edirne',
+    'Elazığ',
+    'Erzincan',
+    'Erzurum',
+    'Eskişehir',
+    'Gaziantep',
+    'Giresun',
+    'Gümüşhane',
+    'Hakkari',
+    'Hatay',
+    'Isparta',
+    'Mersin',
+    'İstanbul',
+    'İzmir',
+    'Kars',
+    'Kastamonu',
+    'Kayseri',
+    'Kırklareli',
+    'Kırşehir',
+    'Kocaeli',
+    'Konya',
+    'Kütahya',
+    'Malatya',
+    'Manisa',
+    'Kahramanmaraş',
+    'Mardin',
+    'Muğla',
+    'Muş',
+    'Nevşehir',
+    'Niğde',
+    'Ordu',
+    'Rize',
+    'Sakarya',
+    'Samsun',
+    'Siirt',
+    'Sinop',
+    'Sivas',
+    'Tekirdağ',
+    'Tokat',
+    'Trabzon',
+    'Tunceli',
+    'Şanlıurfa',
+    'Uşak',
+    'Van',
+    'Yozgat',
+    'Zonguldak',
+    'Aksaray',
+    'Bayburt',
+    'Karaman',
+    'Kırıkkale',
+    'Batman',
+    'Şırnak',
+    'Bartın',
+    'Ardahan',
+    'Iğdır',
+    'Yalova',
+    'Karabük',
+    'Kilis',
+    'Osmaniye',
+    'Düzce'
+  ],
+  districts: {
+    İstanbul: [
+      'Adalar',
+      'Arnavutköy',
+      'Ataşehir',
+      'Avcılar',
+      'Bağcılar',
+      'Bahçelievler',
+      'Bakırköy',
+      'Başakşehir',
+      'Bayrampaşa',
+      'Beşiktaş',
+      'Beykoz',
+      'Beylikdüzü',
+      'Beyoğlu',
+      'Büyükçekmece',
+      'Çatalca',
+      'Çekmeköy',
+      'Esenler',
+      'Esenyurt',
+      'Eyüpsultan',
+      'Fatih',
+      'Gaziosmanpaşa',
+      'Güngören',
+      'Kadıköy',
+      'Kağıthane',
+      'Kartal',
+      'Küçükçekmece',
+      'Maltepe',
+      'Pendik',
+      'Sancaktepe',
+      'Sarıyer',
+      'Silivri',
+      'Şile',
+      'Şişli',
+      'Sultangazi',
+      'Sultanbeyli',
+      'Tuzla',
+      'Ümraniye',
+      'Üsküdar',
+      'Zeytinburnu'
+    ],
+    Ankara: [
+      'Akyurt',
+      'Altındağ',
+      'Ayaş',
+      'Bala',
+      'Beypazarı',
+      'Çamlıdere',
+      'Çankaya',
+      'Çubuk',
+      'Elmadağ',
+      'Etimesgut',
+      'Evren',
+      'Gölbaşı',
+      'Güdül',
+      'Haymana',
+      'Kalecik',
+      'Kazan',
+      'Keçiören',
+      'Kızılcahamam',
+      'Mamak',
+      'Nallıhan',
+      'Polatlı',
+      'Pursaklar',
+      'Sincan',
+      'Şereflikoçhisar',
+      'Yenimahalle'
+    ],
+    İzmir: [
+      'Aliağa',
+      'Balçova',
+      'Bayındır',
+      'Bayraklı',
+      'Bergama',
+      'Beydağ',
+      'Bornova',
+      'Buca',
+      'Çeşme',
+      'Çiğli',
+      'Dikili',
+      'Foça',
+      'Gaziemir',
+      'Güzelbahçe',
+      'Karabağlar',
+      'Karaburun',
+      'Karşıyaka',
+      'Kemalpaşa',
+      'Kınık',
+      'Kiraz',
+      'Konak',
+      'Menderes',
+      'Menemen',
+      'Narlıdere',
+      'Ödemiş',
+      'Seferihisar',
+      'Selçuk',
+      'Tire',
+      'Torbalı',
+      'Urla'
+    ]
+  },
+  neighborhoods: {
+    Kadıköy: [
+      'Acıbadem',
+      'Bostancı',
+      'Caferağa',
+      'Caddebostan',
+      'Erenköy',
+      'Fenerbahçe',
+      'Feneryolu',
+      'Fikirtepe',
+      'Göztepe',
+      'Hasanpaşa',
+      'İçerenköy',
+      'Khalkedon',
+      'Koşuyolu',
+      'Kozyatağı',
+      'Merdivenköy',
+      'Moda',
+      'Özgürlük',
+      'Rasimpaşa',
+      'Sahrayıcedit',
+      'Suadiye',
+      'Zühtüpaşa'
+    ],
+    Beşiktaş: [
+      'Abbasağa',
+      'Akatlar',
+      'Arnavutköy',
+      'Bebek',
+      'Beşiktaş',
+      'Dikilitaş',
+      'Etiler',
+      'Gayrettepe',
+      'Konaklar',
+      'Kuruçeşme',
+      'Levent',
+      'Muradiye',
+      'Nisbetiye',
+      'Ortaköy',
+      'Sinanpaşa',
+      'Ulus',
+      'Vişnezade',
+      'Yıldız'
+    ],
+    Çankaya: [
+      'Ahlatlıbel',
+      'Akköprü',
+      'Alacaatlı',
+      'Alemdar',
+      'Aşağı Öveçler',
+      'Ayrancı',
+      'Bahçelievler',
+      'Barbaros',
+      'Birlik',
+      'Cevizlidere',
+      'Çukurambar',
+      'Dikmen',
+      'Emek',
+      'Esat',
+      'Gaziosmanpaşa',
+      'GOP',
+      'Hilal',
+      'Huzur',
+      'İlkadım',
+      'İmrahor',
+      'İncesu',
+      'Kavaklıdere',
+      'Kızılay',
+      'Konutkent',
+      'Kültür',
+      'Maltepe',
+      'Mebusevleri',
+      'Öveçler',
+      'Remzi Oğuz Arık',
+      'Seyranbağları',
+      'Sokullu',
+      'Şehit Daniş Tunalıgil',
+      'Tahran',
+      'Taşpınar',
+      'Ümit',
+      'Yıldızevler',
+      'Yukarı Öveçler',
+      'Yükseltepe'
+    ]
+  }
+}
+
+const transformPriceToNumber = (price: string) => {
+  return Number(price)
+}
+
 const orderItemSchema = z.object({
   id: z.string().min(1, 'Ürün ID zorunludur'),
   name: z.string().min(1, 'Ürün adı zorunludur'),
   quantity: z.number().min(1, 'Adet en az 1 olmalıdır'),
-  price: z.number().min(0, "Fiyat 0'dan büyük olmalıdır")
+  price: z.string().min(1, 'Fiyat zorunludur').transform(transformPriceToNumber)
 })
 
 const createOrderSchema = z.object({
   // Müşteri Bilgileri
-  firstName: z.string().min(2, 'Ad en az 2 karakter olmalıdır'),
-  lastName: z.string().min(2, 'Soyad en az 2 karakter olmalıdır'),
-  customerPhone: z.string().min(10, 'Telefon numarası en az 10 karakter olmalıdır'),
+  firstName: z.string().min(2, 'Ad en az 2 karakter olmalıdır').default(''),
+  lastName: z.string().min(2, 'Soyad en az 2 karakter olmalıdır').default(''),
+  customerPhone: z.string().min(10, 'Telefon numarası en az 10 karakter olmalıdır').default(''),
   extensionPhone: z.string().optional(),
 
   // Sipariş Bilgileri
   preparationTime: z
-    .number()
-    .min(1, 'Hazırlık süresi en az 1 dakika olmalıdır')
-    .max(120, 'Hazırlık süresi en fazla 120 dakika olabilir'),
-  totalAmount: z.number().min(0, "Toplam tutar 0'dan büyük olmalıdır"),
+    .string()
+    .min(1, 'Hazırlık süresi zorunludur')
+    .default('')
+    .transform(transformPriceToNumber)
+    .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
+    .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
+  totalAmount: z.string().min(1, 'Toplam tutar zorunludur').default('').transform(transformPriceToNumber),
 
   // Adres Bilgileri
-  city: z.string().min(1, 'Şehir zorunludur'),
-  county: z.string().min(1, 'İlçe zorunludur'),
-  neighborhood: z.string().min(1, 'Mahalle zorunludur'),
-  street: z.string().min(1, 'Sokak zorunludur'),
+  city: z.string().min(1, 'Şehir zorunludur').default(''),
+  county: z.string().min(1, 'İlçe zorunludur').default(''),
+  neighborhood: z.string().min(1, 'Mahalle zorunludur').default(''),
+  street: z.string().min(1, 'Sokak zorunludur').default(''),
   buildingNumber: z.string().optional(),
   floor: z.string().optional(),
   buildingName: z.string().optional(),
   doorNumber: z.string().optional(),
   postalCode: z.string().optional(),
-  fullAddress: z.string().min(10, 'Tam adres en az 10 karakter olmalıdır'),
+  fullAddress: z.string().min(10, 'Tam adres en az 10 karakter olmalıdır').default(''),
   addressDirection: z.string().optional(),
 
   // Ödeme ve Teslimat
-  paymentTypeSId: z.string().min(1, 'Ödeme tipi seçimi zorunludur'),
+  paymentTypeSId: z.string().min(1, 'Ödeme tipi seçimi zorunludur').default(''),
   currencyCode: z.string().default('TRY'),
   contactlessDelivery: z.boolean().default(false),
   ringDoorBell: z.boolean().default(true),
 
   // Ürünler
-  products: z.array(orderItemSchema).min(1, 'En az 1 ürün eklemelisiniz').optional()
+  products: z.array(orderItemSchema).min(1, 'En az 1 ürün eklemelisiniz').optional().default([])
 })
 
 type CreateOrderFormData = z.infer<typeof createOrderSchema>
@@ -85,33 +371,13 @@ const currencies = [
 export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [calculatedTotal, setCalculatedTotal] = useState(0)
+  const [selectedCity, setSelectedCity] = useState<string>('')
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('')
+  const [availableDistricts, setAvailableDistricts] = useState<string[]>([])
+  const [availableNeighborhoods, setAvailableNeighborhoods] = useState<string[]>([])
 
   const form = useForm<CreateOrderFormData>({
-    resolver: zodResolver(createOrderSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      customerPhone: '',
-      extensionPhone: '',
-      preparationTime: 30,
-      totalAmount: 0,
-      city: '',
-      county: '',
-      neighborhood: '',
-      street: '',
-      buildingNumber: '',
-      floor: '',
-      buildingName: '',
-      doorNumber: '',
-      postalCode: '',
-      fullAddress: '',
-      addressDirection: '',
-      paymentTypeSId: '',
-      currencyCode: 'TRY',
-      contactlessDelivery: false,
-      ringDoorBell: true,
-      products: []
-    }
+    resolver: zodResolver(createOrderSchema)
   })
 
   const { fields, append, remove, update } = useFieldArray({
@@ -121,6 +387,23 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
 
   const watchedProducts = form.watch('products')
   const watchedTotalAmount = form.watch('totalAmount')
+
+  // Şehir değiştiğinde ilçeleri güncelle
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city)
+    setSelectedDistrict('')
+    setAvailableDistricts(addressData.districts[city] || [])
+    setAvailableNeighborhoods([])
+    form.setValue('county', '')
+    form.setValue('neighborhood', '')
+  }
+
+  // İlçe değiştiğinde mahalleleri güncelle
+  const handleDistrictChange = (district: string) => {
+    setSelectedDistrict(district)
+    setAvailableNeighborhoods(addressData.neighborhoods[district] || [])
+    form.setValue('neighborhood', '')
+  }
 
   // Ürünlerden toplam hesapla
   const calculateProductTotal = () => {
@@ -213,6 +496,11 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
       onClose()
       form.reset()
       setCalculatedTotal(0)
+      // Reset address state
+      setSelectedCity('')
+      setSelectedDistrict('')
+      setAvailableDistricts([])
+      setAvailableNeighborhoods([])
     } catch (error) {
       toast.error('Sipariş oluşturulurken bir hata oluştu.')
       console.error('Error creating order:', error)
@@ -224,6 +512,11 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
   const handleClose = () => {
     form.reset()
     setCalculatedTotal(0)
+    // Reset address state
+    setSelectedCity('')
+    setSelectedDistrict('')
+    setAvailableDistricts([])
+    setAvailableNeighborhoods([])
     onClose()
   }
 
@@ -305,14 +598,34 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   <CardTitle className='flex items-center gap-2 text-lg'>🏠 Adres Bilgileri</CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                    <FormInputField name='city' control={form.control} label='Şehir' placeholder='İstanbul' />
-                    <FormInputField name='county' control={form.control} label='İlçe' placeholder='Kadıköy' />
-                    <FormInputField
+                  <div className='relative grid grid-cols-1 gap-4 md:grid-cols-3'>
+                    <FormCommandSelectField
+                      name='city'
+                      control={form.control}
+                      label='Şehir'
+                      placeholder='Şehir seçin'
+                      options={addressData.cities.map(city => ({ value: city, label: city }))}
+                      onValueChange={handleCityChange}
+                    />
+                    <FormCommandSelectField
+                      name='county'
+                      control={form.control}
+                      label='İlçe'
+                      placeholder='İlçe seçin'
+                      options={availableDistricts.map(district => ({ value: district, label: district }))}
+                      disabled={!selectedCity}
+                      onValueChange={handleDistrictChange}
+                    />
+                    <FormCommandSelectField
                       name='neighborhood'
                       control={form.control}
                       label='Mahalle'
-                      placeholder='Caferağa Mahallesi'
+                      placeholder='Mahalle seçin'
+                      options={availableNeighborhoods.map(neighborhood => ({
+                        value: neighborhood,
+                        label: neighborhood
+                      }))}
+                      disabled={!selectedDistrict}
                     />
                   </div>
 

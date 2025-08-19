@@ -18,8 +18,9 @@ import {
   TimelineSeparator
 } from '@/components/ui/timeline'
 import { cn } from '@/lib/utils'
+import { orderStatusLabels } from '@/modules/mockData'
 import type { Order } from '@/modules/types'
-import { AlertTriangle, Car, CheckCircle, Clock, MapPin, Phone, Store, User } from 'lucide-react'
+import { AlertTriangle, Car, CheckCircle, Clock, MapPin, Phone, Star, Store, User } from 'lucide-react'
 import { formatDateTR } from '../utils'
 
 interface OrderDetailDialogProps {
@@ -41,19 +42,6 @@ const getStatusColor = (status: string) => {
   return colorMap[status] || 'bg-gray-100 text-gray-800'
 }
 
-const getStatusLabel = (status: string) => {
-  const labelMap: Record<string, string> = {
-    pending: 'Beklemede',
-    preparing: 'Hazırlanıyor',
-    ready: 'Hazır',
-    picked_up: 'Alındı',
-    on_way: 'Yolda',
-    delivered: 'Teslim Edildi',
-    cancelled: 'İptal Edildi'
-  }
-  return labelMap[status] || status
-}
-
 const getTimelineIcon = (status: string) => {
   const iconMap: Record<string, React.ReactNode> = {
     pending: <Clock className='h-3 w-3' />,
@@ -67,6 +55,24 @@ const getTimelineIcon = (status: string) => {
   return iconMap[status] || <Clock className='h-3 w-3' />
 }
 
+const getVehicleLabel = (vehicleType: string): string => {
+  const vehicleMap: Record<string, string> = {
+    motorcycle: 'Motosiklet',
+    bicycle: 'Bisiklet',
+    car: 'Araba'
+  }
+  return vehicleMap[vehicleType] || vehicleType
+}
+
+const getVehicleIcon = (vehicleType: string): string => {
+  const iconMap: Record<string, string> = {
+    motorcycle: '🏍️',
+    bicycle: '🚲',
+    car: '🚗'
+  }
+  return iconMap[vehicleType] || '🚚'
+}
+
 export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
   if (!order) return null
 
@@ -78,6 +84,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
   }
 
   const showCourierTracking = order.status === 'on_way' && order.courierLocation
+  const showCourierInfo = order.courierInfo && ['picked_up', 'on_way', 'delivered'].includes(order.status)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -85,28 +92,91 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
         <DialogHeader className='p-6 pb-0'>
           <DialogTitle className='flex items-center gap-3'>
             <span>Sipariş Detayı</span>
-            <Badge className={getStatusColor(order.status)}>{getStatusLabel(order.status)}</Badge>
+            <Badge className={getStatusColor(order.status)}>
+              {orderStatusLabels[order.status as keyof typeof orderStatusLabels]}
+            </Badge>
           </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className='max-h-[70vh] p-6 pt-0'>
-          {/* Kurye Takibi Uyarısı */}
-          {showCourierTracking && (
-            <Alert className='mb-4'>
-              <Car className='h-4 w-4' />
-              <AlertDescription>
-                <div>
-                  <p className='font-medium'>Kurye Takibi Aktif</p>
-                  <p className='text-sm'>Sipariş şu anda kurye ile müşteriye doğru yola çıktı.</p>
-                  <p className='text-muted-foreground mt-1 text-xs'>
-                    Son konum güncellemesi: {formatDateTR(order.courierLocation!.lastUpdated)}
-                  </p>
+          {/* Kurye Bilgileri */}
+          {showCourierInfo && order.courierInfo && (
+            <Card className='mb-4 border-amber-200 bg-amber-50'>
+              <CardHeader className='pb-3'>
+                <CardTitle className='flex items-center gap-2 text-base'>
+                  <Car className='h-4 w-4 text-amber-600' />
+                  Kurye Bilgileri
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='space-y-4'>
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-2'>
+                      <User className='text-muted-foreground h-4 w-4' />
+                      <span className='font-medium'>{order.courierInfo.name}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Phone className='text-muted-foreground h-4 w-4' />
+                      <span>{order.courierInfo.phone}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <span>{getVehicleIcon(order.courierInfo.vehicleType)}</span>
+                      <span>{getVehicleLabel(order.courierInfo.vehicleType)}</span>
+                      {order.courierInfo.licensePlate && (
+                        <Badge variant='outline' className='text-xs'>
+                          {order.courierInfo.licensePlate}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-2'>
+                      <Star className='h-4 w-4 text-amber-500' />
+                      <div className='flex items-center gap-1'>
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-3 w-3 ${
+                              i < order.courierInfo!.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className='text-muted-foreground text-sm'>({order.courierInfo.rating})</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <User className='text-muted-foreground h-4 w-4' />
+                      <span className='text-muted-foreground text-sm'>
+                        {order.courierInfo.totalDeliveries} teslimat
+                      </span>
+                    </div>
+                    {order.courierInfo.currentLocation && (
+                      <div className='flex items-center gap-2'>
+                        <MapPin className='h-4 w-4 text-green-600' />
+                        <span className='text-muted-foreground text-xs'>
+                          Son konum: {formatDateTR(order.courierInfo.currentLocation.lastUpdated)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <Button size='sm' variant='outline' disabled className='mt-2'>
-                  Haritada Görüntüle (Yakında)
-                </Button>
-              </AlertDescription>
-            </Alert>
+
+                {showCourierTracking && (
+                  <Alert className='mt-3'>
+                    <Car className='h-4 w-4' />
+                    <AlertDescription className='flex items-center justify-between'>
+                      <div>
+                        <p className='font-medium'>Kurye Yolda</p>
+                        <p className='text-sm'>Sipariş şu anda müşteriye doğru yola çıktı.</p>
+                      </div>
+                      <Button size='sm' variant='outline' disabled>
+                        Haritada Görüntüle (Yakında)
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
           )}
 
           <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
@@ -123,7 +193,9 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-muted-foreground text-sm'>Durum:</span>
-                    <Badge className={getStatusColor(order.status)}>{getStatusLabel(order.status)}</Badge>
+                    <Badge className={getStatusColor(order.status)}>
+                      {orderStatusLabels[order.status as keyof typeof orderStatusLabels]}
+                    </Badge>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-muted-foreground text-sm'>Oluşturulma:</span>
