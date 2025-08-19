@@ -15,7 +15,7 @@ import type { WorkingArea, WorkingAreaFormData } from './types'
 const workingAreaSchema = z.object({
   name: z.string().min(1, 'Alan adı gereklidir'),
   isActive: z.boolean().default(true)
-}) satisfies z.ZodType<WorkingAreaFormData>
+})
 
 interface WorkingAreaModalProps {
   open: boolean

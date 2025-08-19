@@ -32,7 +32,6 @@ export default function PaymentSettingsCard({
   const [open, setOpen] = useState(false)
 
   const handleToggleActive = (id: string, checked: boolean) => {
-    const next = paymentTypes.map(p => (p.id === id ? { ...p, isActive: checked } : p))
     onPaymentTypeUpdate(id, { isActive: checked })
   }
 
