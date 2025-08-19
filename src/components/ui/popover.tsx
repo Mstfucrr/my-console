@@ -7,12 +7,10 @@ import * as React from 'react'
 /** Açık olan en üst Dialog/AlertDialog Content elemanını bulur */
 function findTopMostOpenDialog(): HTMLElement | null {
   if (typeof document === 'undefined') return null
-  // Radix Dialog ve AlertDialog content nodları role=dialog/alertdialog ve data-state="open" taşır
   const dialogs = Array.from(
     document.querySelectorAll<HTMLElement>('[role="dialog"][data-state="open"],[role="alertdialog"][data-state="open"]')
   )
   if (dialogs.length === 0) return null
-  // En son (DOM'da en aşağıda) olanı al: tipik olarak en üstteki modal
   return dialogs[dialogs.length - 1]
 }
 
@@ -25,7 +23,7 @@ type PopoverContentBaseProps = React.ComponentPropsWithoutRef<typeof PopoverPrim
 type PopoverContentProps = PopoverContentBaseProps & {
   /** true: varsa otomatik olarak açık Dialog içine portal'la (default: true) */
   mountInsideDialog?: boolean
-  /** Açılışta içerideki ilk input'a otomatik odaklan */
+  /** Açılışta içerideki ilk input'a otomatik odaklan (default: true) */
   autoFocus?: boolean
 }
 
@@ -42,22 +40,18 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
     },
     ref
   ) => {
-    // İlk render'da senkron bak: flicker olmadan doğru container'a portal'la
+    // İlk render'da container'ı belirle
     const initialContainer = React.useMemo(
       () => (mountInsideDialog ? findTopMostOpenDialog() : null),
       [mountInsideDialog]
     )
     const [containerEl, setContainerEl] = React.useState<HTMLElement | null>(initialContainer)
 
-    // Dialog açılıp kapanırsa veya bu komponent farklı bir anda mount olursa tekrar dene
+    // Mount/yeniden açılmalarda container'ı güncelle
     React.useEffect(() => {
       if (!mountInsideDialog) return
-      // Eğer container bulunamadıysa (ör. SSR -> hydrate), mount sonrası tekrar ara
-      if (!containerEl) {
-        const found = findTopMostOpenDialog()
-        if (found) setContainerEl(found)
-      }
-    }, [mountInsideDialog, containerEl])
+      setContainerEl(findTopMostOpenDialog())
+    }, [mountInsideDialog])
 
     return (
       <PopoverPrimitive.Portal container={containerEl ?? undefined}>
@@ -65,7 +59,6 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
           ref={ref}
           align={align}
           sideOffset={sideOffset}
-          // Dialog içinde olduğumuzda z-index'i içerikle uyumlu tut (overlay genelde z-50 civarıdır)
           className={cn(
             'bg-popover text-popover-foreground',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
@@ -73,39 +66,32 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
             'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
             'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-            'z-[70] w-72 rounded-md border p-4 shadow-md outline-none', // z-[70]: DialogContent (z-50~60) üstünde kalır
+            // DialogOverlay genelde z-50; Content ~z-60. Bunu bir tık üste alıyoruz.
+            'z-[70] w-72 rounded-md border p-4 shadow-md outline-none',
             className
           )}
-          // Açılışta input'a odaklan; üst form submit/blur tetiklemesin
           onOpenAutoFocus={e => {
             onOpenAutoFocus?.(e)
             if (!autoFocus) return
             try {
-              // Radix kendi odak davranışını engelleyip sonra ilk input'a odaklan
+              // Radix'in default focusunu engelleyip ilk input'a fokus
               e.preventDefault()
               requestAnimationFrame(() => {
-                const root = (e.currentTarget as HTMLElement) ?? document
+                const root = e.currentTarget as HTMLElement
+                if (!root) return
                 const input = root.querySelector<HTMLInputElement>('input, [contenteditable="true"]')
                 input?.focus()
-                // caret'i sona al
-                if (input && input.setSelectionRange) {
+                if (input?.setSelectionRange) {
                   const v = input.value ?? ''
                   input.setSelectionRange(v.length, v.length)
                 }
               })
             } catch {
-              /* yut */
+              /* noop */
             }
           }}
-          // Popover içindeki tıklamaları "outside" sanıp kapatmayı önle
-          onPointerDownOutside={evt => {
-            // Eğer tıklanan target, Popover içindeki cmdk/combobox köküne yakınsa, kapatma
-            const t = evt.target as HTMLElement
-            if (t.closest('[cmdk-root]') || t.closest('[role="combobox"]')) {
-              evt.preventDefault()
-            }
-            props.onPointerDownOutside?.(evt)
-          }}
+          // Not: onPointerDownOutside / onInteractOutside EKLEMEDİK.
+          // Böylece outside click default olarak popover'ı kapatır.
           {...props}
         />
       </PopoverPrimitive.Portal>
@@ -114,7 +100,7 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
 )
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
-/** İhtiyaç duyarsan basit bir custom popover (portal kullanmadan) — değişmedi */
+/** Basit custom popover (portal kullanmadan) — opsiyonel util */
 interface CustomPopoverProps {
   children: React.ReactNode
   open?: boolean
