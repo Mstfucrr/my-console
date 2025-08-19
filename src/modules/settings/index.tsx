@@ -136,6 +136,10 @@ export default function SettingsView() {
     setWorkingAreas(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
   }
 
+  const handleWorkingAreaAdd = (area: WorkingArea) => {
+    setWorkingAreas(prev => [...prev, area])
+  }
+
   const handlePaymentTypeUpdate = (id: string, data: Partial<PaymentType>) => {
     setPaymentTypes(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
   }
@@ -169,7 +173,11 @@ export default function SettingsView() {
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
         <IntegrationSettingsCard integrations={integrations} onIntegrationUpdate={handleIntegrationUpdate} />
 
-        <WorkingAreaSettingsCard workingAreas={workingAreas} onWorkingAreaUpdate={handleWorkingAreaUpdate} />
+        <WorkingAreaSettingsCard
+          workingAreas={workingAreas}
+          onWorkingAreaUpdate={handleWorkingAreaUpdate}
+          onWorkingAreaAdd={handleWorkingAreaAdd}
+        />
 
         <PaymentSettingsCard paymentTypes={paymentTypes} onPaymentTypeUpdate={handlePaymentTypeUpdate} />
 

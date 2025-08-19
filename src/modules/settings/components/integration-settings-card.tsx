@@ -123,7 +123,7 @@ export default function IntegrationSettingsCard({ integrations, onIntegrationUpd
             <DialogTitle>Entegrasyon Yönetimi</DialogTitle>
           </DialogHeader>
 
-          <Alert>
+          <Alert variant='outline' color='info'>
             <AlertCircle className='h-4 w-4' />
             <AlertTitle>Entegrasyon Bilgisi</AlertTitle>
             <AlertDescription>
@@ -252,14 +252,11 @@ export default function IntegrationSettingsCard({ integrations, onIntegrationUpd
                             )}
                           </div>
                         </div>
-                        <div className='flex items-center justify-between pt-2'>
+                        <div className='flex items-center justify-end gap-2 pt-2'>
                           <span className='text-muted-foreground'>Durum:</span>
                           <div className='flex items-center gap-2'>
-                            <span className='text-sm'>{integration.isActive ? 'Aktif' : 'Pasif'}</span>
-                            <Switch
-                              checked={integration.isActive}
-                              onCheckedChange={checked => onIntegrationUpdate(integration.id, { isActive: checked })}
-                            />
+                            <span className='sr-only'>{integration.isActive ? 'Aktif' : 'Pasif'}</span>
+                            <Switch checked={integration.isActive} disabled />
                           </div>
                         </div>
                       </div>
