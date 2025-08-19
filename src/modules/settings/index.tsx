@@ -144,6 +144,14 @@ export default function SettingsView() {
     setPaymentTypes(prev => prev.map(item => (item.id === id ? { ...item, ...data } : item)))
   }
 
+  const handlePaymentTypeAdd = (payment: PaymentType) => {
+    setPaymentTypes(prev => [...prev, payment])
+  }
+
+  const handlePaymentTypeDelete = (id: string) => {
+    setPaymentTypes(prev => prev.filter(item => item.id !== id))
+  }
+
   const handleWorkingHoursUpdate = (hours: WorkingHour[]) => {
     setWorkingHours(hours)
   }
@@ -179,7 +187,12 @@ export default function SettingsView() {
           onWorkingAreaAdd={handleWorkingAreaAdd}
         />
 
-        <PaymentSettingsCard paymentTypes={paymentTypes} onPaymentTypeUpdate={handlePaymentTypeUpdate} />
+        <PaymentSettingsCard
+          paymentTypes={paymentTypes}
+          onPaymentTypeUpdate={handlePaymentTypeUpdate}
+          onPaymentTypeAdd={handlePaymentTypeAdd}
+          onPaymentTypeDelete={handlePaymentTypeDelete}
+        />
 
         <WorkingHoursCard workingHours={workingHours} onWorkingHoursUpdate={handleWorkingHoursUpdate} />
       </div>

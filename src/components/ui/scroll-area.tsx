@@ -19,7 +19,7 @@ interface ScrollBarProps {
 }
 
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className, children, orientation = 'both', scrollHideDelay = 600, ...props }) => {
+  ({ className, children, orientation = 'both', scrollHideDelay = 2000, ...props }) => {
     const containerRef = React.useRef<HTMLDivElement>(null)
     const contentRef = React.useRef<HTMLDivElement>(null)
     const [showScrollbars, setShowScrollbars] = React.useState(false)
@@ -92,7 +92,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     const shouldShowHorizontal = orientation === 'horizontal' || orientation === 'both'
 
     return (
-      <div ref={containerRef} className={cn('relative overflow-hidden', className)} {...props}>
+      <div ref={containerRef} className={cn('relative -mr-2 overflow-hidden pr-2', className)} {...props}>
         <div
           ref={contentRef}
           className='scrollbar-hide h-full w-full overflow-auto'
@@ -116,7 +116,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
             contentSize={scrollState.vertical.contentSize}
             onScroll={handleVerticalScroll}
             className={cn(
-              'absolute top-0 right-0 w-2 transition-opacity duration-200',
+              'absolute top-0 right-0 z-20 w-2 transition-opacity duration-200',
               showScrollbars ? 'opacity-100' : 'opacity-0'
             )}
           />

@@ -2,15 +2,9 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Clock, Edit } from 'lucide-react'
-
-interface WorkingHour {
-  day: string
-  isOpen: boolean
-  openTime: string | null
-  closeTime: string | null
-}
+import { WorkingHoursList } from './WorkingHoursList'
+import type { WorkingHour } from './types'
 
 interface WorkingHoursCardProps {
   workingHours: WorkingHour[]
@@ -32,18 +26,7 @@ export default function WorkingHoursCard({ workingHours }: WorkingHoursCardProps
           </Button>
         </CardHeader>
         <CardContent>
-          <ScrollArea className='h-[200px] pr-3'>
-            <div className='space-y-2'>
-              {workingHours.map(hour => (
-                <div key={hour.day} className='flex items-center justify-between py-1'>
-                  <span className='text-sm font-medium'>{hour.day}</span>
-                  <span className={`text-sm ${hour.isOpen ? 'text-muted-foreground' : 'text-red-600'}`}>
-                    {hour.isOpen ? `${hour.openTime} - ${hour.closeTime}` : 'Kapalı'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+          <WorkingHoursList workingHours={workingHours} />
         </CardContent>
       </Card>
     </>

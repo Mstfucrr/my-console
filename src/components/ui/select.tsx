@@ -10,7 +10,7 @@ const selectVariants = cva(
     variants: {
       color: {
         default:
-          'border-default-300 text-default-500 focus:border-default-500/50 disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
+          'border-default-300 text-default-900 focus:border-default-500/50 disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
         primary:
           'border-primary text-primary focus:border-primary-700 disabled:bg-primary/30 disabled:placeholder:text-primary placeholder:text-primary/70 [&>svg]:stroke-primary focus:outline-none',
         info: 'border-info/50 text-info focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
@@ -192,7 +192,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}

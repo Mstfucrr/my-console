@@ -1,5 +1,6 @@
 'use client'
 
+import { Pagination } from '@/components/pagination'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { CheckCircle2, Flame } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
@@ -14,7 +15,6 @@ export function OrdersTabs() {
     completedOrders,
     completedTotal,
     completedPagination,
-    statusFilter,
     isLoadingActive,
     isFetchingActive,
     isLoadingCompleted,
@@ -81,31 +81,16 @@ export function OrdersTabs() {
             />
 
             {/* Pagination only for completed orders and when no filter is active */}
-            {!statusFilter && completedTotal > completedPagination.limit && (
-              <div className='mt-6'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-muted-foreground text-sm'>{completedTotal} tamamlanan sipariş</span>
-                  <div className='flex gap-2'>
-                    <button
-                      onClick={() => handleCompletedPageChange(completedPagination.page - 1)}
-                      disabled={completedPagination.page <= 1}
-                      className='rounded border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50'
-                    >
-                      Önceki
-                    </button>
-                    <span className='px-3 py-1 text-sm'>
-                      {completedPagination.page} / {Math.ceil(completedTotal / completedPagination.limit)}
-                    </span>
-                    <button
-                      onClick={() => handleCompletedPageChange(completedPagination.page + 1)}
-                      disabled={completedPagination.page >= Math.ceil(completedTotal / completedPagination.limit)}
-                      className='rounded border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50'
-                    >
-                      Sonraki
-                    </button>
-                  </div>
-                </div>
-              </div>
+            {completedTotal > completedPagination.limit && (
+              <Pagination
+                page={completedPagination.page}
+                totalPages={Math.ceil(completedTotal / completedPagination.limit)}
+                canPrev={completedPagination.page > 1}
+                canNext={completedPagination.page < Math.ceil(completedTotal / completedPagination.limit)}
+                onPrev={() => handleCompletedPageChange(completedPagination.page - 1)}
+                onNext={() => handleCompletedPageChange(completedPagination.page + 1)}
+                onPageClick={p => handleCompletedPageChange(p)}
+              />
             )}
           </div>
         )}

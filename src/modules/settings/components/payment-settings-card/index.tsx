@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { CreditCard, Edit } from 'lucide-react'
+import { useState } from 'react'
+import PaymentTypesModal from './PaymentTypesModal'
 
 interface PaymentType {
   id: string
@@ -17,9 +19,23 @@ interface PaymentType {
 interface PaymentSettingsCardProps {
   paymentTypes: PaymentType[]
   onPaymentTypeUpdate: (id: string, data: Partial<PaymentType>) => void
+  onPaymentTypeAdd: (payment: PaymentType) => void
+  onPaymentTypeDelete: (id: string) => void
 }
 
-export default function PaymentSettingsCard({ paymentTypes, onPaymentTypeUpdate }: PaymentSettingsCardProps) {
+export default function PaymentSettingsCard({
+  paymentTypes,
+  onPaymentTypeUpdate,
+  onPaymentTypeAdd,
+  onPaymentTypeDelete
+}: PaymentSettingsCardProps) {
+  const [open, setOpen] = useState(false)
+
+  const handleToggleActive = (id: string, checked: boolean) => {
+    const next = paymentTypes.map(p => (p.id === id ? { ...p, isActive: checked } : p))
+    onPaymentTypeUpdate(id, { isActive: checked })
+  }
+
   return (
     <>
       <Card className='h-[320px]'>
@@ -28,9 +44,9 @@ export default function PaymentSettingsCard({ paymentTypes, onPaymentTypeUpdate 
             <CreditCard className='h-5 w-5 text-purple-600' />
             Ödeme Tipi Ayarları
           </CardTitle>
-          <Button className='flex items-center gap-2' variant='outline' disabled>
+          <Button className='flex items-center gap-2' variant='outline' onClick={() => setOpen(true)}>
             <Edit className='h-4 w-4' />
-            <span className='max-sm:hidden'>Ayarla</span> (Yakında)
+            <span className='max-sm:hidden'>Ayarla</span>
           </Button>
         </CardHeader>
         <CardContent>
@@ -46,7 +62,7 @@ export default function PaymentSettingsCard({ paymentTypes, onPaymentTypeUpdate 
                   </div>
                   <Switch
                     checked={payment.isActive}
-                    onCheckedChange={checked => onPaymentTypeUpdate(payment.id, { isActive: checked })}
+                    onCheckedChange={checked => handleToggleActive(payment.id, checked)}
                   />
                 </div>
               ))}
@@ -54,6 +70,16 @@ export default function PaymentSettingsCard({ paymentTypes, onPaymentTypeUpdate 
           </ScrollArea>
         </CardContent>
       </Card>
+
+      <PaymentTypesModal
+        open={open}
+        onOpenChange={setOpen}
+        paymentTypes={paymentTypes}
+        onChange={onPaymentTypeUpdate}
+        onToggleActive={handleToggleActive}
+        onAddNew={onPaymentTypeAdd}
+        onDelete={onPaymentTypeDelete}
+      />
     </>
   )
 }

@@ -9,6 +9,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  TableOptions,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -23,7 +24,23 @@ import { Pagination } from '../pagination'
 import { Button } from '../ui/button'
 import { DataTableToolbar } from './toolbar'
 
-export type BasicDataTableProps<TData, TValue = never> = {
+export type BasicDataTableProps<TData, TValue = never> = Omit<
+  TableOptions<TData>,
+  | 'data'
+  | 'columns'
+  | 'state'
+  | 'onPaginationChange'
+  | 'onSortingChange'
+  | 'onColumnFiltersChange'
+  | 'onColumnVisibilityChange'
+  | 'onRowSelectionChange'
+  | 'getCoreRowModel'
+  | 'getPaginationRowModel'
+  | 'getSortedRowModel'
+  | 'getFilteredRowModel'
+  | 'manualPagination'
+  | 'pageCount'
+> & {
   // data and columns
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -125,7 +142,8 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
   isLoading = false,
   emptyLabel = 'Kayıt bulunamadı',
   loadingLabel = 'Yükleniyor...',
-  columnVisibilityTriggerProps
+  columnVisibilityTriggerProps,
+  ...tableProps
 }: BasicDataTableProps<TData, TValue>) {
   // Optional built-in selection column
   const computedColumns = React.useMemo(() => {
@@ -206,7 +224,8 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
       columnFilters: columnFilters ?? internalColumnFilters,
       columnVisibility: columnVisibility ?? internalColumnVisibility,
       rowSelection: selectedRowIds ?? internalRowSelection
-    }
+    },
+    ...tableProps
   })
 
   const totalPages = manualPagination ? Math.max(1, Math.ceil((total ?? 0) / pageSize)) : table.getPageCount()
@@ -284,20 +303,22 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
         <AnimatePresence>{showOverlayLoader && <TableOverlayLoader label={loadingLabel} />}</AnimatePresence>
       </div>
 
-      <Pagination
-        page={manualPagination ? page : table.getState().pagination.pageIndex + 1}
-        totalPages={totalPages}
-        canPrev={canPrev}
-        canNext={canNext}
-        onPrev={() => (manualPagination ? onPageChange?.(page - 1) : table.previousPage())}
-        onNext={() => (manualPagination ? onPageChange?.(page + 1) : table.nextPage())}
-        onPageClick={p => (manualPagination ? onPageChange?.(p) : table.setPageIndex(p - 1))}
-        leftInfo={
-          manualPagination
-            ? `${(page - 1) * pageSize + (data.length ? 1 : 0)}-${Math.min(page * pageSize, total ?? 0)} / ${total ?? 0}`
-            : undefined
-        }
-      />
+      {manualPagination && (
+        <Pagination
+          page={manualPagination ? page : table.getState().pagination.pageIndex + 1}
+          totalPages={totalPages}
+          canPrev={canPrev}
+          canNext={canNext}
+          onPrev={() => (manualPagination ? onPageChange?.(page - 1) : table.previousPage())}
+          onNext={() => (manualPagination ? onPageChange?.(page + 1) : table.nextPage())}
+          onPageClick={p => (manualPagination ? onPageChange?.(p) : table.setPageIndex(p - 1))}
+          leftInfo={
+            manualPagination
+              ? `${(page - 1) * pageSize + (data.length ? 1 : 0)}-${Math.min(page * pageSize, total ?? 0)} / ${total ?? 0}`
+              : undefined
+          }
+        />
+      )}
     </div>
   )
 }
