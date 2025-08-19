@@ -19,7 +19,7 @@ interface ScrollBarProps {
 }
 
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className, children, orientation = 'both', scrollHideDelay = 2000, ...props }) => {
+  ({ className, children, orientation = 'both', scrollHideDelay = 2000, ...props }, ref) => {
     const containerRef = React.useRef<HTMLDivElement>(null)
     const contentRef = React.useRef<HTMLDivElement>(null)
     const [showScrollbars, setShowScrollbars] = React.useState(false)
@@ -27,6 +27,9 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
       vertical: { ratio: 0, position: 0, containerSize: 0, contentSize: 0 },
       horizontal: { ratio: 0, position: 0, containerSize: 0, contentSize: 0 }
     })
+
+    // Timeout ref to ensure timeout is cleared and reset on each scroll
+    const hideTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const updateScrollState = React.useCallback(() => {
       if (!containerRef.current || !contentRef.current) return
@@ -57,13 +60,24 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
       updateScrollState()
       setShowScrollbars(true)
 
-      // Hide scrollbars after delay
-      const timeout = setTimeout(() => {
+      // Clear previous timeout if exists, then set a new one
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current)
+      }
+      hideTimeoutRef.current = setTimeout(() => {
         setShowScrollbars(false)
+        hideTimeoutRef.current = null
       }, scrollHideDelay)
-
-      return () => clearTimeout(timeout)
     }, [updateScrollState, scrollHideDelay])
+
+    // Clean up timeout on unmount
+    React.useEffect(() => {
+      return () => {
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current)
+        }
+      }
+    }, [])
 
     const handleVerticalScroll = React.useCallback((position: number) => {
       if (contentRef.current) {
@@ -92,7 +106,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     const shouldShowHorizontal = orientation === 'horizontal' || orientation === 'both'
 
     return (
-      <div ref={containerRef} className={cn('relative -mr-2 overflow-hidden pr-2', className)} {...props}>
+      <div ref={containerRef} className={cn('relative -mr-1 overflow-hidden pr-1', className)} {...props}>
         <div
           ref={contentRef}
           className='scrollbar-hide h-full w-full overflow-auto'
