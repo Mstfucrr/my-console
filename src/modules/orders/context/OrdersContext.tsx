@@ -197,6 +197,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   // Clear filter
   const clearFilter = () => {
     setStatusFilter(null)
+    setSearchTerm('')
   }
 
   // Search function - filters orders by customer name, phone, order ID
