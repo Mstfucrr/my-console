@@ -1,8 +1,8 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { OrderStatus } from '@/modules/types'
-import { CheckCircle2, Clock, Flame, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
+import { type OrderStatus, OrderStatusLabel } from '@/modules/types'
+import { CheckCircle2, Clock, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { OrdersContextType, useOrders } from '../context/OrdersContext'
 
@@ -26,61 +26,34 @@ const statsList: Array<Stat> = [
     value: 0
   },
   {
-    title: 'Beklemede',
-    id: 'pending',
+    title: OrderStatusLabel.created,
+    id: 'created',
     Icon: Clock,
     hint: 'Beklemede olan siparişler',
     color: 'text-orange-500',
     value: 0,
-    orderStatus: 'pending'
+    orderStatus: 'created'
   },
   {
-    title: 'Hazırlanıyor',
-    id: 'preparing',
-    Icon: Flame,
-    hint: 'Hazırlanan siparişler',
-    color: 'text-blue-600',
-    value: 0,
-    orderStatus: 'preparing'
-  },
-  {
-    title: 'Hazırlandı',
-    id: 'prepared',
+    title: OrderStatusLabel.shipped,
+    id: 'shipped',
     Icon: CheckCircle2,
-    hint: 'Hazırlanan siparişler',
-    color: 'text-cyan-600',
-    value: 0,
-    orderStatus: 'prepared'
-  },
-  {
-    title: 'Hazır',
-    id: 'ready',
-    Icon: CheckCircle2,
-    hint: 'Hazır olan siparişler',
+    hint: 'Yola Çıkan siparişler',
     color: 'text-green-600',
     value: 0,
-    orderStatus: 'ready'
+    orderStatus: 'shipped'
   },
   {
-    title: 'Yolda',
-    id: 'on_way',
-    Icon: Truck,
-    hint: 'Yoldaki siparişler',
-    color: 'text-red-500',
-    value: 0,
-    orderStatus: 'on_way'
-  },
-  {
-    title: 'Teslim Edildi',
+    title: OrderStatusLabel.delivered,
     id: 'delivered',
-    Icon: CheckCircle2,
-    hint: 'Teslim edilen siparişler',
-    color: 'text-green-600',
+    Icon: Truck,
+    hint: 'Teslim Edilen siparişler',
+    color: 'text-red-500',
     value: 0,
     orderStatus: 'delivered'
   },
   {
-    title: 'İptal',
+    title: OrderStatusLabel.cancelled,
     id: 'cancelled',
     Icon: XCircle,
     hint: 'İptal edilen siparişler',
@@ -105,17 +78,10 @@ export function OrdersStats() {
   }
 
   return (
-    <div className='grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-8'>
-      {stats.map((stat, index) => (
+    <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5'>
+      {stats.map(stat => (
         <button onClick={() => StatClick(stat)} className='size-full' key={stat.id}>
-          <StatCard
-            title={stat.title}
-            value={stats[index].value}
-            Icon={stat.Icon}
-            hint={stat.hint}
-            color={stat.color}
-            className='size-full'
-          />
+          <StatCard {...stat} className='size-full' />
         </button>
       ))}
     </div>

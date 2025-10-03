@@ -77,12 +77,8 @@ export const ordersService = {
     await delay(600)
     return {
       total: mockOrders.length,
-      pending: mockOrders.filter(o => o.status === 'pending').length,
-      preparing: mockOrders.filter(o => o.status === 'preparing').length,
-      prepared: mockOrders.filter(o => o.status === 'prepared').length,
-      ready: mockOrders.filter(o => o.status === 'ready').length,
-      picked_up: mockOrders.filter(o => o.status === 'picked_up').length,
-      on_way: mockOrders.filter(o => o.status === 'on_way').length,
+      created: mockOrders.filter(o => o.status === 'created').length,
+      shipped: mockOrders.filter(o => o.status === 'shipped').length,
       delivered: mockOrders.filter(o => o.status === 'delivered').length,
       cancelled: mockOrders.filter(o => o.status === 'cancelled').length
     }

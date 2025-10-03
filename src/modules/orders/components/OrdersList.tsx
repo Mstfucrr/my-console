@@ -9,19 +9,11 @@ interface OrdersListProps {
   orders: Order[]
   isLoading: boolean
   isFetching: boolean
-  showActions?: boolean
   emptyMessage: string
   filteredEmptyMessage: string
 }
 
-export function OrdersList({
-  orders,
-  isLoading,
-  isFetching,
-  showActions = false,
-  emptyMessage,
-  filteredEmptyMessage
-}: OrdersListProps) {
+export function OrdersList({ orders, isLoading, isFetching, emptyMessage, filteredEmptyMessage }: OrdersListProps) {
   const { statusFilter, handleViewDetails, handleOrderStatusUpdate, handleCancelOrder } = useOrders()
 
   if (isLoading || isFetching) {
@@ -49,14 +41,7 @@ export function OrdersList({
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
       {orders.map(order => (
-        <OrderCard
-          key={order.id}
-          order={order}
-          onViewDetails={handleViewDetails}
-          onStatusUpdate={handleOrderStatusUpdate}
-          onCancel={handleCancelOrder}
-          showActions={showActions}
-        />
+        <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
       ))}
     </div>
   )

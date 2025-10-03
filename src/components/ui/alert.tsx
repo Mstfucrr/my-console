@@ -48,6 +48,11 @@ const alertVariants = cva(
         color: 'dark',
         className: 'text-dark bg-dark/5'
       },
+      {
+        variant: 'outline',
+        color: 'default',
+        className: 'text-primary bg-primary/5'
+      },
 
       {
         variant: 'outline',

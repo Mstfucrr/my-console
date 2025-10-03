@@ -11,7 +11,7 @@ export const mockDashboardStats: DashboardStats = {
   pendingPayments: 1875.4,
   ordersByStatus: [
     { status: 'delivered', count: 12, percentage: 80 },
-    { status: 'on_way', count: 2, percentage: 13.3 },
+    { status: 'shipped', count: 2, percentage: 13.3 },
     { status: 'cancelled', count: 1, percentage: 6.7 }
   ],
   recentApiErrors: [

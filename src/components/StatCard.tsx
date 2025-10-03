@@ -17,8 +17,8 @@ export default function StatCard({ title, value, Icon, hint, color, type = 'numb
   return (
     <Card {...props}>
       <CardContent className='p-4'>
-        <div className='flex items-center justify-between'>
-          <div>
+        <div className='flex items-center justify-center'>
+          <div className='flex flex-col items-center justify-center'>
             <div className='text-muted-foreground text-xs'>{title}</div>
             <div className='mt-1 flex items-center gap-2'>
               {typeof Icon === 'string' ? (

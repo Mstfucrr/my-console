@@ -28,57 +28,30 @@ export interface Order {
   createdAt: string
   updatedAt: string
   totalAmount: number
-  items: OrderItem[]
-  courierLocation?: CourierLocation
   courierInfo?: CourierInfo
   restaurant: Restaurant
-  logs: OrderLog[]
   paymentMethod: 'cash' | 'card' | 'online'
   integration: 'yemeksepeti' | 'getir' | 'trendyol_go' | 'migros_yemek' | 'tikla_gelsin' | 'manuel'
-}
-
-export interface OrderItem {
-  id: string
-  name: string
-  quantity: number
-  price: number
-  notes?: string
-}
-
-export interface OrderLog {
-  id: string
-  orderId: string
-  status: OrderStatus
-  message: string
-  timestamp: string
-}
-
-export interface CourierLocation {
-  latitude: number
-  longitude: number
-  lastUpdated: string
 }
 
 export interface CourierInfo {
   id: string
   name: string
-  phone: string
-  vehicleType: 'motorcycle' | 'bicycle' | 'car'
   licensePlate?: string
-  rating: number
-  totalDeliveries: number
-  currentLocation?: CourierLocation
 }
 
 export type OrderStatus =
-  | 'pending' // Beklemede
-  | 'preparing' // Hazırlanıyor
-  | 'prepared' // Hazırlandı
-  | 'ready' // Hazır
-  | 'picked_up' // Kurye aldı
-  | 'on_way' // Yolda
-  | 'delivered' // Teslim edildi
-  | 'cancelled' // İptal edildi
+  | 'created' // Beklemede
+  | 'shipped' // Yola Çıktı
+  | 'delivered' // Teslim Edildi
+  | 'cancelled' // İptal Edildi
+
+export const OrderStatusLabel = {
+  created: 'Beklemede',
+  shipped: 'Yola Çıktı',
+  delivered: 'Teslim Edildi',
+  cancelled: 'İptal Edildi'
+} as const
 
 // Dashboard İstatistikleri
 export interface DashboardStats {
