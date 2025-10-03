@@ -30,6 +30,7 @@ export default function ReconciliationStats({ stats }: ReconciliationStatsProps)
         value={stats.totalPending}
         Icon={Clock}
         hint='Ödeme bekleyen tutar'
+        type='currency'
         color='text-yellow-600'
       />
 

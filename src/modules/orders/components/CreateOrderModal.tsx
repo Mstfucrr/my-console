@@ -74,7 +74,6 @@ const paymentMethods = [
 
 export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [calculatedTotal, setCalculatedTotal] = useState(0)
   const [selectedCity, setSelectedCity] = useState<string>('')
   const [selectedDistrict, setSelectedDistrict] = useState<string>('')
   const [availableDistricts, setAvailableDistricts] = useState<string[]>([])
@@ -83,8 +82,6 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
   const form = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema)
   })
-
-  const watchedTotalAmount = form.watch('totalAmount')
 
   // Şehir değiştiğinde ilçeleri güncelle
   const handleCityChange = (city: string) => {
@@ -162,7 +159,6 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
       onSuccess()
       onClose()
       form.reset()
-      setCalculatedTotal(0)
       // Reset address state
       setSelectedCity('')
       setSelectedDistrict('')
@@ -178,7 +174,6 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
 
   const handleClose = () => {
     form.reset()
-    setCalculatedTotal(0)
     // Reset address state
     setSelectedCity('')
     setSelectedDistrict('')
@@ -186,9 +181,6 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
     setAvailableNeighborhoods([])
     onClose()
   }
-
-  const isUsingManualTotal = watchedTotalAmount > 0
-  const displayTotal = isUsingManualTotal ? watchedTotalAmount : calculatedTotal
 
   return (
     <AlertDialog open={visible} onOpenChange={handleClose}>

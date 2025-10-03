@@ -48,7 +48,7 @@ export const mockReconciliationData: ReconciliationRecord[] = [
 export const mockStats: ReconciliationStats = {
   totalSettled: 4931.4,
   totalPending: 2969.13,
-  totalFailed: 1781.82,
+  totalFailed: 178182,
   monthlyRevenue: 15420.95,
   platformFees: 771.05,
   netRevenue: 14649.9

@@ -14,7 +14,7 @@ interface OrdersListProps {
 }
 
 export function OrdersList({ orders, isLoading, isFetching, emptyMessage, filteredEmptyMessage }: OrdersListProps) {
-  const { statusFilter, handleViewDetails, handleOrderStatusUpdate, handleCancelOrder } = useOrders()
+  const { statusFilter, handleViewDetails } = useOrders()
 
   if (isLoading || isFetching) {
     return (

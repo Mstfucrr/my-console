@@ -1,7 +1,5 @@
 'use client'
 
-import type React from 'react'
-
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,7 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { Order, OrderStatus } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
-import { AlertTriangle, Car, CheckCircle, Clock, MapPin, Phone, User } from 'lucide-react'
+import { Car, MapPin, Phone, User } from 'lucide-react'
 import { formatDateTR } from '../utils'
 
 interface OrderDetailDialogProps {
@@ -29,34 +27,6 @@ const getStatusColor = (status: OrderStatus) => {
     cancelled: 'bg-gray-100 text-gray-800'
   }
   return colorMap[status] || 'bg-gray-100 text-gray-800'
-}
-
-const getTimelineIcon = (status: string) => {
-  const iconMap: Record<string, React.ReactNode> = {
-    created: <Clock className='h-3 w-3' />,
-    shipped: <CheckCircle className='h-3 w-3' />,
-    delivered: <Car className='h-3 w-3' />,
-    cancelled: <AlertTriangle className='h-3 w-3' />
-  }
-  return iconMap[status] || <Clock className='h-3 w-3' />
-}
-
-const getVehicleLabel = (vehicleType: string): string => {
-  const vehicleMap: Record<string, string> = {
-    motorcycle: 'Motosiklet',
-    bicycle: 'Bisiklet',
-    car: 'Araba'
-  }
-  return vehicleMap[vehicleType] || vehicleType
-}
-
-const getVehicleIcon = (vehicleType: string): string => {
-  const iconMap: Record<string, string> = {
-    motorcycle: '🏍️',
-    bicycle: '🚲',
-    car: '🚗'
-  }
-  return iconMap[vehicleType] || '🚚'
 }
 
 export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
