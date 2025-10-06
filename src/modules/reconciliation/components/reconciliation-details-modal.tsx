@@ -152,7 +152,7 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
 
               <div className='space-y-3'>
                 <div className='flex items-center justify-between border-b pb-2'>
-                  <span className='text-sm text-gray-600'>Yemek Kartı (Tahsilatı Ata'da):</span>
+                  <span className='text-sm text-gray-600'>Yemek Kartı (Tahsilatı Ata&apos;da):</span>
                   <span className='text-sm font-medium'>{formatCurrency(record.mealCardAtaCollection)}</span>
                 </div>
                 <div className='flex items-center justify-between border-b pb-2'>
