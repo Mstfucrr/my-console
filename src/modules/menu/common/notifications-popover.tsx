@@ -82,7 +82,7 @@ export function NotificationsPopover() {
         <div className='flex items-center justify-between border-b p-4 pb-2'>
           <h3 className='font-semibold'>Bildirimler</h3>
           {unreadCount > 0 && (
-            <Button variant='ghost' size='sm' onClick={markAllAsRead} className='text-xs'>
+            <Button variant='ghost' size='xs' onClick={markAllAsRead} className='text-xs'>
               Tümünü okundu işaretle
             </Button>
           )}
