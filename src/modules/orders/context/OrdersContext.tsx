@@ -32,7 +32,7 @@ export interface OrdersContextType {
   isFetchingActive: boolean
   isLoadingCompleted: boolean
   isFetchingCompleted: boolean
-
+  isStatsLoading: boolean
   // Error
   error: string
 
@@ -118,7 +118,11 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   })
 
   // Stats query
-  const { data: statsData, error: statsError } = useQuery({
+  const {
+    data: statsData,
+    error: statsError,
+    isLoading: isStatsLoading
+  } = useQuery({
     queryKey: ['ordersStats', statusFilter, searchTerm],
     queryFn: async () => {
       const response = await ordersService.getOrdersStats()
@@ -248,7 +252,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     isFetchingActive,
     isLoadingCompleted,
     isFetchingCompleted,
-
+    isStatsLoading,
     // Error
     error,
 

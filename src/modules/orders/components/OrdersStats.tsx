@@ -64,7 +64,7 @@ const statsList: Array<Stat> = [
 ]
 
 export function OrdersStats() {
-  const { stats: statsData, handleStatClick, clearFilter } = useOrders()
+  const { stats: statsData, handleStatClick, clearFilter, isStatsLoading } = useOrders()
 
   const [stats, setStats] = useState<Stat[]>([])
 
@@ -81,7 +81,7 @@ export function OrdersStats() {
     <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5'>
       {stats.map(stat => (
         <button onClick={() => StatClick(stat)} className='size-full' key={stat.id}>
-          <StatCard {...stat} className='size-full' />
+          <StatCard {...stat} className='size-full' isLoading={isStatsLoading} />
         </button>
       ))}
     </div>
