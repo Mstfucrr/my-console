@@ -85,7 +85,12 @@ export const mockOrders: Order[] = [
     totalAmount: 125.75,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
-    integration: 'trendyol_go'
+    integration: 'trendyol_go',
+    courierInfo: {
+      id: 'CUR-002',
+      name: 'Serkan Kurye',
+      licensePlate: '34 ABC 123'
+    }
   },
   {
     id: 'ORD-2024-004',
