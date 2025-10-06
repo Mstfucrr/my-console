@@ -1,7 +1,5 @@
-import { APIError, ChartDataPoint, Order, OrderStatusCount } from '@/modules/types'
+import { APIError, ChartDataPoint, Order, OrderStatus, OrderStatusCount } from '@/modules/types'
 import { LucideIcon } from 'lucide-react'
-
-export type OrderStatus = 'delivered' | 'on_way' | 'cancelled' | 'preparing' | 'ready' | 'pending'
 
 export type OrdersByStatus = {
   status: OrderStatus

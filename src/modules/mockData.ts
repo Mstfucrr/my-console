@@ -269,7 +269,7 @@ export const mockAPILogs: APILog[] = [
     statusCode: 200,
     responseTime: 123,
     request: '',
-    response: '{"id":"ORD-2024-001","status":"on_way"}'
+    response: '{"id":"ORD-2024-001","status":"shipped"}'
   },
   {
     id: '3',

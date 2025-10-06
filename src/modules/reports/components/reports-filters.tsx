@@ -1,40 +1,36 @@
 'use client'
 
-import { DateFilters, FilterCard, SearchInput, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
+import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
 import { format } from 'date-fns'
 import { Filter, Search } from 'lucide-react'
 import { useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
+import { PAYMENT_METHOD_OPTIONS, STATUS_OPTIONS } from '../constants'
 
-const statuses: FilterOption[] = [
-  { value: 'all', label: 'Tüm Durumlar' },
-  { value: 'completed', label: 'Tamamlandı' },
-  { value: 'pending', label: 'Beklemede' },
-  { value: 'failed', label: 'Başarısız' }
-]
-
-export interface ReconciliationFilterProperties {
+export interface ReportsFilterProperties {
   status: string
   search: string
+  paymentMethod: string
   dateFrom?: string
   dateTo?: string
 }
 
-const defaultFilters: ReconciliationFilterProperties = {
-  status: 'all',
+const defaultFilters: ReportsFilterProperties = {
   search: '',
+  status: 'all',
+  paymentMethod: 'all',
   dateFrom: undefined,
   dateTo: undefined
 }
 
-export function ReconciliationFilters({
+export function ReportsFilters({
   filters,
   onFiltersChange,
   onClearFilters
 }: {
-  filters: ReconciliationFilterProperties
-  onFiltersChange: (f: ReconciliationFilterProperties) => void
+  filters: ReportsFilterProperties
+  onFiltersChange: (f: ReportsFilterProperties) => void
   onClearFilters: () => void
 }) {
   const {
@@ -66,10 +62,10 @@ export function ReconciliationFilters({
   return (
     <FilterCard
       config={{
-        title: 'Mutabakat Filtreleri',
+        title: 'Rapor Filtreleri',
         icon: Filter,
-        searchPlaceholder: 'Mutabakat kaydı ara...',
-        statusOptions: statuses,
+        searchPlaceholder: 'Sipariş no, müşteri adı veya telefon ara...',
+        statusOptions: STATUS_OPTIONS,
         showDateFilters: true
       }}
       filters={filters}
@@ -83,7 +79,7 @@ export function ReconciliationFilters({
         <div className='flex flex-1 flex-col gap-3 sm:flex-row sm:items-end'>
           <div className='flex-1'>
             <SearchInput
-              placeholder='Mutabakat kaydı ara...'
+              placeholder='Sipariş no, müşteri adı veya telefon ara...'
               value={pendingFilters.search ?? ''}
               onChange={value => updatePendingFilters({ search: value })}
               Icon={Search}
@@ -91,10 +87,18 @@ export function ReconciliationFilters({
           </div>
           <div className='min-w-[140px]'>
             <StatusSelect
-              options={statuses}
+              options={STATUS_OPTIONS}
               value={pendingFilters.status ?? 'all'}
               onChange={value => updatePendingFilters({ status: value })}
               placeholder='Durum seçin'
+            />
+          </div>
+          <div className='min-w-[160px]'>
+            <StatusSelect
+              options={PAYMENT_METHOD_OPTIONS}
+              value={pendingFilters.paymentMethod ?? 'all'}
+              onChange={value => updatePendingFilters({ paymentMethod: value })}
+              placeholder='Ödeme yöntemi seçin'
             />
           </div>
         </div>

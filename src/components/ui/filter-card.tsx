@@ -1,12 +1,13 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Check, LucideIcon, XCircle } from 'lucide-react'
 import { ReactNode } from 'react'
+import type { DateRange } from 'react-day-picker'
 
 export interface FilterOption {
   value: string
@@ -26,7 +27,6 @@ export interface FilterConfig {
   searchPlaceholder?: string
   statusOptions?: FilterOption[]
   showDateFilters?: boolean
-  tipText?: string
 }
 
 export interface FilterCardProps<T> {
@@ -48,7 +48,7 @@ export function FilterCard<T>({
   hasPendingChanges = false,
   children
 }: FilterCardProps<T>) {
-  const { title, icon: Icon, tipText } = config
+  const { title, icon: Icon } = config
 
   return (
     <Card className='mb-4'>
@@ -72,15 +72,7 @@ export function FilterCard<T>({
           )}
         </div>
       </CardHeader>
-      <CardContent className='space-y-3'>
-        {children}
-
-        {tipText && (
-          <div className='border-success bg-success/10 rounded-md border px-3 py-2 text-xs text-green-700'>
-            💡 İpucu: {tipText}
-          </div>
-        )}
-      </CardContent>
+      <CardContent>{children}</CardContent>
     </Card>
   )
 }
@@ -96,11 +88,21 @@ export function SearchInput({
   onChange: (value: string | undefined) => void
   Icon: LucideIcon
 }) {
+  const isActive = value && value.length > 0
+
   return (
     <div>
       <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>
       <div className='relative'>
-        <Input Icon={Icon} placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} size='sm' />
+        <Input
+          Icon={Icon}
+          placeholder={placeholder}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          size='sm'
+          color={isActive ? 'info' : undefined}
+          variant={isActive ? 'faded' : 'bordered'}
+        />
         {value && value.length > 0 && (
           <Button
             size='icon-xs'
@@ -128,12 +130,19 @@ export function StatusSelect({
   onChange: (value: string) => void
   placeholder?: string
 }) {
+  const isActive = value && value !== 'all'
+
   return (
     <div>
       <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>
       <div className='flex flex-wrap items-center gap-2'>
         <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className='w-[180px]' size='sm'>
+          <SelectTrigger
+            className='min-w-[180px]'
+            size='sm'
+            color={isActive ? 'info' : undefined}
+            variant={isActive ? 'faded' : 'bordered'}
+          >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
@@ -150,66 +159,27 @@ export function StatusSelect({
 }
 
 export function DateFilters({
-  dateFrom,
-  dateTo,
-  onDateFromChange,
-  onDateToChange
+  dateRange,
+  onDateRangeChange,
+  placeholder = 'Tarih aralığı seçin'
 }: {
-  dateFrom: string
-  dateTo: string
-  onDateFromChange: (value: string) => void
-  onDateToChange: (value: string) => void
+  dateRange?: DateRange
+  onDateRangeChange: (range: DateRange | undefined) => void
+  placeholder?: string
 }) {
-  return (
-    <div className='flex items-center gap-2'>
-      <div>
-        <label className='text-muted-foreground mb-1 block text-xs'>Başlangıç Tarihi</label>
-        <Input
-          type='date'
-          value={dateFrom}
-          onChange={e => onDateFromChange(e.target.value)}
-          className='w-40'
-          size='sm'
-        />
-      </div>
-      <div>
-        <label className='text-muted-foreground mb-1 block text-xs'>Bitiş Tarihi</label>
-        <Input type='date' value={dateTo} onChange={e => onDateToChange(e.target.value)} className='w-40' size='sm' />
-      </div>
-    </div>
-  )
-}
+  const isActive = dateRange && (dateRange.from || dateRange.to)
 
-export function ActiveFiltersDisplay<T extends FilterProperties>({
-  filters,
-  statusOptions
-}: {
-  filters: T
-  statusOptions?: FilterOption[]
-}) {
   return (
-    <div className='border-warning bg-warning/10 flex flex-wrap items-center gap-2 rounded-md border px-3 py-2'>
-      <span className='text-muted-foreground text-xs'>Aktif filtreler:</span>
-      {filters.status && filters.status !== 'all' && (
-        <Badge color='info' variant='outline' className='text-xs'>
-          {statusOptions?.find(s => s.value === filters.status)?.label ?? filters.status}
-        </Badge>
-      )}
-      {filters.search && (
-        <Badge color='info' variant='outline' className='text-xs'>
-          Arama: &quot;{filters.search}&quot;
-        </Badge>
-      )}
-      {filters.dateFrom && (
-        <Badge color='info' variant='outline' className='text-xs'>
-          Başlangıç: {filters.dateFrom}
-        </Badge>
-      )}
-      {filters.dateTo && (
-        <Badge color='info' variant='outline' className='text-xs'>
-          Bitiş: {filters.dateTo}
-        </Badge>
-      )}
+    <div>
+      <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>
+      <DateRangePicker
+        dateRange={dateRange}
+        onDateRangeChange={onDateRangeChange}
+        placeholder={placeholder}
+        size='xs'
+        color={isActive ? 'info' : undefined}
+        variant={isActive ? 'soft' : 'outline'}
+      />
     </div>
   )
 }
