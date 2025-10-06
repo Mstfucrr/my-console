@@ -67,7 +67,7 @@ const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive
             'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
             'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             // DialogOverlay genelde z-50; Content ~z-60. Bunu bir tık üste alıyoruz.
-            'z-[70] w-72 rounded-md border p-4 shadow-md outline-none',
+            'z-70 w-72 rounded-md border p-4 shadow-md outline-none',
             className
           )}
           onOpenAutoFocus={e => {

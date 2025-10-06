@@ -1,11 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { ConfirmButton } from '@/components/ui/confirm-button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Textarea } from '@/components/ui/textarea'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { useMutation } from '@tanstack/react-query'
 import { AlertTriangle, Check, Eye, Upload } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { reconciliationService } from '../service'
 import type { ReconciliationRecord } from '../types'
@@ -14,6 +17,60 @@ interface ReconciliationDetailsModalProps {
   record: ReconciliationRecord
   isOpen: boolean
   onClose: () => void
+}
+
+interface IssueReportPopoverProps {
+  onReport: (description: string) => void
+  isReporting: boolean
+}
+
+function IssueReportPopover({ onReport, isReporting }: IssueReportPopoverProps) {
+  const [open, setOpen] = useState(false)
+  const [description, setDescription] = useState('')
+
+  const handleReport = () => {
+    if (!description.trim()) return
+
+    onReport(description)
+    setDescription('')
+    setOpen(false)
+  }
+
+  const handleCancel = () => {
+    setDescription('')
+    setOpen(false)
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button color='destructive' className='flex items-center gap-2' disabled={isReporting}>
+          <AlertTriangle className='h-4 w-4' />
+          {isReporting ? 'Bildiriliyor...' : 'Sorun Bildir'}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className='w-80 p-4' mountInsideDialog={false} side='top' align='center'>
+        <div className='space-y-4'>
+          <div className='text-center text-sm font-medium'>Sorun açıklamasını giriniz</div>
+          <Textarea
+            placeholder='Sorunun detayını açıklayınız...'
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            className='resize-none'
+          />
+          <div className='flex justify-center space-x-2'>
+            <Button variant='outline' size='xs' onClick={handleCancel}>
+              İptal
+            </Button>
+            <Button color='destructive' size='xs' onClick={handleReport} disabled={!description.trim() || isReporting}>
+              {isReporting ? 'Bildiriliyor...' : 'Sorun Bildir'}
+            </Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
 }
 
 export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
@@ -86,12 +143,7 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     )
   }
 
-  const handleReportIssue = () => {
-    if (!record) return
-
-    const description = prompt('Sorun açıklamasını giriniz:')
-    if (!description) return
-
+  const handleReportIssue = (description: string) => {
     toast.promise(
       async () => {
         await reportIssue({ recordId: record.id, description })
@@ -193,26 +245,21 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
               )}
 
               {canApprove && (
-                <Button
-                  onClick={handleApprove}
+                <ConfirmButton
+                  onConfirm={handleApprove}
                   color='success'
                   className='flex items-center gap-2'
                   disabled={isApproving}
+                  confirmationMessage='Mutabakatı onaylamak istediğinizden emin misiniz?'
+                  confirmButtonMessage='Evet, Onayla'
+                  cancelButtonMessage='İptal'
                 >
                   <Check className='h-4 w-4' />
                   {isApproving ? 'Onaylanıyor...' : 'Onayla'}
-                </Button>
+                </ConfirmButton>
               )}
 
-              <Button
-                onClick={handleReportIssue}
-                color='destructive'
-                className='flex items-center gap-2'
-                disabled={isReporting}
-              >
-                <AlertTriangle className='h-4 w-4' />
-                {isReporting ? 'Bildiriliyor...' : 'Sorun Bildir'}
-              </Button>
+              <IssueReportPopover onReport={handleReportIssue} isReporting={isReporting} />
             </div>
           </DialogFooter>
         </DialogContent>

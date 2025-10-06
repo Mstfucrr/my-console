@@ -82,13 +82,13 @@ export function ConfirmButton({
           {children}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-auto p-4'>
+      <PopoverContent className='w-auto p-4' mountInsideDialog={false} side='top' align='center'>
         <div className='space-y-4'>
-          <div className='text-center font-medium'>{confirmationMessage}</div>
+          <div className='text-center text-sm font-medium'>{confirmationMessage}</div>
           <div className='flex justify-center space-x-2'>
             <Button
               variant={cancelButtonVariant}
-              size='sm'
+              size='xs'
               onClick={() => setOpen(false)}
               color={cancelButtonColor}
               {...cancelButtonProps}
@@ -97,7 +97,7 @@ export function ConfirmButton({
             </Button>
             <Button
               variant={confirmButtonVariant}
-              size='sm'
+              size='xs'
               onClick={handleConfirm}
               color={confirmButtonColor}
               {...confirmButtonProps}
