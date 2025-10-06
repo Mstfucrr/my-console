@@ -19,7 +19,7 @@ export const reconciliationService = {
     if (filters?.search) {
       const search = filters.search.toLowerCase()
       filteredData = filteredData.filter(
-        item => item.id.toLowerCase().includes(search) || item.paymentMethod.toLowerCase().includes(search)
+        item => item.id.toLowerCase().includes(search) || item.period.toLowerCase().includes(search)
       )
     }
 
@@ -30,11 +30,11 @@ export const reconciliationService = {
 
     // Apply date range filters
     if (filters?.dateFrom) {
-      filteredData = filteredData.filter(item => item.date >= filters.dateFrom!)
+      filteredData = filteredData.filter(item => item.period >= filters.dateFrom!)
     }
 
     if (filters?.dateTo) {
-      filteredData = filteredData.filter(item => item.date <= filters.dateTo!)
+      filteredData = filteredData.filter(item => item.period <= filters.dateTo!)
     }
 
     return filteredData
@@ -50,9 +50,9 @@ export const reconciliationService = {
     return {
       totalSettled: data.filter(item => item.status === 'completed').length,
       totalPending: data.filter(item => item.status === 'pending').length,
-      totalFailed: data.filter(item => item.status === 'failed').length,
-      monthlyRevenue: data.reduce((sum, item) => sum + item.totalAmount, 0),
-      platformFees: data.reduce((sum, item) => sum + item.platformFee, 0),
+      totalFailed: data.filter(item => item.status === 'problematic').length,
+      monthlyRevenue: data.reduce((sum, item) => sum + item.totalOrderAmount, 0),
+      platformFees: data.reduce((sum, item) => sum + item.ataExpressDeliveryInvoice, 0),
       netRevenue: data.reduce((sum, item) => sum + item.netAmount, 0)
     }
   },
@@ -61,5 +61,44 @@ export const reconciliationService = {
     // Simulate export functionality
     console.log('Exporting reconciliation report', dateRange)
     await new Promise(resolve => setTimeout(resolve, 1000))
+  },
+
+  async uploadInvoice(recordId: string, file: File): Promise<{ success: boolean; invoiceUrl?: string }> {
+    // Simulate file upload
+    console.log(`Uploading file ${file.name} for record ${recordId}`)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Simulate successful upload
+    return {
+      success: true,
+      invoiceUrl: `/invoices/${recordId}.pdf`
+    }
+  },
+
+  async approveReconciliation(recordId: string): Promise<{ success: boolean }> {
+    // Simulate approval process
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    // Update the record status in mock data
+    const recordIndex = mockReconciliationData.findIndex(record => record.id === recordId)
+    if (recordIndex !== -1) {
+      mockReconciliationData[recordIndex].status = 'approved'
+    }
+
+    return { success: true }
+  },
+
+  async reportIssue(recordId: string, issueDescription: string): Promise<{ success: boolean }> {
+    // Simulate issue reporting
+    console.log(`Reporting issue for record ${recordId}: ${issueDescription}`)
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Update the record status in mock data
+    const recordIndex = mockReconciliationData.findIndex(record => record.id === recordId)
+    if (recordIndex !== -1) {
+      mockReconciliationData[recordIndex].status = 'problematic'
+    }
+
+    return { success: true }
   }
 }
