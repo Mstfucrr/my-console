@@ -1,6 +1,5 @@
 'use client'
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,10 +9,11 @@ import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { Order, OrderStatus } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
-import { ArrowLeft, Car, MapPin, Phone, User } from 'lucide-react'
+import { ArrowLeft, MapPin, Phone, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatDateTR } from '../utils'
+import CourierCard from './CourierCard'
 
 const CourierMap = dynamic(() => import('./CourierMap'), { ssr: false })
 
@@ -37,6 +37,10 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
   const [openMap, setOpenMap] = useState(false)
 
   const handleToggleMap = () => setOpenMap(prev => !prev)
+
+  useEffect(() => {
+    if (!open) setOpenMap(false)
+  }, [open])
 
   if (!order) return null
 
@@ -75,44 +79,11 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
           <ScrollArea className='max-h-[70vh] p-6 pt-0'>
             {/* Kurye Bilgileri */}
             {showCourierInfo && order.courierInfo && (
-              <Card className='mb-4 border-amber-200 bg-amber-50'>
-                <CardHeader className='pb-3'>
-                  <CardTitle className='flex items-center gap-2 text-base'>
-                    <Car className='h-4 w-4 text-amber-600' />
-                    Kurye Bilgileri
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
-                    <div className='flex items-center gap-2'>
-                      <User className='text-muted-foreground h-4 w-4' />
-                      <span className='font-medium'>{order.courierInfo.name}</span>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      {order.courierInfo.licensePlate && (
-                        <Badge variant='outline' className='text-xs'>
-                          {order.courierInfo.licensePlate}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {showCourierTracking && order.courierInfo && (
-                    <Alert className='mt-3' variant='outline' color='info'>
-                      <Car className='h-4 w-4' />
-                      <AlertDescription className='flex items-center justify-between'>
-                        <div>
-                          <p className='font-medium'>Kurye Yolda</p>
-                          <p className='text-sm'>Sipariş şu anda müşteriye doğru yola çıktı.</p>
-                        </div>
-                        <Button size='sm' color='info' onClick={handleToggleMap}>
-                          Haritada Görüntüle
-                        </Button>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                </CardContent>
-              </Card>
+              <CourierCard
+                courierInfo={order.courierInfo}
+                handleToggleMap={handleToggleMap}
+                showCourierTracking={showCourierTracking}
+              />
             )}
 
             {/* Sol Kolon - Sipariş Bilgileri */}

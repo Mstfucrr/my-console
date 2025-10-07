@@ -89,9 +89,9 @@ export const mockOrders: Order[] = [
     paymentMethod: 'online',
     integration: 'trendyol_go',
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      id: 'CUR-001',
+      name: 'Murat Kurye',
+      licensePlate: '34 DEF 456',
       position: [40.9923, 29.0234]
     },
     customerPosition: [40.985, 29.045]
@@ -110,8 +110,8 @@ export const mockOrders: Order[] = [
     integration: 'migros_yemek',
     courierInfo: {
       id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      name: 'Gökhan Taş',
+      licensePlate: '34 GHT 789',
       position: [40.9784, 29.0602]
     },
     customerPosition: [40.985, 29.045]
@@ -129,9 +129,9 @@ export const mockOrders: Order[] = [
     paymentMethod: 'cash',
     integration: 'tikla_gelsin',
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      id: 'CUR-003',
+      name: 'Ayhan Yıldız',
+      licensePlate: '34 AYH 321',
       position: [40.985, 29.045]
     },
     customerPosition: [40.985, 29.045]
@@ -149,9 +149,9 @@ export const mockOrders: Order[] = [
     paymentMethod: 'card',
     integration: 'yemeksepeti',
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      id: 'CUR-004',
+      name: 'Berkay Demir',
+      licensePlate: '34 BRK 654',
       position: [40.985, 29.045]
     },
     customerPosition: [40.985, 29.045]
@@ -169,9 +169,9 @@ export const mockOrders: Order[] = [
     paymentMethod: 'online',
     integration: 'manuel',
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      id: 'CUR-005',
+      name: 'Seda Aksoy',
+      licensePlate: '34 SDA 987',
       position: [40.985, 29.045]
     },
     customerPosition: [40.985, 29.045]
@@ -189,9 +189,9 @@ export const mockOrders: Order[] = [
     paymentMethod: 'card',
     integration: 'getir',
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123',
+      id: 'CUR-006',
+      name: 'Yusuf Kılıç',
+      licensePlate: '34 YSF 852',
       position: [40.985, 29.045]
     },
     customerPosition: [40.985, 29.045]
