@@ -20,7 +20,7 @@ const LoginFormContent = () => {
   return (
     <div className='flex items-center justify-center'>
       <Card className='w-full max-w-md rounded-3xl p-8 shadow-lg'>
-        <div className='mb-8 text-center'>
+        <div className='mb-3 text-center'>
           <SiteLogoMin className='text-primary mx-auto w-32' />
           <h1 className='text-primary text-2xl font-bold'>{isOtp ? 'Doğrulama Kodu' : "Console'a Hoşgeldiniz"}</h1>
         </div>
