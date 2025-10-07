@@ -54,14 +54,14 @@ function OrdersViewContent() {
         }
       />
 
-      {/* Arama Kutusu */}
-      <OrdersSearch />
-
       {/* İstatistik Kartları */}
       <OrdersStats />
 
       {/* Pending Siparişler Uyarısı */}
       <OrdersPendingAlert />
+
+      {/* Arama Kutusu */}
+      <OrdersSearch />
 
       {/* Sipariş Tab'ları */}
       <OrdersTabs />
