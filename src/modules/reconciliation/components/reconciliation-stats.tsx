@@ -1,5 +1,5 @@
 import StatCard from '@/components/StatCard'
-import { AlertTriangle, CheckCircle, Clock, DollarSign } from 'lucide-react'
+import { CheckCircle, Clock, DollarSign } from 'lucide-react'
 
 interface ReconciliationStats {
   totalSettled: number
@@ -32,14 +32,6 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       hint: 'Ödeme bekleyen tutar',
       color: 'text-yellow-600',
       type: 'currency' as const
-    },
-    {
-      title: 'Başarısız Ödeme',
-      value: stats.totalFailed,
-      Icon: AlertTriangle,
-      hint: 'Sorunlu ödemeler',
-      color: 'text-red-600',
-      type: 'number' as const
     },
     {
       title: 'Net Ciro',

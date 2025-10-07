@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { CalendarIcon, Clock } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 import { Button, ButtonProps } from '@/components/ui/button'
@@ -34,6 +34,27 @@ export function DateRangePicker({
   const [fromTime, setFromTime] = useState<string>('')
   const [toTime, setToTime] = useState<string>('')
   const [isOpen, setIsOpen] = useState(false)
+
+  // Initialize time inputs from existing dateRange
+  useEffect(() => {
+    setTempDateRange(dateRange)
+
+    if (dateRange?.from) {
+      const fromHours = dateRange.from.getHours().toString().padStart(2, '0')
+      const fromMinutes = dateRange.from.getMinutes().toString().padStart(2, '0')
+      setFromTime(`${fromHours}:${fromMinutes}`)
+    } else {
+      setFromTime('')
+    }
+
+    if (dateRange?.to) {
+      const toHours = dateRange.to.getHours().toString().padStart(2, '0')
+      const toMinutes = dateRange.to.getMinutes().toString().padStart(2, '0')
+      setToTime(`${toHours}:${toMinutes}`)
+    } else {
+      setToTime('')
+    }
+  }, [dateRange])
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setTempDateRange(range)

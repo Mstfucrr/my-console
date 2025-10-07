@@ -23,8 +23,10 @@ import { dashboardService } from './service'
 import type { DashboardStats } from './types'
 import { statusColor, statusLabel } from './utils'
 
+const defaultDateRange = { from: new Date(new Date().setDate(new Date().getDate() - 7)), to: new Date() }
+
 export default function DashboardView() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
@@ -35,8 +37,7 @@ export default function DashboardView() {
   } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats', dateRange],
     queryFn: () => dashboardService.getStats(dateRange),
-    staleTime: 60_000,
-    enabled: !!dateRange
+    staleTime: 60_000
   })
 
   const chartData = useMemo(() => {
