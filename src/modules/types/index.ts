@@ -32,12 +32,14 @@ export interface Order {
   restaurant: Restaurant
   paymentMethod: 'cash' | 'card' | 'online'
   integration: 'yemeksepeti' | 'getir' | 'trendyol_go' | 'migros_yemek' | 'tikla_gelsin' | 'manuel'
+  customerPosition: [number, number]
 }
 
 export interface CourierInfo {
   id: string
   name: string
   licensePlate?: string
+  position: [number, number]
 }
 
 export type OrderStatus =

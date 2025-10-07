@@ -59,7 +59,8 @@ export const mockOrders: Order[] = [
     totalAmount: 85.5,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'yemeksepeti'
+    integration: 'yemeksepeti',
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-002',
@@ -72,7 +73,8 @@ export const mockOrders: Order[] = [
     createdAt: '2024-01-25T17:45:00Z',
     updatedAt: '2024-01-25T18:30:00Z',
     totalAmount: 67.25,
-    restaurant: mockRestaurants[0]
+    restaurant: mockRestaurants[0],
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-003',
@@ -89,8 +91,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.9923, 29.0234]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-004',
@@ -107,8 +111,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.9784, 29.0602]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-005',
@@ -125,8 +131,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-007',
@@ -143,8 +151,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-006',
@@ -161,8 +171,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-008',
@@ -179,8 +191,10 @@ export const mockOrders: Order[] = [
     courierInfo: {
       id: 'CUR-002',
       name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+      licensePlate: '34 ABC 123',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-009',
@@ -193,7 +207,8 @@ export const mockOrders: Order[] = [
     totalAmount: 67.5,
     restaurant: mockRestaurants[0],
     paymentMethod: 'cash',
-    integration: 'yemeksepeti'
+    integration: 'yemeksepeti',
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-010',
@@ -206,7 +221,8 @@ export const mockOrders: Order[] = [
     totalAmount: 89.25,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
-    integration: 'trendyol_go'
+    integration: 'trendyol_go',
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-011',
@@ -219,7 +235,8 @@ export const mockOrders: Order[] = [
     totalAmount: 73.0,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'migros_yemek'
+    integration: 'migros_yemek',
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-012',
@@ -232,7 +249,8 @@ export const mockOrders: Order[] = [
     totalAmount: 195.5,
     restaurant: mockRestaurants[1],
     paymentMethod: 'cash',
-    integration: 'tikla_gelsin'
+    integration: 'tikla_gelsin',
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-013',
@@ -246,11 +264,7 @@ export const mockOrders: Order[] = [
     restaurant: mockRestaurants[0],
     paymentMethod: 'online',
     integration: 'manuel',
-    courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      licensePlate: '34 ABC 123'
-    }
+    customerPosition: [40.985, 29.045]
   }
 ]
 

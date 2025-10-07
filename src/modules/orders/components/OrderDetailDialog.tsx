@@ -10,8 +10,12 @@ import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { Order, OrderStatus } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
-import { Car, MapPin, Phone, User } from 'lucide-react'
+import { ArrowLeft, Car, MapPin, Phone, User } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { useState } from 'react'
 import { formatDateTR } from '../utils'
+
+const CourierMap = dynamic(() => import('./CourierMap'), { ssr: false })
 
 interface OrderDetailDialogProps {
   order: Order | null
@@ -30,6 +34,10 @@ const getStatusColor = (status: OrderStatus) => {
 }
 
 export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
+  const [openMap, setOpenMap] = useState(false)
+
+  const handleToggleMap = () => setOpenMap(prev => !prev)
+
   if (!order) return null
 
   const showCourierTracking = order.status === 'shipped'
@@ -40,111 +48,129 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
       <DialogContent size='4xl' className='p-1'>
         <DialogHeader className='p-6 pb-0'>
           <DialogTitle className='flex items-center gap-3'>
-            <span>Sipariş Detayı</span>
-            <Badge className={getStatusColor(order.status)}>
-              {OrderStatusLabel[order.status as keyof typeof OrderStatusLabel]}
-            </Badge>
+            {openMap ? (
+              <div className='flex items-center gap-2'>
+                <span>Kurye Haritası</span>
+                <Button size='xs' color='secondary' variant='outline' onClick={handleToggleMap}>
+                  <ArrowLeft className='mr-1 h-4 w-4' /> Geri Dön
+                </Button>
+              </div>
+            ) : (
+              <span>Sipariş Detayı</span>
+            )}
+            <Badge className={getStatusColor(order.status)}>{OrderStatusLabel[order.status]}</Badge>
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[70vh] p-6 pt-0'>
-          {/* Kurye Bilgileri */}
-          {showCourierInfo && order.courierInfo && (
-            <Card className='mb-4 border-amber-200 bg-amber-50'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='flex items-center gap-2 text-base'>
-                  <Car className='h-4 w-4 text-amber-600' />
-                  Kurye Bilgileri
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+        {openMap && order.courierInfo ? (
+          <div className='flex h-[26rem] w-full p-6'>
+            <CourierMap
+              courierInfo={order.courierInfo!}
+              courierPosition={order.courierInfo.position}
+              customerPosition={order.customerPosition}
+              key={order.courierInfo.id}
+            />
+          </div>
+        ) : (
+          <ScrollArea className='max-h-[70vh] p-6 pt-0'>
+            {/* Kurye Bilgileri */}
+            {showCourierInfo && order.courierInfo && (
+              <Card className='mb-4 border-amber-200 bg-amber-50'>
+                <CardHeader className='pb-3'>
+                  <CardTitle className='flex items-center gap-2 text-base'>
+                    <Car className='h-4 w-4 text-amber-600' />
+                    Kurye Bilgileri
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                  <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+                    <div className='flex items-center gap-2'>
+                      <User className='text-muted-foreground h-4 w-4' />
+                      <span className='font-medium'>{order.courierInfo.name}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      {order.courierInfo.licensePlate && (
+                        <Badge variant='outline' className='text-xs'>
+                          {order.courierInfo.licensePlate}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  {showCourierTracking && order.courierInfo && (
+                    <Alert className='mt-3' variant='outline' color='info'>
+                      <Car className='h-4 w-4' />
+                      <AlertDescription className='flex items-center justify-between'>
+                        <div>
+                          <p className='font-medium'>Kurye Yolda</p>
+                          <p className='text-sm'>Sipariş şu anda müşteriye doğru yola çıktı.</p>
+                        </div>
+                        <Button size='sm' color='info' onClick={handleToggleMap}>
+                          Haritada Görüntüle
+                        </Button>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Sol Kolon - Sipariş Bilgileri */}
+            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-base'>Sipariş Bilgileri</CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-3'>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground text-sm'>Sipariş ID:</span>
+                    <span className='text-sm font-medium'>{order.id}</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground text-sm'>Durum:</span>
+                    <Badge className={getStatusColor(order.status)}>
+                      {OrderStatusLabel[order.status as keyof typeof OrderStatusLabel]}
+                    </Badge>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground text-sm'>Oluşturulma:</span>
+                    <span className='text-sm'>{formatDateTR(order.createdAt)}</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='text-muted-foreground text-sm'>Son Güncelleme:</span>
+                    <span className='text-sm'>{formatDateTR(order.updatedAt)}</span>
+                  </div>
+                  <Separator />
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground text-sm'>Toplam Tutar:</span>
+                    <span className='text-warning text-lg font-bold'>{formatCurrency(order.totalAmount)}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Müşteri Bilgileri */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-base'>Müşteri Bilgileri</CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-3'>
                   <div className='flex items-center gap-2'>
                     <User className='text-muted-foreground h-4 w-4' />
-                    <span className='font-medium'>{order.courierInfo.name}</span>
+                    <span className='font-medium'>{order.customerName}</span>
                   </div>
                   <div className='flex items-center gap-2'>
-                    {order.courierInfo.licensePlate && (
-                      <Badge variant='outline' className='text-xs'>
-                        {order.courierInfo.licensePlate}
-                      </Badge>
-                    )}
+                    <Phone className='text-muted-foreground h-4 w-4' />
+                    <span>{order.customerPhone}</span>
                   </div>
-                </div>
-
-                {showCourierTracking && (
-                  <Alert className='mt-3' variant='outline' color='info'>
-                    <Car className='h-4 w-4' />
-                    <AlertDescription className='flex items-center justify-between'>
-                      <div>
-                        <p className='font-medium'>Kurye Yolda</p>
-                        <p className='text-sm'>Sipariş şu anda müşteriye doğru yola çıktı.</p>
-                      </div>
-                      <Button size='sm' color='info' disabled>
-                        Haritada Görüntüle (Yakında)
-                      </Button>
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Sol Kolon - Sipariş Bilgileri */}
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-            <Card>
-              <CardHeader>
-                <CardTitle className='text-base'>Sipariş Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-3'>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground text-sm'>Sipariş ID:</span>
-                  <span className='text-sm font-medium'>{order.id}</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground text-sm'>Durum:</span>
-                  <Badge className={getStatusColor(order.status)}>
-                    {OrderStatusLabel[order.status as keyof typeof OrderStatusLabel]}
-                  </Badge>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground text-sm'>Oluşturulma:</span>
-                  <span className='text-sm'>{formatDateTR(order.createdAt)}</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground text-sm'>Son Güncelleme:</span>
-                  <span className='text-sm'>{formatDateTR(order.updatedAt)}</span>
-                </div>
-                <Separator />
-                <div className='flex items-center justify-between'>
-                  <span className='text-muted-foreground text-sm'>Toplam Tutar:</span>
-                  <span className='text-warning text-lg font-bold'>{formatCurrency(order.totalAmount)}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Müşteri Bilgileri */}
-            <Card>
-              <CardHeader>
-                <CardTitle className='text-base'>Müşteri Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-3'>
-                <div className='flex items-center gap-2'>
-                  <User className='text-muted-foreground h-4 w-4' />
-                  <span className='font-medium'>{order.customerName}</span>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <Phone className='text-muted-foreground h-4 w-4' />
-                  <span>{order.customerPhone}</span>
-                </div>
-                <div className='flex items-start gap-2'>
-                  <MapPin className='text-muted-foreground mt-0.5 h-4 w-4' />
-                  <span className='text-sm'>{order.customerAddress}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </ScrollArea>
+                  <div className='flex items-start gap-2'>
+                    <MapPin className='text-muted-foreground mt-0.5 h-4 w-4' />
+                    <span className='text-sm'>{order.customerAddress}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
+        )}
       </DialogContent>
     </Dialog>
   )
