@@ -19,7 +19,7 @@ interface ScrollBarProps {
 }
 
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className, children, orientation = 'both', scrollHideDelay = 2000, ...props }, ref) => {
+  ({ className, children, orientation = 'both', scrollHideDelay = 2000, ...props }) => {
     const containerRef = React.useRef<HTMLDivElement>(null)
     const contentRef = React.useRef<HTMLDivElement>(null)
     const [showScrollbars, setShowScrollbars] = React.useState(false)

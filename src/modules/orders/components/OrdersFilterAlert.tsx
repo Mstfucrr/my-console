@@ -3,7 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { orderStatusLabels } from '@/modules/mockData'
+import { OrderStatusLabel } from '@/modules/types'
 import { Search } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
 
@@ -20,7 +20,7 @@ export function OrdersFilterAlert() {
           <span className='font-medium'>Filtreleme aktif:</span>
           {statusFilter?.map(status => (
             <Badge key={status} variant='outline' className='bg-blue-100 text-blue-800'>
-              {orderStatusLabels[status]}
+              {OrderStatusLabel[status]}
             </Badge>
           ))}
           {searchTerm.trim().length > 0 && (

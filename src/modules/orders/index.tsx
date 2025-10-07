@@ -1,10 +1,10 @@
 'use client'
 
+import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
-import { AlertTriangle, Plus, ShoppingCart } from 'lucide-react'
+import { Plus, ShoppingCart } from 'lucide-react'
 import { CreateOrderModal } from './components/CreateOrderModal'
 import { OrderDetailDialog } from './components/OrderDetailDialog'
 import { OrdersPendingAlert } from './components/OrdersPendingAlert'
@@ -30,6 +30,8 @@ function OrdersViewContent() {
     handleCreateOrderSuccess,
     refreshAllData
   } = useOrders()
+
+  if (error) return <PageError errorMessage='Sipariş verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
 
   // Filter orders based on search and status
 
@@ -60,17 +62,6 @@ function OrdersViewContent() {
 
       {/* Pending Siparişler Uyarısı */}
       <OrdersPendingAlert />
-
-      {/* Hata Mesajı */}
-      {error && (
-        <Alert className='border-destructive'>
-          <AlertTriangle className='h-4 w-4' />
-          <AlertDescription className='flex items-center justify-between'>
-            <span>{error}</span>
-            <RefreshButton onClick={refreshAllData} />
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Sipariş Tab'ları */}
       <OrdersTabs />

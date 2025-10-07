@@ -86,26 +86,12 @@ export default function DashboardView() {
 
   const getStatusBadgeColor = (status: string) => {
     const colorMap: Record<string, string> = {
-      delivered: 'bg-green-100 text-green-800',
-      on_way: 'bg-orange-100 text-orange-800',
-      cancelled: 'bg-red-100 text-red-800',
-      preparing: 'bg-blue-100 text-blue-800',
-      ready: 'bg-green-100 text-green-800',
-      pending: 'bg-yellow-100 text-yellow-800'
+      created: 'bg-yellow-100 text-yellow-800', // Beklemede
+      shipped: 'bg-orange-100 text-orange-800', // Yola Çıktı
+      delivered: 'bg-green-100 text-green-800', // Teslim Edildi
+      cancelled: 'bg-red-100 text-red-800' // İptal Edildi
     }
     return colorMap[status] || 'bg-gray-100 text-gray-800'
-  }
-
-  const getStatusLabel = (status: string) => {
-    const labelMap: Record<string, string> = {
-      delivered: 'Teslim',
-      on_way: 'Yolda',
-      cancelled: 'İptal',
-      preparing: 'Hazırlanıyor',
-      ready: 'Hazır',
-      pending: 'Beklemede'
-    }
-    return labelMap[status] || status
   }
 
   return (
@@ -187,7 +173,7 @@ export default function DashboardView() {
           color='text-green-600'
         />
         <StatCard
-          title='Yolda'
+          title='Yola Çıktı'
           value={stats.onWayOrders}
           Icon={BarChart2}
           hint='Şu anda kurye ile'
@@ -250,7 +236,7 @@ export default function DashboardView() {
                             getStatusBadgeColor(order.status)
                           )}
                         >
-                          {getStatusLabel(order.status)}
+                          {statusLabel(order.status)}
                         </span>
                       </div>
                       <div className='text-muted-foreground text-sm'>{order.customerName}</div>
@@ -261,7 +247,7 @@ export default function DashboardView() {
                     </div>
                   </div>
                 ))}
-                <Link href='/orders' className='w-full'>
+                <Link href='/reports' className='w-full'>
                   <Button variant='outline' className='mt-2 w-full bg-transparent'>
                     Tüm Siparişleri Görüntüle
                   </Button>

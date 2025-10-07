@@ -53,81 +53,14 @@ export const mockOrders: Order[] = [
     customerName: 'Ahmet Yılmaz',
     customerPhone: '+90 532 123 45 67',
     customerAddress: 'Acıbadem Mah. Çeçen Sok. No:15 Kadıköy/İstanbul',
-    status: 'on_way',
+    status: 'created',
     createdAt: '2024-01-25T18:30:00Z',
     updatedAt: '2024-01-25T19:15:00Z',
     totalAmount: 85.5,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
     integration: 'yemeksepeti',
-    items: [
-      { id: '1', name: 'Margarita Pizza', quantity: 1, price: 45.0 },
-      { id: '2', name: 'Coca Cola 330ml', quantity: 2, price: 12.5 },
-      { id: '3', name: 'Patates Kızartması', quantity: 1, price: 15.5 }
-    ],
-    courierLocation: {
-      latitude: 40.9923,
-      longitude: 29.0244,
-      lastUpdated: '2024-01-25T19:14:30Z'
-    },
-    courierInfo: {
-      id: 'CUR-001',
-      name: 'Mehmet Kurye',
-      phone: '+90 532 987 65 43',
-      vehicleType: 'motorcycle',
-      licensePlate: '34 ABC 123',
-      rating: 4.8,
-      totalDeliveries: 1247,
-      currentLocation: {
-        latitude: 40.9923,
-        longitude: 29.0244,
-        lastUpdated: '2024-01-25T19:14:30Z'
-      }
-    },
-    logs: [
-      {
-        id: '1',
-        orderId: 'ORD-2024-001',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T18:30:00Z'
-      },
-      {
-        id: '2',
-        orderId: 'ORD-2024-001',
-        status: 'preparing',
-        message: 'Sipariş hazırlanmaya başlandı',
-        timestamp: '2024-01-25T18:35:00Z'
-      },
-      {
-        id: '3',
-        orderId: 'ORD-2024-001',
-        status: 'prepared',
-        message: 'Sipariş hazırlandı',
-        timestamp: '2024-01-25T18:58:00Z'
-      },
-      {
-        id: '4',
-        orderId: 'ORD-2024-001',
-        status: 'ready',
-        message: 'Fiyuu gönderildi',
-        timestamp: '2024-01-25T19:00:00Z'
-      },
-      {
-        id: '5',
-        orderId: 'ORD-2024-001',
-        status: 'picked_up',
-        message: 'Kurye siparişi aldı',
-        timestamp: '2024-01-25T19:10:00Z'
-      },
-      {
-        id: '6',
-        orderId: 'ORD-2024-001',
-        status: 'on_way',
-        message: 'Kurye yola çıktı',
-        timestamp: '2024-01-25T19:15:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-002',
@@ -136,196 +69,92 @@ export const mockOrders: Order[] = [
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:42 Kadıköy/İstanbul',
     paymentMethod: 'cash',
     integration: 'getir',
-    status: 'delivered',
+    status: 'shipped',
     createdAt: '2024-01-25T17:45:00Z',
     updatedAt: '2024-01-25T18:30:00Z',
     totalAmount: 67.25,
     restaurant: mockRestaurants[0],
-    items: [
-      { id: '4', name: 'Tavuk Şiş', quantity: 1, price: 42.0 },
-      { id: '5', name: 'Ayran', quantity: 1, price: 8.0 },
-      { id: '6', name: 'Salata', quantity: 1, price: 17.25 }
-    ],
-    logs: [
-      {
-        id: '6',
-        orderId: 'ORD-2024-002',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T17:45:00Z'
-      },
-      {
-        id: '7',
-        orderId: 'ORD-2024-002',
-        status: 'preparing',
-        message: 'Sipariş hazırlanmaya başlandı',
-        timestamp: '2024-01-25T17:50:00Z'
-      },
-      {
-        id: '8',
-        orderId: 'ORD-2024-002',
-        status: 'ready',
-        message: 'Sipariş hazır',
-        timestamp: '2024-01-25T18:05:00Z'
-      },
-      {
-        id: '9',
-        orderId: 'ORD-2024-002',
-        status: 'picked_up',
-        message: 'Kurye siparişi aldı',
-        timestamp: '2024-01-25T18:10:00Z'
-      },
-      {
-        id: '10',
-        orderId: 'ORD-2024-002',
-        status: 'on_way',
-        message: 'Kurye yola çıktı',
-        timestamp: '2024-01-25T18:15:00Z'
-      },
-      {
-        id: '11',
-        orderId: 'ORD-2024-002',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T18:30:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-003',
     customerName: 'Mehmet Kaya',
     customerPhone: '+90 538 111 22 33',
     customerAddress: 'Göztepe Mah. Bağdat Cad. No:789 Kadıköy/İstanbul',
-    status: 'preparing',
+    status: 'shipped',
     createdAt: '2024-01-25T19:20:00Z',
     updatedAt: '2024-01-25T19:25:00Z',
     totalAmount: 125.75,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
     integration: 'trendyol_go',
-    items: [
-      { id: '7', name: 'Karışık Izgara', quantity: 2, price: 55.0 },
-      { id: '8', name: 'Fanta 330ml', quantity: 2, price: 12.5 },
-      { id: '9', name: 'Mercimek Çorbası', quantity: 1, price: 15.75 }
-    ],
-    logs: [
-      {
-        id: '12',
-        orderId: 'ORD-2024-003',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T19:20:00Z'
-      },
-      {
-        id: '13',
-        orderId: 'ORD-2024-003',
-        status: 'preparing',
-        message: 'Sipariş hazırlanmaya başlandı',
-        timestamp: '2024-01-25T19:25:00Z'
-      }
-    ]
+    courierInfo: {
+      id: 'CUR-001',
+      name: 'Murat Kurye',
+      licensePlate: '34 DEF 456',
+      position: [40.9923, 29.0234]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-004',
     customerName: 'Ayşe Özdemir',
     customerPhone: '+90 542 789 32 14',
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:58 Kadıköy/İstanbul',
-    status: 'delivered',
+    status: 'shipped',
     createdAt: '2024-01-25T16:30:00Z',
     updatedAt: '2024-01-25T17:45:00Z',
     totalAmount: 78.25,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
     integration: 'migros_yemek',
-    items: [
-      { id: '10', name: 'Tavuk Döner', quantity: 1, price: 35.0 },
-      { id: '11', name: 'Ayran', quantity: 2, price: 8.5 },
-      { id: '12', name: 'Çorba', quantity: 1, price: 18.75 }
-    ],
-    logs: [
-      {
-        id: '14',
-        orderId: 'ORD-2024-004',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T16:30:00Z'
-      },
-      {
-        id: '15',
-        orderId: 'ORD-2024-004',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T17:45:00Z'
-      }
-    ]
+    courierInfo: {
+      id: 'CUR-002',
+      name: 'Gökhan Taş',
+      licensePlate: '34 GHT 789',
+      position: [40.9784, 29.0602]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-005',
     customerName: 'Emre Kaya',
     customerPhone: '+90 555 123 98 76',
     customerAddress: 'Kozyatağı Mah. Değirmen Sok. No:23 Kadıköy/İstanbul',
-    status: 'pending',
+    status: 'created',
     createdAt: '2024-01-25T19:45:00Z',
     updatedAt: '2024-01-25T19:45:00Z',
     totalAmount: 89.5,
     restaurant: mockRestaurants[1],
     paymentMethod: 'cash',
     integration: 'tikla_gelsin',
-    items: [
-      { id: '13', name: 'Lahmacun', quantity: 3, price: 25.0 },
-      { id: '14', name: 'Şalgam', quantity: 1, price: 14.5 }
-    ],
-    logs: [
-      {
-        id: '16',
-        orderId: 'ORD-2024-005',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T19:45:00Z'
-      }
-    ]
+    courierInfo: {
+      id: 'CUR-003',
+      name: 'Ayhan Yıldız',
+      licensePlate: '34 AYH 321',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-007',
     customerName: 'Can Yılmaz',
     customerPhone: '+90 544 321 65 87',
     customerAddress: 'Erenköy Mah. Bağdat Cad. No:234 Kadıköy/İstanbul',
-    status: 'prepared',
+    status: 'shipped',
     createdAt: '2024-01-25T20:10:00Z',
     updatedAt: '2024-01-25T20:25:00Z',
     totalAmount: 92.75,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
     integration: 'yemeksepeti',
-    items: [
-      { id: '16', name: 'Adana Kebap', quantity: 1, price: 52.0 },
-      { id: '17', name: 'Ayran', quantity: 1, price: 8.5 },
-      { id: '18', name: 'Bulgur Pilavı', quantity: 1, price: 18.75 },
-      { id: '19', name: 'Cacık', quantity: 1, price: 13.5 }
-    ],
-    logs: [
-      {
-        id: '19',
-        orderId: 'ORD-2024-007',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T20:10:00Z'
-      },
-      {
-        id: '20',
-        orderId: 'ORD-2024-007',
-        status: 'preparing',
-        message: 'Sipariş hazırlanmaya başlandı',
-        timestamp: '2024-01-25T20:15:00Z'
-      },
-      {
-        id: '21',
-        orderId: 'ORD-2024-007',
-        status: 'prepared',
-        message: 'Sipariş hazırlandı',
-        timestamp: '2024-01-25T20:25:00Z'
-      }
-    ]
+    courierInfo: {
+      id: 'CUR-004',
+      name: 'Berkay Demir',
+      licensePlate: '34 BRK 654',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-006',
@@ -339,65 +168,33 @@ export const mockOrders: Order[] = [
     restaurant: mockRestaurants[0],
     paymentMethod: 'online',
     integration: 'manuel',
-    items: [{ id: '15', name: 'Hamburger', quantity: 1, price: 45.0 }],
-    logs: [
-      {
-        id: '17',
-        orderId: 'ORD-2024-006',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T15:20:00Z'
-      },
-      {
-        id: '18',
-        orderId: 'ORD-2024-006',
-        status: 'cancelled',
-        message: 'Sipariş iptal edildi',
-        timestamp: '2024-01-25T15:35:00Z'
-      }
-    ]
+    courierInfo: {
+      id: 'CUR-005',
+      name: 'Seda Aksoy',
+      licensePlate: '34 SDA 987',
+      position: [40.985, 29.045]
+    },
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-008',
     customerName: 'Ali Demir',
     customerPhone: '+90 555 888 77 66',
     customerAddress: 'Caddebostan Mah. Bağdat Cad. No:111 Kadıköy/İstanbul',
-    status: 'delivered',
+    status: 'shipped',
     createdAt: '2024-01-25T14:10:00Z',
     updatedAt: '2024-01-25T15:30:00Z',
     totalAmount: 156.75,
     restaurant: mockRestaurants[1],
     paymentMethod: 'card',
     integration: 'getir',
-    items: [
-      { id: '20', name: 'Et Döner', quantity: 2, price: 38.0 },
-      { id: '21', name: 'Kola', quantity: 3, price: 10.5 },
-      { id: '22', name: 'Baklava', quantity: 1, price: 35.25 }
-    ],
     courierInfo: {
-      id: 'CUR-002',
-      name: 'Serkan Kurye',
-      phone: '+90 532 111 22 33',
-      vehicleType: 'bicycle',
-      rating: 4.5,
-      totalDeliveries: 892
+      id: 'CUR-006',
+      name: 'Yusuf Kılıç',
+      licensePlate: '34 YSF 852',
+      position: [40.985, 29.045]
     },
-    logs: [
-      {
-        id: '22',
-        orderId: 'ORD-2024-008',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T14:10:00Z'
-      },
-      {
-        id: '23',
-        orderId: 'ORD-2024-008',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T15:30:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-009',
@@ -411,159 +208,63 @@ export const mockOrders: Order[] = [
     restaurant: mockRestaurants[0],
     paymentMethod: 'cash',
     integration: 'yemeksepeti',
-    items: [
-      { id: '23', name: 'Mantı', quantity: 1, price: 42.0 },
-      { id: '24', name: 'Ayran', quantity: 2, price: 8.5 },
-      { id: '25', name: 'Turşu', quantity: 1, price: 8.5 }
-    ],
-    logs: [
-      {
-        id: '24',
-        orderId: 'ORD-2024-009',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T13:45:00Z'
-      },
-      {
-        id: '25',
-        orderId: 'ORD-2024-009',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T14:50:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-010',
     customerName: 'Burak Özkan',
     customerPhone: '+90 532 777 66 55',
     customerAddress: 'Feneryolu Mah. Bağdat Cad. No:222 Kadıköy/İstanbul',
-    status: 'cancelled',
+    status: 'delivered',
     createdAt: '2024-01-25T12:30:00Z',
     updatedAt: '2024-01-25T12:45:00Z',
     totalAmount: 89.25,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
     integration: 'trendyol_go',
-    items: [
-      { id: '26', name: 'Balık Tava', quantity: 1, price: 65.0 },
-      { id: '27', name: 'Salata', quantity: 1, price: 24.25 }
-    ],
-    logs: [
-      {
-        id: '26',
-        orderId: 'ORD-2024-010',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T12:30:00Z'
-      },
-      {
-        id: '27',
-        orderId: 'ORD-2024-010',
-        status: 'cancelled',
-        message: 'Müşteri iptal etti',
-        timestamp: '2024-01-25T12:45:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-011',
     customerName: 'Elif Şahin',
     customerPhone: '+90 555 444 33 22',
     customerAddress: 'Koşuyolu Mah. Uzunçayır Cad. No:88 Kadıköy/İstanbul',
-    status: 'delivered',
+    status: 'shipped',
     createdAt: '2024-01-25T11:15:00Z',
     updatedAt: '2024-01-25T12:20:00Z',
     totalAmount: 73.0,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
     integration: 'migros_yemek',
-    items: [
-      { id: '28', name: 'Köfte', quantity: 2, price: 28.0 },
-      { id: '29', name: 'Pilav', quantity: 1, price: 17.0 }
-    ],
-    logs: [
-      {
-        id: '28',
-        orderId: 'ORD-2024-011',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T11:15:00Z'
-      },
-      {
-        id: '29',
-        orderId: 'ORD-2024-011',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T12:20:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-012',
     customerName: 'Murat Aydın',
     customerPhone: '+90 533 222 11 00',
     customerAddress: 'Hasanpaşa Mah. Fahrettin Kerim Gökay Cad. No:156 Kadıköy/İstanbul',
-    status: 'delivered',
+    status: 'cancelled',
     createdAt: '2024-01-25T10:45:00Z',
     updatedAt: '2024-01-25T11:45:00Z',
     totalAmount: 195.5,
     restaurant: mockRestaurants[1],
     paymentMethod: 'cash',
     integration: 'tikla_gelsin',
-    items: [
-      { id: '30', name: 'Karışık Izgara Family', quantity: 1, price: 165.0 },
-      { id: '31', name: 'Meze Tabağı', quantity: 1, price: 30.5 }
-    ],
-    logs: [
-      {
-        id: '30',
-        orderId: 'ORD-2024-012',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T10:45:00Z'
-      },
-      {
-        id: '31',
-        orderId: 'ORD-2024-012',
-        status: 'delivered',
-        message: 'Sipariş teslim edildi',
-        timestamp: '2024-01-25T11:45:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   },
   {
     id: 'ORD-2024-013',
     customerName: 'Deniz Polat',
     customerPhone: '+90 544 555 66 77',
     customerAddress: 'Erenköy Mah. Bağdat Cad. No:333 Kadıköy/İstanbul',
-    status: 'cancelled',
+    status: 'created',
     createdAt: '2024-01-25T09:30:00Z',
     updatedAt: '2024-01-25T09:35:00Z',
     totalAmount: 52.75,
     restaurant: mockRestaurants[0],
     paymentMethod: 'online',
     integration: 'manuel',
-    items: [
-      { id: '32', name: 'Pide', quantity: 1, price: 38.0 },
-      { id: '33', name: 'Şalgam', quantity: 2, price: 7.375 }
-    ],
-    logs: [
-      {
-        id: '32',
-        orderId: 'ORD-2024-013',
-        status: 'pending',
-        message: 'Sipariş alındı',
-        timestamp: '2024-01-25T09:30:00Z'
-      },
-      {
-        id: '33',
-        orderId: 'ORD-2024-013',
-        status: 'cancelled',
-        message: 'Stok yetersizliği',
-        timestamp: '2024-01-25T09:35:00Z'
-      }
-    ]
+    customerPosition: [40.985, 29.045]
   }
 ]
 
@@ -587,7 +288,7 @@ export const mockAPILogs: APILog[] = [
     statusCode: 200,
     responseTime: 123,
     request: '',
-    response: '{"id":"ORD-2024-001","status":"on_way"}'
+    response: '{"id":"ORD-2024-001","status":"shipped"}'
   },
   {
     id: '3',
@@ -652,8 +353,8 @@ export const mockDashboardStats: DashboardStats = {
   totalRevenue: 3250.75,
   pendingPayments: 1875.4,
   ordersByStatus: [
-    { status: 'delivered', count: 12, percentage: 80 },
-    { status: 'on_way', count: 2, percentage: 13.3 },
+    { status: 'shipped', count: 12, percentage: 80 },
+    { status: 'shipped', count: 2, percentage: 13.3 },
     { status: 'cancelled', count: 1, percentage: 6.7 }
   ],
   recentApiErrors: [
@@ -690,26 +391,10 @@ export const mockDashboardStats: DashboardStats = {
   ]
 }
 
-// Sipariş durumu için Türkçe etiketler
-export const orderStatusLabels: Record<OrderStatus, string> = {
-  pending: 'Beklemede',
-  preparing: 'Hazırlanıyor',
-  prepared: 'Hazırlandı',
-  ready: 'Hazır',
-  picked_up: 'Kurye Aldı',
-  on_way: 'Yolda',
-  delivered: 'Teslim Edildi',
-  cancelled: 'İptal Edildi'
-}
-
 // Sipariş durumu için renkler
 export const orderStatusColors: Record<OrderStatus, string> = {
-  pending: '#FF9800', // Turuncu
-  preparing: '#2196F3', // Mavi
-  prepared: '#13C2C2', // Cyan
-  ready: '#4CAF50', // Yeşil
-  picked_up: '#9C27B0', // Mor
-  on_way: '#FF5722', // Kırmızı-turuncu
+  created: '#FF9800', // Turuncu
+  shipped: '#13C2C2', // Cyan
   delivered: '#4CAF50', // Yeşil
   cancelled: '#F44336' // Kırmızı
 }

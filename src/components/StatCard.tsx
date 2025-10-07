@@ -3,8 +3,10 @@ import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/modules/orders/utils'
 import type { LucideIcon } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
+import { Skeleton } from './ui/skeleton'
 
 interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
+  isLoading?: boolean
   title: string
   value: number
   Icon: LucideIcon | string
@@ -13,12 +15,23 @@ interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   type?: 'number' | 'currency'
 }
 
-export default function StatCard({ title, value, Icon, hint, color, type = 'number', ...props }: StatCardProps) {
+export default function StatCard({
+  title,
+  value,
+  Icon,
+  hint,
+  color,
+  type = 'number',
+  isLoading,
+  ...props
+}: StatCardProps) {
+  if (isLoading) return <Skeleton className='h-24 w-full' />
+
   return (
     <Card {...props}>
       <CardContent className='p-4'>
-        <div className='flex items-center justify-between'>
-          <div>
+        <div className='flex items-center justify-center'>
+          <div className='flex flex-col items-center justify-center'>
             <div className='text-muted-foreground text-xs'>{title}</div>
             <div className='mt-1 flex items-center gap-2'>
               {typeof Icon === 'string' ? (

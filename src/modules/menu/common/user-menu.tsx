@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useAuth } from '@/context/AuthContext'
 import { LogOut, User as UserIcon } from 'lucide-react'
-import Link from 'next/link'
 
 type UserMenuProps = {
   name?: string
@@ -31,10 +30,6 @@ const UserMenu = ({ name, restaurant }: UserMenuProps) => {
       </PopoverTrigger>
       <PopoverContent align='end' sideOffset={8} className='w-full p-0 max-md:w-40'>
         <div className='border-t'>
-          <Link href='/profile' className='hover:bg-muted flex items-center gap-2 px-4 py-2 text-sm'>
-            <UserIcon className='size-4' />
-            Profil
-          </Link>
           <button
             type='button'
             onClick={logout}

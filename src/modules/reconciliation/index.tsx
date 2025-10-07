@@ -1,103 +1,108 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import PageError from '@/components/page-error'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
+import { useQuery } from '@tanstack/react-query'
+import { AlertTriangle } from 'lucide-react'
+import { useState } from 'react'
 import { ReconciliationFilters, type ReconciliationFilterProperties } from './components/reconciliation-filters'
 import ReconciliationHeader from './components/reconciliation-header'
 import ReconciliationInfoAlert from './components/reconciliation-info-alert'
 import ReconciliationStats from './components/reconciliation-stats'
 import ReconciliationTable from './components/reconciliation-table'
 import { reconciliationService } from './service'
-import type { ReconciliationRecord, ReconciliationStats as StatsType } from './types'
+
+const defaultFilters: ReconciliationFilterProperties = {
+  status: 'all',
+  search: '',
+  dateFrom: undefined,
+  dateTo: undefined
+}
 
 export default function ReconciliationView() {
-  const [reconciliationData, setReconciliationData] = useState<ReconciliationRecord[]>([])
-  const [stats, setStats] = useState<StatsType>({
-    totalSettled: 0,
-    totalPending: 0,
-    totalFailed: 0,
-    monthlyRevenue: 0,
-    platformFees: 0,
-    netRevenue: 0
-  })
-  const [isLoading, setIsLoading] = useState(true)
-  const [filters, setFilters] = useState<ReconciliationFilterProperties>({
-    status: 'all',
-    search: '',
-    dateFrom: undefined,
-    dateTo: undefined
+  const [filters, setFilters] = useState<ReconciliationFilterProperties>(defaultFilters)
+
+  // Fetch reconciliation data with filters
+  const {
+    data: reconciliationData = [],
+    isLoading: isDataLoading,
+    error: dataError,
+    refetch: refetchData
+  } = useQuery({
+    queryKey: ['reconciliation', filters],
+    queryFn: () => reconciliationService.getReconciliationData(filters),
+    staleTime: 60_000
   })
 
-  useEffect(() => {
-    loadReconciliationData()
-  }, [])
-
-  const loadReconciliationData = async () => {
-    setIsLoading(true)
-    try {
-      const [data, statsData] = await Promise.all([
-        reconciliationService.getReconciliationData(),
-        reconciliationService.getReconciliationStats()
-      ])
-      setReconciliationData(data)
-      setStats(statsData)
-    } catch (error) {
-      console.error('Failed to load reconciliation data:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // Fetch stats data with filters
+  const {
+    data: stats,
+    isLoading: isStatsLoading,
+    error: statsError,
+    refetch: refetchStats
+  } = useQuery({
+    queryKey: ['reconciliation-stats', filters],
+    queryFn: () => reconciliationService.getReconciliationStats(filters),
+    staleTime: 60_000
+  })
 
   const handleFiltersChange = (newFilters: ReconciliationFilterProperties) => {
     setFilters(newFilters)
-    // You can add debounced API call here if needed
   }
 
   const handleClearFilters = () => {
-    setFilters({
-      status: 'all',
-      search: '',
-      dateFrom: undefined,
-      dateTo: undefined
-    })
+    setFilters(defaultFilters)
   }
 
-  const filteredData = reconciliationData.filter(record => {
-    // Status filter
-    if (filters.status !== 'all' && record.status !== filters.status) {
-      return false
-    }
+  const refreshAllData = () => {
+    refetchData()
+    refetchStats()
+  }
 
-    // Search filter
-    if (filters.search && !record.id.toLowerCase().includes(filters.search.toLowerCase())) {
-      return false
-    }
+  const isLoading = isDataLoading || isStatsLoading
+  const error = dataError || statsError
 
-    // Date filters
-    if (filters.dateFrom && new Date(record.date) < new Date(filters.dateFrom)) {
-      return false
-    }
-    if (filters.dateTo && new Date(record.date) > new Date(filters.dateTo)) {
-      return false
-    }
-
-    return true
-  })
+  if (error)
+    return <PageError errorMessage='Mutabakat verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
-      <ReconciliationHeader onRefresh={loadReconciliationData} isLoading={isLoading} />
+      <ReconciliationHeader onRefresh={refreshAllData} isLoading={isLoading} />
 
-      <ReconciliationStats stats={stats} />
-
-      <ReconciliationFilters
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onClearFilters={handleClearFilters}
+      <ReconciliationStats
+        isLoading={isStatsLoading}
+        stats={
+          stats || {
+            totalSettled: 0,
+            totalPending: 0,
+            totalFailed: 0,
+            monthlyRevenue: 0,
+            platformFees: 0,
+            netRevenue: 0
+          }
+        }
       />
+
+      {!error ? (
+        <ReconciliationFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+        />
+      ) : (
+        <Alert color='destructive' variant='outline'>
+          <AlertTriangle className='h-4 w-4' />
+          <AlertDescription className='flex items-center justify-between'>
+            <span>Mutabakat verileri yüklenirken bir hata oluştu</span>
+            <RefreshButton onClick={refreshAllData} />
+          </AlertDescription>
+        </Alert>
+      )}
 
       <ReconciliationInfoAlert />
 
-      <ReconciliationTable data={filteredData} isLoading={isLoading} />
+      {!error && <ReconciliationTable data={reconciliationData} isLoading={isDataLoading} />}
     </div>
   )
 }

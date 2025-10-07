@@ -6,6 +6,7 @@ import { useOrders } from '../context/OrdersContext'
 
 export function OrdersSearch() {
   const { searchTerm, setSearchTerm } = useOrders()
+  const isActive = searchTerm && searchTerm.length > 0
 
   return (
     <div className='relative max-w-md'>
@@ -15,6 +16,8 @@ export function OrdersSearch() {
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value)}
         className='pl-10'
+        color={isActive ? 'primary' : undefined}
+        variant={isActive ? 'faded' : 'bordered'}
       />
     </div>
   )

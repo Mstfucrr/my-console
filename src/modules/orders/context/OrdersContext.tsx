@@ -2,7 +2,7 @@
 
 import type { Order, OrderStatus, PaginationOptions } from '@/modules/types'
 import { useQuery } from '@tanstack/react-query'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 import { ordersService } from '../service'
 
 export interface OrdersContextType {
@@ -21,12 +21,8 @@ export interface OrdersContextType {
   completedTotal: number
   stats: {
     total: number
-    pending: number
-    preparing: number
-    prepared: number
-    ready: number
-    picked_up: number
-    on_way: number
+    created: number
+    shipped: number
     delivered: number
     cancelled: number
   }
@@ -36,7 +32,7 @@ export interface OrdersContextType {
   isFetchingActive: boolean
   isLoadingCompleted: boolean
   isFetchingCompleted: boolean
-
+  isStatsLoading: boolean
   // Error
   error: string
 
@@ -94,7 +90,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: statusFilter || ['pending', 'preparing', 'prepared', 'ready', 'picked_up', 'on_way'],
+          status: statusFilter || ['created', 'shipped'],
           search: searchTerm
         },
         { page: 1, limit: 50 }
@@ -122,8 +118,12 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   })
 
   // Stats query
-  const { data: statsData, error: statsError } = useQuery({
-    queryKey: ['ordersStats'],
+  const {
+    data: statsData,
+    error: statsError,
+    isLoading: isStatsLoading
+  } = useQuery({
+    queryKey: ['ordersStats', statusFilter, searchTerm],
     queryFn: async () => {
       const response = await ordersService.getOrdersStats()
 
@@ -135,17 +135,18 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const activeOrders = activeOrdersData || []
   const completedOrders = completedOrdersData?.data || []
   const completedTotal = completedOrdersData?.total || 0
-  const stats = statsData || {
-    total: 0,
-    pending: 0,
-    preparing: 0,
-    prepared: 0,
-    ready: 0,
-    picked_up: 0,
-    on_way: 0,
-    delivered: 0,
-    cancelled: 0
-  }
+
+  const stats = useMemo(
+    () =>
+      statsData ?? {
+        total: 0,
+        created: 0,
+        shipped: 0,
+        delivered: 0,
+        cancelled: 0
+      },
+    [statsData]
+  )
 
   // Combine errors
   const error = activeOrdersError?.message || completedOrdersError?.message || statsError?.message || ''
@@ -182,9 +183,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const handleStatClick = (statuses: OrderStatus[]) => {
     setStatusFilter(statuses)
     // Determine which tab to show based on statuses
-    const isActiveStatus = statuses.some(s =>
-      ['pending', 'preparing', 'prepared', 'ready', 'picked_up', 'on_way'].includes(s)
-    )
+    const isActiveStatus = statuses.some(s => ['created', 'shipped'].includes(s))
     const isCompletedStatus = statuses.some(s => ['delivered', 'cancelled'].includes(s))
 
     if (isActiveStatus && !isCompletedStatus) {
@@ -253,7 +252,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     isFetchingActive,
     isLoadingCompleted,
     isFetchingCompleted,
-
+    isStatsLoading,
     // Error
     error,
 

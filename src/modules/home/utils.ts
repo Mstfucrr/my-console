@@ -1,23 +1,15 @@
+import { OrderStatusLabel } from '@/modules/types'
+
 export function statusLabel(status: string) {
-  const map: Record<string, string> = {
-    delivered: 'Teslim Edildi',
-    on_way: 'Yolda',
-    cancelled: 'İptal Edildi',
-    preparing: 'Hazırlanıyor',
-    ready: 'Hazır',
-    pending: 'Beklemede'
-  }
-  return map[status] ?? status
+  return OrderStatusLabel[status as keyof typeof OrderStatusLabel] ?? status
 }
 
 export function statusColor(status: string) {
   const colorMap: Record<string, string> = {
-    delivered: '#16a34a',
-    on_way: '#f59e0b',
-    cancelled: '#ef4444',
-    preparing: '#3b82f6',
-    ready: '#22c55e',
-    pending: '#fb923c'
+    created: '#fb923c', // Beklemede - Orange
+    shipped: '#f59e0b', // Yola Çıktı - Amber
+    delivered: '#16a34a', // Teslim Edildi - Green
+    cancelled: '#ef4444' // İptal Edildi - Red
   }
   return colorMap[status] ?? '#6b7280'
 }

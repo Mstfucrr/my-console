@@ -23,8 +23,7 @@ export function OrdersTabs() {
     stats
   } = useOrders()
 
-  const activeOrdersCount =
-    stats.pending + stats.preparing + stats.prepared + stats.ready + stats.picked_up + stats.on_way
+  const activeOrdersCount = stats.created + stats.shipped
   const completedOrdersCount = stats.delivered + stats.cancelled
 
   return (
@@ -63,7 +62,6 @@ export function OrdersTabs() {
               orders={activeOrders}
               isLoading={isLoadingActive}
               isFetching={isFetchingActive}
-              showActions={true}
               emptyMessage='Aktif sipariş yok'
               filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
             />
@@ -75,7 +73,6 @@ export function OrdersTabs() {
               orders={completedOrders}
               isLoading={isLoadingCompleted}
               isFetching={isFetchingCompleted}
-              showActions={false}
               emptyMessage='Tamamlanan sipariş bulunamadı'
               filteredEmptyMessage='Filtreye uygun tamamlanan sipariş yok'
             />
