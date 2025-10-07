@@ -166,7 +166,7 @@ const VerfiyForm = () => {
                 loadingText='Doğrulanıyor...'
               >
                 <Badge className='text-lg'>
-                  <span className={cn({ 'text-gray-100': !isOtpComplete })}>Verify Now</span>
+                  <span className={cn({ 'text-gray-100': !isOtpComplete })}>Gönder</span>
                 </Badge>
               </LoadingButton>
             ) : (
