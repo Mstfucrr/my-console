@@ -2,7 +2,7 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
+import { FlameIcon } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
 
 export function OrdersPendingAlert() {
@@ -12,13 +12,11 @@ export function OrdersPendingAlert() {
 
   return (
     <Alert variant='outline' color='warning'>
-      <AlertTriangle className='h-4 w-4 text-orange-600' />
+      <FlameIcon className='h-4 w-4 !text-orange-600' />
       <AlertDescription className='flex items-center justify-between'>
         <div>
-          <p className='font-medium'>🔥 {stats.created} sipariş kabul edilmeyi bekliyor!</p>
-          <p className='text-sm'>
-            Beklemede olan siparişler kırmızı çerçeve ile vurgulanmıştır. Hemen işleme alınması gerekmektedir.
-          </p>
+          <p className='font-medium'> {stats.created} sipariş beklemede!</p>
+          <p className='text-sm'>Beklemede olan siparişler kırmızı çerçeve ile vurgulanmıştır.</p>
         </div>
         <Button color='warning' onClick={() => handleStatClick(['created'])}>
           Bekleyenleri Göster

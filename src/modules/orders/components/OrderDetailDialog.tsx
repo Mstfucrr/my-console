@@ -45,7 +45,6 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
   if (!order) return null
 
   const showCourierTracking = order.status === 'shipped'
-  const showCourierInfo = order.courierInfo && ['shipped', 'delivered'].includes(order.status)
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -78,7 +77,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
         ) : (
           <ScrollArea className='max-h-[70vh] p-6 pt-0'>
             {/* Kurye Bilgileri */}
-            {showCourierInfo && order.courierInfo && (
+            {order.courierInfo && (
               <CourierCard
                 courierInfo={order.courierInfo}
                 handleToggleMap={handleToggleMap}

@@ -44,7 +44,7 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
   ]
 
   return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+    <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
       {statCards.map((stat, index) => (
         <StatCard key={index} {...stat} isLoading={isLoading} />
       ))}

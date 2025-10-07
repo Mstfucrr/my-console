@@ -1,8 +1,9 @@
 'use client'
 
+import { Motorcycle } from '@/components/svg'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { Order, OrderStatus } from '@/modules/types'
@@ -88,7 +89,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
 
   return (
     <Card className={cn('mb-3 transition-shadow hover:shadow-md', isUrgent && 'border-red-500 bg-red-50')}>
-      <CardContent className='p-4'>
+      <CardContent className='p-4 pb-0'>
         <div className='flex items-start justify-between gap-4'>
           <div className='min-w-0 flex-1'>
             {/* Sipariş ID ve Durum */}
@@ -103,6 +104,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
                   ACİL!
                 </Badge>
               )}
+              {order.courierInfo && <Motorcycle className='size-7' />}
             </div>
 
             {/* Ödeme Yöntemi ve Entegrasyon */}
@@ -128,11 +130,6 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
                 <Phone className='text-muted-foreground h-3.5 w-3.5' />
                 <span className='text-muted-foreground text-sm'>{order.customerPhone}</span>
               </div>
-
-              <div className='flex items-start gap-2'>
-                <MapPin className='text-muted-foreground mt-0.5 h-3.5 w-3.5' />
-                <span className='text-muted-foreground line-clamp-2 text-xs'>{order.customerAddress}</span>
-              </div>
             </div>
           </div>
 
@@ -147,17 +144,23 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
 
             {/* Restoran Bilgisi */}
             <div className='text-muted-foreground mb-2 text-xs'>{order.restaurant.name}</div>
-
-            {/* Action Buttons veya Detay Butonu */}
-            <div className='flex flex-col items-end gap-2'>
-              <Button variant='outline' onClick={() => onViewDetails(order)}>
-                <Eye className='mr-1 h-3 w-3' />
-                Detay
-              </Button>
-            </div>
           </div>
         </div>
       </CardContent>
+      <CardFooter>
+        <div className='flex w-full items-center justify-between gap-2'>
+          <div className='flex items-start gap-2'>
+            <MapPin className='text-muted-foreground mt-0.5 h-3.5 w-3.5' />
+            <span className='text-muted-foreground line-clamp-2 text-xs'>{order.customerAddress}</span>
+          </div>
+          <div className='flex flex-col items-end gap-2 self-end'>
+            <Button variant='outline' onClick={() => onViewDetails(order)}>
+              <Eye className='mr-1 h-3 w-3' />
+              Detay
+            </Button>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   )
 }

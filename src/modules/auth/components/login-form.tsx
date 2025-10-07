@@ -80,12 +80,6 @@ const LogInForm = () => {
           </LoadingButton>
         </form>
       </FormProvider>
-      <div className='text-muted-foreground text-center text-sm'>
-        Hesabınız yok mu?{' '}
-        <Link href='/signup' className='text-primary hover:underline'>
-          Hesap oluştur
-        </Link>
-      </div>
     </div>
   )
 }

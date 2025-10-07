@@ -8,8 +8,10 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
 import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, Settings, ShoppingCart } from 'lucide-react'
+import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
@@ -21,10 +23,10 @@ import { dashboardService } from './service'
 import type { DashboardStats } from './types'
 import { statusColor, statusLabel } from './utils'
 
-type DateRange = 'today' | 'week' | 'month'
+const defaultDateRange = { from: new Date(new Date().setDate(new Date().getDate() - 7)), to: new Date() }
 
 export default function DashboardView() {
-  const [dateRange, setDateRange] = useState<DateRange>('today')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
@@ -48,12 +50,7 @@ export default function DashboardView() {
   }, [stats])
 
   const getChartTitle = (baseTitle: string) => {
-    const titles = {
-      today: `${baseTitle} (Saatlik)`,
-      week: `${baseTitle} (Günlük)`,
-      month: `${baseTitle} (Haftalık)`
-    }
-    return titles[dateRange] || baseTitle
+    return baseTitle
   }
 
   if (isLoading) {
@@ -98,21 +95,21 @@ export default function DashboardView() {
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       {/* Header */}
       <PageHeader
-        title='Dashboard'
+        title='Özet bilgiler'
         description='İşletmenizin güncel durumunu takip edin'
         icon={BarChart2}
         iconColor='text-blue-500'
         actions={
           <div className='flex items-center gap-2'>
-            {(['today', 'week', 'month'] as const).map(range => (
-              <Button
-                key={range}
-                variant={dateRange === range ? undefined : 'outline'}
-                onClick={() => setDateRange(range)}
-              >
-                {range === 'today' ? 'Bugün' : range === 'week' ? 'Bu Hafta' : 'Bu Ay'}
-              </Button>
-            ))}
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+              placeholder='Tarih aralığı seçin'
+              enableTimeSelection={true}
+              onApply={() => {
+                refetch()
+              }}
+            />
           </div>
         }
       />
@@ -264,7 +261,7 @@ export default function DashboardView() {
       </div>
 
       {/* Line Charts */}
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>{getChartTitle('Sipariş Sayısı')}</CardTitle>
@@ -283,6 +280,22 @@ export default function DashboardView() {
           <CardContent>
             <div className='h-80'>
               <LineChart data={stats.hourlyRevenueChart} title='Ciro (₺)' color='#FFD100' height={300} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base'>{getChartTitle('Ortalama Teslimat Süresi')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='h-80'>
+              <LineChart
+                data={stats.averageDeliveryTimeChart}
+                title='Ortalama Teslimat Süresi (dakika)'
+                color='#10B981'
+                height={300}
+              />
             </div>
           </CardContent>
         </Card>
