@@ -7,7 +7,6 @@ import { useEffect, useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 
 // Fix Leaflet icons
-delete (Leaflet.Icon.Default.prototype as unknown as { _getIconUrl: unknown })._getIconUrl
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
