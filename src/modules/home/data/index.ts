@@ -45,6 +45,16 @@ export const mockDashboardStats: DashboardStats = {
     { label: '14:00', value: 520.65 },
     { label: '15:00', value: 380.3 },
     { label: '16:00', value: 475.85 }
+  ],
+  averageDeliveryTimeChart: [
+    { label: '09:00', value: 45 },
+    { label: '10:00', value: 38 },
+    { label: '11:00', value: 42 },
+    { label: '12:00', value: 35 },
+    { label: '13:00', value: 48 },
+    { label: '14:00', value: 52 },
+    { label: '15:00', value: 41 },
+    { label: '16:00', value: 39 }
   ]
 }
 

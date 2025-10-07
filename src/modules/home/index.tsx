@@ -261,7 +261,7 @@ export default function DashboardView() {
       </div>
 
       {/* Line Charts */}
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>{getChartTitle('Sipariş Sayısı')}</CardTitle>
@@ -280,6 +280,22 @@ export default function DashboardView() {
           <CardContent>
             <div className='h-80'>
               <LineChart data={stats.hourlyRevenueChart} title='Ciro (₺)' color='#FFD100' height={300} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base'>{getChartTitle('Ortalama Teslimat Süresi')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='h-80'>
+              <LineChart
+                data={stats.averageDeliveryTimeChart}
+                title='Ortalama Teslimat Süresi (dakika)'
+                color='#10B981'
+                height={300}
+              />
             </div>
           </CardContent>
         </Card>

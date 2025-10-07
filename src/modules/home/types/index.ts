@@ -27,6 +27,7 @@ export interface DashboardStats {
   recentOrders: Order[]
   hourlyOrdersChart: ChartDataPoint[]
   hourlyRevenueChart: ChartDataPoint[]
+  averageDeliveryTimeChart: ChartDataPoint[]
 }
 
 export type Stats = {
