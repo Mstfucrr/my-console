@@ -8,8 +8,10 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
 import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, Settings, ShoppingCart } from 'lucide-react'
+import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
@@ -21,10 +23,8 @@ import { dashboardService } from './service'
 import type { DashboardStats } from './types'
 import { statusColor, statusLabel } from './utils'
 
-type DateRange = 'today' | 'week' | 'month'
-
 export default function DashboardView() {
-  const [dateRange, setDateRange] = useState<DateRange>('today')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
@@ -35,7 +35,8 @@ export default function DashboardView() {
   } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats', dateRange],
     queryFn: () => dashboardService.getStats(dateRange),
-    staleTime: 60_000
+    staleTime: 60_000,
+    enabled: !!dateRange
   })
 
   const chartData = useMemo(() => {
@@ -48,12 +49,7 @@ export default function DashboardView() {
   }, [stats])
 
   const getChartTitle = (baseTitle: string) => {
-    const titles = {
-      today: `${baseTitle} (Saatlik)`,
-      week: `${baseTitle} (Günlük)`,
-      month: `${baseTitle} (Haftalık)`
-    }
-    return titles[dateRange] || baseTitle
+    return baseTitle
   }
 
   if (isLoading) {
@@ -104,15 +100,15 @@ export default function DashboardView() {
         iconColor='text-blue-500'
         actions={
           <div className='flex items-center gap-2'>
-            {(['today', 'week', 'month'] as const).map(range => (
-              <Button
-                key={range}
-                variant={dateRange === range ? undefined : 'outline'}
-                onClick={() => setDateRange(range)}
-              >
-                {range === 'today' ? 'Bugün' : range === 'week' ? 'Bu Hafta' : 'Bu Ay'}
-              </Button>
-            ))}
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+              placeholder='Tarih aralığı seçin'
+              enableTimeSelection={true}
+              onApply={() => {
+                refetch()
+              }}
+            />
           </div>
         }
       />
