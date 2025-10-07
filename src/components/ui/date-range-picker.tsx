@@ -62,7 +62,7 @@ export function DateRangePicker({
 
   const handleApply = () => {
     if (tempDateRange) {
-      let finalRange = { ...tempDateRange }
+      const finalRange: DateRange = { ...tempDateRange }
 
       if (enableTimeSelection && fromTime && tempDateRange.from) {
         const [hours, minutes] = fromTime.split(':').map(Number)
