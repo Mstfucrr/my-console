@@ -98,7 +98,7 @@ export default function DashboardView() {
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       {/* Header */}
       <PageHeader
-        title='Dashboard'
+        title='Özet bilgiler'
         description='İşletmenizin güncel durumunu takip edin'
         icon={BarChart2}
         iconColor='text-blue-500'
