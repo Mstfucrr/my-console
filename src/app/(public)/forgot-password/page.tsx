@@ -4,7 +4,6 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Mail } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -29,7 +28,6 @@ const ForgotPasswordForm = () => {
   })
 
   const { handleSubmit, control } = form
-  const router = useRouter()
 
   const onSubmit = async (data: ForgotPasswordFormType) => {
     try {

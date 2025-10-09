@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
@@ -28,7 +28,7 @@ const schema = z
 
 type ResetPasswordFormType = z.infer<typeof schema>
 
-const ResetPasswordForm = () => {
+function ResetPasswordFormInner() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const searchParams = useSearchParams()
@@ -150,6 +150,12 @@ const ResetPasswordForm = () => {
     </div>
   )
 }
+
+const ResetPasswordForm = () => (
+  <Suspense fallback={<div className='py-8 text-center'>Yükleniyor...</div>}>
+    <ResetPasswordFormInner />
+  </Suspense>
+)
 
 const ResetPasswordPage = () => {
   return <ResetPasswordForm />

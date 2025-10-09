@@ -75,7 +75,7 @@ export function OrdersStats() {
   return (
     <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5'>
       {stats.map(stat => (
-        <StatCard {...stat} className='size-full' isLoading={isStatsLoading} />
+        <StatCard {...stat} key={stat.id} className='size-full' isLoading={isStatsLoading} />
       ))}
     </div>
   )
