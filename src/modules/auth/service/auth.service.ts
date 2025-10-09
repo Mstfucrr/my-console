@@ -41,6 +41,25 @@ export interface ISignupResponse {
   cookie: string
 }
 
+export interface IForgotPasswordRequest {
+  email: string
+}
+
+export interface IForgotPasswordResponse {
+  success: boolean
+  message: string
+}
+
+export interface IResetPasswordRequest {
+  token: string
+  password: string
+}
+
+export interface IResetPasswordResponse {
+  success: boolean
+  message: string
+}
+
 class AuthService {
   async getSigninCookie(): Promise<{ cookie: string }> {
     console.log('getSigninCookie request')
@@ -107,6 +126,30 @@ class AuthService {
       }
     }
     await new Promise(resolve => setTimeout(resolve, 1500))
+    return response.data
+  }
+
+  async forgotPassword(request: IForgotPasswordRequest): Promise<IForgotPasswordResponse> {
+    console.log('forgotPassword request', request)
+    const response = {
+      data: {
+        success: true,
+        message: 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.'
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    return response.data
+  }
+
+  async resetPassword(request: IResetPasswordRequest): Promise<IResetPasswordResponse> {
+    console.log('resetPassword request', request)
+    const response = {
+      data: {
+        success: true,
+        message: 'Şifreniz başarıyla güncellendi.'
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 2000))
     return response.data
   }
 }

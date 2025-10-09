@@ -70,7 +70,7 @@ const LogInForm = () => {
           />
 
           <div className='flex justify-end'>
-            <Link href='#' className='text-primary text-sm hover:underline'>
+            <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
               Şifremi unuttum?
             </Link>
           </div>
