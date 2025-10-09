@@ -10,6 +10,7 @@ import { OrderDetailDialog } from './components/OrderDetailDialog'
 import { OrdersPendingAlert } from './components/OrdersPendingAlert'
 import { OrdersSearch } from './components/OrdersSearch'
 import { OrdersStats } from './components/OrdersStats'
+import { OrdersStatusFilter } from './components/OrdersStatusFilter'
 import { OrdersTabs } from './components/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
@@ -60,8 +61,11 @@ function OrdersViewContent() {
       {/* Pending Siparişler Uyarısı */}
       <OrdersPendingAlert />
 
-      {/* Arama Kutusu */}
-      <OrdersSearch />
+      {/* Arama ve Filtre */}
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
+        <OrdersSearch />
+        <OrdersStatusFilter />
+      </div>
 
       {/* Sipariş Tab'ları */}
       <OrdersTabs />

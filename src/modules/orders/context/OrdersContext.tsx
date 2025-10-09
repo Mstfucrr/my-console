@@ -3,6 +3,7 @@
 import type { Order, OrderStatus, PaginationOptions } from '@/modules/types'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
+import { ACTIVE_STATUS, COMPLETED_STATUS } from '../constants'
 import { ordersService } from '../service'
 
 export interface OrdersContextType {
@@ -41,8 +42,9 @@ export interface OrdersContextType {
   setIsModalVisible: (visible: boolean) => void
   setIsCreateModalVisible: (visible: boolean) => void
   setCompletedPagination: (pagination: PaginationOptions) => void
-  setActiveTab: (tab: string) => void
+  setActiveTab: (tab: 'active' | 'completed') => void
   setStatusFilter: (filter: OrderStatus[] | null) => void
+  handleStatusFilterChange: (statuses: OrderStatus[] | null) => void
   setSearchTerm: (term: string) => void
 
   // Event handlers
@@ -52,7 +54,6 @@ export interface OrdersContextType {
   handleCompletedPageClick: (page: number) => void
   handleCreateOrderSuccess: () => void
   refreshAllData: () => void
-  handleStatClick: (statuses: OrderStatus[]) => void
   clearFilter: () => void
   filterOrdersBySearch: (orders: Order[]) => Order[]
   handleOrderStatusUpdate: (orderId: string, newStatus: OrderStatus) => Promise<void>
@@ -74,11 +75,12 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     page: 1,
     limit: 6
   })
-  const [activeTab, setActiveTab] = useState('active')
+  const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active')
   const [statusFilter, setStatusFilter] = useState<OrderStatus[] | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>('')
 
   // Active orders query
+  const activeStatuses = statusFilter?.filter(s => ACTIVE_STATUS.includes(s))
   const {
     data: activeOrdersData,
     isLoading: isLoadingActive,
@@ -90,16 +92,18 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: statusFilter || ['created', 'shipped'],
+          status: activeStatuses || (ACTIVE_STATUS as OrderStatus[]),
           search: searchTerm
         },
         { page: 1, limit: 50 }
       )
       return response.data
-    }
+    },
+    enabled: statusFilter ? activeStatuses && activeStatuses.length > 0 : true
   })
 
   // Completed orders query
+  const completedStatuses = statusFilter?.filter(s => COMPLETED_STATUS.includes(s))
   const {
     data: completedOrdersData,
     isLoading: isLoadingCompleted,
@@ -110,11 +114,12 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     queryKey: ['completedOrders', completedPagination.page, completedPagination.limit, statusFilter, searchTerm],
     queryFn: async () => {
       const response = await ordersService.getOrders(
-        { status: statusFilter || ['delivered', 'cancelled'], search: searchTerm },
+        { status: completedStatuses || (COMPLETED_STATUS as OrderStatus[]), search: searchTerm },
         completedPagination
       )
       return response
-    }
+    },
+    enabled: statusFilter ? completedStatuses && completedStatuses.length > 0 : true
   })
 
   // Stats query
@@ -123,12 +128,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     error: statsError,
     isLoading: isStatsLoading
   } = useQuery({
-    queryKey: ['ordersStats', statusFilter, searchTerm],
-    queryFn: async () => {
-      const response = await ordersService.getOrdersStats()
-
-      return response
-    }
+    queryKey: ['ordersStats', searchTerm],
+    queryFn: async () => await ordersService.getOrdersStats()
   })
 
   // Extract data with fallbacks
@@ -179,12 +180,12 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     refetchCompletedOrders()
   }
 
-  // Handle stat card clicks for filtering
-  const handleStatClick = (statuses: OrderStatus[]) => {
+  // Handle status filter changes
+  const handleStatusFilterChange = (statuses: OrderStatus[] | null) => {
     setStatusFilter(statuses)
     // Determine which tab to show based on statuses
-    const isActiveStatus = statuses.some(s => ['created', 'shipped'].includes(s))
-    const isCompletedStatus = statuses.some(s => ['delivered', 'cancelled'].includes(s))
+    const isActiveStatus = statuses?.some(s => ACTIVE_STATUS.includes(s))
+    const isCompletedStatus = statuses?.some(s => COMPLETED_STATUS.includes(s))
 
     if (isActiveStatus && !isCompletedStatus) {
       setActiveTab('active')
@@ -263,6 +264,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setCompletedPagination,
     setActiveTab,
     setStatusFilter,
+    handleStatusFilterChange,
     setSearchTerm,
 
     // Event handlers
@@ -272,7 +274,6 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     handleCompletedPageClick,
     handleCreateOrderSuccess,
     refreshAllData,
-    handleStatClick,
     clearFilter,
     filterOrdersBySearch,
     handleOrderStatusUpdate,

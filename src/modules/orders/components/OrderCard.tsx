@@ -8,7 +8,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { Order, OrderStatus } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
-import { Clock, CreditCard, Eye, MapPin, Phone, User } from 'lucide-react'
+import { Clock, CreditCard, Eye, MapPin, Phone, Trash, User } from 'lucide-react'
 import { formatDateTR } from '../utils'
 
 interface OrderCardProps {
@@ -83,9 +83,12 @@ const getIntegrationIcon = (integration: string) => {
   return iconMap[integration] || '📦'
 }
 
-export function OrderCard({ order, onViewDetails }: OrderCardProps) {
+export function OrderCard({ order, onViewDetails, onCancel }: OrderCardProps) {
   // Check if order needs urgent attention (pending status)
   const isUrgent = order.status === 'created'
+
+  // Beklemede ve kurye ataması yapılmadıysa iptal edilebilir
+  const canCancel = order.status === 'created' && !order.courierInfo
 
   return (
     <Card className={cn('mb-3 transition-shadow hover:shadow-md', isUrgent && 'border-red-500 bg-red-50')}>
@@ -141,9 +144,6 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
               <Clock className='text-muted-foreground h-3 w-3' />
               <span className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</span>
             </div>
-
-            {/* Restoran Bilgisi */}
-            <div className='text-muted-foreground mb-2 text-xs'>{order.restaurant.name}</div>
           </div>
         </div>
       </CardContent>
@@ -153,11 +153,17 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
             <MapPin className='text-muted-foreground mt-0.5 h-3.5 w-3.5' />
             <span className='text-muted-foreground line-clamp-2 text-xs'>{order.customerAddress}</span>
           </div>
-          <div className='flex flex-col items-end gap-2 self-end'>
+          <div className='flex items-center gap-2 self-end'>
             <Button variant='outline' onClick={() => onViewDetails(order)}>
               <Eye className='mr-1 h-3 w-3' />
               Detay
             </Button>
+            {canCancel && (
+              <Button variant='outline' color='destructive' onClick={() => onCancel?.(order.id)}>
+                <Trash className='mr-1 h-3 w-3' />
+                İptal
+              </Button>
+            )}
           </div>
         </div>
       </CardFooter>

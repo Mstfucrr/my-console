@@ -6,7 +6,7 @@ import { FlameIcon } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
 
 export function OrdersPendingAlert() {
-  const { stats, handleStatClick } = useOrders()
+  const { stats, handleStatusFilterChange } = useOrders()
 
   if (stats.created === 0) return null
 
@@ -18,7 +18,7 @@ export function OrdersPendingAlert() {
           <p className='font-medium'> {stats.created} sipariş beklemede!</p>
           <p className='text-sm'>Beklemede olan siparişler kırmızı çerçeve ile vurgulanmıştır.</p>
         </div>
-        <Button color='warning' onClick={() => handleStatClick(['created'])}>
+        <Button color='warning' onClick={() => handleStatusFilterChange(['created'])}>
           Bekleyenleri Göster
         </Button>
       </AlertDescription>

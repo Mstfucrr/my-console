@@ -9,7 +9,7 @@ export function OrdersSearch() {
   const isActive = searchTerm && searchTerm.length > 0
 
   return (
-    <div className='relative max-w-md'>
+    <div className='relative max-w-md flex-1'>
       <Search className='text-muted-foreground absolute top-1/2 left-3 z-1 h-4 w-4 -translate-y-1/2' />
       <Input
         placeholder='Sipariş ID, müşteri adı, telefon numarası ile arama yapın...'
