@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { getStatusColor } from '@/constants'
 import { OrderStatus, OrderStatusLabel } from '@/modules/types'
 import { useOrders } from '../context/OrdersContext'
 
@@ -8,22 +9,22 @@ const statusConfig = [
   {
     status: 'created' as OrderStatus,
     label: OrderStatusLabel.created,
-    color: 'bg-orange-100 text-orange-800 border-orange-200'
+    color: getStatusColor('created')
   },
   {
     status: 'shipped' as OrderStatus,
     label: OrderStatusLabel.shipped,
-    color: 'bg-green-100 text-green-800 border-green-200'
+    color: getStatusColor('shipped')
   },
   {
     status: 'delivered' as OrderStatus,
     label: OrderStatusLabel.delivered,
-    color: 'bg-purple-100 text-purple-800 border-purple-200'
+    color: getStatusColor('delivered')
   },
   {
     status: 'cancelled' as OrderStatus,
     label: OrderStatusLabel.cancelled,
-    color: 'bg-red-100 text-red-800 border-red-200'
+    color: getStatusColor('cancelled')
   }
 ]
 

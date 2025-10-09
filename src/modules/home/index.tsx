@@ -16,6 +16,7 @@ import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
+import { getStatusColor } from '@/constants'
 import { CreateOrderModal } from '../orders/components/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import QuickAction from './components/QuickAction'
@@ -82,16 +83,6 @@ export default function DashboardView() {
         </Card>
       </div>
     )
-  }
-
-  const getStatusBadgeColor = (status: string) => {
-    const colorMap: Record<string, string> = {
-      created: 'bg-yellow-100 text-yellow-800', // Beklemede
-      shipped: 'bg-orange-100 text-orange-800', // Yola Çıktı
-      delivered: 'bg-green-100 text-green-800', // Teslim Edildi
-      cancelled: 'bg-red-100 text-red-800' // İptal Edildi
-    }
-    return colorMap[status] || 'bg-gray-100 text-gray-800'
   }
 
   return (
@@ -224,10 +215,7 @@ export default function DashboardView() {
                       <div className='mb-1 flex items-center gap-2'>
                         <span className='font-medium'>#{order.id}</span>
                         <span
-                          className={cn(
-                            'rounded-full px-2 py-1 text-xs font-medium',
-                            getStatusBadgeColor(order.status)
-                          )}
+                          className={cn('rounded-full px-2 py-1 text-xs font-medium', getStatusColor(order.status))}
                         >
                           {statusLabel(order.status)}
                         </span>

@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { getStatusColor } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
-import type { Order, OrderStatus } from '@/modules/types'
+import type { Order } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
 import { ArrowLeft, MapPin, Phone, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -21,16 +22,6 @@ interface OrderDetailDialogProps {
   order: Order | null
   open: boolean
   onClose: () => void
-}
-
-const getStatusColor = (status: OrderStatus) => {
-  const colorMap: Record<OrderStatus, string> = {
-    created: 'bg-orange-100 text-orange-800',
-    shipped: 'bg-green-100 text-green-800',
-    delivered: 'bg-purple-100 text-purple-800',
-    cancelled: 'bg-gray-100 text-gray-800'
-  }
-  return colorMap[status] || 'bg-gray-100 text-gray-800'
 }
 
 export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
