@@ -14,6 +14,7 @@ interface PageHeaderProps {
   onRefresh?: () => void
   isLoading?: boolean
   showRefreshButton?: boolean
+  rightSide?: ReactNode
 }
 
 export function PageHeader({
@@ -24,7 +25,8 @@ export function PageHeader({
   actions,
   onRefresh,
   isLoading = false,
-  showRefreshButton = false
+  showRefreshButton = false,
+  rightSide
 }: PageHeaderProps) {
   return (
     <Card className='max-sm:mt-5'>
@@ -38,6 +40,7 @@ export function PageHeader({
         </div>
         <div className='flex items-center gap-2'>
           {actions}
+          {rightSide}
           {showRefreshButton && onRefresh && <RefreshButton size='xs' onClick={onRefresh} isLoading={isLoading} />}
         </div>
       </CardHeader>

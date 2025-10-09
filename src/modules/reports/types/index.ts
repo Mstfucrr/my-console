@@ -6,6 +6,7 @@ export interface ReportRecord {
   customerName: string
   customerPhone: string
   orderDate: string
+  createdDate: string
   deliveryDate: string
   totalAmount: number
   platformFee: number

@@ -10,7 +10,7 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, Settings, ShoppingCart } from 'lucide-react'
+import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, ShoppingCart } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
@@ -23,7 +23,10 @@ import { dashboardService } from './service'
 import type { DashboardStats } from './types'
 import { statusColor, statusLabel } from './utils'
 
-const defaultDateRange = { from: new Date(new Date().setDate(new Date().getDate() - 7)), to: new Date() }
+const defaultDateRange = {
+  from: new Date(new Date().setHours(0, 0, 0, 0)),
+  to: new Date(new Date().setHours(23, 59, 59, 999))
+}
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
@@ -141,13 +144,6 @@ export default function DashboardView() {
               title='Mutabakat İşlemleri'
               subtitle='Günlük mutabakatlar'
               color='text-orange-600'
-            />
-            <QuickAction
-              href='/settings'
-              Icon={Settings}
-              title='Ayarlar'
-              subtitle='API ve webhook ayarları'
-              color='text-amber-500'
             />
           </div>
         </CardContent>
