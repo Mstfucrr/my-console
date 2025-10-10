@@ -1,7 +1,7 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { type OrderStatus, OrderStatusLabel } from '@/modules/types'
+import { OrderStatusLabel } from '@/modules/types'
 import { CheckCircle2, Clock, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { OrdersContextType, useOrders } from '../context/OrdersContext'
@@ -13,7 +13,6 @@ interface Stat {
   hint: string
   color: string
   value: number
-  orderStatus?: OrderStatus
 }
 
 const statsList: Array<Stat> = [
@@ -31,8 +30,7 @@ const statsList: Array<Stat> = [
     Icon: Clock,
     hint: 'Beklemede olan siparişler',
     color: 'text-orange-500',
-    value: 0,
-    orderStatus: 'created'
+    value: 0
   },
   {
     title: OrderStatusLabel.shipped,
@@ -40,8 +38,7 @@ const statsList: Array<Stat> = [
     Icon: CheckCircle2,
     hint: 'Yola Çıkan siparişler',
     color: 'text-green-600',
-    value: 0,
-    orderStatus: 'shipped'
+    value: 0
   },
   {
     title: OrderStatusLabel.delivered,
@@ -49,8 +46,7 @@ const statsList: Array<Stat> = [
     Icon: Truck,
     hint: 'Teslim Edilen siparişler',
     color: 'text-red-500',
-    value: 0,
-    orderStatus: 'delivered'
+    value: 0
   },
   {
     title: OrderStatusLabel.cancelled,
@@ -58,8 +54,7 @@ const statsList: Array<Stat> = [
     Icon: XCircle,
     hint: 'İptal edilen siparişler',
     color: 'text-red-600',
-    value: 0,
-    orderStatus: 'cancelled'
+    value: 0
   }
 ]
 

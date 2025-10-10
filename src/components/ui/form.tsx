@@ -66,81 +66,68 @@ type FormItemContextValue = {
 
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue)
 
-const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => {
-    const id = React.useId()
+const FormItem = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  const id = React.useId()
 
-    return (
-      <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn('space-y-2', className)} {...props} />
-      </FormItemContext.Provider>
-    )
-  }
-)
+  return (
+    <FormItemContext.Provider value={{ id }}>
+      <div className={cn('space-y-2', className)} {...props} />
+    </FormItemContext.Provider>
+  )
+}
 FormItem.displayName = 'FormItem'
 
-const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
+const FormLabel = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>) => {
   const { error, formItemId } = useFormField()
 
-  return <Label ref={ref} className={cn(error && 'text-destructive', className)} htmlFor={formItemId} {...props} />
-})
+  return <Label className={cn(error && 'text-destructive', className)} htmlFor={formItemId} {...props} />
+}
 FormLabel.displayName = 'FormLabel'
 
-const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.ComponentPropsWithoutRef<typeof Slot>>(
-  ({ ...props }, ref) => {
-    const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+const FormControl = ({ ...props }: React.ComponentPropsWithoutRef<typeof Slot>) => {
+  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
-    return (
-      <Slot
-        ref={ref}
-        id={formItemId}
-        aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
-        aria-invalid={!!error}
-        {...props}
-      />
-    )
-  }
-)
+  return (
+    <Slot
+      id={formItemId}
+      aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-invalid={!!error}
+      {...props}
+    />
+  )
+}
 FormControl.displayName = 'FormControl'
 
-const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => {
-    const { formDescriptionId } = useFormField()
+const FormDescription = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => {
+  const { formDescriptionId } = useFormField()
 
-    return <p ref={ref} id={formDescriptionId} className={cn('text-muted-foreground text-sm', className)} {...props} />
-  }
-)
+  return <p id={formDescriptionId} className={cn('text-muted-foreground text-sm', className)} {...props} />
+}
 FormDescription.displayName = 'FormDescription'
 
 interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {
   tooltip?: boolean
 }
-const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessageProps>(
-  ({ className, children, tooltip = false, ...props }, ref) => {
-    const { error, formMessageId } = useFormField()
-    const body = error ? String(error?.message) : children
+const FormMessage = ({ className, children, tooltip = false, ...props }: FormMessageProps) => {
+  const { error, formMessageId } = useFormField()
+  const body = error ? String(error?.message) : children
 
-    if (!body) {
-      return null
-    }
-
-    return (
-      <p
-        ref={ref}
-        id={formMessageId}
-        className={cn('text-destructive rounded-0.5 px-1.5 py-2 text-xs leading-none', className, {
-          'bg-destructive text-destructive-foreground inline-block': tooltip
-        })}
-        {...props}
-      >
-        {body}
-      </p>
-    )
+  if (!body) {
+    return null
   }
-)
+
+  return (
+    <p
+      id={formMessageId}
+      className={cn('text-destructive rounded-0.5 px-1.5 py-2 text-xs leading-none', className, {
+        'bg-destructive text-destructive-foreground inline-block': tooltip
+      })}
+      {...props}
+    >
+      {body}
+    </p>
+  )
+}
 FormMessage.displayName = 'FormMessage'
 
 export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField }

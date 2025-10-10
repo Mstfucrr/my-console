@@ -125,27 +125,22 @@ export interface InputProps
   Icon?: LucideIcon
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, size, color, radius, variant, shadow, removeWrapper = false, Icon, ...props }, ref) => {
-    if (removeWrapper)
-      return (
-        <div className='relative'>
-          {Icon && (
-            <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
-              <Icon className='size-4' />
-            </div>
-          )}
-          <input
-            type={type}
-            className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
-            ref={ref}
-            {...props}
-          />
-        </div>
-      )
-
+const Input = ({
+  className,
+  type,
+  size,
+  color,
+  radius,
+  variant,
+  shadow,
+  removeWrapper = false,
+  Icon,
+  ref,
+  ...props
+}: InputProps & { ref?: React.Ref<HTMLInputElement> }) => {
+  if (removeWrapper)
     return (
-      <div className='relative w-full flex-1'>
+      <div className='relative'>
         {Icon && (
           <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
             <Icon className='size-4' />
@@ -159,8 +154,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         />
       </div>
     )
-  }
-)
+
+  return (
+    <div className='relative w-full flex-1'>
+      {Icon && (
+        <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
+          <Icon className='size-4' />
+        </div>
+      )}
+      <input
+        type={type}
+        className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
+        ref={ref}
+        {...props}
+      />
+    </div>
+  )
+}
 Input.displayName = 'Input'
 
 export { Input }

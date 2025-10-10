@@ -46,12 +46,9 @@ const radioVariants = cva(
     }
   }
 )
-const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
-  return <RadioGroupPrimitive.Root className={cn('flex flex-wrap gap-x-6 gap-y-4', className)} {...props} ref={ref} />
-})
+const RadioGroup = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>) => {
+  return <RadioGroupPrimitive.Root className={cn('flex flex-wrap gap-x-6 gap-y-4', className)} {...props} />
+}
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 
 interface RadioGroupItemProps
@@ -60,28 +57,21 @@ interface RadioGroupItemProps
   icon?: React.ReactNode
   color?: color
 }
-const RadioGroupItem = React.forwardRef<React.ElementRef<typeof RadioGroupPrimitive.Item>, RadioGroupItemProps>(
-  ({ className, children, color, size, radius, variant, icon = <Circle />, ...props }, ref) => {
-    return (
-      <>
-        {children ? (
-          <div className='flex items-center gap-2'>
-            <RadioGroupPrimitive.Item
-              ref={ref}
-              className={cn(radioVariants({ color, size, radius, variant }), className)}
-              {...props}
-            >
-              <RadioGroupPrimitive.Indicator className='flex items-center justify-center'>
-                {icon}
-              </RadioGroupPrimitive.Indicator>
-            </RadioGroupPrimitive.Item>
-            <Label htmlFor={props.id} className='text-default-600 cursor-pointer font-normal'>
-              {children}
-            </Label>
-          </div>
-        ) : (
+const RadioGroupItem = ({
+  className,
+  children,
+  color,
+  size,
+  radius,
+  variant,
+  icon = <Circle />,
+  ...props
+}: RadioGroupItemProps) => {
+  return (
+    <>
+      {children ? (
+        <div className='flex items-center gap-2'>
           <RadioGroupPrimitive.Item
-            ref={ref}
             className={cn(radioVariants({ color, size, radius, variant }), className)}
             {...props}
           >
@@ -89,11 +79,20 @@ const RadioGroupItem = React.forwardRef<React.ElementRef<typeof RadioGroupPrimit
               {icon}
             </RadioGroupPrimitive.Indicator>
           </RadioGroupPrimitive.Item>
-        )}
-      </>
-    )
-  }
-)
+          <Label htmlFor={props.id} className='text-default-600 cursor-pointer font-normal'>
+            {children}
+          </Label>
+        </div>
+      ) : (
+        <RadioGroupPrimitive.Item className={cn(radioVariants({ color, size, radius, variant }), className)} {...props}>
+          <RadioGroupPrimitive.Indicator className='flex items-center justify-center'>
+            {icon}
+          </RadioGroupPrimitive.Indicator>
+        </RadioGroupPrimitive.Item>
+      )}
+    </>
+  )
+}
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
 
 export { RadioGroup, RadioGroupItem }

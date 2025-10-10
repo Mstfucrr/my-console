@@ -40,34 +40,32 @@ interface SwitchProps
   endContent?: React.ReactNode
   color?: 'primary' | 'secondary' | 'info' | 'warning' | 'success' | 'destructive' | 'dark'
 }
-const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, SwitchProps>(
-  ({ className, size, color, startContent, endContent, thumbClass, thumbIcon, ...props }, ref) => (
-    <SwitchPrimitives.Root className={cn(switchVariants({ size, color }), className)} {...props} ref={ref}>
-      {startContent && (
-        <span className='content-box text-medium transition-transform-opacity absolute left-1 scale-50 opacity-0 group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100'>
-          {startContent}
-        </span>
+const Switch = ({ className, size, color, startContent, endContent, thumbClass, thumbIcon, ...props }: SwitchProps) => (
+  <SwitchPrimitives.Root className={cn(switchVariants({ size, color }), className)} {...props}>
+    {startContent && (
+      <span className='content-box text-medium transition-transform-opacity absolute left-1 scale-50 opacity-0 group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100'>
+        {startContent}
+      </span>
+    )}
+    <SwitchPrimitives.Thumb
+      className={cn(
+        'bg-background pointer-events-none z-10 flex h-4 w-4 origin-right items-center justify-center rounded-full shadow-lg ring-0 transition-all ltr:data-[state=checked]:ml-5 rtl:data-[state=checked]:mr-5 rtl:data-[state=unchecked]:mr-0.5',
+        thumbClass,
+        {
+          'h-3 w-3 data-[state=checked]:ml-4': size === 'sm',
+          'h-4 w-4': size === 'md',
+          'h-5 w-5': size === 'lg'
+        }
       )}
-      <SwitchPrimitives.Thumb
-        className={cn(
-          'bg-background pointer-events-none z-10 flex h-4 w-4 origin-right items-center justify-center rounded-full shadow-lg ring-0 transition-all ltr:data-[state=checked]:ml-5 rtl:data-[state=checked]:mr-5 rtl:data-[state=unchecked]:mr-0.5',
-          thumbClass,
-          {
-            'h-3 w-3 data-[state=checked]:ml-4': size === 'sm',
-            'h-4 w-4': size === 'md',
-            'h-5 w-5': size === 'lg'
-          }
-        )}
-      >
-        {thumbIcon ? thumbIcon : null}
-      </SwitchPrimitives.Thumb>
-      {endContent && (
-        <span className='content-box text-medium transition-transform-opacity absolute right-1 z-0 opacity-100 group-data-[state=checked]:translate-x-3 group-data-[state=checked]:opacity-0'>
-          {endContent}
-        </span>
-      )}
-    </SwitchPrimitives.Root>
-  )
+    >
+      {thumbIcon ? thumbIcon : null}
+    </SwitchPrimitives.Thumb>
+    {endContent && (
+      <span className='content-box text-medium transition-transform-opacity absolute right-1 z-0 opacity-100 group-data-[state=checked]:translate-x-3 group-data-[state=checked]:opacity-0'>
+        {endContent}
+      </span>
+    )}
+  </SwitchPrimitives.Root>
 )
 Switch.displayName = SwitchPrimitives.Root.displayName
 

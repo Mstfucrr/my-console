@@ -35,19 +35,15 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+const DialogOverlay = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>) => (
   <DialogPrimitive.Overlay
     className={cn(
       'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm',
       className
     )}
     {...props}
-    ref={ref}
   />
-))
+)
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
@@ -56,21 +52,26 @@ interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof Dialo
   overlayScroll?: boolean
   hiddenCloseIcon?: boolean
 }
-const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
-  ({ className, children, size, overlayClass, hiddenCloseIcon = false, ...props }, ref) => (
-    <DialogPortal>
-      <DialogOverlay className={overlayClass} />
-      <DialogPrimitive.Content ref={ref} className={cn(dialogVariants({ size }), className)} {...props}>
-        {children}
-        {!hiddenCloseIcon && (
-          <DialogPrimitive.Close className='ring-offset-background data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none'>
-            <X className='h-4 w-4' />
-            <span className='sr-only'>Close</span>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  )
+const DialogContent = ({
+  className,
+  children,
+  size,
+  overlayClass,
+  hiddenCloseIcon = false,
+  ...props
+}: DialogContentProps) => (
+  <DialogPortal>
+    <DialogOverlay className={overlayClass} />
+    <DialogPrimitive.Content className={cn(dialogVariants({ size }), className)} {...props}>
+      {children}
+      {!hiddenCloseIcon && (
+        <DialogPrimitive.Close className='ring-offset-background data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none'>
+          <X className='h-4 w-4' />
+          <span className='sr-only'>Close</span>
+        </DialogPrimitive.Close>
+      )}
+    </DialogPrimitive.Content>
+  </DialogPortal>
 )
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
@@ -85,24 +86,17 @@ const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 )
 DialogFooter.displayName = 'DialogFooter'
 
-const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn('text-lg leading-none font-semibold tracking-tight', className)}
-    {...props}
-  />
-))
+const DialogTitle = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>) => (
+  <DialogPrimitive.Title className={cn('text-lg leading-none font-semibold tracking-tight', className)} {...props} />
+)
 DialogTitle.displayName = DialogPrimitive.Title.displayName
 
-const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn('text-muted-foreground text-sm', className)} {...props} />
-))
+const DialogDescription = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>) => (
+  <DialogPrimitive.Description className={cn('text-muted-foreground text-sm', className)} {...props} />
+)
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
 export {

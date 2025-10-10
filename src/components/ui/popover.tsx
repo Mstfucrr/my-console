@@ -27,77 +27,71 @@ type PopoverContentProps = PopoverContentBaseProps & {
   autoFocus?: boolean
 }
 
-const PopoverContent = React.forwardRef<React.ElementRef<typeof PopoverPrimitive.Content>, PopoverContentProps>(
-  (
-    {
-      className,
-      align = 'center',
-      sideOffset = 4,
-      mountInsideDialog = true,
-      autoFocus = true,
-      onOpenAutoFocus,
-      ...props
-    },
-    ref
-  ) => {
-    // İlk render'da container'ı belirle
-    const initialContainer = React.useMemo(
-      () => (mountInsideDialog ? findTopMostOpenDialog() : null),
-      [mountInsideDialog]
-    )
-    const [containerEl, setContainerEl] = React.useState<HTMLElement | null>(initialContainer)
+const PopoverContent = ({
+  className,
+  align = 'center',
+  sideOffset = 4,
+  mountInsideDialog = true,
+  autoFocus = true,
+  onOpenAutoFocus,
+  ...props
+}: PopoverContentProps) => {
+  // İlk render'da container'ı belirle
+  const initialContainer = React.useMemo(
+    () => (mountInsideDialog ? findTopMostOpenDialog() : null),
+    [mountInsideDialog]
+  )
+  const [containerEl, setContainerEl] = React.useState<HTMLElement | null>(initialContainer)
 
-    // Mount/yeniden açılmalarda container'ı güncelle
-    React.useEffect(() => {
-      if (!mountInsideDialog) return
-      setContainerEl(findTopMostOpenDialog())
-    }, [mountInsideDialog])
+  // Mount/yeniden açılmalarda container'ı güncelle
+  React.useEffect(() => {
+    if (!mountInsideDialog) return
+    setContainerEl(findTopMostOpenDialog())
+  }, [mountInsideDialog])
 
-    return (
-      <PopoverPrimitive.Portal container={containerEl ?? undefined}>
-        <PopoverPrimitive.Content
-          ref={ref}
-          align={align}
-          sideOffset={sideOffset}
-          className={cn(
-            'bg-popover text-popover-foreground',
-            'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-            'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-            'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-            'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-            // DialogOverlay genelde z-50; Content ~z-60. Bunu bir tık üste alıyoruz.
-            'z-70 w-72 rounded-md border p-4 shadow-md outline-none',
-            className
-          )}
-          onOpenAutoFocus={e => {
-            onOpenAutoFocus?.(e)
-            if (!autoFocus) return
-            try {
-              // Radix'in default focusunu engelleyip ilk input'a fokus
-              e.preventDefault()
-              requestAnimationFrame(() => {
-                const root = e.currentTarget as HTMLElement
-                if (!root) return
-                const input = root.querySelector<HTMLInputElement>('input, [contenteditable="true"]')
-                input?.focus()
-                if (input?.setSelectionRange) {
-                  const v = input.value ?? ''
-                  input.setSelectionRange(v.length, v.length)
-                }
-              })
-            } catch {
-              /* noop */
-            }
-          }}
-          // Not: onPointerDownOutside / onInteractOutside EKLEMEDİK.
-          // Böylece outside click default olarak popover'ı kapatır.
-          {...props}
-        />
-      </PopoverPrimitive.Portal>
-    )
-  }
-)
+  return (
+    <PopoverPrimitive.Portal container={containerEl ?? undefined}>
+      <PopoverPrimitive.Content
+        align={align}
+        sideOffset={sideOffset}
+        className={cn(
+          'bg-popover text-popover-foreground',
+          'data-[state=open]:animate-in data-[state=closed]:animate-out',
+          'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+          'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
+          'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+          // DialogOverlay genelde z-50; Content ~z-60. Bunu bir tık üste alıyoruz.
+          'z-70 w-72 rounded-md border p-4 shadow-md outline-none',
+          className
+        )}
+        onOpenAutoFocus={e => {
+          onOpenAutoFocus?.(e)
+          if (!autoFocus) return
+          try {
+            // Radix'in default focusunu engelleyip ilk input'a fokus
+            e.preventDefault()
+            requestAnimationFrame(() => {
+              const root = e.currentTarget as HTMLElement
+              if (!root) return
+              const input = root.querySelector<HTMLInputElement>('input, [contenteditable="true"]')
+              input?.focus()
+              if (input?.setSelectionRange) {
+                const v = input.value ?? ''
+                input.setSelectionRange(v.length, v.length)
+              }
+            })
+          } catch {
+            /* noop */
+          }
+        }}
+        // Not: onPointerDownOutside / onInteractOutside EKLEMEDİK.
+        // Böylece outside click default olarak popover'ı kapatır.
+        {...props}
+      />
+    </PopoverPrimitive.Portal>
+  )
+}
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
 /** Basit custom popover (portal kullanmadan) — opsiyonel util */

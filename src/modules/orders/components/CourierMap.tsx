@@ -2,7 +2,6 @@
 
 import type { CourierInfo } from '@/modules/types'
 import Leaflet from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 

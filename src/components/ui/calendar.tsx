@@ -128,14 +128,8 @@ function Calendar({
 function CalendarDayButton({ className, day, modifiers, color, ...props }: React.ComponentProps<typeof DayButton>) {
   const defaultClassNames = getDefaultClassNames()
 
-  const ref = React.useRef<HTMLButtonElement>(null)
-  React.useEffect(() => {
-    if (modifiers.focused) ref.current?.focus()
-  }, [modifiers.focused])
-
   return (
     <Button
-      ref={ref}
       variant='ghost'
       size='icon'
       color={color as ButtonProps['color']}
