@@ -53,7 +53,7 @@ export function DataTableToolbar<TData>({
               <ChevronDown className='ml-2 h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='z-[9999]'>
+          <DropdownMenuContent align='end' className='z-9999'>
             {table
               .getAllLeafColumns()
               .filter(column => column.getCanHide())

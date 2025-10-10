@@ -22,7 +22,7 @@ const buttonVariants = cva(
         outline: 'hover:text-primary-foreground border border-current bg-transparent',
         soft: 'hover:text-primary-foreground bg-current/15',
         ghost: 'hover:text-primary-foreground bg-transparent text-current',
-        link: '!bg-transparent text-current/80 hover:text-current'
+        link: 'bg-transparent! text-current/80 hover:text-current'
       },
       size: {
         default: 'h-10 px-4 py-[10px]',

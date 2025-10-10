@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 const switchVariants = cva(
-  'peer [&_.content-box]:text-primary-foreground group focus-visible:ring-ring focus-visible:ring-offset-background data-[state=unchecked]:bg-default-300 relative inline-flex flex-shrink-0 cursor-pointer items-center justify-start rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&_.content-box]:text-[10px] [&_.content-box>svg]:h-4 [&_.content-box>svg]:w-4',
+  'peer [&_.content-box]:text-primary-foreground group focus-visible:ring-ring focus-visible:ring-offset-background data-[state=unchecked]:bg-default-300 relative inline-flex shrink-0 cursor-pointer items-center justify-start rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&_.content-box]:text-[10px] [&_.content-box>svg]:h-4 [&_.content-box>svg]:w-4',
   {
     variants: {
       color: {

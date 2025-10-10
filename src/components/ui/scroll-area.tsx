@@ -217,7 +217,7 @@ const ScrollBar: React.FC<ScrollBarProps> = ({
       ref={scrollbarRef}
       className={cn(
         'flex touch-none transition-opacity duration-200 select-none',
-        isVertical ? 'h-full w-2 border-l border-l-transparent p-[1px]' : 'h-2 border-t border-t-transparent p-[1px]',
+        isVertical ? 'h-full w-2 border-l border-l-transparent p-px' : 'h-2 border-t border-t-transparent p-px',
         className
       )}
     >

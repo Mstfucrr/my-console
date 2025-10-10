@@ -99,13 +99,13 @@ export function NotificationsPopover() {
                   )}
                   onClick={() => markAsRead(notification.id)}
                 >
-                  <div className='mt-0.5 flex-shrink-0'>{getNotificationIcon(notification.type)}</div>
+                  <div className='mt-0.5 shrink-0'>{getNotificationIcon(notification.type)}</div>
                   <div className='min-w-0 flex-1'>
                     <p className='text-foreground text-sm font-medium'>{notification.title}</p>
                     <p className='text-muted-foreground mt-1 text-sm'>{notification.message}</p>
                     <p className='text-muted-foreground mt-2 text-xs'>{notification.time}</p>
                   </div>
-                  {!notification.read && <div className='mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500' />}
+                  {!notification.read && <div className='mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-500' />}
                 </div>
               ))}
             </div>

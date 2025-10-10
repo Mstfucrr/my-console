@@ -139,7 +139,7 @@ const CustomPopover: React.FC<CustomPopoverProps> = ({ children, open = false, o
       {open && (
         <div
           className={cn(
-            'custom-popover-container divide-default-100 border-default-200 bg-popover absolute left-0 z-[70] w-56 divide-y rounded-md border shadow-lg focus:outline-none',
+            'custom-popover-container divide-default-100 border-default-200 bg-popover absolute left-0 z-70 w-56 divide-y rounded-md border shadow-lg focus:outline-none',
             className
           )}
         >

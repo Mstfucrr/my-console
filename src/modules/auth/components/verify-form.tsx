@@ -158,7 +158,7 @@ const VerfiyForm = () => {
               <LoadingButton
                 type='button'
                 variant='outline'
-                className='w-full !bg-transparent text-white'
+                className='w-full bg-transparent! text-white'
                 size='lg'
                 onClick={handleSubmit}
                 disabled={!isOtpComplete}

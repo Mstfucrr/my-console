@@ -57,7 +57,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
         </DialogHeader>
 
         {openMap && order.courierInfo ? (
-          <div className='flex h-[26rem] w-full p-4 pt-0'>
+          <div className='flex h-104 w-full p-4 pt-0'>
             <CourierMap
               courierInfo={order.courierInfo!}
               courierPosition={order.courierInfo.position}

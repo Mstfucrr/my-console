@@ -16,7 +16,7 @@ export default function WelcomeText() {
       >
         <div className='relative'>
           <motion.span
-            className='from-primary-200 via-primary-400 to-primary-300 block bg-gradient-to-r bg-clip-text text-transparent'
+            className='from-primary-200 via-primary-400 to-primary-300 block bg-linear-to-r bg-clip-text text-transparent'
             animate={{
               backgroundPosition: ['0% center', '100% center', '0% center']
             }}
@@ -34,7 +34,7 @@ export default function WelcomeText() {
         </div>
         <div className='relative'>
           <motion.span
-            className='from-primary-200 via-primary-400 to-primary-200 block bg-gradient-to-r bg-clip-text text-transparent'
+            className='from-primary-200 via-primary-400 to-primary-200 block bg-linear-to-r bg-clip-text text-transparent'
             animate={{
               backgroundPosition: ['100% center', '0% center', '100% center']
             }}
@@ -54,7 +54,7 @@ export default function WelcomeText() {
 
       {/* Decorative Line */}
       <motion.div
-        className='from-primary-300 to-primary-600 mt-8 h-1 w-24 rounded-full bg-gradient-to-r'
+        className='from-primary-300 to-primary-600 mt-8 h-1 w-24 rounded-full bg-linear-to-r'
         initial={{ opacity: 0, scaleX: 0 }}
         animate={{ opacity: 1, scaleX: 1 }}
         transition={{ duration: 0.8, delay: 1.4 }}
