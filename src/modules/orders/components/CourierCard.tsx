@@ -23,29 +23,31 @@ export default function CourierCardPeek({ courierInfo, showCourierTracking, hand
   return (
     <Card className='mb-4 border bg-white p-4'>
       {/* Üst satır: tek bakışta özet */}
-      <div className='flex items-center gap-3'>
-        {/* Avatar / Baş harf */}
-        <div className='bg-muted text-muted-foreground grid size-10 place-items-center rounded-full text-sm font-semibold'>
-          <Motorcycle className='opacity-70' />
-        </div>
+      <div className='flex items-center gap-3 max-sm:flex-col'>
+        <div className='flex items-center gap-3'>
+          {/* Avatar / Baş harf */}
+          <div className='bg-muted text-muted-foreground grid size-10 place-items-center rounded-full text-sm font-semibold max-sm:hidden'>
+            <Motorcycle className='opacity-70' />
+          </div>
 
-        {/* İsim + pill'ler */}
-        <div className='min-w-0 flex-1'>
-          <div className='flex items-center gap-2'>
-            <h3 className='truncate text-base font-semibold tracking-tight'>{courierInfo?.name || 'Kurye'}</h3>
+          {/* İsim + pill'ler */}
+          <div className='min-w-0 flex-1'>
+            <div className='flex items-center gap-2'>
+              <h3 className='truncate text-base font-semibold tracking-tight'>{courierInfo?.name || 'Kurye'}</h3>
 
-            {hasPlate && (
-              <Badge variant='outline' className='rounded-full px-2 py-0.5 text-[11px]'>
-                {courierInfo.licensePlate}
-              </Badge>
-            )}
+              {hasPlate && (
+                <Badge variant='outline' className='rounded-full px-2 py-0.5 text-[11px]'>
+                  {courierInfo.licensePlate}
+                </Badge>
+              )}
 
-            {/* Durum: sadece izleme açıkken göster */}
-            {showCourierTracking && (
-              <span className='rounded-full border bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700'>
-                Yolda
-              </span>
-            )}
+              {/* Durum: sadece izleme açıkken göster */}
+              {showCourierTracking && (
+                <span className='rounded-full border bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700'>
+                  Yolda
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

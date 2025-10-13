@@ -196,14 +196,19 @@ export function OrderCard({ order, onViewDetails, onCancel }: OrderCardProps) {
             </button>
           </div>
           <div className='flex items-center gap-2 self-end'>
-            <Button variant='outline' onClick={() => onViewDetails(order)}>
-              <Eye className='mr-1 h-3 w-3' />
-              Detay
+            <Button variant='outline' className='flex items-center gap-1' onClick={() => onViewDetails(order)}>
+              <Eye className='size-3' />
+              <span className='max-sm:hidden'>Detay</span>
             </Button>
             {canCancel && (
-              <Button variant='outline' color='destructive' onClick={() => onCancel?.(order.id)}>
-                <Trash className='mr-1 h-3 w-3' />
-                İptal
+              <Button
+                variant='outline'
+                color='destructive'
+                className='flex items-center gap-1'
+                onClick={() => onCancel?.(order.id)}
+              >
+                <Trash className='size-3' />
+                <span className='max-sm:hidden'>İptal</span>
               </Button>
             )}
           </div>
