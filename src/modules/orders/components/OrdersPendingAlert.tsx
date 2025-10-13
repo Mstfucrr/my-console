@@ -12,7 +12,7 @@ export function OrdersPendingAlert() {
 
   return (
     <Alert variant='outline' color='warning'>
-      <FlameIcon className='h-4 w-4 !text-orange-600' />
+      <FlameIcon className='h-4 w-4 text-orange-600!' />
       <AlertDescription className='flex items-center justify-between'>
         <div>
           <p className='font-medium'> {stats.created} sipariş beklemede!</p>

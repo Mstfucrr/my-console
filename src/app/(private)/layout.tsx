@@ -5,6 +5,7 @@ import { useMounted } from '@/hooks/use-mounted'
 import { cn } from '@/lib/utils'
 import Menu from '@/modules/menu'
 import { motion } from 'framer-motion'
+import 'leaflet/dist/leaflet.css'
 import { usePathname } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {

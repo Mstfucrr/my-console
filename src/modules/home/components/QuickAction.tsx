@@ -2,13 +2,14 @@ import Link from 'next/link'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { Route } from 'next'
 
 function QuickActionLink({
   href,
   onClick,
   children
 }: {
-  href?: string
+  href?: Route
   onClick?: () => void
   children: React.ReactNode
 }) {
@@ -34,7 +35,7 @@ export default function QuickAction({
   subtitle,
   color
 }: {
-  href?: string
+  href?: Route
   onClick?: () => void
   Icon: React.ComponentType<{ className?: string }>
   title: string

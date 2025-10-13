@@ -22,7 +22,7 @@ const buttonVariants = cva(
         outline: 'hover:text-primary-foreground border border-current bg-transparent',
         soft: 'hover:text-primary-foreground bg-current/15',
         ghost: 'hover:text-primary-foreground bg-transparent text-current',
-        link: '!bg-transparent text-current/80 hover:text-current'
+        link: 'bg-transparent! text-current/80 hover:text-current'
       },
       size: {
         default: 'h-10 px-4 py-[10px]',
@@ -153,19 +153,16 @@ export interface ButtonProps
   color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark'
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, color, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button'
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, color, className }), !props.disabled && 'cursor-pointer')}
-        disabled={props.disabled}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
+const Button = ({ className, variant, size, color, asChild = false, ...props }: ButtonProps) => {
+  const Comp = asChild ? Slot : 'button'
+  return (
+    <Comp
+      className={cn(buttonVariants({ variant, size, color, className }), !props.disabled && 'cursor-pointer')}
+      disabled={props.disabled}
+      {...props}
+    />
+  )
+}
 Button.displayName = 'Button'
 
 export { Button, buttonVariants }

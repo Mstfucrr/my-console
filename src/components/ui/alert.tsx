@@ -107,46 +107,36 @@ interface AlertHTMLProps extends React.HTMLAttributes<HTMLDivElement> {
 // Merge both interfaces to create final AlertProps
 type AlertProps = VariantProps<typeof alertVariants> & AlertHTMLProps
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, color, variant, dismissible, onDismiss, children, ...props }, ref) => {
-    const [dismissed, setDismissed] = React.useState(false)
+const Alert = ({ className, color, variant, dismissible, onDismiss, children, ...props }: AlertProps) => {
+  const [dismissed, setDismissed] = React.useState(false)
 
-    const handleDismiss = () => {
-      setDismissed(true)
-      if (onDismiss) {
-        onDismiss()
-      }
+  const handleDismiss = () => {
+    setDismissed(true)
+    if (onDismiss) {
+      onDismiss()
     }
-
-    return !dismissed ? (
-      <div ref={ref} role='alert' className={cn(alertVariants({ color, variant }), className)} {...props}>
-        {children}
-        {dismissible && (
-          <button onClick={handleDismiss} className='grow-0'>
-            <X className='h-5 w-5' />
-          </button>
-        )}
-      </div>
-    ) : null
   }
-)
+
+  return !dismissed ? (
+    <div role='alert' className={cn(alertVariants({ color, variant }), className)} {...props}>
+      {children}
+      {dismissible && (
+        <button onClick={handleDismiss} className='grow-0'>
+          <X className='h-5 w-5' />
+        </button>
+      )}
+    </div>
+  ) : null
+}
 Alert.displayName = 'Alert'
 
-const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h5
-      ref={ref}
-      className={cn('col-start-2 mb-2 grow text-lg leading-none font-medium tracking-tight', className)}
-      {...props}
-    />
-  )
+const AlertTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h5 className={cn('col-start-2 mb-2 grow text-lg leading-none font-medium tracking-tight', className)} {...props} />
 )
 AlertTitle.displayName = 'AlertTitle'
 
-const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('col-start-2 grow text-sm [&_p]:leading-relaxed', className)} {...props} />
-  )
+const AlertDescription = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <div className={cn('col-start-2 grow text-sm [&_p]:leading-relaxed', className)} {...props} />
 )
 AlertDescription.displayName = 'AlertDescription'
 

@@ -98,41 +98,21 @@ type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Roo
     icon?: React.ReactNode
   }
 
-const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
-  ({ className, color, size, radius, variant, children, lineThrough, icon = <Check />, ...props }, ref) => (
-    <>
-      {children ? (
-        <div className='flex items-center'>
-          <CheckboxPrimitive.Root
-            ref={ref}
-            className={cn(checkboxVariants({ color, size, radius, variant }), className)}
-            {...props}
-          >
-            <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-current')}>
-              {icon}
-            </CheckboxPrimitive.Indicator>
-          </CheckboxPrimitive.Root>
-          <Label
-            htmlFor={props.id}
-            className={cn(
-              'text-muted-foreground transition-colors-opacity before:transition-width flex-1 cursor-pointer font-normal motion-reduce:transition-none ltr:pl-2.5 rtl:pr-2.5',
-              {
-                'text-xs': size === 'xs',
-                'text-sm': size === 'sm',
-                'text-base': size === 'md',
-                'text-lg': size === 'lg',
-                'text-[18px]': size === 'xl',
-                "text-medium before:bg-foreground relative inline-flex items-center justify-center select-none peer-data-[state=checked]:opacity-60 before:absolute before:h-0.5 before:w-0 before:content-[''] peer-data-[state=checked]:before:w-full":
-                  lineThrough
-              }
-            )}
-          >
-            {children}
-          </Label>
-        </div>
-      ) : (
+const Checkbox = ({
+  className,
+  color,
+  size,
+  radius,
+  variant,
+  children,
+  lineThrough,
+  icon = <Check />,
+  ...props
+}: CheckboxProps) => (
+  <>
+    {children ? (
+      <div className='flex items-center'>
         <CheckboxPrimitive.Root
-          ref={ref}
           className={cn(checkboxVariants({ color, size, radius, variant }), className)}
           {...props}
         >
@@ -140,9 +120,32 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
             {icon}
           </CheckboxPrimitive.Indicator>
         </CheckboxPrimitive.Root>
-      )}
-    </>
-  )
+        <Label
+          htmlFor={props.id}
+          className={cn(
+            'text-muted-foreground transition-colors-opacity before:transition-width flex-1 cursor-pointer font-normal motion-reduce:transition-none ltr:pl-2.5 rtl:pr-2.5',
+            {
+              'text-xs': size === 'xs',
+              'text-sm': size === 'sm',
+              'text-base': size === 'md',
+              'text-lg': size === 'lg',
+              'text-[18px]': size === 'xl',
+              "text-medium before:bg-foreground relative inline-flex items-center justify-center select-none peer-data-[state=checked]:opacity-60 before:absolute before:h-0.5 before:w-0 before:content-[''] peer-data-[state=checked]:before:w-full":
+                lineThrough
+            }
+          )}
+        >
+          {children}
+        </Label>
+      </div>
+    ) : (
+      <CheckboxPrimitive.Root className={cn(checkboxVariants({ color, size, radius, variant }), className)} {...props}>
+        <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-current')}>
+          {icon}
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
+    )}
+  </>
 )
 Checkbox.displayName = CheckboxPrimitive.Root.displayName
 

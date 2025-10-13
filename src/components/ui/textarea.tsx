@@ -116,17 +116,15 @@ export interface TextareaProps
   shadow?: Shadow
 }
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, color, radius, variant, shadow, defaultValue, ...props }, ref) => {
-    return (
-      <div className='w-full flex-1'>
-        <textarea className={cn(textareaVariants({ color, radius, variant, shadow }), className)} ref={ref} {...props}>
-          {defaultValue}
-        </textarea>
-      </div>
-    )
-  }
-)
+const Textarea = ({ className, color, radius, variant, shadow, defaultValue, ...props }: TextareaProps) => {
+  return (
+    <div className='w-full flex-1'>
+      <textarea className={cn(textareaVariants({ color, radius, variant, shadow }), className)} {...props}>
+        {defaultValue}
+      </textarea>
+    </div>
+  )
+}
 Textarea.displayName = 'Textarea'
 
 export { Textarea }
