@@ -4,6 +4,7 @@ import { Motorcycle } from '@/components/svg'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { ConfirmButton } from '@/components/ui/confirm-button'
 import { getStatusColor } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
@@ -201,15 +202,18 @@ export function OrderCard({ order, onViewDetails, onCancel }: OrderCardProps) {
               <span className='max-sm:hidden'>Detay</span>
             </Button>
             {canCancel && (
-              <Button
-                variant='outline'
+              <ConfirmButton
+                onConfirm={() => onCancel?.(order.id)}
+                confirmationMessage='Siparişi iptal etmek istediğinizden emin misiniz?'
+                confirmButtonMessage='Evet, İptal Et'
+                cancelButtonMessage='İptal'
                 color='destructive'
                 className='flex items-center gap-1'
-                onClick={() => onCancel?.(order.id)}
+                confirmButtonColor='destructive'
               >
                 <Trash className='size-3' />
                 <span className='max-sm:hidden'>İptal</span>
-              </Button>
+              </ConfirmButton>
             )}
           </div>
         </div>

@@ -74,7 +74,13 @@ export const mockOrders: Order[] = [
     updatedAt: '2024-01-25T18:30:00Z',
     totalAmount: 67.25,
     restaurant: mockRestaurants[0],
-    customerPosition: [40.985, 29.045]
+    customerPosition: [40.985, 29.045],
+    courierInfo: {
+      id: 'CUR-001',
+      name: 'Murat Kurye',
+      licensePlate: '34 DEF 456',
+      position: [40.9923, 29.0234]
+    }
   },
   {
     id: 'ORD-2024-003',

@@ -14,7 +14,7 @@ import { NotificationsPopover } from '../common/notifications-popover'
 import { SupportDialog } from '../common/support-dialog'
 import UserMenu from '../common/user-menu'
 
-const MobileSidebar = () => {
+const MobileMenu = () => {
   const { mobileMenu, setMobileMenu } = useSidebar()
   const isDesktop = useIsDesktop()
 
@@ -55,7 +55,7 @@ const MobileSidebar = () => {
 
         <div className='flex items-center gap-2'>
           <NotificationsPopover />
-          <SupportDialog />
+          {/* <SupportDialog /> */}
           <UserMenu />
           <Button
             variant='outline'
@@ -68,6 +68,9 @@ const MobileSidebar = () => {
           </Button>
         </div>
       </div>
+      <div className='fixed right-5 bottom-5 z-10'>
+        <SupportDialog />
+      </div>
 
       {mobileMenu && (
         <div
@@ -79,4 +82,4 @@ const MobileSidebar = () => {
   )
 }
 
-export default MobileSidebar
+export default MobileMenu
