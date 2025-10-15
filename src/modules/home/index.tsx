@@ -10,12 +10,13 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, ShoppingCart } from 'lucide-react'
+import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, LucideIcon, ShoppingCart } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
+import { DeliveryCheckList, DeliveryShipmentPackagesAdd } from '@/components/svg'
 import { getStatusColor } from '@/constants'
 import { CreateOrderModal } from '../orders/components/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -28,6 +29,69 @@ const defaultDateRange = {
   from: new Date(new Date().setHours(0, 0, 0, 0)),
   to: new Date(new Date().setHours(23, 59, 59, 999))
 }
+
+type StatsList = {
+  title: string
+  id: keyof DashboardStats
+  Icon: LucideIcon
+  color: string
+  bgColor: string
+  hint: string
+  type?: 'currency'
+}
+
+const statsList: Array<StatsList> = [
+  {
+    title: 'Toplam Sipariş',
+    id: 'todayOrders',
+    Icon: ShoppingCart,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    hint: 'Bugün alınan sipariş sayısı'
+  },
+  {
+    title: 'Teslim Edildi',
+    id: 'deliveredOrders',
+    Icon: CheckCircle,
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
+    hint: 'Başarıyla teslim edilen'
+  },
+  {
+    title: 'Yola Çıktı',
+    id: 'onWayOrders',
+    Icon: BarChart2,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50',
+    hint: 'Şu anda kurye ile'
+  },
+  {
+    title: 'İptal Edildi',
+    id: 'cancelledOrders',
+    Icon: Clock,
+    color: 'text-red-600',
+    bgColor: 'bg-red-50',
+    hint: 'İptal edilen siparişler'
+  },
+  {
+    title: 'Toplam Ciro',
+    id: 'totalRevenue',
+    Icon: CreditCard,
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50',
+    hint: 'Bugünkü toplam ciro',
+    type: 'currency'
+  },
+  {
+    title: 'Tahsilat Bekleyen',
+    id: 'pendingPayments',
+    Icon: Clock,
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-50',
+    hint: 'Ödeme bekleyen bakiye',
+    type: 'currency'
+  }
+]
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
@@ -108,84 +172,62 @@ export default function DashboardView() {
         }
       />
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
-            <QuickAction
-              href='/orders'
-              Icon={BarChart2}
-              title='Son Siparişler'
-              subtitle='Aktif siparişleri görüntüle'
-              color='text-blue-600'
-            />
-            <QuickAction
-              onClick={() => setIsCreateOrderModalVisible(true)}
-              Icon={ShoppingCart}
-              title='Yeni Sipariş Ekle'
-              subtitle='Manuel sipariş oluştur'
-              color='text-green-600'
-            />
-            <QuickAction
-              href='/reconciliation'
-              Icon={CheckCircle}
-              title='Mutabakat İşlemleri'
-              subtitle='Günlük mutabakatlar'
-              color='text-orange-600'
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='grid grid-cols-2 gap-3'>
+              <QuickAction
+                href='/orders'
+                Icon={BarChart2}
+                title='Siparişler'
+                subtitle='Aktif siparişler'
+                color='text-blue-600'
+              />
+              <QuickAction
+                onClick={() => setIsCreateOrderModalVisible(true)}
+                Icon={DeliveryShipmentPackagesAdd}
+                title='Yeni Sipariş'
+                subtitle='Sipariş oluştur'
+                color='text-green-600'
+              />
+              <QuickAction
+                href='/reconciliation'
+                Icon={CheckCircle}
+                title='Mutabakat'
+                subtitle='Günlük işlemler'
+                color='text-orange-600'
+              />
+              <QuickAction
+                href='/reports'
+                Icon={DeliveryCheckList}
+                title='Raporlar'
+                subtitle='Analiz ve raporlar'
+                color='text-purple-600'
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Stats */}
-      <div className='grid grid-cols-2 gap-4 lg:grid-cols-6'>
-        <StatCard
-          title='Toplam Sipariş'
-          value={stats.todayOrders}
-          Icon={ShoppingCart}
-          hint='Bugün alınan sipariş sayısı'
-          color='text-blue-600'
-        />
-        <StatCard
-          title='Teslim Edildi'
-          value={stats.deliveredOrders}
-          Icon={CheckCircle}
-          hint='Başarıyla teslim edilen'
-          color='text-green-600'
-        />
-        <StatCard
-          title='Yola Çıktı'
-          value={stats.onWayOrders}
-          Icon={BarChart2}
-          hint='Şu anda kurye ile'
-          color='text-amber-500'
-        />
-        <StatCard
-          title='İptal Edildi'
-          value={stats.cancelledOrders}
-          Icon={Clock}
-          hint='İptal edilen siparişler'
-          color='text-red-600'
-        />
-        <StatCard
-          title='Toplam Ciro'
-          value={stats.totalRevenue}
-          Icon={CreditCard}
-          hint='Bugünkü toplam ciro'
-          color='text-purple-600'
-          type='currency'
-        />
-        <StatCard
-          title='Tahsilat Bekleyen'
-          value={stats.pendingPayments}
-          Icon={Clock}
-          hint='Ödeme bekleyen bakiye'
-          color='text-yellow-600'
-          type='currency'
-        />
+        {/* Stats */}
+        <div className='grid grid-cols-3 gap-4 max-sm:grid-cols-2'>
+          {statsList.map(stat => (
+            <StatCard
+              key={stat.id}
+              isLoading={isLoading}
+              title={stat.title}
+              value={stats[stat.id] as number}
+              size='sm'
+              Icon={stat.Icon}
+              hint={stat.hint}
+              color={stat.color}
+              type={stat.type}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Chart + Recent Orders */}

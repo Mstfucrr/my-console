@@ -44,12 +44,14 @@ export default function QuickAction({
 }) {
   return (
     <QuickActionLink href={href} onClick={onClick}>
-      <Card className='hover:bg-accent group transition-colors'>
-        <CardContent className='p-4 max-sm:p-2'>
-          <div className='flex h-28 flex-col items-center justify-center text-center'>
-            <Icon className={cn('mb-2 size-8 max-sm:size-6', color)} />
-            <div className='mb-1 font-medium max-sm:text-xs'>{title}</div>
-            <div className='text-muted-foreground text-xs max-sm:text-[9px]'>{subtitle}</div>
+      <Card className='group hover:bg-accent/30 border-0 bg-transparent transition-all duration-200 hover:shadow-sm'>
+        <CardContent className='p-3 max-sm:p-2'>
+          <div className='relative flex h-full items-center justify-center gap-3'>
+            <Icon className={cn('absolute right-10 size-12 opacity-30 max-sm:size-5', color)} />
+            <div className='flex flex-1 flex-col text-left'>
+              <h5 className='text-sm leading-tight font-medium max-sm:text-xs'>{title}</h5>
+              <p className='text-muted-foreground text-xs leading-tight opacity-80 max-sm:text-[10px]'>{subtitle}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
