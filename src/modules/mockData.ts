@@ -59,7 +59,7 @@ export const mockOrders: Order[] = [
     totalAmount: 85.5,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'yemeksepeti',
+    channel: 'yemeksepeti',
     customerPosition: [40.985, 29.045]
   },
   {
@@ -68,7 +68,7 @@ export const mockOrders: Order[] = [
     customerPhone: '+90 535 987 65 43',
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:42 Kadıköy/İstanbul',
     paymentMethod: 'cash',
-    integration: 'getir',
+    channel: 'getir',
     status: 'shipped',
     createdAt: '2024-01-25T17:45:00Z',
     updatedAt: '2024-01-25T18:30:00Z',
@@ -93,7 +93,7 @@ export const mockOrders: Order[] = [
     totalAmount: 125.75,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
-    integration: 'trendyol_go',
+    channel: 'trendyolGo',
     courierInfo: {
       id: 'CUR-001',
       name: 'Murat Kurye',
@@ -113,7 +113,7 @@ export const mockOrders: Order[] = [
     totalAmount: 78.25,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'migros_yemek',
+    channel: 'migrosYemek',
     courierInfo: {
       id: 'CUR-002',
       name: 'Gökhan Taş',
@@ -133,7 +133,7 @@ export const mockOrders: Order[] = [
     totalAmount: 89.5,
     restaurant: mockRestaurants[1],
     paymentMethod: 'cash',
-    integration: 'tikla_gelsin',
+    channel: 'tiklaGelsin',
     courierInfo: {
       id: 'CUR-003',
       name: 'Ayhan Yıldız',
@@ -153,7 +153,7 @@ export const mockOrders: Order[] = [
     totalAmount: 92.75,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'yemeksepeti',
+    channel: 'yemeksepeti',
     courierInfo: {
       id: 'CUR-004',
       name: 'Berkay Demir',
@@ -173,7 +173,7 @@ export const mockOrders: Order[] = [
     totalAmount: 45.0,
     restaurant: mockRestaurants[0],
     paymentMethod: 'online',
-    integration: 'manuel',
+    channel: 'fiyuu',
     courierInfo: {
       id: 'CUR-005',
       name: 'Seda Aksoy',
@@ -193,7 +193,7 @@ export const mockOrders: Order[] = [
     totalAmount: 156.75,
     restaurant: mockRestaurants[1],
     paymentMethod: 'card',
-    integration: 'getir',
+    channel: 'getir',
     courierInfo: {
       id: 'CUR-006',
       name: 'Yusuf Kılıç',
@@ -213,7 +213,7 @@ export const mockOrders: Order[] = [
     totalAmount: 67.5,
     restaurant: mockRestaurants[0],
     paymentMethod: 'cash',
-    integration: 'yemeksepeti',
+    channel: 'yemeksepeti',
     customerPosition: [40.985, 29.045]
   },
   {
@@ -227,7 +227,7 @@ export const mockOrders: Order[] = [
     totalAmount: 89.25,
     restaurant: mockRestaurants[1],
     paymentMethod: 'online',
-    integration: 'trendyol_go',
+    channel: 'trendyolGo',
     customerPosition: [40.985, 29.045]
   },
   {
@@ -241,7 +241,7 @@ export const mockOrders: Order[] = [
     totalAmount: 73.0,
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
-    integration: 'migros_yemek',
+    channel: 'migrosYemek',
     customerPosition: [40.985, 29.045]
   },
   {
@@ -255,7 +255,7 @@ export const mockOrders: Order[] = [
     totalAmount: 195.5,
     restaurant: mockRestaurants[1],
     paymentMethod: 'cash',
-    integration: 'tikla_gelsin',
+    channel: 'tiklaGelsin',
     customerPosition: [40.985, 29.045]
   },
   {
@@ -269,7 +269,7 @@ export const mockOrders: Order[] = [
     totalAmount: 52.75,
     restaurant: mockRestaurants[0],
     paymentMethod: 'online',
-    integration: 'manuel',
+    channel: 'fiyuu',
     customerPosition: [40.985, 29.045]
   }
 ]

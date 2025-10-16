@@ -30,10 +30,22 @@ export interface Order {
   totalAmount: number
   courierInfo?: CourierInfo
   restaurant: Restaurant
-  paymentMethod: 'cash' | 'card' | 'online'
-  integration: 'yemeksepeti' | 'getir' | 'trendyol_go' | 'migros_yemek' | 'tikla_gelsin' | 'manuel'
+  paymentMethod: PaymentMethod
+  channel: OrderChannel
   customerPosition: [number, number]
 }
+
+export type OrderChannel =
+  | 'yemeksepeti'
+  | 'getir'
+  | 'trendyolGo'
+  | 'migrosYemek'
+  | 'tiklaGelsin'
+  | 'araGelsin'
+  | 'fiyuu'
+  | 'manuel'
+
+export type PaymentMethod = 'cash' | 'card' | 'online'
 
 export interface CourierInfo {
   id: string

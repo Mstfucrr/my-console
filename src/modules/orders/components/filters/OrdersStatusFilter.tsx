@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { getStatusColor } from '@/constants'
 import { OrderStatus, OrderStatusLabel } from '@/modules/types'
-import { useOrders } from '../context/OrdersContext'
+import { useOrders } from '../../context/OrdersContext'
 
 const statusConfig = [
   {

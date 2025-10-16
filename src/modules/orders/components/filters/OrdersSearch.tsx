@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
-import { useOrders } from '../context/OrdersContext'
+import { useOrders } from '../../context/OrdersContext'
 
 export function OrdersSearch() {
   const { searchTerm, setSearchTerm } = useOrders()

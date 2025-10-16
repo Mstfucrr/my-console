@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { OrderStatusLabel } from '@/modules/types'
 import { Search } from 'lucide-react'
-import { useOrders } from '../context/OrdersContext'
+import { useOrders } from '../../context/OrdersContext'
 
 export function OrdersFilterAlert() {
   const { statusFilter, clearFilter, searchTerm } = useOrders()

@@ -4,7 +4,7 @@ import StatCard from '@/components/StatCard'
 import { OrderStatusLabel } from '@/modules/types'
 import { CheckCircle2, Clock, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { OrdersContextType, useOrders } from '../context/OrdersContext'
+import { OrdersContextType, useOrders } from '../../context/OrdersContext'
 
 interface Stat {
   title: string

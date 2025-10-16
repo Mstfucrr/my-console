@@ -3,7 +3,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { FlameIcon } from 'lucide-react'
-import { useOrders } from '../context/OrdersContext'
+import { useOrders } from '../../context/OrdersContext'
 
 export function OrdersPendingAlert() {
   const { stats, handleStatusFilterChange } = useOrders()

@@ -1,19 +1,29 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import type { Order } from '@/modules/types'
 import { Loader2, ShoppingCart } from 'lucide-react'
-import { useOrders } from '../context/OrdersContext'
+import { useOrders } from '../../context/OrdersContext'
 import { OrderCard } from './OrderCard'
+import { OrderListItem } from './OrderListItem'
 
 interface OrdersListProps {
   orders: Order[]
   isLoading: boolean
   isFetching: boolean
+  viewMode: 'card' | 'list'
   emptyMessage: string
   filteredEmptyMessage: string
 }
 
-export function OrdersList({ orders, isLoading, isFetching, emptyMessage, filteredEmptyMessage }: OrdersListProps) {
+export function OrdersList({
+  orders,
+  isLoading,
+  isFetching,
+  viewMode,
+  emptyMessage,
+  filteredEmptyMessage
+}: OrdersListProps) {
   const { statusFilter, handleViewDetails } = useOrders()
 
   if (isLoading || isFetching) {
@@ -39,10 +49,14 @@ export function OrdersList({ orders, isLoading, isFetching, emptyMessage, filter
   }
 
   return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-      {orders.map(order => (
-        <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
-      ))}
+    <div className={cn('grid grid-cols-1 gap-4', viewMode === 'list' ? 'grid-cols-1' : 'md:grid-cols-3')}>
+      {orders.map(order =>
+        viewMode === 'card' ? (
+          <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
+        ) : (
+          <OrderListItem key={order.id} order={order} onViewDetails={handleViewDetails} />
+        )
+      )}
     </div>
   )
 }

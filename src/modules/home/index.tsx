@@ -18,7 +18,7 @@ import { LineChart } from './components/LineChart'
 
 import { DeliveryCheckList, DeliveryShipmentPackagesAdd } from '@/components/svg'
 import { getStatusColor } from '@/constants'
-import { CreateOrderModal } from '../orders/components/CreateOrderModal'
+import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import QuickAction from './components/QuickAction'
 import { dashboardService } from './service'
