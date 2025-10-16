@@ -117,10 +117,6 @@ export default function DashboardView() {
     }))
   }, [stats])
 
-  const getChartTitle = (baseTitle: string) => {
-    return baseTitle
-  }
-
   if (isLoading) {
     return (
       <div className='p-6'>
@@ -290,38 +286,33 @@ export default function DashboardView() {
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>{getChartTitle('Sipariş Sayısı')}</CardTitle>
+            <CardTitle className='text-base'>Sipariş Sayısı</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='h-80'>
-              <LineChart data={stats.hourlyOrdersChart} title='Sipariş Sayısı' color='#2196F3' height={300} />
+              <LineChart data={stats.hourlyOrdersChart} color='#2196F3' height={300} yAxisLabel='Adet' />
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>{getChartTitle('Ciro')}</CardTitle>
+            <CardTitle className='text-base'>Ciro</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='h-80'>
-              <LineChart data={stats.hourlyRevenueChart} title='Ciro (₺)' color='#FFD100' height={300} />
+              <LineChart data={stats.hourlyRevenueChart} color='#FFD100' height={300} yAxisLabel='TL' />
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>{getChartTitle('Ortalama Teslimat Süresi')}</CardTitle>
+            <CardTitle className='text-base'>Ortalama Teslimat Süresi</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='h-80'>
-              <LineChart
-                data={stats.averageDeliveryTimeChart}
-                title='Ortalama Teslimat Süresi (dakika)'
-                color='#10B981'
-                height={300}
-              />
+              <LineChart data={stats.averageDeliveryTimeChart} color='#10B981' height={300} yAxisLabel='Dakika' />
             </div>
           </CardContent>
         </Card>

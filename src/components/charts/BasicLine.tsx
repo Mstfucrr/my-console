@@ -15,6 +15,7 @@ export interface BasicLineProps extends ApexOptions {
   colors?: string[]
   height?: number
   width?: number | string
+  yAxisLabel?: string
 }
 
 export default function BasicLine({
@@ -23,6 +24,7 @@ export default function BasicLine({
   colors = ['#2196F3'],
   height = 300,
   width,
+  yAxisLabel,
   ...options
 }: BasicLineProps) {
   const chartRef = useRef<HTMLDivElement | null>(null)
@@ -71,7 +73,16 @@ export default function BasicLine({
           fontSize: '12px',
           colors: '#64748b'
         }
-      }
+      },
+      title: yAxisLabel
+        ? {
+            text: yAxisLabel,
+            style: {
+              color: '#64748b',
+              fontSize: '12px'
+            }
+          }
+        : undefined
     },
     tooltip: {
       theme: 'light',

@@ -10,9 +10,10 @@ interface LineChartProps {
   title?: string
   color?: string
   height?: number
+  yAxisLabel?: string
 }
 
-export function LineChart({ data, title, color = '#2196F3', height = 300 }: LineChartProps) {
+export function LineChart({ data, title, color = '#2196F3', height = 300, yAxisLabel }: LineChartProps) {
   const series = [
     {
       name: title || 'Data',
@@ -22,13 +23,5 @@ export function LineChart({ data, title, color = '#2196F3', height = 300 }: Line
 
   const categories = data.map(item => item.label)
 
-  return (
-    <BasicLine
-      series={series}
-      categories={categories}
-      colors={[color]}
-      height={height}
-      title={{ text: title || 'Data' }}
-    />
-  )
+  return <BasicLine series={series} categories={categories} colors={[color]} height={height} yAxisLabel={yAxisLabel} />
 }
