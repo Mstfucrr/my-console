@@ -2,23 +2,31 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
+
+// Regex patterns centralized for reusability
+const PASSWORD_REGEXES = {
+  lowercase: { regex: /[a-z]/, message: 'Şifre en az bir küçük harf içermelidir.' },
+  uppercase: { regex: /[A-Z]/, message: 'Şifre en az bir büyük harf içermelidir.' },
+  number: { regex: /\d/, message: 'Şifre en az bir rakam içermelidir.' }
+}
 
 const schema = z
   .object({
     password: z
       .string()
       .min(8, { message: 'Şifre en az 8 karakter olmalıdır.' })
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-        message: 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.'
-      }),
+      .regex(PASSWORD_REGEXES.lowercase.regex, { message: PASSWORD_REGEXES.lowercase.message })
+      .regex(PASSWORD_REGEXES.uppercase.regex, { message: PASSWORD_REGEXES.uppercase.message })
+      .regex(PASSWORD_REGEXES.number.regex, { message: PASSWORD_REGEXES.number.message }),
     confirmPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -45,6 +53,15 @@ function ResetPasswordFormInner() {
 
   const { handleSubmit, control } = form
   const router = useRouter()
+
+  // Centralized password checks for reusability
+  const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
+  const isLengthValid = passwordValue.length >= 8
+  const hasUppercase = PASSWORD_REGEXES.uppercase.regex.test(passwordValue)
+  const hasLowercase = PASSWORD_REGEXES.lowercase.regex.test(passwordValue)
+  const hasNumber = PASSWORD_REGEXES.number.regex.test(passwordValue)
+
+  const isValid = isLengthValid && hasUppercase && hasLowercase && hasNumber
 
   useEffect(() => {
     if (!token) {
@@ -90,6 +107,13 @@ function ResetPasswordFormInner() {
     )
   }
 
+  const reqItem = (ok: boolean, content: React.ReactNode) => (
+    <span className={ok ? 'text-green-700' : 'text-primary'}>
+      {ok ? '✔' : '•'} {content}
+      <br />
+    </span>
+  )
+
   return (
     <div className='w-full space-y-4'>
       <div className='text-center'>
@@ -103,12 +127,12 @@ function ResetPasswordFormInner() {
             <FormInputField
               name='password'
               control={control}
-              label='Yeni Şifre'
               type='password'
               id='password'
               size='lg'
               disabled={isLoading}
-              placeholder='En az 8 karakter'
+              placeholder='Şifrenizi giriniz'
+              Icon={Lock}
             />
           </div>
 
@@ -116,22 +140,23 @@ function ResetPasswordFormInner() {
             <FormInputField
               name='confirmPassword'
               control={control}
-              label='Şifre Tekrarı'
               type='password'
               id='confirmPassword'
               size='lg'
               disabled={isLoading}
               placeholder='Şifrenizi tekrar girin'
+              Icon={Lock}
             />
           </div>
 
-          <div className='rounded-lg bg-blue-50 p-3'>
-            <p className='text-xs text-blue-800'>
-              <strong>Şifre gereksinimleri:</strong>
-              <br />• En az 8 karakter
-              <br />• En az bir büyük harf (A-Z)
-              <br />• En az bir küçük harf (a-z)
-              <br />• En az bir rakam (0-9)
+          <div className={cn('rounded-lg bg-blue-50 p-3', isValid ? 'bg-green-50' : 'bg-blue-50')}>
+            <p className='text-xs'>
+              <strong className={cn(isValid ? 'text-green-700' : 'text-primary')}>Şifre gereksinimleri:</strong>
+              <br />
+              {reqItem(isLengthValid, 'En az 8 karakter')}
+              {reqItem(hasUppercase, 'En az bir büyük harf (A-Z)')}
+              {reqItem(hasLowercase, 'En az bir küçük harf (a-z)')}
+              {reqItem(hasNumber, 'En az bir rakam (0-9)')}
             </p>
           </div>
 

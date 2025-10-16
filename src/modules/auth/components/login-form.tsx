@@ -2,6 +2,7 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Lock, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -10,7 +11,7 @@ import { z } from 'zod'
 import { useAuthContext } from '../context/AuthContext'
 
 const schema = z.object({
-  identifier: z.string().min(1, { message: 'E-posta zorunludur.' }).email({ message: 'Geçerli bir e-posta giriniz.' }),
+  email: z.string().min(1, { message: 'E-posta zorunludur.' }).email({ message: 'Geçerli bir e-posta giriniz.' }),
   password: z.string().min(1, { message: 'Şifre zorunludur.' })
 })
 
@@ -24,9 +25,9 @@ const LogInForm = () => {
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
-    mode: 'all',
+    mode: 'onSubmit',
     defaultValues: {
-      identifier: 'efsane@fiyuu.com.tr',
+      email: 'efsane@fiyuu.com.tr',
       password: '11111-222224!'
     }
   })
@@ -49,24 +50,26 @@ const LogInForm = () => {
   return (
     <div className='w-full space-y-4'>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 text-left'>
           <FormInputField
-            name='identifier'
+            name='email'
             control={control}
-            label='Email'
             type='email'
-            id='identifier'
+            id='email'
             size='lg'
             disabled={loginPending}
+            Icon={Mail}
+            placeholder='E-posta adresinizi giriniz'
           />
           <FormInputField
             name='password'
             control={control}
-            label='Şifre'
             type='password'
             id='password'
             size='lg'
             disabled={loginPending}
+            Icon={Lock}
+            placeholder='Şifrenizi giriniz'
           />
 
           <div className='flex justify-end'>

@@ -88,12 +88,12 @@ const ForgotPasswordForm = () => {
           <FormInputField
             name='email'
             control={control}
-            label='E-posta Adresi'
             type='email'
             id='email'
             size='lg'
             disabled={isLoading}
-            placeholder='ornek@email.com'
+            placeholder='E-posta adresinizi giriniz'
+            Icon={Mail}
           />
 
           <LoadingButton className='w-full' isLoading={isLoading} size='lg' loadingText='Gönderiliyor...'>

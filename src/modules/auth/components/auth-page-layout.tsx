@@ -14,7 +14,7 @@ const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
       <div className='w-full max-w-md'>
         <div className='flex items-center justify-center'>
           <Card className='w-full max-w-md rounded-3xl p-8 shadow-lg'>
-            <div className='mb-5 text-center'>
+            <div className='mb-4 text-center'>
               <SiteLogoMin className='text-primary mx-auto w-32' />
             </div>
 
