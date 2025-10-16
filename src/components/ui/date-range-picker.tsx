@@ -1,7 +1,7 @@
 'use client'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
-import { CalendarIcon, Clock } from 'lucide-react'
+import { CalendarIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
@@ -161,7 +161,6 @@ export function DateRangePicker({
                 İptal
               </Button>
               <Button size='xs' onClick={handleApply}>
-                <Clock className='mr-1 h-3 w-3' />
                 Uygula
               </Button>
             </div>
