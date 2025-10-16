@@ -59,7 +59,7 @@ const LogInForm = () => {
             size='lg'
             disabled={loginPending}
             Icon={Mail}
-            placeholder='E-posta adresinizi giriniz'
+            placeholder='E-posta giriniz'
           />
           <FormInputField
             name='password'

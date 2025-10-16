@@ -92,7 +92,7 @@ const ForgotPasswordForm = () => {
             id='email'
             size='lg'
             disabled={isLoading}
-            placeholder='E-posta adresinizi giriniz'
+            placeholder='E-posta giriniz'
             Icon={Mail}
           />
 

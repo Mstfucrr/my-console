@@ -12,10 +12,10 @@ interface ReconciliationHeaderProps {
 export default function ReconciliationHeader({ onRefresh, isLoading }: ReconciliationHeaderProps) {
   return (
     <PageHeader
-      title='Mutabakat İşlemleri'
+      title='Mutabakat'
       description='Günlük satış mutabakatlarınızı takip edin ve raporlarınızı indirin'
       icon={CheckCircle}
-      iconColor='text-green-600'
+      iconColor='text-orange-600'
       showRefreshButton
       onRefresh={onRefresh}
       isLoading={isLoading}

@@ -6,6 +6,7 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { motion } from 'framer-motion'
+import { RefreshCcw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { type ChangeEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -166,11 +167,12 @@ const VerfiyForm = () => {
                 loadingText='Doğrulanıyor...'
               >
                 <Badge className='text-lg'>
-                  <span className={cn({ 'text-gray-100': !isOtpComplete })}>Gönder</span>
+                  <span className={cn({ 'text-gray-100': !isOtpComplete })}>Gönder ({timer})</span>
                 </Badge>
               </LoadingButton>
             ) : (
               <Button type='button' className='w-full' size='lg' onClick={handleResendOtp}>
+                <RefreshCcw className='mr-2 size-4' />
                 <span className='text-white'>Tekrar Gönder</span>
               </Button>
             )}
