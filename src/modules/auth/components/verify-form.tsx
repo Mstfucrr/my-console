@@ -90,30 +90,26 @@ const VerfiyForm = () => {
       phoneNumber: loginData.phoneNumber
     })
 
-    if (!isOtpValid) {
-      toast.error('Kod geçersiz. Lütfen tekrar deneyiniz.')
-      return
-    }
+    if (!isOtpValid) throw new Error('Invalid OTP')
 
-    await setCookie({
-      action_cookie
-    })
+    await setCookie({ action_cookie })
   }
 
   const handleSubmit = async () => {
     if (!loginData || loginData.otpTimeout === 0) return
     setOtp(otpArray)
 
-    await toast
+    toast
       .promise(verifyOtpAndSetCookie, {
         pending: 'Kod doğrulanıyor...',
         success: 'Başarılıyla giriş yaptınız.',
         error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
       })
-      .then(() => router.push('/'))
+      .then(() => {
+        router.push('/')
+      })
       .catch(() => {
         setTimeout(() => inputRefs.current[0]?.focus(), 0)
-        return
       })
   }
 
