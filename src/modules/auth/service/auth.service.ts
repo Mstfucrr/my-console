@@ -92,11 +92,15 @@ class AuthService {
     console.log('verifyOtp request', request)
     const response = {
       data: {
-        isOtpValid: true,
+        isOtpValid: request.otp === '111111' ? true : false,
         action_cookie: '1234567890'
       }
     }
     await new Promise(resolve => setTimeout(resolve, 1500))
+    if (!response.data.isOtpValid) {
+      throw new Error('Invalid OTP')
+    }
+
     return response.data
   }
 
