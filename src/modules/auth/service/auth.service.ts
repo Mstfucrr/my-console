@@ -92,7 +92,7 @@ class AuthService {
     console.log('verifyOtp request', request)
     const response = {
       data: {
-        isOtpValid: request.otp === '111111' ? true : false,
+        isOtpValid: request.otp === '123456' ? true : false,
         action_cookie: '1234567890'
       }
     }
