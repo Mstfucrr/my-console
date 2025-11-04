@@ -1,14 +1,17 @@
 ---
 description: Best practices for TypeScript, React, and Next.js, covering code structure, modularity, performance, error handling, forms, UI styling, and testing to ensure clean, scalable, and efficient development.
-globs: **/*.{ts,tsx}
+globs: *.tsx,*.ts
+alwaysApply: false
 ---
+
 Web accessibility best practices
+
 - Use **semantic HTML elements** (`<button>`, `<nav>`, `<section>`, etc.).
 - Implement **ARIA attributes** where necessary.
 - Ensure **keyboard navigation support**.
 
-
 Code style and structure best practices for TypeScript, React, and Next.js project
+
 - Follow **clean and maintainable code** principles.
 - Use **functional and declarative programming**; avoid classes.
 - Prefer **CSR (Client-Side Rendering)** for dynamic pages.
@@ -26,8 +29,8 @@ Code style and structure best practices for TypeScript, React, and Next.js proje
   - **lib/** → Utility functions (`cn` for class merging).
   - **modules/** → Enforcing modular architecture for scalable applications.
 
-
 Best practices for error handling in web applications
+
 - Prioritize **error handling** at the beginning of functions.
 - Use **early returns** for invalid states instead of deep `if` statements.
 - Keep **happy path logic at the end** of functions.
@@ -35,22 +38,32 @@ Best practices for error handling in web applications
 - Ensure **meaningful error messages** for users.
 - Handle errors gracefully in **Next.js Server Actions**.
 
+Code flow and control structure best practices
+
+- **Always use early return pattern** - return early for error cases, edge cases, and invalid conditions.
+- Avoid nested `if` statements - use early returns to reduce nesting and improve readability.
+- Prefer guard clauses at the beginning of functions to validate inputs and conditions.
+- Keep the main logic flow at the end of functions after all validations.
+- Use early returns to handle special cases before processing the main logic.
 
 Best practices for form handling and validation using React Hook Form and Zod
+
 - Use **controlled components** for form inputs.
 - Implement **form validation** on both **client and server side**.
 - Use **React Hook Form** for managing forms efficiently.
 - Use **Zod** for schema-based validation:
+
   ```ts
-  import { z } from "zod";
+  import { z } from 'zod'
 
   const formSchema = z.object({
-    email: z.string().email("Geçersiz e-posta adresi"),
-    password: z.string().min(6, "Parola en az 6 karakterden oluşmalı"),
-  });
-
+    email: z.string().email('Geçersiz e-posta adresi'),
+    password: z.string().min(6, 'Parola en az 6 karakterden oluşmalı')
+  })
+  ```
 
 Enforcing modular architecture for scalable applications
+
 - **Modules must be used for feature-based separation.**
 - The directory structure should follow this pattern:
   ```
@@ -66,10 +79,12 @@ Enforcing modular architecture for scalable applications
   │   └── ... module_n/
   ```
 - **Global utilities, hooks, and components should NOT be inside a module.**
+
   - Example: If a date formatting function is used across multiple modules, place it in `/src/utils/`.
   - Example: A modal component used everywhere should be in `/src/components/`, NOT inside a module.
 
 - **Module-Specific Example**
+
   - `modules/orders/hooks/useOrderFilter.ts` ✅
   - `modules/orders/components/OrderTable.tsx` ✅
   - `modules/orders/utils/formatOrderDate.ts` ✅
@@ -84,10 +99,10 @@ Enforcing modular architecture for scalable applications
   ├── utils/            # General utility functions
   ├── lib/              # Miscellaneous utilities (e.g., cn function for class merging)
   ```
-here necessary.
-
+  here necessary.
 
 Performance optimization best practices for Next.js and React
+
 - Minimize **'use client'**, `useEffect`, and `useState`; prefer **React Server Components (RSC)**.
 - Wrap **client components** in **Suspense with a fallback**.
 - Use **dynamic imports** (`next/dynamic`) for non-critical components.
@@ -97,8 +112,8 @@ Performance optimization best practices for Next.js and React
 - Use **`tailwind-merge` (`cn` from `src/lib/utils.ts`)** to handle conditional `className` values.
 - Prefer **Shadcn UI** for UI components instead of other libraries.
 
-
 React.js best practices for component development and hooks
+
 - Use **functional components** with **TypeScript**.
 - Use **Shadcn UI** components instead of custom-styled components.
 - Implement hooks properly (`useState`, `useEffect`, `useContext`, `useReducer`, `useMemo`, `useCallback`).
@@ -113,8 +128,8 @@ React.js best practices for component development and hooks
 - Use **cleanup functions** in `useEffect` to **prevent memory leaks**.
 - Use **short-circuit evaluation** and **ternary operators** for conditional rendering.
 
-
 Best practices for using TanStack React Table and TanStack React Query
+
 - **Use React Query for all API requests**.
 - Define **query keys properly** (`queryKey: ['data', id]`).
 - Implement **error handling** using `onError`.
@@ -140,29 +155,31 @@ Best practices for using TanStack React Table and TanStack React Query
       cell: ({ row }) => <span className={cn(row.original.status === "active" ? "text-green-500" : "text-red-500")}>{row.original.status}</span>,
     },
   ];
-
+  ```
 
 Best practices for unit and integration testing
+
 - Write **unit tests** using **Vitest** and **React Testing Library**.
 - Implement **integration tests** for critical user flows.
 - Use **snapshot testing** cautiously.
 
-
 Best practices for UI styling using Shadcn UI and Tailwind CSS
+
 - Use **Shadcn UI** for consistent and reusable components.
 - Implement **responsive design** using Tailwind CSS (`sm:`, `md:`, `lg:`).
 - Use `cn` from `src/lib/utils.ts` for conditional class merging:
+
   ```tsx
   import { cn } from "@/lib/utils";
 
   <div className={cn("p-4", "bg-blue-500": isActive)}>
     Dynamic Styled Element
   </div>;
-
+  ```
 
 Every new component added must follow this format:
-```tsx
 
+```tsx
 export function Component() {
   return <div></div>
 }
