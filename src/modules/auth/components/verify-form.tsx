@@ -105,12 +105,8 @@ const VerfiyForm = () => {
         success: 'Başarılıyla giriş yaptınız.',
         error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
       })
-      .then(() => {
-        router.push('/')
-      })
-      .catch(() => {
-        setTimeout(() => inputRefs.current[0]?.focus(), 0)
-      })
+      .then(() => router.push('/'))
+      .catch(() => setTimeout(() => inputRefs.current[0]?.focus(), 0))
   }
 
   const handleResendOtp = () => {
