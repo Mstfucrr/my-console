@@ -20,39 +20,49 @@ Modern ve ölçeklenebilir web uygulaması.
 
 ### Ön Gereksinimler
 
-- Node.js (18.x veya üzeri)
+- Node.js v22.21.1 (NVM kullanarak kurulum önerilir)
 - pnpm (Önerilen paket yöneticisi)
 
-1. PNPM Kurulumu (eğer yüklü değilse)
+1. Node.js Kurulumu (NVM ile)
+
+```bash
+# NVM kullanarak doğru Node.js versiyonunu yükleyin ve kullanın
+nvm install 22.21.1
+nvm use
+```
+
+2. PNPM Kurulumu (eğer yüklü değilse)
 
 ```bash
 npm install -g pnpm
 ```
 
-2. Projeyi klonlayın
+3. Projeyi klonlayın
 
 ```bash
 git clone <repository-url>
 cd my-console
 ```
 
-3. Bağımlılıkları yükleyin
+4. Bağımlılıkları yükleyin
 
 ```bash
 pnpm install
 ```
 
-4. Ortam değişkenlerini ayarlamak için `.env.local` dosyasını oluşturun ve gerekli ortam değişkenlerini ekleyin
+5. Ortam değişkenlerini ayarlamak için `.env.local` dosyasını oluşturun ve gerekli ortam değişkenlerini ekleyin
 
 ```bash
 touch .env.local
 ```
 
-5. Geliştirme ortamını başlatın
+6. Geliştirme ortamını başlatın
 
 ```bash
 pnpm dev
 ```
+
+Uygulama `http://localhost:3000` adresinde çalışacaktır.
 
 ## 📝 Kullanılabilir Scriptler
 
@@ -63,7 +73,7 @@ pnpm dev
 # Projeyi build eder
 pnpm build
 
-# Production build'ini 3000 portunda serve eder
+# Production build'ini serve eder
 pnpm start
 
 # ESLint ile kod kalitesi ve syntax kontrolü yapar
@@ -71,6 +81,7 @@ pnpm lint
 
 # Prettier ile tüm dosyaları belirlenen kurallara göre formatlar
 pnpm format
+
 ```
 
 ## 📁 Proje Yapısı
@@ -146,3 +157,13 @@ pnpm update -i
 # Tüm bağımlılıkları güncelle
 pnpm update
 ```
+
+## 📌 Versiyon Yönetimi
+
+Bu proje Node.js v22.21.1 kullanmaktadır. Versiyon yönetimi için:
+
+- **`.nvmrc`**: NVM kullanıcıları için otomatik versiyon seçimi (`nvm use`)
+- **`package.json`**: `engines` alanı ile versiyon kontrolü
+- **`Dockerfile`**: Docker container'larında kullanılan versiyon
+
+Farklı bir Node.js versiyonu kullanmak projede sorunlara yol açabilir.
