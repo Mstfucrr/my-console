@@ -69,6 +69,13 @@ const VerfiyForm = () => {
     }
   }
 
+  const resetOtp = () => {
+    setOtp(otpArray)
+    setTimeout(() => {
+      inputRefs.current[0]?.focus()
+    }, 0)
+  }
+
   const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Backspace' && otp[index] === '' && index > 0) {
       setOtp(prevOtp => {
