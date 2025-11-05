@@ -9,7 +9,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import type { Order } from '@/modules/types'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
@@ -27,8 +27,10 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
 
   const handleToggleMap = () => setOpenMap(prev => !prev)
 
+  // Reset openMap when dialog closes
   useEffect(() => {
-    if (!open) setOpenMap(false)
+    if (open) return
+    startTransition(() => setOpenMap(false))
   }, [open])
 
   if (!order) return null

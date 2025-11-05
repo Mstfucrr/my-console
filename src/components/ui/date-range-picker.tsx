@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 import { Button, ButtonProps } from '@/components/ui/button'
@@ -31,30 +31,40 @@ export function DateRangePicker({
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
-  const [fromTime, setFromTime] = useState<string>('')
-  const [toTime, setToTime] = useState<string>('')
-  const [isOpen, setIsOpen] = useState(false)
 
-  // Initialize time inputs from existing dateRange
+  // Sync tempDateRange when dateRange prop changes
   useEffect(() => {
-    setTempDateRange(dateRange)
-
-    if (dateRange?.from) {
-      const fromHours = dateRange.from.getHours().toString().padStart(2, '0')
-      const fromMinutes = dateRange.from.getMinutes().toString().padStart(2, '0')
-      setFromTime(`${fromHours}:${fromMinutes}`)
-    } else {
-      setFromTime('')
-    }
-
-    if (dateRange?.to) {
-      const toHours = dateRange.to.getHours().toString().padStart(2, '0')
-      const toMinutes = dateRange.to.getMinutes().toString().padStart(2, '0')
-      setToTime(`${toHours}:${toMinutes}`)
-    } else {
-      setToTime('')
-    }
+    startTransition(() => setTempDateRange(dateRange))
   }, [dateRange])
+
+  // Derive time strings from dateRange
+  const derivedFromTime = useMemo(() => {
+    if (!dateRange || !dateRange.from) return ''
+    const fromHours = dateRange.from.getHours().toString().padStart(2, '0')
+    const fromMinutes = dateRange.from.getMinutes().toString().padStart(2, '0')
+    return `${fromHours}:${fromMinutes}`
+  }, [dateRange])
+
+  const derivedToTime = useMemo(() => {
+    if (!dateRange || !dateRange.to) return ''
+    const toHours = dateRange.to.getHours().toString().padStart(2, '0')
+    const toMinutes = dateRange.to.getMinutes().toString().padStart(2, '0')
+    return `${toHours}:${toMinutes}`
+  }, [dateRange])
+
+  const [fromTime, setFromTime] = useState<string>(derivedFromTime)
+  const [toTime, setToTime] = useState<string>(derivedToTime)
+
+  // Sync time inputs when dateRange changes
+  useEffect(() => {
+    startTransition(() => setFromTime(derivedFromTime))
+  }, [derivedFromTime])
+
+  useEffect(() => {
+    startTransition(() => setToTime(derivedToTime))
+  }, [derivedToTime])
+
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setTempDateRange(range)

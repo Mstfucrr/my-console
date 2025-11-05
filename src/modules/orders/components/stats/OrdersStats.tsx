@@ -3,7 +3,7 @@
 import StatCard from '@/components/StatCard'
 import { OrderStatusLabel } from '@/modules/types'
 import { CheckCircle2, Clock, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { OrdersContextType, useOrders } from '../../context/OrdersContext'
 
 interface Stat {
@@ -61,11 +61,7 @@ const statsList: Array<Stat> = [
 export function OrdersStats() {
   const { stats: statsData, isStatsLoading } = useOrders()
 
-  const [stats, setStats] = useState<Stat[]>([])
-
-  useEffect(() => {
-    setStats(statsList.map(stat => ({ ...stat, value: statsData[stat.id] || 0 })))
-  }, [statsData])
+  const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData[stat.id] || 0 })), [statsData])
 
   return (
     <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5'>

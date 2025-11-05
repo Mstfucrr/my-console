@@ -106,12 +106,14 @@ export const successResponseMiddleware: ResponseMiddleware = response => {
 export const tokenRefreshMiddleware = (instance: AxiosInstance, publicInstance: AxiosInstance) => {
   createAuthRefreshInterceptor(
     instance,
-    async (failedRequest: any) => {
+    async (failedRequest: AxiosError<BackendError>) => {
       try {
         const { refreshToken } = getToken()
         const { data } = await publicInstance.post<{ accessToken: string }>('/auth/refresh', { refreshToken })
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ accessToken: data.accessToken, refreshToken }))
-        failedRequest.response.config.headers['Authorization'] = `Bearer ${data.accessToken}`
+        if (failedRequest.response?.config) {
+          failedRequest.response.config.headers['Authorization'] = `Bearer ${data.accessToken}`
+        }
       } catch {
         localStorage.removeItem(STORAGE_KEY)
         window.location.href = '/login'

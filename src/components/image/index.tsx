@@ -10,7 +10,7 @@ export interface CustomImageProps extends ImgHTMLAttributes<HTMLImageElement> {
 
 const CustomImage = (props: CustomImageProps) => {
   return (
-    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       decoding='async'
       loading='lazy'
