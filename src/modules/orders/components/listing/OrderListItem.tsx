@@ -33,7 +33,7 @@ export function OrderListItem({ order, onViewDetails }: OrderListItemProps) {
         <div className='col-span-2 flex items-center gap-1'>
           <StatusBadge status={order.status} />
           {/* Courier Icon */}
-          {order.courierInfo && <Motorcycle className='text-primary size-8 flex-shrink-0' />}
+          {order.courierInfo && <Motorcycle className='text-primary size-8 shrink-0' />}
         </div>
 
         {/* Channel Badge - Fixed width */}

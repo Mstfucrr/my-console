@@ -42,21 +42,25 @@ const VerfiyForm = () => {
   const isTimerComplete = useMemo(() => timer === 0, [timer])
 
   useEffect(() => {
-    if (isTimerComplete) {
-      setOtp(otpArray)
-    }
-  }, [isTimerComplete, otpArray])
+    if (!isTimerComplete) return
+    resetOtp()
+  }, [isTimerComplete])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const { value } = e.target
-    if (!isNaN(Number(value)) && value.length <= 1) {
-      const newOtp = [...otp]
-      newOtp[index] = value
-      setOtp(newOtp)
-      if (value.length === 1 && index < totalOtpField - 1) {
-        inputRefs.current[index + 1]?.focus()
-      }
+    const digit = e.target.value.replace(/[^0-9]/g, '').slice(0, 1)
+    const newOtp = [...otp]
+    newOtp[index] = digit
+    setOtp(newOtp)
+    if (digit && index < totalOtpField - 1) {
+      inputRefs.current[index + 1]?.focus()
     }
+  }
+
+  const resetOtp = () => {
+    setOtp(otpArray)
+    setTimeout(() => {
+      inputRefs.current[0]?.focus()
+    }, 0)
   }
 
   const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
@@ -86,32 +90,28 @@ const VerfiyForm = () => {
       phoneNumber: loginData.phoneNumber
     })
 
-    if (!isOtpValid) {
-      toast.error('Kod geçersiz. Lütfen tekrar deneyiniz.')
-      return
-    }
+    if (!isOtpValid) throw new Error('Invalid OTP')
 
-    await setCookie({
-      action_cookie
-    })
+    await setCookie({ action_cookie })
   }
 
   const handleSubmit = async () => {
     if (!loginData || loginData.otpTimeout === 0) return
     setOtp(otpArray)
-    inputRefs.current[0]?.focus()
 
-    await toast.promise(verifyOtpAndSetCookie, {
-      pending: 'Kod doğrulanıyor...',
-      success: 'Başarılıyla giriş yaptınız.',
-      error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
-    })
-
-    router.push('/')
+    toast
+      .promise(verifyOtpAndSetCookie, {
+        pending: 'Kod doğrulanıyor...',
+        success: 'Başarılıyla giriş yaptınız.',
+        error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
+      })
+      .then(() => router.push('/'))
+      .catch(() => setTimeout(() => inputRefs.current[0]?.focus(), 0))
   }
 
   const handleResendOtp = () => {
     setTimer(loginData.otpTimeout)
+    resetOtp()
   }
 
   const isOtpComplete = otp.every(digit => digit !== '')
@@ -138,10 +138,12 @@ const VerfiyForm = () => {
               disabled={isTimerComplete || isVerifyOtpPending || isSetCookiePending}
               autoFocus={index === 0}
               maxLength={1}
-              className='focus:border-primary h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
+              className='focus:border-primary no-spin h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
               ref={(ref: HTMLInputElement | null) => {
                 inputRefs.current[index] = ref
               }}
+              inputMode='numeric'
+              pattern='[0-9]*'
             />
           ))}
         </div>
@@ -155,7 +157,7 @@ const VerfiyForm = () => {
               }}
               transition={{ duration: 1 }}
             />
-            {!isTimerComplete ? (
+            {!isTimerComplete || isVerifyOtpPending || isSetCookiePending ? (
               <LoadingButton
                 type='button'
                 variant='outline'

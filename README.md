@@ -1,58 +1,68 @@
-# new-console
+# Partners
 
 Modern ve ölçeklenebilir web uygulaması.
 
 ## 🚀 Teknolojiler
 
-- [React](https://react.dev/) - UI kütüphanesi (v18.3.1)
-- [Next.js](https://nextjs.org/) - React framework (v14.2.24)
+- [React](https://react.dev/) - UI kütüphanesi (v19.2.0)
+- [Next.js](https://nextjs.org/) - React framework (v16.0.1)
 - [TypeScript](https://www.typescriptlang.org/) - Tip güvenliği (v5.8.2)
-- [Tailwind CSS](https://tailwindcss.com/) - Stil kütüphanesi (v4.0.12)
+- [Tailwind CSS](https://tailwindcss.com/) - Stil kütüphanesi (v4.1.16)
 - [Shadcn UI](https://ui.shadcn.com/) - UI komponent kütüphanesi
 - [TanStack Query](https://tanstack.com/query/latest) - Sunucu state yönetimi (v5.67.2)
 - [React Hook Form](https://react-hook-form.com/) - Form yönetimi (v7.54.2)
 - [Zod](https://zod.dev/) - Form validasyonu (v3.24.2)
 - [Framer Motion](https://www.framer.com/motion/) - Animasyonlar (v12.4.11)
+- [Zustand](https://zustand-demo.pmnd.rs/) - State yönetimi (v5.0.3)
 - [ESLint](https://eslint.org/) (v8.57.1) & [Prettier](https://prettier.io/) (v3.5.3) - Kod formatı
 
 ## 🛠️ Kurulum
 
 ### Ön Gereksinimler
 
-- Node.js (18.x veya üzeri)
+- Node.js v22.21.1 (NVM kullanarak kurulum önerilir)
 - pnpm (Önerilen paket yöneticisi)
 
-1. PNPM Kurulumu (eğer yüklü değilse)
+1. Node.js Kurulumu (NVM ile)
+
+```bash
+# NVM kullanarak doğru Node.js versiyonunu yükleyin ve kullanın
+nvm install 22.21.1
+nvm use
+```
+
+2. PNPM Kurulumu (eğer yüklü değilse)
 
 ```bash
 npm install -g pnpm
 ```
 
-2. Projeyi klonlayın
+3. Projeyi klonlayın
 
 ```bash
-git clone https://gitlab.fiyuu.com.tr/fiyuu_new-console/new-console.git
-cd new-console
+git clone <repository-url>
+cd partners
 ```
 
-3. Bağımlılıkları yükleyin
+4. Bağımlılıkları yükleyin
 
 ```bash
 pnpm install
 ```
 
-4. Ortam değişkenlerini ayarlamak için `.env.local` dosyasını oluşturun ve `.env.example` dosyasnıdan bakarak gerekli kısımları ayarlayın
+5. Ortam değişkenlerini ayarlamak için `.env.local` dosyasını oluşturun ve gerekli ortam değişkenlerini ekleyin
 
 ```bash
-cp .env.local
+touch .env.local
 ```
 
-5. Geliştirme ortamını dev ortamında başlatın.
+6. Geliştirme ortamını başlatın
 
 ```bash
-# Development
 pnpm dev
 ```
+
+Uygulama `http://localhost:3000` adresinde çalışacaktır.
 
 ## 📝 Kullanılabilir Scriptler
 
@@ -63,7 +73,7 @@ pnpm dev
 # Projeyi build eder
 pnpm build
 
-# Production build'ini 3000 portunda serve eder
+# Production build'ini serve eder
 pnpm start
 
 # ESLint ile kod kalitesi ve syntax kontrolü yapar
@@ -71,6 +81,7 @@ pnpm lint
 
 # Prettier ile tüm dosyaları belirlenen kurallara göre formatlar
 pnpm format
+
 ```
 
 ## 📁 Proje Yapısı
@@ -78,18 +89,27 @@ pnpm format
 ```
 src/
 ├── app/              # Next.js sayfa ve route yapısı
+│   ├── (private)/    # Private route'lar (kimlik doğrulama gerektiren)
+│   ├── (public)/     # Public route'lar (login, forgot-password vb.)
+│   └── api/          # API route'ları
 ├── components/       # Genel kullanım komponentleri
+│   ├── ui/          # Shadcn UI komponentleri
+│   └── form/        # Form komponentleri
+├── constants/       # Sabitler
+├── context/         # React context'leri
 ├── hooks/           # Custom React hooks
 ├── lib/             # Utility fonksiyonları
 ├── modules/         # Feature-based modüller
-│   ├── module1/
-│   │   ├── components/   # Modül-specific komponentler
-│   │   ├── hooks/        # Modül-specific hooks
-│   │   └── services/     # Modül-specific API servisleri
+│   ├── auth/        # Kimlik doğrulama modülü
+│   ├── home/        # Ana sayfa modülü
+│   ├── menu/        # Menü modülü
+│   ├── orders/      # Sipariş modülü
+│   ├── reconciliation/  # Mutabakat modülü
+│   ├── reports/     # Rapor modülü
+│   └── types/       # Tip tanımlamaları
 ├── provider/        # React context providers
-├── services/        # API servisleri
-├── styles/         # Global stil dosyaları
-└── utils/          # Yardımcı fonksiyonlar
+├── store/           # Zustand store'ları
+└── styles/          # Global stil dosyaları
 ```
 
 ## 🔍 Geliştirme Kuralları
@@ -113,9 +133,9 @@ src/
 - Responsive tasarım için Tailwind breakpoint'lerini kullanın
 - Class birleştirme ve koşullu class içerikleri için `cn` utility'sini kullanın
 
-### **Performans**
+### Performans
 
-- Image optimizasyonu için `CustomImage` komponentini kullanın
+- Image optimizasyonu için Next.js `Image` komponentini kullanın
 
 ### Kod Kalitesi
 
@@ -137,3 +157,13 @@ pnpm update -i
 # Tüm bağımlılıkları güncelle
 pnpm update
 ```
+
+## 📌 Versiyon Yönetimi
+
+Bu proje Node.js v22.21.1 kullanmaktadır. Versiyon yönetimi için:
+
+- **`.nvmrc`**: NVM kullanıcıları için otomatik versiyon seçimi (`nvm use`)
+- **`package.json`**: `engines` alanı ile versiyon kontrolü
+- **`Dockerfile`**: Docker container'larında kullanılan versiyon
+
+Farklı bir Node.js versiyonu kullanmak projede sorunlara yol açabilir.

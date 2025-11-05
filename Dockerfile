@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22.21.1-alpine AS base
 
 # Sadece gerektiğinde bağımlılıkları yükle
 FROM base AS deps
