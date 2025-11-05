@@ -178,6 +178,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
   )
   const [internalRowSelection, setInternalRowSelection] = React.useState<Record<string, boolean>>(selectedRowIds ?? {})
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns: computedColumns,

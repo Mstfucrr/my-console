@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, startTransition, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -12,42 +12,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-
-  // useEffect(() => {
-  //   // Sayfa yüklendiğinde cookie'deki token'ı kontrol et
-  //   const cookieToken = getCookie('token')
-
-  //   // Cookie token'ın varlığını kontrol et
-  //   if (!cookieToken) {
-  //     // Eğer cookie token yoksa, local storage'da bir token var mı kontrol et
-  //     const localToken = localStorage.getItem('token')
-  //     if (!localToken) {
-  //       // Eğer local storage'da da token yoksa, kullanıcı kimlik doğrulaması yapılmamış
-  //       // Kullanıcıyı giriş sayfasına yönlendir
-  //       setIsAuthenticated(false)
-  //       router.push('/signin')
-  //     } else {
-  //       // Eğer local token varsa, kullanıcı kimlik doğrulaması yapılmış
-  //       setIsAuthenticated(true)
-  //     }
-  //   } else {
-  //     // Eğer cookie token varsa, eski cookie'yi sil
-  //     deleteCookie('token')
-  //     localStorage.setItem('token', cookieToken)
-  //     setIsAuthenticated(true)
-  //   }
-  // }, [])
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return !!localStorage.getItem('token')
+  })
 
   const pathname = usePathname()
+
+  // Check auth on pathname change
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
-      setIsAuthenticated(true)
-    } else {
-      setIsAuthenticated(false)
-      router.push('/login')
-    }
+    startTransition(() => {
+      if (token) setIsAuthenticated(true)
+      else {
+        setIsAuthenticated(false)
+        router.push('/login')
+      }
+    })
   }, [pathname, router])
 
   const logout = () => {

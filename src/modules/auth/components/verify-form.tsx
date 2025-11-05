@@ -8,11 +8,19 @@ import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { motion } from 'framer-motion'
 import { RefreshCcw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { type ChangeEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
 import { toast } from 'react-toastify'
 
 const VerfiyForm = () => {
-  // const { loginData } = useAuthContext()
   const loginData = {
     otpTimeout: 30,
     phoneNumber: '1234567890',
@@ -41,10 +49,15 @@ const VerfiyForm = () => {
 
   const isTimerComplete = useMemo(() => timer === 0, [timer])
 
+  const resetOtp = useCallback(() => {
+    startTransition(() => setOtp(otpArray))
+    setTimeout(() => inputRefs.current[0]?.focus(), 0)
+  }, [otpArray])
+
   useEffect(() => {
     if (!isTimerComplete) return
     resetOtp()
-  }, [isTimerComplete])
+  }, [isTimerComplete, resetOtp])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const digit = e.target.value.replace(/[^0-9]/g, '').slice(0, 1)
@@ -54,13 +67,6 @@ const VerfiyForm = () => {
     if (digit && index < totalOtpField - 1) {
       inputRefs.current[index + 1]?.focus()
     }
-  }
-
-  const resetOtp = () => {
-    setOtp(otpArray)
-    setTimeout(() => {
-      inputRefs.current[0]?.focus()
-    }, 0)
   }
 
   const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {

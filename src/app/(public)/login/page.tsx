@@ -3,17 +3,9 @@ import LogInForm from '@/modules/auth/components/login-form'
 import VerfiyForm from '@/modules/auth/components/verify-form'
 import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 
 const LoginFormContent = () => {
   const { isOtp } = useAuthContext()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
 
   return (
     <div className='mb-3 text-center'>
