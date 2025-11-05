@@ -4,8 +4,9 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   return NextResponse.json(
     {
-      status: 'OK',
-      timestamp: new Date().toISOString()
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NEXT_PUBLIC_APP_ENV || 'unknown'
     },
     { status: 200 }
   )

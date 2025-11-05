@@ -18,7 +18,7 @@ const LoginFormContent = () => {
   return (
     <div className='mb-3 text-center'>
       <h1 className='text-primary -mt-3 mb-4 text-2xl font-bold'>
-        {isOtp ? 'Doğrulama Kodu' : "Console'a Hoşgeldiniz"}
+        {isOtp ? 'Doğrulama Kodu' : "Partner'a Hoşgeldiniz"}
       </h1>
 
       <AnimatePresence mode='wait'>

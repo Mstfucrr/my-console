@@ -23,7 +23,7 @@ export function LoginView() {
         <div className='flex w-full items-center gap-2'>
           <SiteLogoMin className='text-primary size-12 sm:size-20 md:size-24' />
           <span className='text-default-900 text-lg font-bold sm:text-2xl md:text-3xl'>
-            <b className='text-primary'>New Console&apos;a</b> Hoşgeldiniz
+            <b className='text-primary'>Partner&apos;a</b> Hoşgeldiniz
           </span>
         </div>
         <LoginFormContent />

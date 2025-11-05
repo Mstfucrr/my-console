@@ -1,4 +1,4 @@
-# My Console
+# Partner
 
 Modern ve ölçeklenebilir web uygulaması.
 
@@ -41,7 +41,7 @@ npm install -g pnpm
 
 ```bash
 git clone <repository-url>
-cd my-console
+cd partner
 ```
 
 4. Bağımlılıkları yükleyin

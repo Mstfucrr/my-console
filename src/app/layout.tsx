@@ -16,7 +16,9 @@ const openSans = Open_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'New Console'
+  title: 'Partner',
+  description:
+    'Partner yönetim platformu. Sipariş takibi, mutabakat, raporlama ve daha fazlası için modern ve kullanıcı dostu arayüz.'
 }
 
 export default function RootLayout({
