@@ -80,7 +80,7 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     env: {
-      NEXT_PUBLIC_APP_ENV: 'test' // kendi flag’in: kodda process.env.APP_ENV==='test' kontrolü yap
+      NEXT_PUBLIC_APP_ENV: 'test' // kendi flag’in: kodda process.env.NEXT_PUBLIC_APP_ENV==='test' kontrolü yap
     }
   }
 })
