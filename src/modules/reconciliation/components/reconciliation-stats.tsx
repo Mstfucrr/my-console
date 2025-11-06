@@ -1,0 +1,52 @@
+import StatCard from '@/components/StatCard'
+import { CheckCircle, Clock, DollarSign } from 'lucide-react'
+
+interface ReconciliationStats {
+  totalSettled: number
+  totalPending: number
+  totalFailed: number
+  monthlyRevenue: number
+  platformFees: number
+  netRevenue: number
+}
+
+interface ReconciliationStatsProps {
+  stats: ReconciliationStats
+  isLoading: boolean
+}
+
+export default function ReconciliationStats({ stats, isLoading }: ReconciliationStatsProps) {
+  const statCards = [
+    {
+      title: 'Ödenen Tutar',
+      value: stats.totalSettled,
+      Icon: CheckCircle,
+      hint: 'Bu ay ödenen toplam',
+      color: 'text-green-600',
+      type: 'number' as const
+    },
+    {
+      title: 'Bekleyen Ödeme',
+      value: stats.totalPending,
+      Icon: Clock,
+      hint: 'Ödeme bekleyen tutar',
+      color: 'text-yellow-600',
+      type: 'currency' as const
+    },
+    {
+      title: 'Net Ciro',
+      value: stats.netRevenue,
+      Icon: DollarSign,
+      hint: 'Komisyon sonrası net',
+      color: 'text-purple-600',
+      type: 'currency' as const
+    }
+  ]
+  return (
+    <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
+      {statCards.map(stat => (
+        <StatCard key={stat.title} {...stat} isLoading={isLoading} />
+      ))}
+    </div>
+  )
+}

@@ -1,0 +1,11 @@
+
+      build/*
+      dist/*
+      public/*
+      .next/*
+      node_modules/*
+      package.json
+      *.log
+      .htaccess
+      .env
+      pnpm-lock.yaml

@@ -1,0 +1,22 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+        d="M14.0008 15.6265V19.7532C14.0008 20.9963 11.9853 22.0041 9.49895 22.0041C7.01263 22.0041 4.99707 20.9963 4.99707 19.7532V15.6265"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+        d="M14.0008 15.6265V19.7532C14.0008 20.9963 11.9853 22.0041 9.49895 22.0041C7.01263 22.0041 4.99707 20.9963 4.99707 19.7532V15.6265"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <ellipse cx="9.49895" cy="15.6265" rx="4.50187" ry="2.62609" stroke="currentColor" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M10.2496 15.6266H8.74902" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path d="M2.99609 6.99793L19.0028 1.99585" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path d="M3.99707 9.9991L21.0042 5.99744" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round" />
+    <path
+        d="M20.0035 13.6306V17.7523C20.0035 18.9928 17.9926 20.0033 15.5016 20.0033C14.9984 20.0073 14.496 19.9638 14.001 19.8732"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+        d="M14.0006 16.0933C14.4938 16.1986 14.9968 16.2517 15.5012 16.2518C17.9922 16.2518 20.0031 15.0713 20.0031 13.6307C20.0031 12.1801 17.9922 10.9996 15.5012 10.9996C13.2803 10.9996 11.4395 11.94 11.0693 13.1705"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

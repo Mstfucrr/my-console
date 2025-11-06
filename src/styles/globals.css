@@ -1,0 +1,268 @@
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+    --nextra-primary-hue: 250deg;
+  }
+}
+
+/* Remove number input spin buttons */
+@layer base {
+  input[type='number'].no-spin::-webkit-inner-spin-button,
+  input[type='number'].no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'].no-spin {
+    -moz-appearance: textfield;
+  }
+}
+
+@theme {
+  --color-border: oklch(92.78% 0.0058 264.53);
+
+  --color-default-50: oklch(98.38% 0.0035 247.86);
+  --color-default-100: oklch(96.84% 0.0068 247.9);
+  --color-default-200: oklch(92.9% 0.0126 255.53);
+  --color-default-300: oklch(86.88% 0.0198 252.85);
+  --color-default-400: oklch(71.07% 0.0351 256.79);
+  --color-default-500: oklch(55.47% 0.0407 257.44);
+  --color-default-600: oklch(44.55% 0.0374 257.29);
+  --color-default-700: oklch(37.2% 0.0392 257.3);
+  --color-default-800: oklch(28% 0.0369 259.97);
+  --color-default-900: oklch(20.79% 0.0399 265.73);
+  --color-default-950: oklch(13.71% 0.036 258.53);
+
+  --color-input: oklch(92.78% 0.0058 264.53);
+  --color-ring: oklch(0.4676 0.0668 266.74);
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(13.71% 0.036 258.53);
+
+  --color-primary-10: oklch(99.9% 0.0025 345.21);
+  --color-primary-50: oklch(0.9495 0.0055 274.96);
+  --color-primary-100: oklch(0.8449 0.0175 267.77);
+  --color-primary-200: oklch(0.7662 0.0272 266.55);
+  --color-primary-300: oklch(0.6535 0.0409 267.16);
+  --color-primary-400: oklch(0.5804 0.0503 267.06);
+  --color-primary-500: oklch(0.4676 0.0668 266.74);
+  --color-primary-600: oklch(0.4376 0.0612 266.12);
+  --color-primary-700: oklch(0.3706 0.0506 267.46);
+  --color-primary-800: oklch(0.3146 0.0399 266.27);
+  --color-primary-900: oklch(0.2668 0.0331 269.12);
+  --color-primary-950: oklch(0.2022 0.0248 269.12);
+  --color-primary: oklch(0.4676 0.0668 266.74);
+
+  --color-primary-foreground: oklch(97.25% 0.0135 286.15);
+
+  --color-secondary: oklch(92.9% 0.0126 255.53);
+  --color-secondary-foreground: oklch(20.79% 0.0399 265.73);
+
+  --color-destructive-700: #be185d;
+  --color-destructive: oklch(63.68% 0.2078 25.33);
+  --color-destructive-foreground: oklch(97.1% 0.0127 17.38);
+
+  --color-success-700: #15803d;
+  --color-success: oklch(72.29% 0.1921 149.58);
+  --color-success-foreground: oklch(98.21% 0.0179 155.86);
+
+  --color-info-700: #0f766e;
+  --color-info: oklch(71.46% 0.1256 215.13);
+  --color-info-foreground: oklch(98.42% 0.0187 200.93);
+
+  --color-warning-700: #a16207;
+  --color-warning: oklch(0.8368 0.1559 81.19);
+  --color-warning-foreground: oklch(8.98% 0.4156 73.63);
+
+  --color-muted: oklch(96.71% 0.0029 264.54);
+  --color-muted-foreground: oklch(55.47% 0.0407 257.44);
+
+  --color-accent: oklch(92.9% 0.0126 255.53);
+  --color-accent-foreground: oklch(20.79% 0.0399 265.73);
+
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(13.71% 0.036 258.53);
+
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(13.71% 0.036 258.53);
+
+  --shadow-sm: 0px 1px 2px 0px rgba(15, 22, 36, 0.06), 0px 1px 3px 0px rgba(15, 22, 36, 0.1);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-slide-down-and-fade: slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-left-and-fade: slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up-and-fade: slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-right-and-fade: slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialog-open: dialog-open 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialog-close: dialog-close 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes slideDownAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideLeftAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideUpAndFade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideRightAndFade {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes dialog-open {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes dialog-close {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+@utility container {
+  margin-inline: auto;
+  padding-inline: 15px;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 640px) {
+    max-width: 640px;
+    padding-inline: 15px;
+  }
+  @media (width >= 768px) {
+    max-width: 768px;
+  }
+  @media (width >= 1024px) {
+    max-width: 1024px;
+    padding-inline: 15px;
+  }
+  @media (width >= 1280px) {
+    max-width: 1280px;
+    padding-inline: 0;
+  }
+  @media (width >= 1392px) {
+    max-width: 1392px;
+    padding-inline: 0;
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-default-50 text-foreground;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Hide scrollbar for scrollbar-hide class */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
