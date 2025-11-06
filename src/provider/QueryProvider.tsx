@@ -8,7 +8,9 @@ const QueryProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
+      {process.env.NEXT_PUBLIC_APP_ENV !== 'test' && (
+        <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
+      )}
     </QueryClientProvider>
   )
 }
