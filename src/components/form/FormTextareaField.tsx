@@ -9,6 +9,7 @@ interface FormTextareaFieldProps<T extends FieldValues> extends Omit<TextareaPro
   label?: string
   placeholder?: string
   formItemClassName?: string
+  required?: boolean
 }
 
 export function FormTextareaField<T extends FieldValues>({
@@ -17,6 +18,7 @@ export function FormTextareaField<T extends FieldValues>({
   label,
   placeholder,
   formItemClassName,
+  required,
   ...props
 }: FormTextareaFieldProps<T>) {
   const {
@@ -29,6 +31,7 @@ export function FormTextareaField<T extends FieldValues>({
       {label && (
         <FormLabel htmlFor={name} className={cn('text-sm font-medium', error && 'text-red-500')}>
           {label}
+          {required && <span className='ml-0.5'>*</span>}
         </FormLabel>
       )}
       <FormControl>

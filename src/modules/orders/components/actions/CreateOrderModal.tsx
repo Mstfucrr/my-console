@@ -37,17 +37,22 @@ const createOrderSchema = z.object({
     .transform(transformPriceToNumber)
     .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
     .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
-  totalAmount: z.string().min(1, 'Toplam tutar zorunludur').default('').transform(transformPriceToNumber),
+  totalAmount: z
+    .string()
+    .min(1, 'Toplam tutar zorunludur')
+    .default('')
+    .transform(transformPriceToNumber)
+    .refine(value => value > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
 
   // Adres Bilgileri
   city: z.string().min(1, 'Şehir zorunludur').default(''),
   county: z.string().min(1, 'İlçe zorunludur').default(''),
   neighborhood: z.string().min(1, 'Mahalle zorunludur').default(''),
   street: z.string().min(1, 'Sokak zorunludur').default(''),
-  buildingNumber: z.string().optional(),
+  buildingNumber: z.string().min(1, 'Bina numarası zorunludur').default(''),
   floor: z.string().optional(),
   buildingName: z.string().optional(),
-  doorNumber: z.string().optional(),
+  doorNumber: z.string().min(1, 'Kapı numarası zorunludur').default(''),
   postalCode: z.string().optional(),
   fullAddress: z.string().min(10, 'Tam adres en az 10 karakter olmalıdır').default(''),
   addressDirection: z.string().optional(),
@@ -204,14 +209,21 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   </CardHeader>
                   <CardContent className='space-y-4'>
                     <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                      <FormInputField name='firstName' control={form.control} label='Ad' placeholder='Ahmet' />
-                      <FormInputField name='lastName' control={form.control} label='Soyad' placeholder='Yılmaz' />
+                      <FormInputField name='firstName' required control={form.control} label='Ad' placeholder='Ahmet' />
+                      <FormInputField
+                        name='lastName'
+                        required
+                        control={form.control}
+                        label='Soyad'
+                        placeholder='Yılmaz'
+                      />
                     </div>
                     <FormInputField
                       name='customerPhone'
+                      required
                       control={form.control}
                       label='Telefon'
-                      placeholder='+90 555 123 45 67'
+                      placeholder='555 123 45 67'
                     />
                     <FormInputField
                       name='extensionPhone'
@@ -230,6 +242,7 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   <CardContent className='space-y-4'>
                     <FormInputField
                       name='preparationTime'
+                      required
                       control={form.control}
                       label='Hazırlık Süresi (dakika)'
                       type='number'
@@ -237,6 +250,7 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                     />
                     <FormInputField
                       name='totalAmount'
+                      required
                       control={form.control}
                       label='Toplam Tutar (₺)'
                       type='number'
@@ -255,6 +269,7 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   <div className='relative grid grid-cols-1 gap-4 md:grid-cols-3'>
                     <FormCommandSelectField
                       name='city'
+                      required
                       control={form.control}
                       label='Şehir'
                       placeholder='Şehir seçin'
@@ -263,6 +278,7 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                     />
                     <FormCommandSelectField
                       name='county'
+                      required
                       control={form.control}
                       label='İlçe'
                       placeholder='İlçe seçin'
@@ -272,6 +288,7 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                     />
                     <FormCommandSelectField
                       name='neighborhood'
+                      required
                       control={form.control}
                       label='Mahalle'
                       placeholder='Mahalle seçin'
@@ -284,8 +301,20 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   </div>
 
                   <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                    <FormInputField name='street' control={form.control} label='Sokak' placeholder='Atatürk Caddesi' />
-                    <FormInputField name='buildingNumber' control={form.control} label='Bina No' placeholder='123' />
+                    <FormInputField
+                      name='street'
+                      required
+                      control={form.control}
+                      label='Sokak'
+                      placeholder='Atatürk Caddesi'
+                    />
+                    <FormInputField
+                      name='buildingNumber'
+                      required
+                      control={form.control}
+                      label='Bina No'
+                      placeholder='123'
+                    />
                     <FormInputField name='floor' control={form.control} label='Kat' placeholder='3' />
                   </div>
 
@@ -296,12 +325,19 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                       label='Bina Adı'
                       placeholder='Plaza Adı'
                     />
-                    <FormInputField name='doorNumber' control={form.control} label='Daire No' placeholder='12' />
+                    <FormInputField
+                      name='doorNumber'
+                      required
+                      control={form.control}
+                      label='Daire No'
+                      placeholder='12'
+                    />
                     <FormInputField name='postalCode' control={form.control} label='Posta Kodu' placeholder='34710' />
                   </div>
 
                   <FormTextareaField
                     name='fullAddress'
+                    required
                     control={form.control}
                     label='Tam Adres'
                     placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'

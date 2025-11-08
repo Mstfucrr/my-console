@@ -24,6 +24,7 @@ interface IssueReportPopoverProps {
   isReporting: boolean
 }
 
+// TODO: Cari ekstre dosyası da eklenecek
 function IssueReportPopover({ onReport, isReporting }: IssueReportPopoverProps) {
   const [open, setOpen] = useState(false)
   const [description, setDescription] = useState('')
@@ -46,14 +47,14 @@ function IssueReportPopover({ onReport, isReporting }: IssueReportPopoverProps) 
       <PopoverTrigger asChild>
         <Button color='destructive' className='flex items-center gap-2' disabled={isReporting}>
           <AlertTriangle className='h-4 w-4' />
-          {isReporting ? 'Bildiriliyor...' : 'Sorun Bildir'}
+          {isReporting ? 'Gönderiliyor...' : 'Kontrole Gönder'}
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-80 p-4' mountInsideDialog={false} side='top' align='center'>
         <div className='space-y-4'>
-          <div className='text-center text-sm font-medium'>Sorun açıklamasını giriniz</div>
+          <div className='text-center text-sm font-medium'>Neden mutabık olmadığınızı aşağıdaki alanda belirtiniz</div>
           <Textarea
-            placeholder='Sorunun detayını açıklayınız...'
+            placeholder='Açıklamanızı giriniz...'
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
@@ -64,7 +65,7 @@ function IssueReportPopover({ onReport, isReporting }: IssueReportPopoverProps) 
               İptal
             </Button>
             <Button color='destructive' size='xs' onClick={handleReport} disabled={!description.trim() || isReporting}>
-              {isReporting ? 'Bildiriliyor...' : 'Sorun Bildir'}
+              {isReporting ? 'Gönderiliyor...' : 'Gönder'}
             </Button>
           </div>
         </div>
@@ -240,17 +241,18 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
               {hasInvoice && (
                 <Button onClick={handleViewInvoice} variant='outline' className='flex items-center gap-2'>
                   <Eye className='h-4 w-4' />
-                  Fatura Görüntüle
+                  Fatura/Cari Görüntüle
                 </Button>
               )}
 
               {canApprove && (
+                // TODO: Fatura yükleme olacak zorunlu olacak.
                 <ConfirmButton
                   onConfirm={handleApprove}
                   color='success'
                   className='flex items-center gap-2'
                   disabled={isApproving}
-                  confirmationMessage='Mutabakatı onaylamak istediğinizden emin misiniz?'
+                  confirmationMessage='Mutabıkız onay bildirimi yapıyorsunuz, '
                   confirmButtonMessage='Evet, Onayla'
                   cancelButtonMessage='İptal'
                 >

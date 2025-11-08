@@ -39,7 +39,7 @@ export default function QuickAction({
   onClick?: () => void
   Icon: React.ComponentType<{ className?: string }>
   title: string
-  subtitle: string
+  subtitle?: string
   color?: string
 }) {
   return (
@@ -50,7 +50,9 @@ export default function QuickAction({
             <Icon className={cn('absolute right-10 size-12 opacity-30 max-sm:size-5', color)} />
             <div className='flex flex-1 flex-col text-left'>
               <h5 className='text-sm leading-tight font-medium max-sm:text-xs'>{title}</h5>
-              <p className='text-muted-foreground text-xs leading-tight opacity-80 max-sm:text-[10px]'>{subtitle}</p>
+              {subtitle && (
+                <p className='text-muted-foreground text-xs leading-tight opacity-80 max-sm:text-[10px]'>{subtitle}</p>
+              )}
             </div>
           </div>
         </CardContent>

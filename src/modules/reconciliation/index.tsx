@@ -27,6 +27,7 @@ export default function ReconciliationView() {
   const {
     data: reconciliationData = [],
     isLoading: isDataLoading,
+    isFetching: isDataFetching,
     error: dataError,
     refetch: refetchData
   } = useQuery({
@@ -68,7 +69,7 @@ export default function ReconciliationView() {
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
-      <ReconciliationHeader onRefresh={refreshAllData} isLoading={isLoading} />
+      <ReconciliationHeader onRefresh={refreshAllData} isLoading={isDataFetching} />
 
       <ReconciliationStats
         isLoading={isStatsLoading}

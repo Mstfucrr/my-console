@@ -81,18 +81,20 @@ export function SearchInput({
   placeholder,
   value,
   onChange,
+  showLabel = true,
   Icon
 }: {
   placeholder: string
   value: string
   onChange: (value: string | undefined) => void
+  showLabel?: boolean
   Icon: LucideIcon
 }) {
   const isActive = value && value.length > 0
 
   return (
     <div>
-      <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>
+      {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>}
       <div className='relative'>
         <Input
           Icon={Icon}
@@ -123,18 +125,20 @@ export function StatusSelect({
   options,
   value,
   onChange,
-  placeholder = 'Durum'
+  placeholder = 'Durum',
+  showLabel = true
 }: {
   options: FilterOption[]
   value: string
   onChange: (value: string) => void
   placeholder?: string
+  showLabel?: boolean
 }) {
   const isActive = value && value !== 'all'
 
   return (
     <div>
-      <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>
+      {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>}
       <div className='flex flex-wrap items-center gap-2'>
         <Select value={value} onValueChange={onChange}>
           <SelectTrigger
@@ -161,17 +165,19 @@ export function StatusSelect({
 export function DateFilters({
   dateRange,
   onDateRangeChange,
-  placeholder = 'Tarih aralığı seçin'
+  placeholder = 'Tarih aralığı seçin',
+  showLabel = true
 }: {
   dateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
+  showLabel?: boolean
 }) {
   const isActive = dateRange && (dateRange.from || dateRange.to)
 
   return (
     <div>
-      <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>
+      {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>}
       <DateRangePicker
         dateRange={dateRange}
         onDateRangeChange={onDateRangeChange}

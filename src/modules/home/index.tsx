@@ -10,13 +10,24 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, LucideIcon, ShoppingCart } from 'lucide-react'
+import {
+  BadgeTurkishLira,
+  BarChart2,
+  CheckCircle,
+  CircleX,
+  Clock,
+  CreditCard,
+  Loader2,
+  LucideIcon,
+  ShoppingCart
+} from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
-import { DeliveryCheckList, DeliveryShipmentPackagesAdd } from '@/components/svg'
+import { DeliveryCheckList, DeliveryShipmentPackagesAdd, Motorcycle } from '@/components/svg'
+import { Label } from '@/components/ui/label'
 import { getStatusColor } from '@/constants'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -47,7 +58,7 @@ const statsList: Array<StatsList> = [
     Icon: ShoppingCart,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
-    hint: 'Bugün alınan sipariş sayısı'
+    hint: 'Toplam sipariş sayısı'
   },
   {
     title: 'Teslim Edildi',
@@ -55,20 +66,20 @@ const statsList: Array<StatsList> = [
     Icon: CheckCircle,
     color: 'text-green-600',
     bgColor: 'bg-green-50',
-    hint: 'Başarıyla teslim edilen'
+    hint: 'Başarıyla teslim edilen siparişler'
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
-    Icon: BarChart2,
+    Icon: Motorcycle, // TODO: Add SVG component
     color: 'text-amber-600',
     bgColor: 'bg-amber-50',
-    hint: 'Şu anda kurye ile'
+    hint: 'Yola çıkan siparişler'
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
-    Icon: Clock,
+    Icon: CircleX,
     color: 'text-red-600',
     bgColor: 'bg-red-50',
     hint: 'İptal edilen siparişler'
@@ -79,7 +90,7 @@ const statsList: Array<StatsList> = [
     Icon: CreditCard,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
-    hint: 'Bugünkü toplam ciro',
+    hint: 'Hesaplanan toplam ciro',
     type: 'currency'
   },
   {
@@ -88,7 +99,7 @@ const statsList: Array<StatsList> = [
     Icon: Clock,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
-    hint: 'Ödeme bekleyen bakiye',
+    hint: 'Ödeme bekleyen tutar',
     type: 'currency'
   }
 ]
@@ -154,11 +165,12 @@ export default function DashboardView() {
         icon={BarChart2}
         iconColor='text-blue-500'
         actions={
-          <div className='flex items-center gap-2'>
+          <div className='flex flex-col justify-center gap-2 sm:items-end'>
+            <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
             <DateRangePicker
               dateRange={dateRange}
               onDateRangeChange={setDateRange}
-              placeholder='Tarih aralığı seçin'
+              placeholder='Dönem seçin'
               enableTimeSelection={true}
               onApply={() => {
                 refetch()
@@ -178,9 +190,9 @@ export default function DashboardView() {
             <div className='grid grid-cols-2 gap-3'>
               <QuickAction
                 href='/orders'
-                Icon={BarChart2}
+                Icon={ShoppingCart}
                 title='Siparişler'
-                subtitle='Aktif siparişler'
+                subtitle='Günlük siparişler'
                 color='text-blue-600'
               />
               <QuickAction
@@ -192,16 +204,16 @@ export default function DashboardView() {
               />
               <QuickAction
                 href='/reconciliation'
-                Icon={CheckCircle}
+                Icon={BadgeTurkishLira}
                 title='Mutabakat'
-                subtitle='Günlük işlemler'
+                subtitle='Mutabakat işlemleri'
                 color='text-orange-600'
               />
               <QuickAction
                 href='/reports'
                 Icon={DeliveryCheckList}
                 title='Raporlar'
-                subtitle='Analiz ve raporlar'
+                subtitle='Geçmiş siparişler'
                 color='text-purple-600'
               />
             </div>
@@ -230,7 +242,7 @@ export default function DashboardView() {
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>Sipariş Durumu Dağılımı</CardTitle>
+            <CardTitle className='text-base'>Sipariş Durumu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='flex h-80 items-center justify-center'>

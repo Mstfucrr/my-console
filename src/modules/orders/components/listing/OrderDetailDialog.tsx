@@ -44,15 +44,11 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
               <div className='flex items-center gap-2'>
                 <span>Kurye Haritası</span>
                 <Button size='xs' color='secondary' variant='outline' onClick={handleToggleMap}>
-                  <ArrowLeft className='mr-1 h-4 w-4' /> Geri Dön
+                  <ArrowLeft className='mr-1 size-4' /> Geri Dön
                 </Button>
               </div>
             ) : (
-              <>
-                <span>Sipariş Detayı</span>
-                <StatusBadge status={order.status} variant='soft' />
-                <span className='text-muted-foreground text-sm font-normal'>#{order.id}</span>
-              </>
+              <span>Sipariş Detayı</span>
             )}
           </DialogTitle>
         </DialogHeader>

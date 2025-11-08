@@ -137,7 +137,7 @@ export function DateRangePicker({
 
             {enableTimeSelection && (
               <div className='mt-4 space-y-3 border-t pt-3'>
-                <div className='grid grid-cols-2 gap-3'>
+                <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
                   <div>
                     <Label htmlFor='from-time' className='text-xs'>
                       Başlangıç Saati

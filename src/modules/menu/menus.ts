@@ -1,4 +1,4 @@
-import { CheckCircle, Home, ShoppingCart } from 'lucide-react'
+import { BadgeTurkishLira, Home, ShoppingCart } from 'lucide-react'
 import { MenuItem } from './type'
 
 export const menusConfig: MenuItem[] = [
@@ -14,7 +14,7 @@ export const menusConfig: MenuItem[] = [
   },
   {
     title: 'Mutabakat',
-    Icon: CheckCircle,
+    Icon: BadgeTurkishLira,
     href: '/reconciliation'
   }
 ]

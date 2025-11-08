@@ -61,7 +61,7 @@ export function FormCommandSelectField<T extends FieldValues>({
       {label && (
         <FormLabel htmlFor={name} className={cn('text-sm font-medium', error && 'text-red-500')}>
           {label}
-          {required && <span className='ml-1 text-red-500'>*</span>}
+          {required && <span className='ml-0.5'>*</span>}
         </FormLabel>
       )}
       <FormControl>

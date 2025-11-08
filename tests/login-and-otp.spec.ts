@@ -6,7 +6,8 @@ test('OTP doğrulamalı giriş akışı', async ({ page }) => {
 
   // Login formunun göründüğünü kontrol et
   await expect(page.getByRole('heading', { name: /Partner'a Hoşgeldiniz/i })).toBeVisible()
-  await expect(page.getByPlaceholder('E-posta giriniz')).toBeVisible()
+  await expect(page.getByPlaceholder('Hesap ID giriniz')).toBeVisible()
+  await expect(page.getByPlaceholder('E-posta veya kullanıcı adı giriniz')).toBeVisible()
   await expect(page.getByPlaceholder('Şifrenizi giriniz')).toBeVisible()
 
   // Giriş Yap butonuna bas

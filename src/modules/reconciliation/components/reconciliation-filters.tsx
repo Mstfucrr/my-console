@@ -87,6 +87,7 @@ export function ReconciliationFilters({
               value={pendingFilters.search ?? ''}
               onChange={value => updatePendingFilters({ search: value })}
               Icon={Search}
+              showLabel={false}
             />
           </div>
           <div className='min-w-[140px]'>
@@ -95,6 +96,7 @@ export function ReconciliationFilters({
               value={pendingFilters.status ?? 'all'}
               onChange={value => updatePendingFilters({ status: value })}
               placeholder='Durum seçin'
+              showLabel={false}
             />
           </div>
         </div>
@@ -103,6 +105,7 @@ export function ReconciliationFilters({
             dateRange={dateRange}
             onDateRangeChange={handleDateRangeChange}
             placeholder='Tarih aralığı seçin'
+            showLabel={false}
           />
         </div>
       </div>
