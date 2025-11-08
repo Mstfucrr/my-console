@@ -2,32 +2,38 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Lock, Mail } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { Lock, Mail, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
-import { useAuthContext } from '../context/AuthContext'
+import { authService, ILoginRequest } from '../service/auth.service'
 
 const schema = z.object({
-  email: z.string().min(1, { message: 'E-posta zorunludur.' }).email({ message: 'Geçerli bir e-posta giriniz.' }),
+  accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
+  identifier: z.string().min(1, { message: 'E-posta veya kullanıcı adı zorunludur.' }),
   password: z.string().min(1, { message: 'Şifre zorunludur.' })
 })
 
 type LoginFormType = z.infer<typeof schema>
 
-const LogInForm = () => {
-  const {
-    loginMutation: { mutateAsync: login, isPending: loginPending },
-    handleOtp
-  } = useAuthContext()
+interface LogInFormProps {
+  onOtpRequired?: () => void
+}
+
+const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
+  const { mutateAsync: login, isPending: loginPending } = useMutation({
+    mutationFn: (request: ILoginRequest) => authService.login(request)
+  })
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
-      email: 'efsane@fiyuu.com.tr',
+      accountId: 'fiyuu',
+      identifier: 'efsane@fiyuu.com.tr',
       password: '11111-222224!'
     }
   })
@@ -39,8 +45,11 @@ const LogInForm = () => {
   const onSubmit = async (data: LoginFormType) => {
     try {
       const { otp } = await login(data)
-      if (otp) handleOtp()
-      else router.push('/')
+      if (otp) {
+        onOtpRequired?.()
+      } else {
+        router.push('/')
+      }
     } catch (error) {
       console.error('login error', error)
       toast.error('Giriş bilgileri hatalı. Lütfen tekrar deneyiniz.')
@@ -52,14 +61,24 @@ const LogInForm = () => {
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 text-left'>
           <FormInputField
-            name='email'
+            name='accountId'
             control={control}
-            type='email'
-            id='email'
+            type='text'
+            id='accountId'
+            size='lg'
+            disabled={loginPending}
+            Icon={User}
+            placeholder='Hesap ID giriniz'
+          />
+          <FormInputField
+            name='identifier'
+            control={control}
+            type='text'
+            id='identifier'
             size='lg'
             disabled={loginPending}
             Icon={Mail}
-            placeholder='E-posta giriniz'
+            placeholder='E-posta veya kullanıcı adı giriniz'
           />
           <FormInputField
             name='password'

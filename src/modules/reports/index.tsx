@@ -74,15 +74,6 @@ export default function ReportsView() {
         description='Eski siparişlerinizi filtreleyerek detaylı raporlar görüntüleyebilirsiniz'
         icon={BarChart3}
         iconColor='text-purple-400'
-        rightSide={
-          <span className='text-sm text-gray-500'>
-            {reportsData[0]?.createdDate && reportsData[reportsData.length - 1]?.createdDate
-              ? formatDate(reportsData[0].createdDate) +
-                ' - ' +
-                formatDate(reportsData[reportsData.length - 1].createdDate)
-              : null}
-          </span>
-        }
       />
 
       {/* İstatistik Kartları */}

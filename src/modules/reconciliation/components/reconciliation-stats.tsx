@@ -23,7 +23,7 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       Icon: CheckCircle,
       hint: 'Bu ay ödenen toplam',
       color: 'text-green-600',
-      type: 'number' as const
+      type: 'currency' as const
     },
     {
       title: 'Bekleyen Ödeme',
@@ -34,10 +34,10 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       type: 'currency' as const
     },
     {
-      title: 'Net Ciro',
+      title: 'Toplam Ciro',
       value: stats.netRevenue,
       Icon: DollarSign,
-      hint: 'Komisyon sonrası net',
+      hint: 'Hesaplanan toplam ciro',
       color: 'text-purple-600',
       type: 'currency' as const
     }

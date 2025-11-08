@@ -11,6 +11,7 @@ interface FormInputFieldProps<T extends FieldValues> extends InputProps {
   type?: string
   placeholder?: string
   formItemClassName?: string
+  required?: boolean
 }
 
 export function FormInputField<T extends FieldValues>({
@@ -20,6 +21,7 @@ export function FormInputField<T extends FieldValues>({
   type = 'text',
   placeholder,
   formItemClassName,
+  required,
   ...props
 }: FormInputFieldProps<T>) {
   const {
@@ -32,6 +34,7 @@ export function FormInputField<T extends FieldValues>({
       {label && (
         <FormLabel htmlFor={name} className={cn('text-sm font-medium', error && 'text-red-500')}>
           {label}
+          {required && <span className='ml-0.5'>*</span>}
         </FormLabel>
       )}
       <FormControl>

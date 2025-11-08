@@ -1,7 +1,7 @@
 export interface ILoginRequest {
-  email: string
+  accountId: string
+  identifier: string
   password: string
-  fiyuu_cookie?: string
 }
 
 export interface ILoginResponse {
