@@ -1,6 +1,5 @@
 import { mockOrders } from '@/modules/mockData'
-import { Bike, CheckCircle2, ShoppingCart, XCircle } from 'lucide-react'
-import type { DashboardStats, Stats } from '../types'
+import type { DashboardStats } from '../types'
 
 export const mockDashboardStats: DashboardStats = {
   todayOrders: 15,
@@ -57,34 +56,3 @@ export const mockDashboardStats: DashboardStats = {
     { label: '16:00', value: 39 }
   ]
 }
-
-export const dashboardStats: Stats[] = [
-  {
-    title: 'Toplam Sipariş',
-    value: 120,
-    Icon: ShoppingCart,
-    color: 'text-blue-600',
-    hint: 'Bugün alınan sipariş sayısı'
-  },
-  {
-    title: 'Teslim Edildi',
-    value: 72,
-    Icon: CheckCircle2,
-    color: 'text-green-600',
-    hint: 'Başarıyla teslim edilen'
-  },
-  {
-    title: 'Yolda',
-    value: 18,
-    Icon: Bike,
-    color: 'text-amber-500',
-    hint: 'Şu anda kurye ile'
-  },
-  {
-    title: 'İptal Edildi',
-    value: 6,
-    Icon: XCircle,
-    color: 'text-red-600',
-    hint: 'İptal edilen siparişler'
-  }
-]

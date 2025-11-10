@@ -37,7 +37,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Motorcycle className='text-primary -ml-2 size-8 shrink-0' />
+                      <Motorcycle className='text-primary -ml-2 size-4 shrink-0' />
                     </TooltipTrigger>
                     <TooltipContent>{order.courierInfo.name}</TooltipContent>
                   </Tooltip>

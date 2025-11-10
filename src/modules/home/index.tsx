@@ -10,31 +10,21 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import {
-  BadgeTurkishLira,
-  BarChart2,
-  CheckCircle,
-  CircleX,
-  Clock,
-  CreditCard,
-  Loader2,
-  LucideIcon,
-  ShoppingCart
-} from 'lucide-react'
+import { BarChart2, Loader2, LucideIcon } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
-import { DeliveryCheckList, DeliveryShipmentPackagesAdd, Motorcycle } from '@/components/svg'
 import { Label } from '@/components/ui/label'
-import { getStatusColor } from '@/constants'
+import { getStatusColor, getStatusTextColor, getStatusBgColor } from '@/constants'
+import { DashboardIcons, OrderStatusIcons, QuickActionIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
+import { OrderStatusColor, OrderStatusLabel } from '../types'
 import QuickAction from './components/QuickAction'
 import { dashboardService } from './service'
 import type { DashboardStats } from './types'
-import { statusColor, statusLabel } from './utils'
 
 const defaultDateRange = {
   from: new Date(new Date().setHours(0, 0, 0, 0)),
@@ -55,7 +45,7 @@ const statsList: Array<StatsList> = [
   {
     title: 'Toplam Sipariş',
     id: 'todayOrders',
-    Icon: ShoppingCart,
+    Icon: DashboardIcons.TotalOrders,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
     hint: 'Toplam sipariş sayısı'
@@ -63,31 +53,31 @@ const statsList: Array<StatsList> = [
   {
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
-    Icon: CheckCircle,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
+    Icon: OrderStatusIcons.delivered,
+    color: getStatusTextColor('delivered'),
+    bgColor: getStatusBgColor('delivered'),
     hint: 'Başarıyla teslim edilen siparişler'
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
-    Icon: Motorcycle, // TODO: Add SVG component
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
+    Icon: OrderStatusIcons.shipped,
+    color: getStatusTextColor('shipped'),
+    bgColor: getStatusBgColor('shipped'),
     hint: 'Yola çıkan siparişler'
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
-    Icon: CircleX,
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
+    Icon: OrderStatusIcons.cancelled,
+    color: getStatusTextColor('cancelled'),
+    bgColor: getStatusBgColor('cancelled'),
     hint: 'İptal edilen siparişler'
   },
   {
     title: 'Toplam Ciro',
     id: 'totalRevenue',
-    Icon: CreditCard,
+    Icon: DashboardIcons.TotalRevenue,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
     hint: 'Hesaplanan toplam ciro',
@@ -96,7 +86,7 @@ const statsList: Array<StatsList> = [
   {
     title: 'Tahsilat Bekleyen',
     id: 'pendingPayments',
-    Icon: Clock,
+    Icon: DashboardIcons.PendingPayments,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
     hint: 'Ödeme bekleyen tutar',
@@ -122,9 +112,9 @@ export default function DashboardView() {
   const chartData = useMemo(() => {
     if (!stats) return []
     return stats.ordersByStatus.map(s => ({
-      label: statusLabel(s.status),
+      label: OrderStatusLabel[s.status],
       value: s.count,
-      color: statusColor(s.status)
+      color: OrderStatusColor[s.status]
     }))
   }, [stats])
 
@@ -190,28 +180,28 @@ export default function DashboardView() {
             <div className='grid grid-cols-2 gap-3'>
               <QuickAction
                 href='/orders'
-                Icon={ShoppingCart}
+                Icon={QuickActionIcons.Orders}
                 title='Siparişler'
                 subtitle='Günlük siparişler'
                 color='text-blue-600'
               />
               <QuickAction
                 onClick={() => setIsCreateOrderModalVisible(true)}
-                Icon={DeliveryShipmentPackagesAdd}
+                Icon={QuickActionIcons.NewOrder}
                 title='Yeni Sipariş'
                 subtitle='Sipariş oluştur'
                 color='text-green-600'
               />
               <QuickAction
                 href='/reconciliation'
-                Icon={BadgeTurkishLira}
+                Icon={QuickActionIcons.Reconciliation}
                 title='Mutabakat'
                 subtitle='Mutabakat işlemleri'
                 color='text-orange-600'
               />
               <QuickAction
                 href='/reports'
-                Icon={DeliveryCheckList}
+                Icon={QuickActionIcons.Reports}
                 title='Raporlar'
                 subtitle='Geçmiş siparişler'
                 color='text-purple-600'
@@ -267,7 +257,7 @@ export default function DashboardView() {
                         <span
                           className={cn('rounded-full px-2 py-1 text-xs font-medium', getStatusColor(order.status))}
                         >
-                          {statusLabel(order.status)}
+                          {OrderStatusLabel[order.status]}
                         </span>
                       </div>
                       <div className='text-muted-foreground text-sm'>{order.customerName}</div>

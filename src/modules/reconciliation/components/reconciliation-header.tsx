@@ -1,7 +1,7 @@
 'use client'
 
 import { PageHeader } from '@/components/page-header'
-import { BadgeTurkishLira } from 'lucide-react'
+import { ModuleIcons } from '@/constants/icons'
 
 interface ReconciliationHeaderProps {
   onRefresh: () => void
@@ -13,7 +13,7 @@ export default function ReconciliationHeader({ onRefresh, isLoading }: Reconcili
     <PageHeader
       title='Mutabakat'
       description='Satış mutabakatlarınızı takip edin'
-      icon={BadgeTurkishLira}
+      icon={ModuleIcons.Reconciliation}
       iconColor='text-orange-600'
       showRefreshButton
       onRefresh={onRefresh}

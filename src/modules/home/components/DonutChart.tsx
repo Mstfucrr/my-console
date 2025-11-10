@@ -16,7 +16,6 @@ export function DashboardDonut({ data, height = 320 }: DashboardDonutProps) {
       labels={labels}
       colors={colors}
       height={height}
-      dataLabels={{ enabled: false }}
     />
   )
 }
