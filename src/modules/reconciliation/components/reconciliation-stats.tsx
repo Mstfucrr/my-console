@@ -2,8 +2,8 @@ import StatCard from '@/components/StatCard'
 import { CheckCircle, Clock, DollarSign } from 'lucide-react'
 
 interface ReconciliationStats {
-  totalSettled: number
   totalPending: number
+  totalApproved: number
   totalFailed: number
   monthlyRevenue: number
   platformFees: number
@@ -19,7 +19,7 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
   const statCards = [
     {
       title: 'Ödenen Tutar',
-      value: stats.totalSettled,
+      value: stats.totalApproved,
       Icon: CheckCircle,
       hint: 'Bu ay ödenen toplam',
       color: 'text-green-600',

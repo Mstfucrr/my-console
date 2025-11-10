@@ -9,7 +9,7 @@ import type { DateRange } from 'react-day-picker'
 
 const statuses: FilterOption[] = [
   { value: 'all', label: 'Tüm Durumlar' },
-  { value: 'completed', label: 'Tamamlandı' },
+  { value: 'approved', label: 'Onaylandı' },
   { value: 'pending', label: 'Beklemede' },
   { value: 'failed', label: 'Başarısız' }
 ]
@@ -68,7 +68,6 @@ export function ReconciliationFilters({
       config={{
         title: 'Mutabakat Filtreleri',
         icon: Filter,
-        searchPlaceholder: 'Mutabakat kaydı ara...',
         statusOptions: statuses,
         showDateFilters: true
       }}
@@ -83,7 +82,7 @@ export function ReconciliationFilters({
         <div className='flex flex-1 flex-col gap-3 sm:flex-row sm:items-end'>
           <div className='flex-1'>
             <SearchInput
-              placeholder='Mutabakat kaydı ara...'
+              placeholder='Mutabakat kaydı ara (id, dönem)'
               value={pendingFilters.search ?? ''}
               onChange={value => updatePendingFilters({ search: value })}
               Icon={Search}

@@ -1,4 +1,4 @@
-import type { ReconciliationRecord, ReconciliationStats } from '../types'
+import type { ReconciliationRecord } from '../types'
 
 export const mockReconciliationData: ReconciliationRecord[] = [
   {
@@ -9,7 +9,7 @@ export const mockReconciliationData: ReconciliationRecord[] = [
     debtBalance: 750.0,
     creditBalance: 1200.0,
     netAmount: 14300.5,
-    status: 'completed',
+    status: 'approved',
     ataExpressDeliveryInvoice: 930.0,
     yourInvoiceAmount: 15750.5,
     mealCardAtaCollection: 4200.0,
@@ -72,12 +72,3 @@ export const mockReconciliationData: ReconciliationRecord[] = [
     invoiceUploaded: false
   }
 ]
-
-export const mockStats: ReconciliationStats = {
-  totalSettled: 4931.4,
-  totalPending: 2969.13,
-  totalFailed: 178182,
-  monthlyRevenue: 15420.95,
-  platformFees: 771.05,
-  netRevenue: 14649.9
-}

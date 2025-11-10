@@ -24,7 +24,6 @@ export interface FilterProperties {
 export interface FilterConfig {
   title: string
   icon: LucideIcon
-  searchPlaceholder?: string
   statusOptions?: FilterOption[]
   showDateFilters?: boolean
 }

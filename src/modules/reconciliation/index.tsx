@@ -61,7 +61,6 @@ export default function ReconciliationView() {
     refetchStats()
   }
 
-  const isLoading = isDataLoading || isStatsLoading
   const error = dataError || statsError
 
   if (error)
@@ -75,7 +74,7 @@ export default function ReconciliationView() {
         isLoading={isStatsLoading}
         stats={
           stats || {
-            totalSettled: 0,
+            totalApproved: 0,
             totalPending: 0,
             totalFailed: 0,
             monthlyRevenue: 0,

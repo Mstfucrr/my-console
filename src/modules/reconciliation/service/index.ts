@@ -48,7 +48,7 @@ export const reconciliationService = {
     const data = await this.getReconciliationData(filters)
 
     return {
-      totalSettled: data.filter(item => item.status === 'completed').length,
+      totalApproved: data.filter(item => item.status === 'approved').length,
       totalPending: data.filter(item => item.status === 'pending').length,
       totalFailed: data.filter(item => item.status === 'problematic').length,
       monthlyRevenue: data.reduce((sum, item) => sum + item.totalOrderAmount, 0),
@@ -75,6 +75,18 @@ export const reconciliationService = {
     }
   },
 
+  async uploadCurrentAccountStatement(recordId: string, file: File): Promise<{ success: boolean; fileUrl?: string }> {
+    // Simulate file upload
+    console.log(`Uploading current account statement file ${file.name} for record ${recordId}`)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Simulate successful upload
+    return {
+      success: true,
+      fileUrl: `/statements/${recordId}.pdf`
+    }
+  },
+
   async approveReconciliation(recordId: string): Promise<{ success: boolean }> {
     // Simulate approval process
     await new Promise(resolve => setTimeout(resolve, 1500))
@@ -88,9 +100,12 @@ export const reconciliationService = {
     return { success: true }
   },
 
-  async reportIssue(recordId: string, issueDescription: string): Promise<{ success: boolean }> {
+  async reportIssue(recordId: string, issueDescription: string, statementFile?: File): Promise<{ success: boolean }> {
     // Simulate issue reporting
     console.log(`Reporting issue for record ${recordId}: ${issueDescription}`)
+    if (statementFile) {
+      console.log(`Uploading current account statement file: ${statementFile.name}`)
+    }
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     // Update the record status in mock data
