@@ -18,7 +18,7 @@ import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
 import { getStatusBgColor, getStatusColor, getStatusTextColor } from '@/constants'
-import { DashboardIcons, OrderStatusIcons, QuickActionIcons } from '@/constants/icons'
+import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import { OrderStatusColor, OrderStatusLabel } from '../types'
@@ -44,7 +44,7 @@ const statsList: Array<StatsList> = [
   {
     title: 'Toplam Sipariş',
     id: 'todayOrders',
-    Icon: DashboardIcons.TotalOrders,
+    Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50'
   },
@@ -72,7 +72,7 @@ const statsList: Array<StatsList> = [
   {
     title: 'Toplam Ciro',
     id: 'totalRevenue',
-    Icon: DashboardIcons.TotalRevenue,
+    Icon: StatCardIcons.TotalRevenue,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
     type: 'currency'
@@ -80,7 +80,7 @@ const statsList: Array<StatsList> = [
   {
     title: 'Tahsilat Bekleyen',
     id: 'pendingPayments',
-    Icon: DashboardIcons.PendingPayments,
+    Icon: StatCardIcons.PendingPayments,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
     type: 'currency'

@@ -68,30 +68,32 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
         </div>
       </div>
 
-      <DialogFooter className='-mx-6 -mb-6 border-t bg-gray-50 px-6 py-4 pt-4'>
-        <div className='flex w-full flex-wrap gap-3'>
-          {hasInvoice && (
-            <Button onClick={onViewInvoice} variant='outline' className='flex items-center gap-2'>
-              <Eye className='h-4 w-4' />
-              Fatura/Cari Görüntüle
-            </Button>
-          )}
+      {(hasInvoice || canApprove || canReport) && (
+        <DialogFooter className='-mx-6 -mb-6 border-t bg-gray-50 px-6 py-4 pt-4'>
+          <div className='flex w-full flex-wrap gap-3'>
+            {hasInvoice && (
+              <Button onClick={onViewInvoice} variant='outline' className='flex items-center gap-2'>
+                <Eye className='h-4 w-4' />
+                Fatura/Cari Görüntüle
+              </Button>
+            )}
 
-          {canApprove && (
-            <Button onClick={onGoToApprovePage} color='success' className='flex items-center gap-2'>
-              <Check className='h-4 w-4' />
-              Onayla
-            </Button>
-          )}
+            {canApprove && (
+              <Button onClick={onGoToApprovePage} color='success' className='flex items-center gap-2'>
+                <Check className='h-4 w-4' />
+                Onayla
+              </Button>
+            )}
 
-          {canReport && (
-            <Button onClick={onGoToReportPage} color='destructive' className='flex items-center gap-2'>
-              <AlertTriangle className='h-4 w-4' />
-              Kontrole Gönder
-            </Button>
-          )}
-        </div>
-      </DialogFooter>
+            {canReport && (
+              <Button onClick={onGoToReportPage} color='destructive' className='flex items-center gap-2'>
+                <AlertTriangle className='h-4 w-4' />
+                Kontrole Gönder
+              </Button>
+            )}
+          </div>
+        </DialogFooter>
+      )}
     </>
   )
 }

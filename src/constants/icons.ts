@@ -35,6 +35,27 @@ export const DashboardIcons = {
   PendingPayments: Clock
 } as const
 
+// StatCard Icons - Consistent icons based on text labels
+// Same text labels should use the same icon for consistency
+export const StatCardIcons = {
+  // Revenue related (Toplam Ciro, Toplam Gelir, Net Gelir, Total Revenue)
+  TotalRevenue: CreditCard,
+  NetRevenue: CreditCard,
+  Revenue: CreditCard,
+
+  // Pending related (Bekleyen Ödeme, Tahsilat Bekleyen, Pending)
+  Pending: Clock,
+  PendingPayments: Clock,
+
+  // Approved/Settled related (Ödenen Tutar, Total Approved)
+  Approved: CheckCircle,
+  Settled: CheckCircle,
+
+  // Orders related (Toplam Sipariş, Total Orders)
+  TotalOrders: ShoppingCart,
+  Orders: ShoppingCart
+} as const
+
 // Quick Action Icons
 export const QuickActionIcons = {
   Orders: ShoppingCart,

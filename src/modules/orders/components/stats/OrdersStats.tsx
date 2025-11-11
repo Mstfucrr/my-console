@@ -2,7 +2,7 @@
 
 import StatCard from '@/components/StatCard'
 import { getStatusTextColor } from '@/constants'
-import { DashboardIcons, OrderStatusIcons } from '@/constants/icons'
+import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { OrderStatusLabel } from '@/modules/types'
 import { LucideIcon } from 'lucide-react'
 import { useMemo } from 'react'
@@ -20,7 +20,7 @@ const statsList: Array<Stat> = [
   {
     title: 'Toplam',
     id: 'total',
-    Icon: DashboardIcons.TotalOrders,
+    Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600',
     value: 0
   },

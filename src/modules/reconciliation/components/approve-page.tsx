@@ -1,7 +1,7 @@
 import { FormFileField } from '@/components/form/FormFileField'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
-import { Form } from '@/components/ui/form'
+import { Form, FormDescription } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -44,9 +44,12 @@ export function ApprovePage({ onBack, onSubmit, isSubmitting }: ApprovePageProps
               name='invoiceFile'
               control={form.control}
               label='Yüklenecek Fatura Dosyasını seçiniz:'
-              accept='.pdf,.jpg,.jpeg,.png'
+              accept='.pdf'
               required
             />
+            <FormDescription className='text-muted-foreground text-xs'>
+              Fatura dosyasının boyutu 10MB&apos;den büyük olamaz ve sadece pdf dosyası yükleyebilirsiniz.
+            </FormDescription>
           </div>
         </div>
 
