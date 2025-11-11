@@ -146,7 +146,6 @@ export default function DashboardView() {
         title='Özet bilgiler'
         description='İşletmenizin güncel durumunu takip edin'
         icon={BarChart2}
-        iconColor='text-blue-500'
         actions={
           <div className='flex flex-col justify-center gap-2 sm:items-end'>
             <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
@@ -232,7 +231,7 @@ export default function DashboardView() {
                       <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
                     </div>
                     <div className='text-right'>
-                      <div className='text-warning font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
+                      <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                     </div>
                   </div>
                 ))}
@@ -253,7 +252,8 @@ export default function DashboardView() {
       </div>
 
       {/* Line Charts */}
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
+
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3' hidden>
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Sipariş Sayısı</CardTitle>

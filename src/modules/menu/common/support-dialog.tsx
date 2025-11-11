@@ -9,11 +9,11 @@ export function SupportDialog() {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          size='icon'
+          size='lg'
           className='bg-primary/90 hover:bg-primary relative size-10 text-white shadow-lg'
           title='Destek Ekibine Mail Gönder'
         >
-          <MessageCircle className='size-6' />
+          <MessageCircle />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-80 border-0 bg-transparent p-0 shadow-none'>

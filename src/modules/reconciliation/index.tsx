@@ -1,10 +1,7 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 import { ReconciliationFilters, type ReconciliationFilterProperties } from './components/reconciliation-filters'
 import ReconciliationHeader from './components/reconciliation-header'
@@ -70,6 +67,12 @@ export default function ReconciliationView() {
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       <ReconciliationHeader onRefresh={refreshAllData} isLoading={isDataFetching} />
 
+      <ReconciliationFilters
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={handleClearFilters}
+      />
+
       <ReconciliationStats
         isLoading={isStatsLoading}
         stats={
@@ -83,22 +86,6 @@ export default function ReconciliationView() {
           }
         }
       />
-
-      {!error ? (
-        <ReconciliationFilters
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onClearFilters={handleClearFilters}
-        />
-      ) : (
-        <Alert color='destructive' variant='outline'>
-          <AlertTriangle className='h-4 w-4' />
-          <AlertDescription className='flex items-center justify-between'>
-            <span>Mutabakat verileri yüklenirken bir hata oluştu</span>
-            <RefreshButton onClick={refreshAllData} />
-          </AlertDescription>
-        </Alert>
-      )}
 
       <ReconciliationInfoAlert />
 

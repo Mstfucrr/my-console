@@ -51,7 +51,9 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
 
           {/* Right side - Amount and action */}
           <div className='flex flex-col items-end gap-2'>
-            <div className='text-warning text-lg font-bold whitespace-nowrap'>{formatCurrency(order.totalAmount)}</div>
+            <div className='text-primary-700 text-lg font-bold whitespace-nowrap'>
+              {formatCurrency(order.totalAmount)}
+            </div>
             <div className='flex flex-wrap items-center gap-2'>
               <StatusBadge status={order.status} />
               <PaymentMethodBadge paymentMethod={order.paymentMethod} />

@@ -112,6 +112,7 @@ export default function ReconciliationTable({ data, isLoading }: ReconciliationT
             emptyLabel='Mutabakat kaydı bulunamadı'
             loadingLabel='Mutabakat kayıtları yükleniyor...'
             meta={{ handleToggleModal }}
+            enableColumnVisibility={false}
           />
         </CardContent>
       </Card>

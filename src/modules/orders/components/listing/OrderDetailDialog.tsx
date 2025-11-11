@@ -81,7 +81,7 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                 <CardContent className='space-y-3'>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm'>Sipariş ID</span>
-                    <span className='font-mono text-sm'>{order.id}</span>
+                    <span className='text-sm'>{order.id}</span>
                   </div>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm'>Durum</span>
@@ -106,9 +106,9 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
                     <span className='text-sm'>{formatDateTR(order.updatedAt)}</span>
                   </div>
                   <Separator />
-                  <div className='bg-muted/50 flex items-center justify-between rounded-lg p-3'>
-                    <span className='text-sm font-medium'>Toplam Tutar</span>
-                    <span className='text-warning text-xl font-bold'>{formatCurrency(order.totalAmount)}</span>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
+                    <span className='text-primary-700 text-xl font-bold'>{formatCurrency(order.totalAmount)}</span>
                   </div>
                 </CardContent>
               </Card>

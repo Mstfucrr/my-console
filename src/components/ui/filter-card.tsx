@@ -55,7 +55,7 @@ export function FilterCard<T>({
     <Card className={className}>
       <CardHeader className='flex flex-row items-center justify-between space-y-0'>
         <div className='flex items-center gap-2'>
-          <Icon className='text-amber-400' />
+          <Icon className='text-primary' />
           <CardTitle className='text-base'>{title}</CardTitle>
         </div>
         <div className='flex items-center gap-2'>

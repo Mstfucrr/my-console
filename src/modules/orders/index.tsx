@@ -2,10 +2,9 @@
 
 import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
-import { DeliveryShipmentPackagesAdd } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
-import { ShoppingCart } from 'lucide-react'
+import { Plus, ShoppingCart } from 'lucide-react'
 import { CreateOrderModal } from './components/actions/CreateOrderModal'
 import { OrderFilters } from './components/filters/OrderFilters'
 import { OrderDetailDialog } from './components/listing/OrderDetailDialog'
@@ -41,25 +40,22 @@ function OrdersViewContent() {
       {/* Sayfa Başlığı */}
       <PageHeader
         title='Siparişler'
-        description='Tüm siparişlerinizi buradan takip edebilir ve yönetebilirsiniz'
         icon={ShoppingCart}
-        iconColor='text-amber-400'
         actions={
           <div className='flex items-center gap-2'>
-            <RefreshButton onClick={refreshAllData} isIconButton isLoading={isFetchingActive} />
-            <Button onClick={() => setIsCreateModalVisible(true)} color='success'>
-              <DeliveryShipmentPackagesAdd className='mr-2 h-4 w-4' />
+            <RefreshButton onClick={refreshAllData} isIconButton size='sm' isLoading={isFetchingActive} />
+            <Button onClick={() => setIsCreateModalVisible(true)} size='lg' color='success'>
+              <Plus className='mr-2' />
               Yeni Sipariş
             </Button>
           </div>
         }
       />
 
-      {/* İstatistik Kartları */}
-      <OrdersStats />
-
       {/* Filtreler */}
       <OrderFilters />
+      {/* İstatistik Kartları */}
+      <OrdersStats />
 
       {/* Sipariş Tab'ları */}
       <OrdersTabs />
