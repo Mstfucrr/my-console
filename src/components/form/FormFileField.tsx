@@ -46,7 +46,7 @@ export function FormFileField<T extends FieldValues>({
         toast.error(`Dosya boyutu ${maxSize / 1024 / 1024}MB&apos;den büyük olamaz.`)
         return
       }
-      if (!accept.includes(file.type)) {
+      if (!accept.includes(file.type.split('/')[1])) {
         toast.error(`Sadece ${accept.split(',').join(', ')} dosya türleri yükleyebilirsiniz.`)
         return
       }

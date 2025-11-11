@@ -118,9 +118,9 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
           await reportIssue({ recordId: record.id, description: data.description, statementFile: data.statementFile })
         },
         {
-          pending: 'Sorun bildiriliyor...',
-          success: 'Sorun başarıyla bildirildi',
-          error: 'Sorun bildirilirken bir hata oluştu'
+          pending: 'Mutabık olmadığınızın bildirimi yapılıyor...',
+          success: 'Mutabık olmadığınızın bildirimi başarıyla yapıldı',
+          error: 'Mutabık olmadığınızın bildirimi yapılırken bir hata oluştu'
         }
       )
       handleClose()

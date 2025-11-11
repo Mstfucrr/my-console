@@ -2,7 +2,7 @@ import { FormFileField } from '@/components/form/FormFileField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
-import { Form } from '@/components/ui/form'
+import { Form, FormDescription } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertTriangle, ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -57,9 +57,14 @@ export function ReportPage({ onBack, onSubmit, isSubmitting }: ReportPageProps) 
               name='statementFile'
               control={form.control}
               label='Cari ekstre dosyanızı seçiniz:'
-              accept='.pdf,.jpg,.jpeg,.png'
+              accept='.jpeg,.doc,.docx,.xls,.xlsx,.pdf'
               required
+              maxSize={10 * 1024 * 1024}
             />
+            <FormDescription className='text-muted-foreground text-xs'>
+              Cari ekstre dosyasının boyutu 10MB&apos;den büyük olamaz ve sadece jpeg, word, excel ve pdf dosya türleri
+              yükleyebilirsiniz.
+            </FormDescription>
           </div>
         </div>
 
