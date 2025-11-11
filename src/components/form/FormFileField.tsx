@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { Upload } from 'lucide-react'
 import { useRef } from 'react'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
+import { toast } from 'react-toastify'
 
 interface FormFileFieldProps<T extends FieldValues> {
   name: FieldPath<T>
@@ -14,6 +15,7 @@ interface FormFileFieldProps<T extends FieldValues> {
   required?: boolean
   buttonText?: string
   changeButtonText?: string
+  maxSize?: number
 }
 
 export function FormFileField<T extends FieldValues>({
@@ -24,7 +26,8 @@ export function FormFileField<T extends FieldValues>({
   formItemClassName,
   required,
   buttonText = 'Dosya Seç',
-  changeButtonText = 'Dosya Değiştir'
+  changeButtonText = 'Dosya Değiştir',
+  maxSize = 10 * 1024 * 1024
 }: FormFileFieldProps<T>) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const {
@@ -39,6 +42,14 @@ export function FormFileField<T extends FieldValues>({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
+      if (file.size > maxSize) {
+        toast.error(`Dosya boyutu ${maxSize / 1024 / 1024}MB&apos;den büyük olamaz.`)
+        return
+      }
+      if (!accept.includes(file.type)) {
+        toast.error(`Sadece ${accept.split(',').join(', ')} dosya türleri yükleyebilirsiniz.`)
+        return
+      }
       onChange(file)
     }
   }
@@ -55,19 +66,8 @@ export function FormFileField<T extends FieldValues>({
       )}
       <FormControl>
         <div className='flex items-center gap-3'>
-          <input
-            ref={fileInputRef}
-            type='file'
-            accept={accept}
-            onChange={handleFileChange}
-            className='hidden'
-          />
-          <Button
-            type='button'
-            onClick={handleFileSelect}
-            variant='outline'
-            className='flex items-center gap-2'
-          >
+          <input ref={fileInputRef} type='file' accept={accept} onChange={handleFileChange} className='hidden' />
+          <Button type='button' onClick={handleFileSelect} variant='outline' className='flex items-center gap-2'>
             <Upload className='h-4 w-4' />
             {file ? changeButtonText : buttonText}
           </Button>
@@ -78,4 +78,3 @@ export function FormFileField<T extends FieldValues>({
     </FormItem>
   )
 }
-

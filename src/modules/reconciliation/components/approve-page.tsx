@@ -46,9 +46,10 @@ export function ApprovePage({ onBack, onSubmit, isSubmitting }: ApprovePageProps
               label='Yüklenecek Fatura Dosyasını seçiniz:'
               accept='.pdf'
               required
+              maxSize={2 * 1024 * 1024}
             />
             <FormDescription className='text-muted-foreground text-xs'>
-              Fatura dosyasının boyutu 10MB&apos;den büyük olamaz ve sadece pdf dosyası yükleyebilirsiniz.
+              Fatura dosyasının boyutu 2MB&apos;den büyük olamaz ve sadece pdf dosyası yükleyebilirsiniz.
             </FormDescription>
           </div>
         </div>
