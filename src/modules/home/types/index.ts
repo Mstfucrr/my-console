@@ -34,6 +34,5 @@ export type Stats = {
   title: string
   value: number
   Icon: LucideIcon
-  hint: string
   color: string
 }

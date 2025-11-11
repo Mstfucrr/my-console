@@ -64,7 +64,6 @@ export function ReportsFilters({
       config={{
         title: 'Rapor Filtreleri',
         icon: Filter,
-        searchPlaceholder: 'Sipariş no, müşteri adı veya telefon ara...',
         statusOptions: STATUS_OPTIONS,
         showDateFilters: true
       }}

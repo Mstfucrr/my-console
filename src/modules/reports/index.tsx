@@ -10,10 +10,6 @@ import ReportsStats from './components/reports-stats'
 import ReportsTable from './components/reports-table'
 import { reportsService } from './service/reportsService'
 
-const formatDate = (date: string) => {
-  return Intl.DateTimeFormat('tr-TR', { dateStyle: 'full' }).format(new Date(date))
-}
-
 const defaultFilters: ReportsFilterProperties = {
   search: '',
   status: 'all',

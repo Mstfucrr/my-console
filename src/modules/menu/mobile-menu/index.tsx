@@ -36,7 +36,7 @@ const MobileMenu = () => {
             <ScrollArea className='mt-2 max-h-[calc(100%-100px)] flex-1 px-4 pb-2'>
               <div className='flex h-full flex-1 items-center'>
                 <nav className='flex h-full w-full items-center'>
-                  <ul className='flex w-full flex-col items-center gap-2 pt-5'>
+                  <ul className='flex w-full flex-col items-center gap-2 pt-5' onClick={() => setMobileMenu(false)}>
                     {menusConfig.map(item => (
                       <MenuItem key={item.href} item={item} />
                     ))}

@@ -1,9 +1,8 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { getStatusTextColor, getStatusBgColor } from '@/constants'
-import { OrderStatusIcons } from '@/constants/icons'
-import { DashboardIcons } from '@/constants/icons'
+import { getStatusTextColor } from '@/constants'
+import { DashboardIcons, OrderStatusIcons } from '@/constants/icons'
 import { OrderStatusLabel } from '@/modules/types'
 import { LucideIcon } from 'lucide-react'
 import { useMemo } from 'react'
@@ -13,7 +12,6 @@ interface Stat {
   title: string
   id: keyof OrdersContextType['stats']
   Icon: LucideIcon
-  hint: string
   color: string
   value: number
 }
@@ -23,7 +21,6 @@ const statsList: Array<Stat> = [
     title: 'Toplam',
     id: 'total',
     Icon: DashboardIcons.TotalOrders,
-    hint: 'Toplam sipariş sayısı',
     color: 'text-blue-600',
     value: 0
   },
@@ -31,7 +28,6 @@ const statsList: Array<Stat> = [
     title: OrderStatusLabel.created,
     id: 'created',
     Icon: OrderStatusIcons.created,
-    hint: 'Beklemede olan siparişler',
     color: getStatusTextColor('created'),
     value: 0
   },
@@ -39,7 +35,6 @@ const statsList: Array<Stat> = [
     title: OrderStatusLabel.shipped,
     id: 'shipped',
     Icon: OrderStatusIcons.shipped,
-    hint: 'Yola Çıkan siparişler',
     color: getStatusTextColor('shipped'),
     value: 0
   },
@@ -47,7 +42,6 @@ const statsList: Array<Stat> = [
     title: OrderStatusLabel.delivered,
     id: 'delivered',
     Icon: OrderStatusIcons.delivered,
-    hint: 'Teslim Edilen siparişler',
     color: getStatusTextColor('delivered'),
     value: 0
   },
@@ -55,7 +49,6 @@ const statsList: Array<Stat> = [
     title: OrderStatusLabel.cancelled,
     id: 'cancelled',
     Icon: OrderStatusIcons.cancelled,
-    hint: 'İptal edilen siparişler',
     color: getStatusTextColor('cancelled'),
     value: 0
   }

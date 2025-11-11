@@ -9,15 +9,6 @@ export const mockUser: User = {
   role: 'admin'
 }
 
-export const mockOnboardingUser: User = {
-  id: '2',
-  email: 'onboarding@restaurant.com',
-  name: 'Yeni Kullanıcı',
-  companyName: 'Yeni Restoran',
-  role: 'admin',
-  needsOnboarding: true
-}
-
 // Mock Restoranlar
 export const mockRestaurants: Restaurant[] = [
   {

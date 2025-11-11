@@ -14,7 +14,6 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
       value: stats.totalOrders,
       Icon: ShoppingCart,
       color: 'text-blue-600',
-      hint: 'Tüm zamanlar',
       type: 'number' as const
     },
     {
@@ -22,7 +21,6 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
       value: stats.totalRevenue,
       Icon: DollarSign,
       color: 'text-green-600',
-      hint: 'Brüt gelir',
       type: 'currency' as const
     },
     {
@@ -30,7 +28,6 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
       value: stats.totalFees,
       Icon: TrendingUp,
       color: 'text-orange-600',
-      hint: 'Toplam komisyon',
       type: 'currency' as const
     },
     {
@@ -38,7 +35,6 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
       value: stats.netRevenue,
       Icon: Calculator,
       color: 'text-purple-600',
-      hint: 'Komisyon sonrası',
       type: 'currency' as const
     }
   ]

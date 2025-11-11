@@ -21,7 +21,6 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       title: 'Ödenen Tutar',
       value: stats.totalApproved,
       Icon: CheckCircle,
-      hint: 'Bu ay ödenen toplam',
       color: 'text-green-600',
       type: 'currency' as const
     },
@@ -29,7 +28,6 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       title: 'Bekleyen Ödeme',
       value: stats.totalPending,
       Icon: Clock,
-      hint: 'Ödeme bekleyen tutar',
       color: 'text-yellow-600',
       type: 'currency' as const
     },
@@ -37,7 +35,6 @@ export default function ReconciliationStats({ stats, isLoading }: Reconciliation
       title: 'Toplam Ciro',
       value: stats.netRevenue,
       Icon: DollarSign,
-      hint: 'Hesaplanan toplam ciro',
       color: 'text-purple-600',
       type: 'currency' as const
     }

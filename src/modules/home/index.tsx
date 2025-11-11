@@ -17,7 +17,7 @@ import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
-import { getStatusColor, getStatusTextColor, getStatusBgColor } from '@/constants'
+import { getStatusBgColor, getStatusColor, getStatusTextColor } from '@/constants'
 import { DashboardIcons, OrderStatusIcons, QuickActionIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -37,7 +37,6 @@ type StatsList = {
   Icon: LucideIcon
   color: string
   bgColor: string
-  hint: string
   type?: 'currency'
 }
 
@@ -47,32 +46,28 @@ const statsList: Array<StatsList> = [
     id: 'todayOrders',
     Icon: DashboardIcons.TotalOrders,
     color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    hint: 'Toplam sipariş sayısı'
+    bgColor: 'bg-blue-50'
   },
   {
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
     Icon: OrderStatusIcons.delivered,
     color: getStatusTextColor('delivered'),
-    bgColor: getStatusBgColor('delivered'),
-    hint: 'Başarıyla teslim edilen siparişler'
+    bgColor: getStatusBgColor('delivered')
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
     Icon: OrderStatusIcons.shipped,
     color: getStatusTextColor('shipped'),
-    bgColor: getStatusBgColor('shipped'),
-    hint: 'Yola çıkan siparişler'
+    bgColor: getStatusBgColor('shipped')
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
     Icon: OrderStatusIcons.cancelled,
     color: getStatusTextColor('cancelled'),
-    bgColor: getStatusBgColor('cancelled'),
-    hint: 'İptal edilen siparişler'
+    bgColor: getStatusBgColor('cancelled')
   },
   {
     title: 'Toplam Ciro',
@@ -80,7 +75,6 @@ const statsList: Array<StatsList> = [
     Icon: DashboardIcons.TotalRevenue,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
-    hint: 'Hesaplanan toplam ciro',
     type: 'currency'
   },
   {
@@ -89,7 +83,6 @@ const statsList: Array<StatsList> = [
     Icon: DashboardIcons.PendingPayments,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
-    hint: 'Ödeme bekleyen tutar',
     type: 'currency'
   }
 ]
@@ -178,34 +171,20 @@ export default function DashboardView() {
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-2 gap-3'>
-              <QuickAction
-                href='/orders'
-                Icon={QuickActionIcons.Orders}
-                title='Siparişler'
-                subtitle='Günlük siparişler'
-                color='text-blue-600'
-              />
+              <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
               <QuickAction
                 onClick={() => setIsCreateOrderModalVisible(true)}
                 Icon={QuickActionIcons.NewOrder}
                 title='Yeni Sipariş'
-                subtitle='Sipariş oluştur'
                 color='text-green-600'
               />
               <QuickAction
                 href='/reconciliation'
                 Icon={QuickActionIcons.Reconciliation}
                 title='Mutabakat'
-                subtitle='Mutabakat işlemleri'
                 color='text-orange-600'
               />
-              <QuickAction
-                href='/reports'
-                Icon={QuickActionIcons.Reports}
-                title='Raporlar'
-                subtitle='Geçmiş siparişler'
-                color='text-purple-600'
-              />
+              <QuickAction href='/reports' Icon={QuickActionIcons.Reports} title='Raporlar' color='text-purple-600' />
             </div>
           </CardContent>
         </Card>
@@ -213,17 +192,7 @@ export default function DashboardView() {
         {/* Stats */}
         <div className='grid grid-cols-3 gap-4 max-sm:grid-cols-2'>
           {statsList.map(stat => (
-            <StatCard
-              key={stat.id}
-              isLoading={isLoading}
-              title={stat.title}
-              value={stats[stat.id] as number}
-              size='sm'
-              Icon={stat.Icon}
-              hint={stat.hint}
-              color={stat.color}
-              type={stat.type}
-            />
+            <StatCard key={stat.id} isLoading={isLoading} value={stats[stat.id] as number} {...stat} />
           ))}
         </div>
       </div>
@@ -244,7 +213,6 @@ export default function DashboardView() {
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Son Siparişler</CardTitle>
-            <p className='text-muted-foreground text-sm'>En son alınan siparişler</p>
           </CardHeader>
           <CardContent>
             {stats.recentOrders.length > 0 ? (

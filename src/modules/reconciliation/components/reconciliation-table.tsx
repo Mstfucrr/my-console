@@ -3,7 +3,7 @@ import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
-import type { ColumnDef, TableMeta } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
@@ -12,9 +12,10 @@ interface ReconciliationTableProps {
   data: ReconciliationRecord[]
   isLoading: boolean
 }
+
 declare module '@tanstack/react-table' {
   interface TableMeta<TData = unknown> {
-    handleToggleModal?: (record: ReconciliationRecord) => void
+    handleToggleModal?: (record: TData) => void
   }
 }
 
@@ -30,7 +31,7 @@ const STATUS_TEXT = {
   approved: 'Onaylandı'
 } as const
 
-const columns: ColumnDef<ReconciliationRecord, TableMeta<ReconciliationRecord>>[] = [
+const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     accessorKey: 'period',
     header: 'Mutabakat Dönemi',
@@ -77,7 +78,9 @@ const columns: ColumnDef<ReconciliationRecord, TableMeta<ReconciliationRecord>>[
     id: 'actions',
     header: 'İşlemler',
     cell: ({ row, table }) => {
-      const handleToggleModal = table.options.meta?.handleToggleModal
+      const handleToggleModal = table.options.meta?.handleToggleModal as
+        | ((record: ReconciliationRecord) => void)
+        | undefined
 
       return (
         <Button variant='outline' color='primary' onClick={() => handleToggleModal?.(row.original)}>
