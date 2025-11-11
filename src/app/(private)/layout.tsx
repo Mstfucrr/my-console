@@ -10,15 +10,13 @@ import { usePathname } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const mounted = useMounted()
-  const pathname = usePathname()
-  const isOnboarding = pathname.includes('/onboarding') // TODO: Daha sonra ayrı olacak
 
   if (!mounted) return <LayoutLoader />
 
   return (
     <AuthProvider>
-      {!isOnboarding && <Menu />}
-      <div className={cn('transition-all duration-150', isOnboarding ? 'pt-10' : 'pt-16')}>
+      <Menu />
+      <div className={cn('pt-16 transition-all duration-150')}>
         <div className='flex flex-col gap-4 pb-0'>
           <LayoutWrapper>
             <div className='container mx-auto'>{children}</div>

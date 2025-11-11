@@ -41,7 +41,9 @@ export function PageHeader({
         <div className='flex items-center gap-2'>
           {actions}
           {rightSide}
-          {showRefreshButton && onRefresh && <RefreshButton size='xs' onClick={onRefresh} isLoading={isLoading} />}
+          {showRefreshButton && onRefresh && (
+            <RefreshButton size='xs' isIconButton onClick={onRefresh} isLoading={isLoading} />
+          )}
         </div>
       </CardHeader>
     </Card>

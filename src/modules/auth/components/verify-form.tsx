@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
-import { useAuthContext } from '@/modules/auth/context/AuthContext'
+import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { RefreshCcw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -19,6 +19,7 @@ import {
   useState
 } from 'react'
 import { toast } from 'react-toastify'
+import { authService, ISetCookieRequest, IVerifyOtpRequest } from '../service/auth.service'
 
 const VerfiyForm = () => {
   const loginData = {
@@ -26,7 +27,15 @@ const VerfiyForm = () => {
     phoneNumber: '1234567890',
     installationId: '1234567890'
   }
-  const { verifyOtpMutation, setCookieMutation } = useAuthContext()
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: (request: IVerifyOtpRequest) => authService.verifyOtp(request)
+  })
+
+  const setCookieMutation = useMutation({
+    mutationFn: (request: ISetCookieRequest) => authService.setCookie(request)
+  })
+
   const totalOtpField = 6
   const otpArray: string[] = Array.from({ length: totalOtpField }, () => '')
   const [otp, setOtp] = useState<string[]>(otpArray)
@@ -175,7 +184,9 @@ const VerfiyForm = () => {
                 loadingText='Doğrulanıyor...'
               >
                 <Badge className='text-lg'>
-                  <span className={cn({ 'text-gray-100': !isOtpComplete })}>Gönder ({timer})</span>
+                  <span className={cn('flex items-center gap-2', { 'text-gray-100': !isOtpComplete })}>
+                    Gönder <small className='text-xs'>({timer})</small>
+                  </span>
                 </Badge>
               </LoadingButton>
             ) : (

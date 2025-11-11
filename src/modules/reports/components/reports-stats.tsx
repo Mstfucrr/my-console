@@ -1,5 +1,6 @@
 import StatCard from '@/components/StatCard'
-import { Calculator, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react'
+import { StatCardIcons } from '@/constants/icons'
+import { TrendingUp } from 'lucide-react'
 import type { ReportsStats } from '../types'
 
 interface ReportsStatsProps {
@@ -12,17 +13,15 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
     {
       title: 'Toplam Sipariş',
       value: stats.totalOrders,
-      Icon: ShoppingCart,
+      Icon: StatCardIcons.TotalOrders,
       color: 'text-blue-600',
-      hint: 'Tüm zamanlar',
       type: 'number' as const
     },
     {
       title: 'Toplam Gelir',
       value: stats.totalRevenue,
-      Icon: DollarSign,
+      Icon: StatCardIcons.TotalRevenue,
       color: 'text-green-600',
-      hint: 'Brüt gelir',
       type: 'currency' as const
     },
     {
@@ -30,15 +29,13 @@ export default function ReportsStats({ stats, isLoading }: ReportsStatsProps) {
       value: stats.totalFees,
       Icon: TrendingUp,
       color: 'text-orange-600',
-      hint: 'Toplam komisyon',
       type: 'currency' as const
     },
     {
       title: 'Net Gelir',
       value: stats.netRevenue,
-      Icon: Calculator,
+      Icon: StatCardIcons.NetRevenue,
       color: 'text-purple-600',
-      hint: 'Komisyon sonrası',
       type: 'currency' as const
     }
   ]

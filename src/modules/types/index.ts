@@ -67,6 +67,12 @@ export const OrderStatusLabel = {
   cancelled: 'İptal Edildi'
 } as const
 
+export const OrderStatusColor = {
+  created: '#fb923c', // Beklemede - Orange
+  shipped: '#f59e0b', // Yola Çıktı - Amber
+  delivered: '#16a34a', // Teslim Edildi - Green
+  cancelled: '#ef4444' // İptal Edildi - Red
+} as const
 // Dashboard İstatistikleri
 export interface DashboardStats {
   todayOrders: number

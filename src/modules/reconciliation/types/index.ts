@@ -6,7 +6,7 @@ export interface ReconciliationRecord {
   debtBalance: number // Borç Bakiye
   creditBalance: number // Alacak Bakiye
   netAmount: number // Net Tutar
-  status: 'pending' | 'approved' | 'problematic' | 'completed' // Durum
+  status: 'pending' | 'approved' | 'problematic' // Durum
 
   // Detay modal için ek bilgiler
   ataExpressDeliveryInvoice: number // Ata Express Dağıtım Fatura Tutarı
@@ -21,8 +21,8 @@ export interface ReconciliationRecord {
 }
 
 export interface ReconciliationStats {
-  totalSettled: number
   totalPending: number
+  totalApproved: number
   totalFailed: number
   monthlyRevenue: number
   platformFees: number

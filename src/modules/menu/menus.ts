@@ -1,20 +1,20 @@
-import { CheckCircle, Home, ShoppingCart } from 'lucide-react'
+import { ModuleIcons } from '@/constants/icons'
 import { MenuItem } from './type'
 
 export const menusConfig: MenuItem[] = [
   {
     title: 'Ana Sayfa',
-    Icon: Home,
+    Icon: ModuleIcons.Home,
     href: '/'
   },
   {
     title: 'Siparişler',
-    Icon: ShoppingCart,
+    Icon: ModuleIcons.Orders,
     href: '/orders'
   },
   {
     title: 'Mutabakat',
-    Icon: CheckCircle,
+    Icon: ModuleIcons.Reconciliation,
     href: '/reconciliation'
   }
 ]

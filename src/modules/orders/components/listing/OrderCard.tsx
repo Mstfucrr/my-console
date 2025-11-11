@@ -2,6 +2,7 @@
 
 import { Motorcycle } from '@/components/svg'
 import { Card, CardContent } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { Order, OrderStatus } from '@/modules/types'
@@ -32,7 +33,16 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
               <ChannelBadge channel={order.channel} />
               <span className='truncate text-sm font-semibold'>{order.customerName}</span>
               {isUrgent && <span className='shrink-0 animate-pulse text-red-500'>🔥</span>}
-              {order.courierInfo && <Motorcycle className='text-primary -ml-2 size-8 shrink-0' />}
+              {order.courierInfo && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Motorcycle className='text-primary -ml-2 size-4 shrink-0' />
+                    </TooltipTrigger>
+                    <TooltipContent>{order.courierInfo.name}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
 
             <div className='text-muted-foreground mt-2 flex items-center gap-2 text-xs'>

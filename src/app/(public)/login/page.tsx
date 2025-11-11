@@ -1,17 +1,15 @@
 'use client'
 import LogInForm from '@/modules/auth/components/login-form'
 import VerfiyForm from '@/modules/auth/components/verify-form'
-import { useAuthContext } from '@/modules/auth/context/AuthContext'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useState } from 'react'
 
 const LoginFormContent = () => {
-  const { isOtp } = useAuthContext()
+  const [isOtp, setIsOtp] = useState(false)
 
   return (
     <div className='mb-3 text-center'>
-      <h1 className='text-primary -mt-3 mb-4 text-2xl font-bold'>
-        {isOtp ? 'Doğrulama Kodu' : "Partner'a Hoşgeldiniz"}
-      </h1>
+      {isOtp && <h1 className='text-primary -mt-3 mb-4 text-2xl font-bold'>Doğrulama Kodu</h1>}
 
       <AnimatePresence mode='wait'>
         {!isOtp ? (
@@ -22,7 +20,7 @@ const LoginFormContent = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <LogInForm />
+            <LogInForm onOtpRequired={() => setIsOtp(true)} />
           </motion.div>
         ) : (
           <motion.div

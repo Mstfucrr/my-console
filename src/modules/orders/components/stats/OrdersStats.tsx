@@ -1,8 +1,10 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
+import { getStatusTextColor } from '@/constants'
+import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { OrderStatusLabel } from '@/modules/types'
-import { CheckCircle2, Clock, LucideIcon, ShoppingCart, Truck, XCircle } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { OrdersContextType, useOrders } from '../../context/OrdersContext'
 
@@ -10,7 +12,6 @@ interface Stat {
   title: string
   id: keyof OrdersContextType['stats']
   Icon: LucideIcon
-  hint: string
   color: string
   value: number
 }
@@ -19,41 +20,36 @@ const statsList: Array<Stat> = [
   {
     title: 'Toplam',
     id: 'total',
-    Icon: ShoppingCart,
-    hint: 'Toplam sipariş sayısı',
+    Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600',
     value: 0
   },
   {
     title: OrderStatusLabel.created,
     id: 'created',
-    Icon: Clock,
-    hint: 'Beklemede olan siparişler',
-    color: 'text-orange-500',
+    Icon: OrderStatusIcons.created,
+    color: getStatusTextColor('created'),
     value: 0
   },
   {
     title: OrderStatusLabel.shipped,
     id: 'shipped',
-    Icon: CheckCircle2,
-    hint: 'Yola Çıkan siparişler',
-    color: 'text-green-600',
+    Icon: OrderStatusIcons.shipped,
+    color: getStatusTextColor('shipped'),
     value: 0
   },
   {
     title: OrderStatusLabel.delivered,
     id: 'delivered',
-    Icon: Truck,
-    hint: 'Teslim Edilen siparişler',
-    color: 'text-red-500',
+    Icon: OrderStatusIcons.delivered,
+    color: getStatusTextColor('delivered'),
     value: 0
   },
   {
     title: OrderStatusLabel.cancelled,
     id: 'cancelled',
-    Icon: XCircle,
-    hint: 'İptal edilen siparişler',
-    color: 'text-red-600',
+    Icon: OrderStatusIcons.cancelled,
+    color: getStatusTextColor('cancelled'),
     value: 0
   }
 ]

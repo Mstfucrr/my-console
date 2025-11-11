@@ -10,20 +10,21 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import { BarChart2, CheckCircle, Clock, CreditCard, Loader2, LucideIcon, ShoppingCart } from 'lucide-react'
+import { BarChart2, Loader2, LucideIcon } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
-import { DeliveryCheckList, DeliveryShipmentPackagesAdd } from '@/components/svg'
-import { getStatusColor } from '@/constants'
+import { Label } from '@/components/ui/label'
+import { getStatusBgColor, getStatusColor, getStatusTextColor } from '@/constants'
+import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
+import { OrderStatusColor, OrderStatusLabel } from '../types'
 import QuickAction from './components/QuickAction'
 import { dashboardService } from './service'
 import type { DashboardStats } from './types'
-import { statusColor, statusLabel } from './utils'
 
 const defaultDateRange = {
   from: new Date(new Date().setHours(0, 0, 0, 0)),
@@ -36,7 +37,6 @@ type StatsList = {
   Icon: LucideIcon
   color: string
   bgColor: string
-  hint: string
   type?: 'currency'
 }
 
@@ -44,51 +44,45 @@ const statsList: Array<StatsList> = [
   {
     title: 'Toplam Sipariş',
     id: 'todayOrders',
-    Icon: ShoppingCart,
+    Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    hint: 'Bugün alınan sipariş sayısı'
+    bgColor: 'bg-blue-50'
   },
   {
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
-    Icon: CheckCircle,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-    hint: 'Başarıyla teslim edilen'
+    Icon: OrderStatusIcons.delivered,
+    color: getStatusTextColor('delivered'),
+    bgColor: getStatusBgColor('delivered')
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
-    Icon: BarChart2,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50',
-    hint: 'Şu anda kurye ile'
+    Icon: OrderStatusIcons.shipped,
+    color: getStatusTextColor('shipped'),
+    bgColor: getStatusBgColor('shipped')
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
-    Icon: Clock,
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
-    hint: 'İptal edilen siparişler'
+    Icon: OrderStatusIcons.cancelled,
+    color: getStatusTextColor('cancelled'),
+    bgColor: getStatusBgColor('cancelled')
   },
   {
     title: 'Toplam Ciro',
     id: 'totalRevenue',
-    Icon: CreditCard,
+    Icon: StatCardIcons.TotalRevenue,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50',
-    hint: 'Bugünkü toplam ciro',
     type: 'currency'
   },
   {
     title: 'Tahsilat Bekleyen',
     id: 'pendingPayments',
-    Icon: Clock,
+    Icon: StatCardIcons.PendingPayments,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
-    hint: 'Ödeme bekleyen bakiye',
     type: 'currency'
   }
 ]
@@ -111,9 +105,9 @@ export default function DashboardView() {
   const chartData = useMemo(() => {
     if (!stats) return []
     return stats.ordersByStatus.map(s => ({
-      label: statusLabel(s.status),
+      label: OrderStatusLabel[s.status],
       value: s.count,
-      color: statusColor(s.status)
+      color: OrderStatusColor[s.status]
     }))
   }, [stats])
 
@@ -154,11 +148,12 @@ export default function DashboardView() {
         icon={BarChart2}
         iconColor='text-blue-500'
         actions={
-          <div className='flex items-center gap-2'>
+          <div className='flex flex-col justify-center gap-2 sm:items-end'>
+            <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
             <DateRangePicker
               dateRange={dateRange}
               onDateRangeChange={setDateRange}
-              placeholder='Tarih aralığı seçin'
+              placeholder='Dönem seçin'
               enableTimeSelection={true}
               onApply={() => {
                 refetch()
@@ -176,34 +171,20 @@ export default function DashboardView() {
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-2 gap-3'>
-              <QuickAction
-                href='/orders'
-                Icon={BarChart2}
-                title='Siparişler'
-                subtitle='Aktif siparişler'
-                color='text-blue-600'
-              />
+              <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
               <QuickAction
                 onClick={() => setIsCreateOrderModalVisible(true)}
-                Icon={DeliveryShipmentPackagesAdd}
+                Icon={QuickActionIcons.NewOrder}
                 title='Yeni Sipariş'
-                subtitle='Sipariş oluştur'
                 color='text-green-600'
               />
               <QuickAction
                 href='/reconciliation'
-                Icon={CheckCircle}
+                Icon={QuickActionIcons.Reconciliation}
                 title='Mutabakat'
-                subtitle='Günlük işlemler'
                 color='text-orange-600'
               />
-              <QuickAction
-                href='/reports'
-                Icon={DeliveryCheckList}
-                title='Raporlar'
-                subtitle='Analiz ve raporlar'
-                color='text-purple-600'
-              />
+              <QuickAction href='/reports' Icon={QuickActionIcons.Reports} title='Raporlar' color='text-purple-600' />
             </div>
           </CardContent>
         </Card>
@@ -211,17 +192,7 @@ export default function DashboardView() {
         {/* Stats */}
         <div className='grid grid-cols-3 gap-4 max-sm:grid-cols-2'>
           {statsList.map(stat => (
-            <StatCard
-              key={stat.id}
-              isLoading={isLoading}
-              title={stat.title}
-              value={stats[stat.id] as number}
-              size='sm'
-              Icon={stat.Icon}
-              hint={stat.hint}
-              color={stat.color}
-              type={stat.type}
-            />
+            <StatCard key={stat.id} isLoading={isLoading} value={stats[stat.id] as number} {...stat} />
           ))}
         </div>
       </div>
@@ -230,7 +201,7 @@ export default function DashboardView() {
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-base'>Sipariş Durumu Dağılımı</CardTitle>
+            <CardTitle className='text-base'>Sipariş Durumu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className='flex h-80 items-center justify-center'>
@@ -242,7 +213,6 @@ export default function DashboardView() {
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Son Siparişler</CardTitle>
-            <p className='text-muted-foreground text-sm'>En son alınan siparişler</p>
           </CardHeader>
           <CardContent>
             {stats.recentOrders.length > 0 ? (
@@ -255,7 +225,7 @@ export default function DashboardView() {
                         <span
                           className={cn('rounded-full px-2 py-1 text-xs font-medium', getStatusColor(order.status))}
                         >
-                          {statusLabel(order.status)}
+                          {OrderStatusLabel[order.status]}
                         </span>
                       </div>
                       <div className='text-muted-foreground text-sm'>{order.customerName}</div>
