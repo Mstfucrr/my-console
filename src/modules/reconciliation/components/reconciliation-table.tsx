@@ -27,7 +27,7 @@ const STATUS_COLORS: Record<string, BadgeProps['color']> = {
 
 const STATUS_TEXT = {
   pending: 'Beklemede',
-  problematic: 'Başarısız',
+  problematic: 'Onaylanmadı',
   approved: 'Onaylandı'
 } as const
 
@@ -39,8 +39,8 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   },
   {
     accessorKey: 'totalOrderAmount',
-    header: 'Toplam Sipariş Tutarı',
-    cell: ({ row }) => formatCurrency(row.getValue('totalOrderAmount'))
+    header: 'Toplam Sipariş Tutarı (₺)',
+    cell: ({ row }) => formatCurrency(row.getValue('totalOrderAmount'), false)
   },
   {
     accessorKey: 'distributionCount',
@@ -49,18 +49,18 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   },
   {
     accessorKey: 'debtBalance',
-    header: 'Borç Bakiye',
-    cell: ({ row }) => formatCurrency(row.getValue('debtBalance'))
+    header: 'Borç Bakiye (₺)',
+    cell: ({ row }) => formatCurrency(row.getValue('debtBalance'), false)
   },
   {
     accessorKey: 'creditBalance',
-    header: 'Alacak Bakiye',
-    cell: ({ row }) => formatCurrency(row.getValue('creditBalance'))
+    header: 'Alacak Bakiye (₺)',
+    cell: ({ row }) => formatCurrency(row.getValue('creditBalance'), false)
   },
   {
     accessorKey: 'netAmount',
-    header: 'Net Tutar',
-    cell: ({ row }) => formatCurrency(row.getValue('netAmount'))
+    header: 'Net Tutar (₺)',
+    cell: ({ row }) => formatCurrency(row.getValue('netAmount'), false)
   },
   {
     accessorKey: 'status',

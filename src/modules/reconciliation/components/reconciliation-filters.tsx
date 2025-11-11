@@ -11,7 +11,7 @@ const statuses: FilterOption[] = [
   { value: 'all', label: 'Tüm Durumlar' },
   { value: 'approved', label: 'Onaylandı' },
   { value: 'pending', label: 'Beklemede' },
-  { value: 'failed', label: 'Başarısız' }
+  { value: 'failed', label: 'Onaylanmadı' }
 ]
 
 export interface ReconciliationFilterProperties {

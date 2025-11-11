@@ -39,7 +39,7 @@ export function ReportPage({ onBack, onSubmit, isSubmitting }: ReportPageProps) 
           <div className='space-y-4'>
             <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
               <p className='text-sm font-medium text-red-700'>
-                Mutabık olmadığınızın bildirimini yapıyorsunuz, Neden mutabık olmadığınızı aşağıdaki alanda belirtiniz,
+                Mutabık olmadığınızın bildirimini yapıyorsunuz, neden mutabık olmadığınızı aşağıdaki alanda belirtiniz.
               </p>
             </div>
 

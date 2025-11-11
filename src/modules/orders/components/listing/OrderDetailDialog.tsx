@@ -3,9 +3,11 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { MaskedText } from '@/components/ui/masked-text'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
+import { maskPhone } from '@/lib/utils'
 import type { Order } from '@/modules/types'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -129,9 +131,14 @@ export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogPro
 
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm'>Telefon</span>
-                    <a href={`tel:${order.customerPhone}`} className='text-sm'>
-                      {order.customerPhone}
-                    </a>
+                    <MaskedText
+                      value={order.customerPhone}
+                      maskFn={maskPhone}
+                      defaultMasked={true}
+                      asLink={true}
+                      href={`tel:${order.customerPhone}`}
+                      textClassName='text-sm'
+                    />
                   </div>
 
                   <Separator />

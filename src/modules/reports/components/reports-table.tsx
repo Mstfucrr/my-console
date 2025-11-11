@@ -66,7 +66,7 @@ export default function ReportsTable({ data, isLoading }: ReportsTableProps) {
       cell: ({ row }) => {
         const status = row.getValue('status') as string
         return (
-          <Badge variant='outline' color={STATUS_COLORS[status] || 'secondary'}>
+          <Badge variant='outline' className='text-nowrap' color={STATUS_COLORS[status] || 'secondary'}>
             {STATUS_TEXT[status as keyof typeof STATUS_TEXT] || status}
           </Badge>
         )

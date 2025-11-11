@@ -18,11 +18,11 @@ interface OrderCardProps {
 }
 
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
-  const isUrgent = order.status === 'created'
+  const isCreated = order.status === 'created'
 
   return (
     <Card
-      className={cn('cursor-pointer transition-all hover:shadow-md', isUrgent && 'border-l-4 border-l-red-500')}
+      className={cn('cursor-pointer transition-all hover:shadow-md', isCreated && 'border-l-4 border-l-red-500')}
       onClick={() => onViewDetails(order)}
     >
       <CardContent className='p-4'>
@@ -32,12 +32,11 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
             <div className='mb-2 flex items-center gap-2'>
               <ChannelBadge channel={order.channel} />
               <span className='truncate text-sm font-semibold'>{order.customerName}</span>
-              {isUrgent && <span className='shrink-0 animate-pulse text-red-500'>🔥</span>}
               {order.courierInfo && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Motorcycle className='text-primary -ml-2 size-4 shrink-0' />
+                      <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
                     </TooltipTrigger>
                     <TooltipContent>{order.courierInfo.name}</TooltipContent>
                   </Tooltip>

@@ -36,7 +36,7 @@ export function ApprovePage({ onBack, onSubmit, isSubmitting }: ApprovePageProps
           <div className='space-y-2'>
             <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
               <p className='text-sm font-medium text-red-700'>
-                Mutabıkız bildirimi yapıyorsunuz, Faturanızı aşağıdaki alandan yükleyebilirsiniz.
+                Mutabıkız bildirimi yapıyorsunuz, faturanızı aşağıdaki alandan yükleyebilirsiniz.
               </p>
             </div>
 
