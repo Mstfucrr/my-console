@@ -56,8 +56,6 @@ export interface OrdersContextType {
   refreshAllData: () => void
   clearFilter: () => void
   filterOrdersBySearch: (orders: Order[]) => Order[]
-  handleOrderStatusUpdate: (orderId: string, newStatus: OrderStatus) => Promise<void>
-  handleCancelOrder: (orderId: string) => Promise<void>
 
   // Refetch functions
   refetchActiveOrders: () => void
@@ -214,24 +212,6 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Handle order status updates
-  const handleOrderStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
-    try {
-      // TODO: API call to update order status
-      console.log(`Updating order ${orderId} to status ${newStatus}`)
-
-      // Refresh the affected tabs
-      refreshAllData()
-    } catch (err) {
-      console.error('Error updating order status:', err)
-    }
-  }
-
-  // Cancel pending order
-  const handleCancelOrder = async (orderId: string) => {
-    await handleOrderStatusUpdate(orderId, 'cancelled')
-  }
-
   const value: OrdersContextType = {
     // State
     selectedOrder,
@@ -276,8 +256,6 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     refreshAllData,
     clearFilter,
     filterOrdersBySearch,
-    handleOrderStatusUpdate,
-    handleCancelOrder,
 
     // Refetch functions
     refetchActiveOrders,
