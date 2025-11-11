@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { ShoppingCart } from 'lucide-react'
 import { CreateOrderModal } from './components/actions/CreateOrderModal'
-import { OrdersSearch } from './components/filters/OrdersSearch'
-import { OrdersStatusFilter } from './components/filters/OrdersStatusFilter'
+import { OrderFilters } from './components/filters/OrderFilters'
 import { OrderDetailDialog } from './components/listing/OrderDetailDialog'
 import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersTabs } from './components/stats/OrdersTabs'
@@ -59,11 +58,8 @@ function OrdersViewContent() {
       {/* İstatistik Kartları */}
       <OrdersStats />
 
-      {/* Arama ve Filtre */}
-      <div className='flex flex-col gap-4 sm:flex-row sm:items-center'>
-        <OrdersSearch />
-        <OrdersStatusFilter />
-      </div>
+      {/* Filtreler */}
+      <OrderFilters />
 
       {/* Sipariş Tab'ları */}
       <OrdersTabs />
