@@ -28,7 +28,7 @@ export default function StatCard({ title, value, Icon, color, type = 'number', i
             {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
           </span>
         </div>
-        <div>
+        <div className='opacity-30'>
           {typeof Icon === 'string' ? (
             <span className={`text-2xl ${color}`}>{Icon}</span>
           ) : (

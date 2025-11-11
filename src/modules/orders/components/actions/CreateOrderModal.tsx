@@ -209,7 +209,14 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
                   </CardHeader>
                   <CardContent className='space-y-4'>
                     <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                      <FormInputField name='firstName' required control={form.control} label='Ad' placeholder='Ahmet' />
+                      <FormInputField
+                        name='firstName'
+                        autoFocus
+                        required
+                        control={form.control}
+                        label='Ad'
+                        placeholder='Ahmet'
+                      />
                       <FormInputField
                         name='lastName'
                         required

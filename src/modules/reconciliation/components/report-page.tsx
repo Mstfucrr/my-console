@@ -49,6 +49,7 @@ export function ReportPage({ onBack, onSubmit, isSubmitting }: ReportPageProps) 
               label='Neden mutabık olmadığınızı belirtiniz'
               placeholder='Neden mutabık olmadığınızı belirtiniz'
               rows={4}
+              autoFocus
               required
             />
 
