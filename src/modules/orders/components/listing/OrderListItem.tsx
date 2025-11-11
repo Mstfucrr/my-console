@@ -5,7 +5,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { Order } from '@/modules/types'
 import { formatDateTR } from '../../utils'
-import { ChannelBadge, StatusBadge } from '../Badges'
+import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 
 interface OrderListItemProps {
   order: Order
@@ -41,11 +41,16 @@ export function OrderListItem({ order, onViewDetails }: OrderListItemProps) {
           <ChannelBadge channel={order.channel} />
         </div>
 
+        {/* Payment Method Badge - Fixed width */}
+        <div className='col-span-2'>
+          <PaymentMethodBadge paymentMethod={order.paymentMethod} />
+        </div>
+
         {/* Amount - Fixed width */}
         <div className='text-warning col-span-1 text-sm font-bold'>{formatCurrency(order.totalAmount)}</div>
 
         {/* Time - Fixed width */}
-        <div className='text-muted-foreground col-span-4 hidden justify-end text-xs text-nowrap md:flex'>
+        <div className='text-muted-foreground col-span-3 hidden justify-end text-xs text-nowrap md:flex'>
           <span>{formatDateTR(order.createdAt)}</span>
         </div>
       </div>

@@ -15,7 +15,7 @@ export const mockRestaurants: Restaurant[] = [
     id: '1',
     name: 'Demo Restoran - Merkez',
     address: 'Atatürk Cad. No:123, Kadıköy/İstanbul',
-    phone: '+90 216 123 45 67',
+    phone: '216 123 45 67',
     isActive: true,
     createdAt: '2024-01-15T10:00:00Z'
   },
@@ -23,7 +23,7 @@ export const mockRestaurants: Restaurant[] = [
     id: '2',
     name: 'Demo Restoran - Şube 2',
     address: 'Bağdat Cad. No:456, Maltepe/İstanbul',
-    phone: '+90 216 987 65 43',
+    phone: '216 987 65 43',
     isActive: true,
     createdAt: '2024-02-20T14:30:00Z'
   },
@@ -31,7 +31,7 @@ export const mockRestaurants: Restaurant[] = [
     id: '3',
     name: 'Demo Restoran - Şube 3',
     address: 'İstiklal Cad. No:789, Beyoğlu/İstanbul',
-    phone: '+90 212 555 11 22',
+    phone: '212 555 11 22',
     isActive: false,
     createdAt: '2024-03-10T09:15:00Z'
   }
@@ -42,7 +42,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-001',
     customerName: 'Ahmet Yılmaz',
-    customerPhone: '+90 532 123 45 67',
+    customerPhone: '532 123 45 67',
     customerAddress: 'Acıbadem Mah. Çeçen Sok. No:15 Kadıköy/İstanbul',
     status: 'created',
     createdAt: '2024-01-25T18:30:00Z',
@@ -56,7 +56,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-002',
     customerName: 'Fatma Demir',
-    customerPhone: '+90 535 987 65 43',
+    customerPhone: '535 987 65 43',
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:42 Kadıköy/İstanbul',
     paymentMethod: 'cash',
     channel: 'getir',
@@ -76,7 +76,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-003',
     customerName: 'Mehmet Kaya',
-    customerPhone: '+90 538 111 22 33',
+    customerPhone: '538 111 22 33',
     customerAddress: 'Göztepe Mah. Bağdat Cad. No:789 Kadıköy/İstanbul',
     status: 'shipped',
     createdAt: '2024-01-25T19:20:00Z',
@@ -96,7 +96,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-004',
     customerName: 'Ayşe Özdemir',
-    customerPhone: '+90 542 789 32 14',
+    customerPhone: '542 789 32 14',
     customerAddress: 'Fenerbahçe Mah. Fener Kalamış Cad. No:58 Kadıköy/İstanbul',
     status: 'shipped',
     createdAt: '2024-01-25T16:30:00Z',
@@ -116,7 +116,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-005',
     customerName: 'Emre Kaya',
-    customerPhone: '+90 555 123 98 76',
+    customerPhone: '555 123 98 76',
     customerAddress: 'Kozyatağı Mah. Değirmen Sok. No:23 Kadıköy/İstanbul',
     status: 'created',
     createdAt: '2024-01-25T19:45:00Z',
@@ -136,7 +136,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-007',
     customerName: 'Can Yılmaz',
-    customerPhone: '+90 544 321 65 87',
+    customerPhone: '544 321 65 87',
     customerAddress: 'Erenköy Mah. Bağdat Cad. No:234 Kadıköy/İstanbul',
     status: 'shipped',
     createdAt: '2024-01-25T20:10:00Z',
@@ -156,7 +156,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-006',
     customerName: 'Zeynep Arslan',
-    customerPhone: '+90 533 456 78 90',
+    customerPhone: '533 456 78 90',
     customerAddress: 'Sahrayıcedit Mah. Söğütlüçeşme Cad. No:67 Kadıköy/İstanbul',
     status: 'cancelled',
     createdAt: '2024-01-25T15:20:00Z',
@@ -176,7 +176,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-008',
     customerName: 'Ali Demir',
-    customerPhone: '+90 555 888 77 66',
+    customerPhone: '555 888 77 66',
     customerAddress: 'Caddebostan Mah. Bağdat Cad. No:111 Kadıköy/İstanbul',
     status: 'shipped',
     createdAt: '2024-01-25T14:10:00Z',
@@ -196,7 +196,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-009',
     customerName: 'Selin Kaya',
-    customerPhone: '+90 544 999 88 77',
+    customerPhone: '544 999 88 77',
     customerAddress: 'Suadiye Mah. Plaj Yolu Sok. No:45 Maltepe/İstanbul',
     status: 'delivered',
     createdAt: '2024-01-25T13:45:00Z',
@@ -210,7 +210,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-010',
     customerName: 'Burak Özkan',
-    customerPhone: '+90 532 777 66 55',
+    customerPhone: '532 777 66 55',
     customerAddress: 'Feneryolu Mah. Bağdat Cad. No:222 Kadıköy/İstanbul',
     status: 'delivered',
     createdAt: '2024-01-25T12:30:00Z',
@@ -224,7 +224,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-011',
     customerName: 'Elif Şahin',
-    customerPhone: '+90 555 444 33 22',
+    customerPhone: '555 444 33 22',
     customerAddress: 'Koşuyolu Mah. Uzunçayır Cad. No:88 Kadıköy/İstanbul',
     status: 'shipped',
     createdAt: '2024-01-25T11:15:00Z',
@@ -238,7 +238,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-012',
     customerName: 'Murat Aydın',
-    customerPhone: '+90 533 222 11 00',
+    customerPhone: '533 222 11 00',
     customerAddress: 'Hasanpaşa Mah. Fahrettin Kerim Gökay Cad. No:156 Kadıköy/İstanbul',
     status: 'cancelled',
     createdAt: '2024-01-25T10:45:00Z',
@@ -252,7 +252,7 @@ export const mockOrders: Order[] = [
   {
     id: 'ORD-2024-013',
     customerName: 'Deniz Polat',
-    customerPhone: '+90 544 555 66 77',
+    customerPhone: '544 555 66 77',
     customerAddress: 'Erenköy Mah. Bağdat Cad. No:333 Kadıköy/İstanbul',
     status: 'created',
     createdAt: '2024-01-25T09:30:00Z',

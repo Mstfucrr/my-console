@@ -89,6 +89,9 @@ export type BasicDataTableProps<TData, TValue = never> = Omit<
 
   // column visibility trigger props
   columnVisibilityTriggerProps?: React.ComponentProps<typeof Button>
+
+  // row click handler
+  onRowClick?: (row: TData) => void
 }
 
 function TableOverlayLoader({ label }: { label?: string }) {
@@ -143,6 +146,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
   emptyLabel = 'Kayıt bulunamadı',
   loadingLabel = 'Yükleniyor...',
   columnVisibilityTriggerProps,
+  onRowClick,
   ...tableProps
 }: BasicDataTableProps<TData, TValue>) {
   // Optional built-in selection column
@@ -286,7 +290,12 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className='hover:bg-muted/40'>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={cn('hover:bg-muted/40', onRowClick && 'cursor-pointer')}
+                  onClick={() => onRowClick?.(row.original)}
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}

@@ -61,7 +61,7 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
               <span className='text-sm font-medium'>{formatCurrency(record.onlinePaymentAmount)}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Restauranta Ödeme Tutarı:</span>
+              <span className='text-sm text-gray-600'>Restorana Ödeme Tutarı:</span>
               <span className='text-sm font-medium'>{formatCurrency(record.restaurantPaymentAmount)}</span>
             </div>
           </div>
