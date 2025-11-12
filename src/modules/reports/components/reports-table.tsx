@@ -1,13 +1,22 @@
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Filter, FilterX } from 'lucide-react'
+import { useState } from 'react'
 import { STATUS_COLORS, STATUS_TEXT } from '../constants'
 import type { ReportRecord } from '../types'
+import { ReportsFilters, type ReportsFilterProperties } from './reports-filters'
 
 interface ReportsTableProps {
   data: ReportRecord[]
   isLoading: boolean
+  filters: ReportsFilterProperties
+  onFiltersChange: (f: ReportsFilterProperties) => void
+  onClearFilters: () => void
+  onRefresh: () => void
 }
 
 const formatDate = (dateString: string) => {
@@ -18,7 +27,16 @@ const formatCurrency = (amount: number) => {
   return `₺${amount.toFixed(2)}`
 }
 
-export default function ReportsTable({ data, isLoading }: ReportsTableProps) {
+export default function ReportsTable({
+  data,
+  isLoading,
+  filters,
+  onFiltersChange,
+  onClearFilters,
+  onRefresh
+}: ReportsTableProps) {
+  const [showFilters, setShowFilters] = useState(false)
+
   const columns: ColumnDef<ReportRecord>[] = [
     {
       accessorKey: 'orderId',
@@ -93,10 +111,22 @@ export default function ReportsTable({ data, isLoading }: ReportsTableProps) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Eski Sipariş Raporları ({data.length})</CardTitle>
+        <div className='flex flex-row items-center gap-2'>
+          <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
+          <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
+            {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
+            <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
+        {showFilters && (
+          <div className='mb-4'>
+            <ReportsFilters filters={filters} onFiltersChange={onFiltersChange} onClearFilters={onClearFilters} />
+          </div>
+        )}
         <BasicDataTable
           columns={columns}
           data={data}

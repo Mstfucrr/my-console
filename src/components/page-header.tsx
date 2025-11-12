@@ -35,8 +35,12 @@ export function PageHeader({
       <Card className='max-sm:mt-5'>
         <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2'>
           <div>
-            <CardTitle className='mb-1 flex items-center gap-2 text-2xl'>
-              <Icon className={iconColor} />
+            <CardTitle className='flex items-center gap-2 text-2xl'>
+              {typeof Icon === 'string' ? (
+                <span className={`text-2xl ${iconColor}`}>{Icon}</span>
+              ) : (
+                <Icon className={`size-7 ${iconColor}`} />
+              )}{' '}
               {title}
             </CardTitle>
             {description && <p className='text-muted-foreground text-sm'>{description}</p>}

@@ -1,11 +1,9 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { PageHeader } from '@/components/page-header'
 import { useQuery } from '@tanstack/react-query'
-import { BarChart3 } from 'lucide-react'
 import { useState } from 'react'
-import { ReportsFilters, type ReportsFilterProperties } from './components/reports-filters'
+import { type ReportsFilterProperties } from './components/reports-filters'
 import ReportsStats from './components/reports-stats'
 import ReportsTable from './components/reports-table'
 import { reportsService } from './service/reportsService'
@@ -25,6 +23,7 @@ export default function ReportsView() {
   const {
     data: reportsData = [],
     isLoading: isReportsLoading,
+    isFetching: isReportsFetching,
     error: reportsError,
     refetch: refetchReports
   } = useQuery({
@@ -65,12 +64,6 @@ export default function ReportsView() {
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
       {/* Sayfa Başlığı */}
-      <PageHeader
-        title='Raporlar'
-        description='Eski siparişlerinizi filtreleyerek detaylı raporlar görüntüleyebilirsiniz'
-        icon={BarChart3}
-        iconColor='text-purple-400'
-      />
 
       {/* İstatistik Kartları */}
       <ReportsStats
@@ -78,11 +71,15 @@ export default function ReportsView() {
         isLoading={isStatsLoading}
       />
 
-      {/* Filtreler */}
-      <ReportsFilters filters={filters} onFiltersChange={handleFiltersChange} onClearFilters={handleClearFilters} />
-
       {/* Raporlar Tablosu */}
-      <ReportsTable data={reportsData} isLoading={isReportsLoading} />
+      <ReportsTable
+        data={reportsData}
+        isLoading={isReportsLoading || isReportsFetching}
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={handleClearFilters}
+        onRefresh={refreshAllData}
+      />
     </div>
   )
 }

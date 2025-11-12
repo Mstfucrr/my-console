@@ -26,12 +26,7 @@ export function maskString(
 ): string {
   if (!value) return ''
 
-  const {
-    visibleStart = 0,
-    visibleEnd = 0,
-    maskChar = '*',
-    preserveNonDigits = false
-  } = options
+  const { visibleStart = 0, visibleEnd = 0, maskChar = '*', preserveNonDigits = false } = options
 
   if (preserveNonDigits) {
     // For phone numbers: preserve formatting characters like +, -, spaces, etc.
@@ -47,8 +42,7 @@ export function maskString(
     return chars
       .map(char => {
         if (/\d/.test(char)) {
-          const shouldShow =
-            digitIndex < visibleStart || digitIndex >= totalDigits - visibleEnd
+          const shouldShow = digitIndex < visibleStart || digitIndex >= totalDigits - visibleEnd
           digitIndex++
           return shouldShow ? char : maskChar
         }

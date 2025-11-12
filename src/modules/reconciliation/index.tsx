@@ -3,8 +3,7 @@
 import PageError from '@/components/page-error'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { ReconciliationFilters, type ReconciliationFilterProperties } from './components/reconciliation-filters'
-import ReconciliationHeader from './components/reconciliation-header'
+import { type ReconciliationFilterProperties } from './components/reconciliation-filters'
 import ReconciliationInfoAlert from './components/reconciliation-info-alert'
 import ReconciliationStats from './components/reconciliation-stats'
 import ReconciliationTable from './components/reconciliation-table'
@@ -65,13 +64,7 @@ export default function ReconciliationView() {
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
-      <ReconciliationHeader onRefresh={refreshAllData} isLoading={isDataFetching} />
-
-      <ReconciliationFilters
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onClearFilters={handleClearFilters}
-      />
+      {/* <ReconciliationHeader  /> */}
 
       <ReconciliationStats
         isLoading={isStatsLoading}
@@ -89,7 +82,16 @@ export default function ReconciliationView() {
 
       <ReconciliationInfoAlert />
 
-      {!error && <ReconciliationTable data={reconciliationData} isLoading={isDataLoading} />}
+      {!error && (
+        <ReconciliationTable
+          data={reconciliationData}
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          isLoading={isDataLoading || isDataFetching}
+          onRefresh={refreshAllData}
+        />
+      )}
     </div>
   )
 }

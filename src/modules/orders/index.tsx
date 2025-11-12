@@ -3,10 +3,8 @@
 import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Plus, ShoppingCart } from 'lucide-react'
 import { CreateOrderModal } from './components/actions/CreateOrderModal'
-import { OrderFilters } from './components/filters/OrderFilters'
 import { OrderDetailDialog } from './components/listing/OrderDetailDialog'
 import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersTabs } from './components/stats/OrdersTabs'
@@ -18,7 +16,6 @@ function OrdersViewContent() {
     selectedOrder,
     isModalVisible,
     isCreateModalVisible,
-    isFetchingActive,
     // Error
     error,
 
@@ -42,18 +39,12 @@ function OrdersViewContent() {
         title='Siparişler'
         icon={ShoppingCart}
         actions={
-          <div className='flex items-center gap-2'>
-            <RefreshButton onClick={refreshAllData} isIconButton size='sm' isLoading={isFetchingActive} />
-            <Button onClick={() => setIsCreateModalVisible(true)} size='lg' color='success'>
-              <Plus className='mr-2' />
-              Yeni Sipariş
-            </Button>
-          </div>
+          <Button onClick={() => setIsCreateModalVisible(true)} size='lg' color='success'>
+            <Plus className='mr-2' />
+            Yeni Sipariş
+          </Button>
         }
       />
-
-      {/* Filtreler */}
-      <OrderFilters />
       {/* İstatistik Kartları */}
       <OrdersStats />
 
