@@ -1,3 +1,4 @@
+import { AnimatedFilters } from '@/components/animated-filters'
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -124,12 +125,10 @@ export default function ReportsTable({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        {showFilters && (
-          <div className='mb-4'>
-            <ReportsFilters filters={filters} onFiltersChange={onFiltersChange} onClearFilters={onClearFilters} />
-          </div>
-        )}
+      <CardContent className='flex flex-col gap-4'>
+        <AnimatedFilters isOpen={showFilters}>
+          <ReportsFilters filters={filters} onFiltersChange={onFiltersChange} onClearFilters={onClearFilters} />
+        </AnimatedFilters>
         <BasicDataTable
           columns={columns}
           data={data}

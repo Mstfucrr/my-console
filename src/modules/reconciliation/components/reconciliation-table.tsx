@@ -1,3 +1,4 @@
+import { AnimatedFilters } from '@/components/animated-filters'
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -135,13 +136,13 @@ export default function ReconciliationTable({
           </div>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
-          {showFilters && (
+          <AnimatedFilters isOpen={showFilters}>
             <ReconciliationFilters
               filters={filters}
               onFiltersChange={onFiltersChange}
               onClearFilters={onClearFilters}
             />
-          )}
+          </AnimatedFilters>
           <BasicDataTable
             columns={columns}
             data={data}
