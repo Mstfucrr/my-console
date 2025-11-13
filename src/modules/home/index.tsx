@@ -89,7 +89,6 @@ const statsList: Array<StatsList> = [
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
-  const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
     data: stats,
@@ -171,11 +170,9 @@ export default function DashboardView() {
           <CardContent>
             <div className='grid grid-cols-2 gap-3'>
               <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
-              <QuickAction
-                onClick={() => setIsCreateOrderModalVisible(true)}
-                Icon={QuickActionIcons.NewOrder}
-                title='Yeni Sipariş'
-                color='text-green-600'
+              <CreateOrderModal
+                onSuccess={refetch}
+                trigger={<QuickAction Icon={QuickActionIcons.NewOrder} title='Yeni Sipariş' color='text-green-600' />}
               />
               <QuickAction
                 href='/reconciliation'
@@ -290,15 +287,6 @@ export default function DashboardView() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Create Order Modal */}
-      <CreateOrderModal
-        visible={isCreateOrderModalVisible}
-        onClose={() => setIsCreateOrderModalVisible(false)}
-        onSuccess={() => {
-          refetch() // Dashboard'ı yenile
-        }}
-      />
     </div>
   )
 }

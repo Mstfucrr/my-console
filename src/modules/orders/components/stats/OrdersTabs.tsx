@@ -10,6 +10,7 @@ import { CheckCircle2, Filter, FilterX, Flame, LayoutGrid, LayoutList } from 'lu
 import { useMemo, useState } from 'react'
 import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
 import { useOrders } from '../../context/OrdersContext'
+import { CreateOrderModal } from '../actions/CreateOrderModal'
 import { OrderFilters } from '../filters/OrderFilters'
 import { OrdersFilterAlert } from '../filters/OrdersFilterAlert'
 import { OrdersList } from '../listing/OrdersList'
@@ -27,7 +28,7 @@ const viewModeButtons = [
   }
 ]
 
-export function OrdersTabs() {
+export function OrdersTabs({ onSuccess }: { onSuccess: () => void }) {
   const {
     activeTab,
     setActiveTab,
@@ -79,7 +80,10 @@ export function OrdersTabs() {
       <CardHeader>
         <div className='flex flex-col gap-4'>
           <div className='flex items-center justify-between'>
-            <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
+            {/* Yeni Sipariş Oluştur Modalı */}
+            <div className='flex flex-row items-center gap-2'>
+              <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
+            </div>
             <div className='flex flex-row items-center gap-2'>
               <div className='flex items-center gap-2'>
                 <RefreshButton
@@ -107,6 +111,7 @@ export function OrdersTabs() {
                     </Button>
                   ))}
                 </ButtonGroup>
+                <CreateOrderModal onSuccess={onSuccess} />
               </div>
             </div>
           </div>
