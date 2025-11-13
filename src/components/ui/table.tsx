@@ -38,7 +38,7 @@ TableRow.displayName = 'TableRow'
 const TableHead = ({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
   <th
     className={cn(
-      'text-default-800 h-14 px-4 align-middle text-sm font-semibold capitalize ltr:text-left ltr:last:text-right rtl:text-right rtl:last:text-left ltr:[&:has([role=checkbox])]:pr-0 rtl:[&:has([role=checkbox])]:pl-0',
+      'text-default-800 h-14 px-4 align-middle text-sm font-semibold capitalize last:text-right',
       className
     )}
     {...props}
@@ -47,13 +47,7 @@ const TableHead = ({ className, ...props }: React.ThHTMLAttributes<HTMLTableCell
 TableHead.displayName = 'TableHead'
 
 const TableCell = ({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-  <td
-    className={cn(
-      'text-default-600 p-4 align-middle text-sm font-normal last:text-right rtl:last:text-left ltr:[&:has([role=checkbox])]:pr-0 rtl:[&:has([role=checkbox])]:pl-0',
-      className
-    )}
-    {...props}
-  />
+  <td className={cn('text-default-600 p-4 align-middle text-sm font-normal last:text-right', className)} {...props} />
 )
 TableCell.displayName = 'TableCell'
 

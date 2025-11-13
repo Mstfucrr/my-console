@@ -10,8 +10,8 @@ import { ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 export interface FilterOption {
-  value: string
-  label: string
+  value: string | number
+  label: string | number
 }
 
 export interface FilterProperties {
@@ -55,7 +55,7 @@ export function FilterCard<T>({
     <Card className={className}>
       <CardHeader className='flex flex-row items-center justify-between space-y-0'>
         <div className='flex items-center gap-2'>
-          <Icon className='text-amber-400' />
+          <Icon className='text-primary' />
           <CardTitle className='text-base'>{title}</CardTitle>
         </div>
         <div className='flex items-center gap-2'>
@@ -124,7 +124,7 @@ export function SearchInput({
   )
 }
 
-export function StatusSelect({
+export function StatusSelect<T extends string>({
   options,
   value,
   onChange,
@@ -132,8 +132,8 @@ export function StatusSelect({
   showLabel = true
 }: {
   options: FilterOption[]
-  value: string
-  onChange: (value: string) => void
+  value: T
+  onChange: (value: T) => void
   placeholder?: string
   showLabel?: boolean
 }) {
@@ -154,7 +154,7 @@ export function StatusSelect({
           </SelectTrigger>
           <SelectContent>
             {options.map(option => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem key={option.value} value={option.value.toString()}>
                 {option.label}
               </SelectItem>
             ))}

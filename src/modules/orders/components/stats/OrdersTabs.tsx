@@ -3,11 +3,15 @@
 import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { CheckCircle2, Flame, LayoutGrid, LayoutList } from 'lucide-react'
-import { useState } from 'react'
+import { TabsWithList } from '@/components/ui/tabs'
+import { CheckCircle2, Filter, FilterX, Flame, LayoutGrid, LayoutList } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
 import { useOrders } from '../../context/OrdersContext'
+import { CreateOrderModal } from '../actions/CreateOrderModal'
+import { OrderFilters } from '../filters/OrderFilters'
 import { OrdersFilterAlert } from '../filters/OrdersFilterAlert'
 import { OrdersList } from '../listing/OrdersList'
 
@@ -38,9 +42,12 @@ export function OrdersTabs() {
     isFetchingCompleted,
     handleCompletedPageChange,
     stats,
-    statusFilter
+    statusFilter,
+    refreshAllData,
+    handleCreateOrderSuccess: onSuccess
   } = useOrders()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
+  const [showFilters, setShowFilters] = useState(false)
 
   // Calculate counts based on filtered data
   const activeOrdersCount = statusFilter ? activeOrders.length : stats.created + stats.shipped
@@ -51,60 +58,68 @@ export function OrdersTabs() {
 
   const isCompletedTabDisabled = Boolean(statusFilter && statusFilter.every(status => ACTIVE_STATUS.includes(status)))
 
+  const tabItems = useMemo(
+    () => [
+      {
+        value: 'active' as const,
+        label: <span>Aktif Siparişler ({activeOrdersCount})</span>,
+        Icon: Flame,
+        disabled: isActiveTabDisabled
+      },
+      {
+        value: 'completed' as const,
+        label: <span>Tamamlanan ({completedOrdersCount})</span>,
+        Icon: CheckCircle2,
+        disabled: isCompletedTabDisabled
+      }
+    ],
+    [activeOrdersCount, completedOrdersCount, isActiveTabDisabled, isCompletedTabDisabled]
+  )
+
   return (
     <Card>
-      <CardHeader className='pb-0'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-4 border-b'>
-            <button
-              onClick={() => setActiveTab('active')}
-              disabled={isActiveTabDisabled}
-              className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
-                activeTab === 'active'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : isActiveTabDisabled
-                    ? 'text-muted-foreground cursor-not-allowed opacity-50'
-                    : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Flame className='h-4 w-4' />
-              Aktif Siparişler ({activeOrdersCount})
-            </button>
-            <button
-              onClick={() => setActiveTab('completed')}
-              disabled={isCompletedTabDisabled}
-              className={`flex items-center gap-2 px-4 py-2 font-medium transition-colors ${
-                activeTab === 'completed'
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : isCompletedTabDisabled
-                    ? 'text-muted-foreground cursor-not-allowed opacity-50'
-                    : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <CheckCircle2 className='h-4 w-4' />
-              Tamamlanan ({completedOrdersCount})
-            </button>
-          </div>
-          <div className='flex items-center gap-4'>
-            <ButtonGroup>
-              {viewModeButtons.map(({ label, Icon, value }) => (
-                <Button
-                  key={value}
-                  variant={viewMode === value ? null : 'outline'}
-                  size='xs'
-                  title={label}
-                  disabled={viewMode === value}
-                  onClick={() => setViewMode(value)}
-                >
-                  <Icon className='size-4' />
-                  <span className='sr-only'>{label}</span>
+      <CardHeader>
+        <div className='flex flex-col gap-4'>
+          <div className='flex items-center justify-between'>
+            {/* Yeni Sipariş Oluştur Modalı */}
+
+            <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
+
+            <div className='flex flex-row items-center gap-2'>
+              <div className='flex items-center gap-2'>
+                <RefreshButton
+                  onClick={refreshAllData}
+                  isIconButton
+                  isLoading={isFetchingActive || isFetchingCompleted}
+                />
+                <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
+                  {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
+                  <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
                 </Button>
-              ))}
-            </ButtonGroup>
+              </div>
+              <div className='flex items-center gap-2'>
+                <ButtonGroup>
+                  {viewModeButtons.map(({ label, Icon, value }) => (
+                    <Button
+                      key={value}
+                      variant={viewMode === value ? null : 'outline'}
+                      size='xs'
+                      title={label}
+                      onClick={() => setViewMode(value)}
+                    >
+                      <Icon className='size-4' />
+                      <span className='sr-only'>{label}</span>
+                    </Button>
+                  ))}
+                </ButtonGroup>
+                <CreateOrderModal onSuccess={onSuccess} />
+              </div>
+            </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent className='pt-0'>
+      <CardContent className='flex flex-col gap-4'>
+        {showFilters && <OrderFilters />}
         {activeTab === 'active' ? (
           <div className='space-y-4'>
             <OrdersFilterAlert />

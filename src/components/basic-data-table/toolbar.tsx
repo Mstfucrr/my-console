@@ -33,6 +33,7 @@ export function DataTableToolbar<TData>({
   leftSlot,
   columnVisibilityTriggerProps
 }: ToolbarProps<TData>) {
+  if (!searchable || !enableColumnVisibility) return null
   return (
     <div className='flex flex-wrap items-center gap-2 px-2 sm:px-0'>
       <div className='mr-auto'>{leftSlot}</div>

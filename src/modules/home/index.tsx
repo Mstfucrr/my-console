@@ -17,7 +17,7 @@ import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
-import { getStatusBgColor, getStatusColor, getStatusTextColor } from '@/constants'
+import { ORDER_STATUS_BG_COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -52,22 +52,22 @@ const statsList: Array<StatsList> = [
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
     Icon: OrderStatusIcons.delivered,
-    color: getStatusTextColor('delivered'),
-    bgColor: getStatusBgColor('delivered')
+    color: ORDER_STATUS_TEXT_COLORS['delivered'],
+    bgColor: ORDER_STATUS_BG_COLORS['delivered']
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
     Icon: OrderStatusIcons.shipped,
-    color: getStatusTextColor('shipped'),
-    bgColor: getStatusBgColor('shipped')
+    color: ORDER_STATUS_TEXT_COLORS['shipped'],
+    bgColor: ORDER_STATUS_BG_COLORS['shipped']
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
     Icon: OrderStatusIcons.cancelled,
-    color: getStatusTextColor('cancelled'),
-    bgColor: getStatusBgColor('cancelled')
+    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
+    bgColor: ORDER_STATUS_BG_COLORS['cancelled']
   },
   {
     title: 'Toplam Ciro',
@@ -89,7 +89,6 @@ const statsList: Array<StatsList> = [
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
-  const [isCreateOrderModalVisible, setIsCreateOrderModalVisible] = useState(false)
 
   const {
     data: stats,
@@ -146,7 +145,6 @@ export default function DashboardView() {
         title='Özet bilgiler'
         description='İşletmenizin güncel durumunu takip edin'
         icon={BarChart2}
-        iconColor='text-blue-500'
         actions={
           <div className='flex flex-col justify-center gap-2 sm:items-end'>
             <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
@@ -172,11 +170,9 @@ export default function DashboardView() {
           <CardContent>
             <div className='grid grid-cols-2 gap-3'>
               <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
-              <QuickAction
-                onClick={() => setIsCreateOrderModalVisible(true)}
-                Icon={QuickActionIcons.NewOrder}
-                title='Yeni Sipariş'
-                color='text-green-600'
+              <CreateOrderModal
+                onSuccess={refetch}
+                trigger={<QuickAction Icon={QuickActionIcons.NewOrder} title='Yeni Sipariş' color='text-green-600' />}
               />
               <QuickAction
                 href='/reconciliation'
@@ -223,7 +219,10 @@ export default function DashboardView() {
                       <div className='mb-1 flex items-center gap-2'>
                         <span className='font-medium'>#{order.id}</span>
                         <span
-                          className={cn('rounded-full px-2 py-1 text-xs font-medium', getStatusColor(order.status))}
+                          className={cn(
+                            'rounded-full px-2 py-1 text-xs font-medium',
+                            ORDER_STATUS_COLORS[order.status]
+                          )}
                         >
                           {OrderStatusLabel[order.status]}
                         </span>
@@ -232,7 +231,7 @@ export default function DashboardView() {
                       <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
                     </div>
                     <div className='text-right'>
-                      <div className='text-warning font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
+                      <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                     </div>
                   </div>
                 ))}
@@ -253,7 +252,8 @@ export default function DashboardView() {
       </div>
 
       {/* Line Charts */}
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
+
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3' hidden>
         <Card>
           <CardHeader>
             <CardTitle className='text-base'>Sipariş Sayısı</CardTitle>
@@ -287,15 +287,6 @@ export default function DashboardView() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Create Order Modal */}
-      <CreateOrderModal
-        visible={isCreateOrderModalVisible}
-        onClose={() => setIsCreateOrderModalVisible(false)}
-        onSuccess={() => {
-          refetch() // Dashboard'ı yenile
-        }}
-      />
     </div>
   )
 }

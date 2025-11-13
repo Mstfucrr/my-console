@@ -12,7 +12,7 @@ export interface OrdersContextType {
   isModalVisible: boolean
   isCreateModalVisible: boolean
   completedPagination: PaginationOptions
-  activeTab: string
+  activeTab: 'active' | 'completed'
   statusFilter: OrderStatus[] | null
   searchTerm: string
 

@@ -12,9 +12,7 @@ export default function ReconciliationHeader({ onRefresh, isLoading }: Reconcili
   return (
     <PageHeader
       title='Mutabakat'
-      description='Satış mutabakatlarınızı takip edin'
       icon={ModuleIcons.Reconciliation}
-      iconColor='text-orange-600'
       showRefreshButton
       onRefresh={onRefresh}
       isLoading={isLoading}

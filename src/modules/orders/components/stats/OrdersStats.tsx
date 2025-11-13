@@ -1,7 +1,7 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { getStatusTextColor } from '@/constants'
+import { ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { OrderStatusLabel } from '@/modules/types'
 import { LucideIcon } from 'lucide-react'
@@ -28,28 +28,28 @@ const statsList: Array<Stat> = [
     title: OrderStatusLabel.created,
     id: 'created',
     Icon: OrderStatusIcons.created,
-    color: getStatusTextColor('created'),
+    color: ORDER_STATUS_TEXT_COLORS['created'],
     value: 0
   },
   {
     title: OrderStatusLabel.shipped,
     id: 'shipped',
     Icon: OrderStatusIcons.shipped,
-    color: getStatusTextColor('shipped'),
+    color: ORDER_STATUS_TEXT_COLORS['shipped'],
     value: 0
   },
   {
     title: OrderStatusLabel.delivered,
     id: 'delivered',
     Icon: OrderStatusIcons.delivered,
-    color: getStatusTextColor('delivered'),
+    color: ORDER_STATUS_TEXT_COLORS['delivered'],
     value: 0
   },
   {
     title: OrderStatusLabel.cancelled,
     id: 'cancelled',
     Icon: OrderStatusIcons.cancelled,
-    color: getStatusTextColor('cancelled'),
+    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
     value: 0
   }
 ]

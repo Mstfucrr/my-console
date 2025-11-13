@@ -1,12 +1,5 @@
 import { mockReconciliationData } from '../data/mock-data'
-import type { ReconciliationRecord, ReconciliationStats } from '../types'
-
-export interface ReconciliationFilterProperties {
-  status: string
-  search: string
-  dateFrom?: string
-  dateTo?: string
-}
+import type { ReconciliationFilterProperties, ReconciliationRecord, ReconciliationStats } from '../types'
 
 export const reconciliationService = {
   async getReconciliationData(filters?: ReconciliationFilterProperties): Promise<ReconciliationRecord[]> {
@@ -15,26 +8,9 @@ export const reconciliationService = {
 
     let filteredData = [...mockReconciliationData]
 
-    // Apply search filter
-    if (filters?.search) {
-      const search = filters.search.toLowerCase()
-      filteredData = filteredData.filter(
-        item => item.id.toLowerCase().includes(search) || item.period.toLowerCase().includes(search)
-      )
-    }
-
     // Apply status filter
     if (filters?.status && filters.status !== 'all') {
       filteredData = filteredData.filter(item => item.status === filters.status)
-    }
-
-    // Apply date range filters
-    if (filters?.dateFrom) {
-      filteredData = filteredData.filter(item => item.period >= filters.dateFrom!)
-    }
-
-    if (filters?.dateTo) {
-      filteredData = filteredData.filter(item => item.period <= filters.dateTo!)
     }
 
     return filteredData

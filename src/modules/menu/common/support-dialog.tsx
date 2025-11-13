@@ -10,7 +10,7 @@ export function SupportDialog() {
       <PopoverTrigger asChild>
         <Button
           size='icon'
-          className='bg-primary/90 hover:bg-primary relative size-10 text-white shadow-lg'
+          className='bg-primary/90 hover:bg-primary relative text-white shadow-lg'
           title='Destek Ekibine Mail Gönder'
         >
           <MessageCircle className='size-6' />

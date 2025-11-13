@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { FilterCard, SearchInput, type FilterOption } from '@/components/ui/filter-card'
-import { getStatusColor } from '@/constants'
+import { ORDER_STATUS_COLORS } from '@/constants'
 import { OrderStatus, OrderStatusLabel } from '@/modules/types'
 import { Filter, Search } from 'lucide-react'
 import { useOrders } from '../../context/OrdersContext'
@@ -19,22 +19,22 @@ const statusConfig = [
   {
     status: 'created' as OrderStatus,
     label: OrderStatusLabel.created,
-    color: getStatusColor('created')
+    color: ORDER_STATUS_COLORS['created']
   },
   {
     status: 'shipped' as OrderStatus,
     label: OrderStatusLabel.shipped,
-    color: getStatusColor('shipped')
+    color: ORDER_STATUS_COLORS['shipped']
   },
   {
     status: 'delivered' as OrderStatus,
     label: OrderStatusLabel.delivered,
-    color: getStatusColor('delivered')
+    color: ORDER_STATUS_COLORS['delivered']
   },
   {
     status: 'cancelled' as OrderStatus,
     label: OrderStatusLabel.cancelled,
-    color: getStatusColor('cancelled')
+    color: ORDER_STATUS_COLORS['cancelled']
   }
 ]
 

@@ -5,14 +5,20 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { FormSwitchField } from '@/components/form/FormSwitchField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { addressData } from '@/modules/citiesData'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ShoppingCart } from 'lucide-react'
+import { Plus, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -66,9 +72,8 @@ const createOrderSchema = z.object({
 type CreateOrderFormData = z.infer<typeof createOrderSchema>
 
 interface CreateOrderModalProps {
-  visible: boolean
-  onClose: () => void
   onSuccess: () => void
+  trigger?: React.ReactNode
 }
 
 const paymentMethods = [
@@ -77,7 +82,7 @@ const paymentMethods = [
   { value: 'online', label: 'Online Ödeme' }
 ]
 
-export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderModalProps) {
+export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCity, setSelectedCity] = useState<string>('')
   const [selectedDistrict, setSelectedDistrict] = useState<string>('')
@@ -162,7 +167,6 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
 
       toast.success('Sipariş başarıyla oluşturuldu!')
       onSuccess()
-      onClose()
       form.reset()
       // Reset address state
       setSelectedCity('')
@@ -184,11 +188,20 @@ export function CreateOrderModal({ visible, onClose, onSuccess }: CreateOrderMod
     setSelectedDistrict('')
     setAvailableDistricts([])
     setAvailableNeighborhoods([])
-    onClose()
   }
 
   return (
-    <AlertDialog open={visible} onOpenChange={handleClose}>
+    <AlertDialog>
+      <AlertDialogTrigger asChild={trigger ? true : false}>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button color='success' size='xs' className='flex items-center gap-2'>
+            <Plus className='h-4 w-4' />
+            Yeni Sipariş Oluştur
+          </Button>
+        )}
+      </AlertDialogTrigger>
       <AlertDialogContent className='p-1' size='4xl'>
         <AlertDialogHeader className='p-6 pb-0'>
           <AlertDialogTitle className='flex items-center gap-2'>

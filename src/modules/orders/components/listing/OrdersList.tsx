@@ -32,6 +32,11 @@ export function OrdersList({
 
   const columns: ColumnDef<Order>[] = [
     {
+      accessorKey: 'createdAt',
+      header: 'Oluşturulma Tarihi',
+      cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+    },
+    {
       accessorKey: 'customerName',
       header: 'Müşteri',
       cell: ({ row }) => <div className='font-medium'>{row.getValue('customerName')}</div>
@@ -57,17 +62,15 @@ export function OrdersList({
     {
       accessorKey: 'paymentMethod',
       header: 'Ödeme Yöntemi',
+      size: 100,
       cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
     },
     {
       accessorKey: 'totalAmount',
-      header: 'Tutar',
-      cell: ({ row }) => <div className='text-warning font-bold'>{formatCurrency(row.getValue('totalAmount'))}</div>
-    },
-    {
-      accessorKey: 'createdAt',
-      header: 'Oluşturulma Tarihi',
-      cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+      header: 'Tutar (₺)',
+      cell: ({ row }) => (
+        <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
+      )
     }
   ]
 
@@ -109,6 +112,7 @@ export function OrdersList({
       emptyLabel={statusFilter ? filteredEmptyMessage : emptyMessage}
       loadingLabel='Siparişler yükleniyor...'
       onRowClick={order => handleViewDetails(order)}
+      enableColumnVisibility={false}
     />
   )
 }

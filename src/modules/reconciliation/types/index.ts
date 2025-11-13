@@ -28,3 +28,9 @@ export interface ReconciliationStats {
   platformFees: number
   netRevenue: number
 }
+
+export interface ReconciliationFilterProperties {
+  status: 'all' | 'approved' | 'pending' | 'failed'
+  month?: string
+  year?: string
+}
