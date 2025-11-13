@@ -7,6 +7,7 @@ import { FormSwitchField } from '@/components/form/FormSwitchField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -191,8 +192,8 @@ export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) 
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild={trigger ? true : false}>
+    <AlertDialog onOpenChange={handleClose}>
+      <AlertDialogTrigger asChild>
         {trigger ? (
           trigger
         ) : (
@@ -407,9 +408,9 @@ export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) 
 
               {/* Form Butonları */}
               <div className='flex justify-end gap-3'>
-                <Button type='button' variant='outline' onClick={handleClose}>
+                <AlertDialogCancel color='default' variant='outline'>
                   İptal
-                </Button>
+                </AlertDialogCancel>
                 <Button type='submit' disabled={isSubmitting} className='min-w-[120px]'>
                   {isSubmitting ? 'Oluşturuluyor...' : 'Siparişi Oluştur'}
                 </Button>
