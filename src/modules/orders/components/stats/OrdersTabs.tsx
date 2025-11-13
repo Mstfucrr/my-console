@@ -80,39 +80,37 @@ export function OrdersTabs() {
     <Card>
       <CardHeader>
         <div className='flex flex-col gap-4'>
-          <div className='flex items-center justify-between'>
+          <div className='flex flex-wrap items-center justify-between gap-2'>
             {/* Yeni Sipariş Oluştur Modalı */}
 
             <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
 
-            <div className='flex flex-row items-center gap-2'>
-              <div className='flex items-center gap-2'>
-                <RefreshButton
-                  onClick={refreshAllData}
-                  isIconButton
-                  isLoading={isFetchingActive || isFetchingCompleted}
-                />
-                <ButtonGroup>
-                  {viewModeButtons.map(({ label, Icon, value }) => (
-                    <Button
-                      key={value}
-                      variant={viewMode === value ? null : 'soft'}
-                      size='xs'
-                      title={label}
-                      onClick={() => setViewMode(value)}
-                    >
-                      <Icon className='size-4' />
-                      <span className='sr-only'>{label}</span>
-                    </Button>
-                  ))}
-                </ButtonGroup>
-                <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-                  {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-                  <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-                </Button>
+            <div className='flex flex-wrap items-center gap-2'>
+              <RefreshButton
+                onClick={refreshAllData}
+                isIconButton
+                isLoading={isFetchingActive || isFetchingCompleted}
+              />
+              <ButtonGroup>
+                {viewModeButtons.map(({ label, Icon, value }) => (
+                  <Button
+                    key={value}
+                    variant={viewMode === value ? null : 'soft'}
+                    size='xs'
+                    title={label}
+                    onClick={() => setViewMode(value)}
+                  >
+                    <Icon className='size-4' />
+                    <span className='sr-only'>{label}</span>
+                  </Button>
+                ))}
+              </ButtonGroup>
+              <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
+                {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
+                <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
+              </Button>
 
-                <CreateOrderModal onSuccess={onSuccess} />
-              </div>
+              <CreateOrderModal onSuccess={onSuccess} />
             </div>
           </div>
         </div>
