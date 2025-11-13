@@ -28,7 +28,7 @@ const viewModeButtons = [
   }
 ]
 
-export function OrdersTabs({ onSuccess }: { onSuccess: () => void }) {
+export function OrdersTabs() {
   const {
     activeTab,
     setActiveTab,
@@ -43,7 +43,8 @@ export function OrdersTabs({ onSuccess }: { onSuccess: () => void }) {
     handleCompletedPageChange,
     stats,
     statusFilter,
-    refreshAllData
+    refreshAllData,
+    handleCreateOrderSuccess: onSuccess
   } = useOrders()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(false)
@@ -81,9 +82,9 @@ export function OrdersTabs({ onSuccess }: { onSuccess: () => void }) {
         <div className='flex flex-col gap-4'>
           <div className='flex items-center justify-between'>
             {/* Yeni Sipariş Oluştur Modalı */}
-            <div className='flex flex-row items-center gap-2'>
-              <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
-            </div>
+
+            <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
+
             <div className='flex flex-row items-center gap-2'>
               <div className='flex items-center gap-2'>
                 <RefreshButton
@@ -96,7 +97,7 @@ export function OrdersTabs({ onSuccess }: { onSuccess: () => void }) {
                   <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
                 </Button>
               </div>
-              <div className='flex items-center gap-4'>
+              <div className='flex items-center gap-2'>
                 <ButtonGroup>
                   {viewModeButtons.map(({ label, Icon, value }) => (
                     <Button

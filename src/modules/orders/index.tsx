@@ -7,33 +7,17 @@ import { OrdersTabs } from './components/stats/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
-  const {
-    // State
-    selectedOrder,
-    isModalVisible,
-    // Error
-    error,
-
-    // Event handlers
-    handleCloseModal,
-    handleCreateOrderSuccess,
-    refreshAllData
-  } = useOrders()
+  const { error, refreshAllData } = useOrders()
 
   if (error) return <PageError errorMessage='Sipariş verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
 
-  // Filter orders based on search and status
-
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
-      {/* İstatistik Kartları */}
       <OrdersStats />
 
-      {/* Sipariş Tab'ları */}
-      <OrdersTabs onSuccess={handleCreateOrderSuccess} />
+      <OrdersTabs />
 
-      {/* Sipariş Detay Modalı */}
-      <OrderDetailDialog order={selectedOrder} open={isModalVisible} onClose={handleCloseModal} />
+      <OrderDetailDialog />
     </div>
   )
 }

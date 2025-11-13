@@ -8,24 +8,24 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { maskPhone } from '@/lib/utils'
-import type { Order } from '@/modules/types'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
+import { useOrders } from '../../context/OrdersContext'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 
 const CourierMap = dynamic(() => import('../courier/CourierMap'), { ssr: false })
 
-interface OrderDetailDialogProps {
-  order: Order | null
-  open: boolean
-  onClose: () => void
-}
-
-export function OrderDetailDialog({ order, open, onClose }: OrderDetailDialogProps) {
+export function OrderDetailDialog() {
   const [openMap, setOpenMap] = useState(false)
+  const {
+    // State
+    selectedOrder: order,
+    isModalVisible: open,
+    handleCloseModal: onClose
+  } = useOrders()
 
   const handleToggleMap = () => setOpenMap(prev => !prev)
 

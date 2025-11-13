@@ -73,13 +73,15 @@ interface TabsWithListProps<TValue extends string = string> {
   onValueChange: (value: TValue) => void
   items: { value: TValue; label: React.ReactNode; Icon?: LucideIcon; disabled?: boolean }[]
   className?: string
+  triggerProps?: React.ComponentPropsWithoutRef<typeof TabsTrigger>
 }
 
 const TabsWithList = <TValue extends string = string>({
   activeTab,
   onValueChange,
   items,
-  className
+  className,
+  triggerProps
 }: TabsWithListProps<TValue>) => {
   const handleValueChange = (value: string) => onValueChange(value as TValue)
 
@@ -90,7 +92,13 @@ const TabsWithList = <TValue extends string = string>({
           const Icon = item.Icon
           const label = item.label
           return (
-            <TabsTrigger className='gap-2' key={item.value} value={item.value} disabled={item.disabled}>
+            <TabsTrigger
+              className='gap-2'
+              key={item.value}
+              value={item.value}
+              disabled={item.disabled}
+              {...triggerProps}
+            >
               {Icon && <Icon className='size-4' />}
               {label}
             </TabsTrigger>

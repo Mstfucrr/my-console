@@ -196,7 +196,7 @@ export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) 
         {trigger ? (
           trigger
         ) : (
-          <Button color='success' size='sm'>
+          <Button color='success' size='xs' className='flex items-center gap-2'>
             <Plus className='h-4 w-4' />
             Yeni Sipariş Oluştur
           </Button>
