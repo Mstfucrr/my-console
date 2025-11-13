@@ -30,7 +30,7 @@ interface PaymentMethodBadgeProps {
   className?: string
 }
 
-export function PaymentMethodBadge({ paymentMethod, showIcon = true, className }: PaymentMethodBadgeProps) {
+export function PaymentMethodBadge({ paymentMethod, showIcon = false, className }: PaymentMethodBadgeProps) {
   return (
     <Badge
       className={cn(
