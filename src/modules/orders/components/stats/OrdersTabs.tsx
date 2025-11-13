@@ -13,7 +13,6 @@ import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
 import { useOrders } from '../../context/OrdersContext'
 import { CreateOrderModal } from '../actions/CreateOrderModal'
 import { OrderFilters } from '../filters/OrderFilters'
-import { OrdersFilterAlert } from '../filters/OrdersFilterAlert'
 import { OrdersList } from '../listing/OrdersList'
 
 const viewModeButtons = [
@@ -97,7 +96,7 @@ export function OrdersTabs() {
                   {viewModeButtons.map(({ label, Icon, value }) => (
                     <Button
                       key={value}
-                      variant={viewMode === value ? null : 'outline'}
+                      variant={viewMode === value ? null : 'soft'}
                       size='xs'
                       title={label}
                       onClick={() => setViewMode(value)}
@@ -124,7 +123,6 @@ export function OrdersTabs() {
         </AnimatedFilters>
         {activeTab === 'active' ? (
           <div className='space-y-4'>
-            <OrdersFilterAlert />
             <OrdersList
               orders={activeOrders}
               isLoading={isLoadingActive}
@@ -136,7 +134,6 @@ export function OrdersTabs() {
           </div>
         ) : (
           <div className='space-y-4'>
-            <OrdersFilterAlert />
             <OrdersList
               orders={completedOrders}
               isLoading={isLoadingCompleted}
