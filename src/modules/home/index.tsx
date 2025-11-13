@@ -17,7 +17,7 @@ import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
-import { ORDER_STATUS_BG_COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
+import { ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -36,7 +36,6 @@ type StatsList = {
   id: keyof DashboardStats
   Icon: LucideIcon
   color: string
-  bgColor: string
   type?: 'currency'
 }
 
@@ -45,36 +44,31 @@ const statsList: Array<StatsList> = [
     title: 'Toplam Sipariş',
     id: 'todayOrders',
     Icon: StatCardIcons.TotalOrders,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50'
+    color: 'text-blue-600'
   },
   {
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
     Icon: OrderStatusIcons.delivered,
-    color: ORDER_STATUS_TEXT_COLORS['delivered'],
-    bgColor: ORDER_STATUS_BG_COLORS['delivered']
+    color: ORDER_STATUS_TEXT_COLORS['delivered']
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
     Icon: OrderStatusIcons.shipped,
-    color: ORDER_STATUS_TEXT_COLORS['shipped'],
-    bgColor: ORDER_STATUS_BG_COLORS['shipped']
+    color: ORDER_STATUS_TEXT_COLORS['shipped']
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
     Icon: OrderStatusIcons.cancelled,
-    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
-    bgColor: ORDER_STATUS_BG_COLORS['cancelled']
+    color: ORDER_STATUS_TEXT_COLORS['cancelled']
   },
   {
     title: 'Toplam Ciro',
     id: 'totalRevenue',
     Icon: StatCardIcons.TotalRevenue,
     color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
     type: 'currency'
   },
   {
@@ -82,7 +76,6 @@ const statsList: Array<StatsList> = [
     id: 'pendingPayments',
     Icon: StatCardIcons.PendingPayments,
     color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50',
     type: 'currency'
   }
 ]

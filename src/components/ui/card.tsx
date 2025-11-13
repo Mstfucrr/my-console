@@ -3,7 +3,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('card bg-card text-card-foreground r rounded-md border shadow-sm', className)} {...props} />
+  <div className={cn('card bg-card text-card-foreground rounded-md border shadow-sm', className)} {...props} />
 )
 Card.displayName = 'Card'
 

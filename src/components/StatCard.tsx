@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/modules/orders/utils'
 import type { LucideIcon } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
@@ -13,13 +14,25 @@ export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   type?: 'number' | 'currency'
 }
 
-export default function StatCard({ title, value, Icon, color, type = 'number', isLoading, ...props }: StatCardProps) {
+export default function StatCard({
+  title,
+  value,
+  Icon,
+  color,
+  type = 'number',
+  isLoading,
+  className,
+  ...props
+}: StatCardProps) {
   if (isLoading) return <Skeleton className='h-24 w-full' />
 
   return (
     <Card
       {...props}
-      className='border-border/50 hover:border-border/80 rounded-lg border p-4 transition-colors duration-200'
+      className={cn(
+        'border-border/50 hover:border-border/80 rounded-lg border p-4 transition-colors duration-200',
+        className
+      )}
     >
       <CardContent className='flex items-start justify-between gap-4 p-0'>
         <div>

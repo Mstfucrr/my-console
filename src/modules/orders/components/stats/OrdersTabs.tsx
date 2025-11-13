@@ -1,5 +1,6 @@
 'use client'
 
+import { AnimatedFilters } from '@/components/animated-filters'
 import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
@@ -92,12 +93,6 @@ export function OrdersTabs() {
                   isIconButton
                   isLoading={isFetchingActive || isFetchingCompleted}
                 />
-                <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-                  {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-                  <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-                </Button>
-              </div>
-              <div className='flex items-center gap-2'>
                 <ButtonGroup>
                   {viewModeButtons.map(({ label, Icon, value }) => (
                     <Button
@@ -112,6 +107,11 @@ export function OrdersTabs() {
                     </Button>
                   ))}
                 </ButtonGroup>
+                <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
+                  {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
+                  <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
+                </Button>
+
                 <CreateOrderModal onSuccess={onSuccess} />
               </div>
             </div>
@@ -119,7 +119,9 @@ export function OrdersTabs() {
         </div>
       </CardHeader>
       <CardContent className='flex flex-col gap-4'>
-        {showFilters && <OrderFilters />}
+        <AnimatedFilters isOpen={showFilters}>
+          <OrderFilters />
+        </AnimatedFilters>
         {activeTab === 'active' ? (
           <div className='space-y-4'>
             <OrdersFilterAlert />

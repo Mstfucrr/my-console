@@ -2,7 +2,7 @@ import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { X } from 'lucide-react'
 import * as React from 'react'
 
-import { buttonVariants } from '@/components/ui/button'
+import { ButtonProps, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const AlertDialog = AlertDialogPrimitive.Root
@@ -104,8 +104,8 @@ const AlertDialogAction = ({ className, color = 'success', variant, ...props }: 
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 interface AlertDialogCancelProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
-  color?: 'default' | 'primary' | 'secondary' | 'warning' | 'destructive' | 'success' | 'info'
-  variant?: 'outline' | 'soft' | 'ghost' | 'link'
+  color?: ButtonProps['color']
+  variant?: ButtonProps['variant']
 }
 
 const AlertDialogCancel = ({ className, variant, color = 'destructive', ...props }: AlertDialogCancelProps) => (
