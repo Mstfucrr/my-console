@@ -62,6 +62,7 @@ export function OrdersList({
     {
       accessorKey: 'paymentMethod',
       header: 'Ödeme Yöntemi',
+      size: 100,
       cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
     },
     {

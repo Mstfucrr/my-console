@@ -112,12 +112,8 @@ export function OrdersTabs() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className='pt-0'>
-        {showFilters && (
-          <div className='mb-4'>
-            <OrderFilters />
-          </div>
-        )}
+      <CardContent className='flex flex-col gap-4'>
+        {showFilters && <OrderFilters />}
         {activeTab === 'active' ? (
           <div className='space-y-4'>
             <OrdersFilterAlert />

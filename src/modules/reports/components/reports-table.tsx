@@ -66,17 +66,20 @@ export default function ReportsTable({
     {
       accessorKey: 'totalAmount',
       header: 'Toplam Tutar',
+      meta: { align: 'right' },
       cell: ({ row }) => formatCurrency(row.getValue('totalAmount'))
     },
     {
       accessorKey: 'platformFee',
       header: 'Platform Komisyonu',
+      meta: { align: 'right' },
       cell: ({ row }) => formatCurrency(row.getValue('platformFee'))
     },
     {
       accessorKey: 'netAmount',
       header: 'Net Tutar',
-      cell: ({ row }) => <div className='font-medium text-green-600'>{formatCurrency(row.getValue('netAmount'))}</div>
+      meta: { align: 'right' },
+      cell: ({ row }) => <div className='font-medium'>{formatCurrency(row.getValue('netAmount'))}</div>
     },
     {
       accessorKey: 'status',
@@ -102,7 +105,7 @@ export default function ReportsTable({
         const address = row.getValue('deliveryAddress') as string
         return (
           <div className='max-w-[200px] truncate text-sm text-gray-600' title={address}>
-            {address}
+            {address.length > 20 ? address.slice(0, 20) + '...' : address}
           </div>
         )
       }

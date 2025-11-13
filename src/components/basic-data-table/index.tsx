@@ -270,7 +270,14 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id} className='text-left'>
+                  <TableHead
+                    key={header.id}
+                    style={{ width: header.getSize() }}
+                    className={cn(
+                      'text-left',
+                      (header.column.columnDef.meta as { align?: 'right' | 'left' })?.align === 'right' && 'text-right'
+                    )}
+                  >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
@@ -297,7 +304,14 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
                   onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell
+                      className={cn(
+                        (cell.column.columnDef.meta as { align?: 'right' | 'left' })?.align === 'right' && 'text-right'
+                      )}
+                      key={cell.id}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))

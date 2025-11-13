@@ -17,7 +17,7 @@ import { DashboardDonut } from './components/DonutChart'
 import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
-import { getStatusBgColor, getStatusColor, getStatusTextColor } from '@/constants'
+import { ORDER_STATUS_BG_COLORS, ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
@@ -52,22 +52,22 @@ const statsList: Array<StatsList> = [
     title: 'Teslim Edildi',
     id: 'deliveredOrders',
     Icon: OrderStatusIcons.delivered,
-    color: getStatusTextColor('delivered'),
-    bgColor: getStatusBgColor('delivered')
+    color: ORDER_STATUS_TEXT_COLORS['delivered'],
+    bgColor: ORDER_STATUS_BG_COLORS['delivered']
   },
   {
     title: 'Yola Çıktı',
     id: 'onWayOrders',
     Icon: OrderStatusIcons.shipped,
-    color: getStatusTextColor('shipped'),
-    bgColor: getStatusBgColor('shipped')
+    color: ORDER_STATUS_TEXT_COLORS['shipped'],
+    bgColor: ORDER_STATUS_BG_COLORS['shipped']
   },
   {
     title: 'İptal Edildi',
     id: 'cancelledOrders',
     Icon: OrderStatusIcons.cancelled,
-    color: getStatusTextColor('cancelled'),
-    bgColor: getStatusBgColor('cancelled')
+    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
+    bgColor: ORDER_STATUS_BG_COLORS['cancelled']
   },
   {
     title: 'Toplam Ciro',
@@ -222,7 +222,10 @@ export default function DashboardView() {
                       <div className='mb-1 flex items-center gap-2'>
                         <span className='font-medium'>#{order.id}</span>
                         <span
-                          className={cn('rounded-full px-2 py-1 text-xs font-medium', getStatusColor(order.status))}
+                          className={cn(
+                            'rounded-full px-2 py-1 text-xs font-medium',
+                            ORDER_STATUS_COLORS[order.status]
+                          )}
                         >
                           {OrderStatusLabel[order.status]}
                         </span>

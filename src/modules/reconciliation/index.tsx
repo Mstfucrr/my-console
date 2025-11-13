@@ -3,21 +3,20 @@
 import PageError from '@/components/page-error'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { type ReconciliationFilterProperties } from './components/reconciliation-filters'
 import ReconciliationInfoAlert from './components/reconciliation-info-alert'
 import ReconciliationStats from './components/reconciliation-stats'
 import ReconciliationTable from './components/reconciliation-table'
 import { reconciliationService } from './service'
+import type { ReconciliationFilterProperties } from './types'
 
-const defaultFilters: ReconciliationFilterProperties = {
+export const defaultReconciliationFilters: ReconciliationFilterProperties = {
   status: 'all',
-  search: '',
-  dateFrom: undefined,
-  dateTo: undefined
+  month: undefined,
+  year: undefined
 }
 
 export default function ReconciliationView() {
-  const [filters, setFilters] = useState<ReconciliationFilterProperties>(defaultFilters)
+  const [filters, setFilters] = useState<ReconciliationFilterProperties>(defaultReconciliationFilters)
 
   // Fetch reconciliation data with filters
   const {
@@ -49,7 +48,7 @@ export default function ReconciliationView() {
   }
 
   const handleClearFilters = () => {
-    setFilters(defaultFilters)
+    setFilters(defaultReconciliationFilters)
   }
 
   const refreshAllData = () => {

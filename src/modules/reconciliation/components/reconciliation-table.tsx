@@ -7,8 +7,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Filter, FilterX } from 'lucide-react'
 import { useState } from 'react'
-import { ReconciliationFilterProperties } from '../service'
-import type { ReconciliationRecord } from '../types'
+import type { ReconciliationFilterProperties, ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
 import { ReconciliationFilters } from './reconciliation-filters'
 
@@ -49,31 +48,38 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     accessorKey: 'totalOrderAmount',
     header: 'Toplam Sipariş Tutarı (₺)',
+    meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.getValue('totalOrderAmount'), false)
   },
   {
     accessorKey: 'distributionCount',
     header: 'Dağıtım Adedi',
+    meta: { align: 'right' },
     cell: ({ row }) => row.getValue('distributionCount')
   },
   {
     accessorKey: 'debtBalance',
     header: 'Borç Bakiye (₺)',
+    meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.getValue('debtBalance'), false)
   },
   {
     accessorKey: 'creditBalance',
     header: 'Alacak Bakiye (₺)',
+    meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.getValue('creditBalance'), false)
   },
   {
     accessorKey: 'netAmount',
     header: 'Net Tutar (₺)',
+    meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.getValue('netAmount'), false)
   },
   {
     accessorKey: 'status',
     header: 'Durum',
+    size: 20,
+    maxSize: 20,
     cell: ({ row }) => {
       const status = row.getValue('status') as string
       return (
@@ -128,7 +134,7 @@ export default function ReconciliationTable({
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className='flex flex-col gap-4'>
           {showFilters && (
             <ReconciliationFilters
               filters={filters}

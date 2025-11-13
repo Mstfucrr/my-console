@@ -3,7 +3,7 @@
 import CustomImage from '@/components/image'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { getStatusColor } from '@/constants'
+import { ORDER_STATUS_COLORS } from '@/constants'
 import { cn } from '@/lib/utils'
 import type { OrderChannel, OrderStatus } from '@/modules/types'
 import { OrderStatusLabel } from '@/modules/types'
@@ -18,7 +18,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, variant = 'outline', className }: StatusBadgeProps) {
   return (
-    <Badge className={cn(getStatusColor(status), 'shrink-0', className)} variant={variant}>
+    <Badge className={cn(ORDER_STATUS_COLORS[status], 'shrink-0', className)} variant={variant}>
       {OrderStatusLabel[status]}
     </Badge>
   )
