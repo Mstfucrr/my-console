@@ -1,5 +1,6 @@
 'use client'
 
+import { getToken, removeToken } from '@/lib/local-storage-helper'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, startTransition, useContext, useEffect, useState } from 'react'
 
@@ -14,16 +15,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
-    return !!localStorage.getItem('token')
+    return !!getToken().accessToken
   })
 
   const pathname = usePathname()
 
   // Check auth on pathname change
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const { accessToken } = getToken()
     startTransition(() => {
-      if (token) setIsAuthenticated(true)
+      if (accessToken) setIsAuthenticated(true)
       else {
         setIsAuthenticated(false)
         router.push('/login')
@@ -32,7 +33,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [pathname, router])
 
   const logout = () => {
-    localStorage.removeItem('token')
+    removeToken()
     setIsAuthenticated(false)
     router.push('/login')
   }

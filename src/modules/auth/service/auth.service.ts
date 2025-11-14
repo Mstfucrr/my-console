@@ -1,160 +1,93 @@
-export interface ILoginRequest {
-  accountId: string
-  identifier: string
-  password: string
-}
-
-export interface ILoginResponse {
-  otp: boolean
-  phoneNumber: string
-  installationId: string
-  redirectUrl: string
-  otpTimeout: number
-}
-
-export interface IVerifyOtpRequest {
-  phoneNumber: string
-  otp: string
-  installationId: string
-}
-
-export interface IVerifyOtpResponse {
-  isOtpValid: boolean
-  action_cookie: string
-}
-
-export interface ISetCookieRequest {
-  action_cookie: string
-}
-
-export interface ISignupRequest {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  companyName: string
-  city: string
-  address: string
-}
-
-export interface ISignupResponse {
-  cookie: string
-}
-
-export interface IForgotPasswordRequest {
-  email: string
-}
-
-export interface IForgotPasswordResponse {
-  success: boolean
-  message: string
-}
-
-export interface IResetPasswordRequest {
-  token: string
-  password: string
-}
-
-export interface IResetPasswordResponse {
-  success: boolean
-  message: string
-}
+import { setToken } from '@/lib/local-storage-helper'
+import type {
+  IConfirmCodeRequest,
+  IConfirmCodeResponse,
+  ILoginRequest,
+  ILoginResponse,
+  ILogoutRequest,
+  IPasswordRecoveryRequest,
+  IPasswordRecoveryResponse,
+  IRefreshTokenRequest,
+  IRefreshTokenResponse,
+  IVerifyOtpRequest,
+  IVerifyOtpResponse
+} from '@/modules/auth/types'
 
 class AuthService {
-  async getSigninCookie(): Promise<{ cookie: string }> {
-    console.log('getSigninCookie request')
-    const response = {
-      data: {
-        cookie: '1234567890'
-      }
-    }
-    console.log('getSigninCookie response', response)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    return response.data
-  }
-
   async login(request: ILoginRequest): Promise<ILoginResponse> {
+    // const { data } = await publicAxiosInstance.post<ILoginResponse>('/auth/login', request)
+    // return data
+    await new Promise(resolve => setTimeout(resolve, 1500))
     console.log('login request', request)
     const response = {
-      data: {
-        otp: true,
-        phoneNumber: '1234567890',
-        installationId: '1234567890',
-        redirectUrl: 'https://fiyuu.com',
-        otpTimeout: 60
-      }
+      accessToken: '1234567890',
+      userId: '1234567890',
+      accountId: '1234567890',
+      requiresOtp: true,
+      otpSessionId: '1234567890',
+      maskedPhoneNumber: '*** *** 1234'
     }
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    return response.data
+
+    if (response.requiresOtp) return response
+
+    setToken({ accessToken: response.accessToken, refreshToken: response.accessToken })
+
+    return response
   }
 
   async verifyOtp(request: IVerifyOtpRequest): Promise<IVerifyOtpResponse> {
+    // const { data } = await publicAxiosInstance.post<IVerifyOtpResponse>('/auth/otp-verify', {
+    //   otpSessionId: request.otpSessionId,
+    //   otpCode: request.otpCode
+    // })
+    // return data
     console.log('verifyOtp request', request)
-    const response = {
-      data: {
-        isOtpValid: request.otp === '123456' ? true : false,
-        action_cookie: '1234567890'
-      }
-    }
     await new Promise(resolve => setTimeout(resolve, 1500))
-    if (!response.data.isOtpValid) {
-      throw new Error('Invalid OTP')
+    if (request.otpCode !== '123456') throw new Error('Invalid OTP')
+    const response = {
+      accessToken: '1234567890',
+      userId: '1234567890',
+      accountId: '1234567890'
     }
 
-    return response.data
+    setToken({ accessToken: response.accessToken, refreshToken: response.accessToken })
+
+    return response
   }
 
-  async setCookie(request: ISetCookieRequest): Promise<{ cookie: string }> {
-    console.log('setCookie request', request)
-    const response = {
-      data: {
-        cookie: '1234567890'
-      }
-    }
-    localStorage.setItem('token', response.data.cookie)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    return response.data
+  async logout(request: ILogoutRequest): Promise<void> {
+    // await privateAxiosInstance.post('/auth/logout', request)
+    console.log('logout request', request)
+    return
   }
 
-  async signup(request: ISignupRequest): Promise<ISignupResponse> {
-    console.log('signup request', request)
-    const response = {
-      data: {
-        cookie: '1234567890',
-        otp: true,
-        phoneNumber: '1234567890',
-        installationId: '1234567890',
-        redirectUrl: 'https://fiyuu.com',
-        otpTimeout: 60
-      }
+  async refreshToken(request: IRefreshTokenRequest): Promise<IRefreshTokenResponse> {
+    // const { data } = await publicAxiosInstance.post<IRefreshTokenResponse>('/auth/refresh', request)
+    // return data
+    console.log('refreshToken request', request)
+    return {
+      accessToken: '1234567890',
+      refreshToken: '1234567890'
     }
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    return response.data
   }
 
-  async forgotPassword(request: IForgotPasswordRequest): Promise<IForgotPasswordResponse> {
-    console.log('forgotPassword request', request)
-    const response = {
-      data: {
-        success: true,
-        message: 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.'
-      }
+  async passwordRecovery(request: IPasswordRecoveryRequest): Promise<IPasswordRecoveryResponse> {
+    // const { data } = await publicAxiosInstance.post('/auth/password-recovery', request)
+    // return data
+    console.log('passwordRecovery request', request)
+    return {
+      recoverySessionId: '1234567890',
+      message: '1234567890'
     }
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    return response.data
   }
 
-  async resetPassword(request: IResetPasswordRequest): Promise<IResetPasswordResponse> {
-    console.log('resetPassword request', request)
-    const response = {
-      data: {
-        success: true,
-        message: 'Şifreniz başarıyla güncellendi.'
-      }
+  async confirmCode(request: IConfirmCodeRequest): Promise<IConfirmCodeResponse> {
+    // const { data } = await publicAxiosInstance.post('/auth/confirm-code', request)
+    // return data
+    console.log('confirmCode request', request)
+    return {
+      message: '1234567890'
     }
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    return response.data
   }
 }
 

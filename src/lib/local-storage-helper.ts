@@ -8,13 +8,15 @@ export function getItem(key: string) {
   return ''
 }
 
+const TOKEN_KEY = 'token'
+
 interface TokenType {
   accessToken: string
   refreshToken: string
 }
 
 export function getToken(): TokenType {
-  const user = localStorage.getItem('user')
+  const user = localStorage.getItem(TOKEN_KEY)
   if (user) {
     const userData: TokenType = JSON.parse(user)
 
@@ -22,6 +24,14 @@ export function getToken(): TokenType {
   }
 
   throw new Error('Token not found')
+}
+
+export function setToken(token: TokenType) {
+  localStorage.setItem(TOKEN_KEY, JSON.stringify(token))
+}
+
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY)
 }
 
 export function getItemJson(key: string) {
