@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
-import { authService, ILoginRequest } from '../service/auth.service'
+import { authService } from '../service/auth.service'
+import { ILoginRequest, ILoginResponse } from '../types'
 
 const schema = z.object({
   accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
@@ -20,7 +21,7 @@ const schema = z.object({
 type LoginFormType = z.infer<typeof schema>
 
 interface LogInFormProps {
-  onOtpRequired?: () => void
+  onOtpRequired: (loginData: ILoginResponse) => void
 }
 
 const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
@@ -44,10 +45,11 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
 
   const onSubmit = async (data: LoginFormType) => {
     try {
-      const { otp } = await login(data)
-      if (otp) {
-        onOtpRequired?.()
-      } else {
+      const loginResponse = await login(data)
+
+      if (loginResponse.requiresOtp) return onOtpRequired(loginResponse)
+      else {
+        toast.success('Başarılıyla giriş yaptınız.')
         router.push('/')
       }
     } catch (error) {
