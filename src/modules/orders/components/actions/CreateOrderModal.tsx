@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -83,7 +83,7 @@ const paymentMethods = [
   { value: 'online', label: 'Online Ödeme' }
 ]
 
-export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) {
+export function CreateOrderModal({ onSuccess, trigger, ...buttonProps }: CreateOrderModalProps & ButtonProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedCity, setSelectedCity] = useState<string>('')
   const [selectedDistrict, setSelectedDistrict] = useState<string>('')
@@ -197,7 +197,7 @@ export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) 
         {trigger ? (
           trigger
         ) : (
-          <Button color='success' size='xs' className='flex items-center gap-2'>
+          <Button color='success' size='xs' className='flex items-center gap-2' {...buttonProps}>
             <Plus className='h-4 w-4' />
             Yeni Sipariş Oluştur
           </Button>

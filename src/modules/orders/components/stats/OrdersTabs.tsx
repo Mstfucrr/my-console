@@ -2,31 +2,15 @@
 
 import { AnimatedFilters } from '@/components/animated-filters'
 import { Pagination } from '@/components/pagination'
-import { Button } from '@/components/ui/button'
-import { ButtonGroup } from '@/components/ui/button-group'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { TabsWithList } from '@/components/ui/tabs'
-import { CheckCircle2, Filter, FilterX, Flame, LayoutGrid, LayoutList } from 'lucide-react'
+import { CheckCircle2, Flame } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
 import { useOrders } from '../../context/OrdersContext'
-import { CreateOrderModal } from '../actions/CreateOrderModal'
 import { OrderFilters } from '../filters/OrderFilters'
 import { OrdersList } from '../listing/OrdersList'
-
-const viewModeButtons = [
-  {
-    label: 'Kart Görünümü',
-    Icon: LayoutGrid,
-    value: 'card' as const
-  },
-  {
-    label: 'Liste Görünümü',
-    Icon: LayoutList,
-    value: 'list' as const
-  }
-]
+import { OrdersToolbar } from './OrdersToolbar'
 
 export function OrdersTabs() {
   const {
@@ -42,9 +26,7 @@ export function OrdersTabs() {
     isFetchingCompleted,
     handleCompletedPageChange,
     stats,
-    statusFilter,
-    refreshAllData,
-    handleCreateOrderSuccess: onSuccess
+    statusFilter
   } = useOrders()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(false)
@@ -85,33 +67,12 @@ export function OrdersTabs() {
 
             <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
 
-            <div className='flex flex-wrap items-center gap-2'>
-              <RefreshButton
-                onClick={refreshAllData}
-                isIconButton
-                isLoading={isFetchingActive || isFetchingCompleted}
-              />
-              <ButtonGroup>
-                {viewModeButtons.map(({ label, Icon, value }) => (
-                  <Button
-                    key={value}
-                    variant={viewMode === value ? null : 'soft'}
-                    size='xs'
-                    title={label}
-                    onClick={() => setViewMode(value)}
-                  >
-                    <Icon className='size-4' />
-                    <span className='sr-only'>{label}</span>
-                  </Button>
-                ))}
-              </ButtonGroup>
-              <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-                {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-                <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-              </Button>
-
-              <CreateOrderModal onSuccess={onSuccess} />
-            </div>
+            <OrdersToolbar
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              showFilters={showFilters}
+              onToggleFilters={() => setShowFilters(!showFilters)}
+            />
           </div>
         </div>
       </CardHeader>
