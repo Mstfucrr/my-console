@@ -1,3 +1,4 @@
+import { publicAxiosInstance } from '@/lib/axios'
 import { setToken } from '@/lib/local-storage-helper'
 import type {
   IConfirmCodeRequest,
@@ -15,8 +16,9 @@ import type {
 
 class AuthService {
   async login(request: ILoginRequest): Promise<ILoginResponse> {
-    // const { data } = await publicAxiosInstance.post<ILoginResponse>('/auth/login', request)
-    // return data
+    const { data } = await publicAxiosInstance.post<ILoginResponse>('/auth/login', request)
+    console.log('login response', data)
+    return data
     await new Promise(resolve => setTimeout(resolve, 1500))
     console.log('login request', request)
     const response = {

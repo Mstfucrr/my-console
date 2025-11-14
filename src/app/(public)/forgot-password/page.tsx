@@ -5,7 +5,6 @@ import { authService } from '@/modules/auth/service/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Mail, User } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -21,7 +20,6 @@ type ForgotPasswordFormType = z.infer<typeof schema>
 const ForgotPasswordForm = () => {
   const [isEmailSent, setIsEmailSent] = useState(false)
   const [recoverySessionId, setRecoverySessionId] = useState<string | null>(null)
-  const router = useRouter()
 
   const form = useForm<ForgotPasswordFormType>({
     resolver: zodResolver(schema),
