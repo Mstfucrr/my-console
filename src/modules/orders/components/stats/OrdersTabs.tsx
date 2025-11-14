@@ -81,16 +81,14 @@ export function OrdersTabs() {
           <OrderFilters />
         </AnimatedFilters>
         {activeTab === 'active' ? (
-          <div className='space-y-4'>
-            <OrdersList
-              orders={activeOrders}
-              isLoading={isLoadingActive}
-              isFetching={isFetchingActive}
-              viewMode={viewMode}
-              emptyMessage='Aktif sipariş yok'
-              filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
-            />
-          </div>
+          <OrdersList
+            orders={activeOrders}
+            isLoading={isLoadingActive}
+            isFetching={isFetchingActive}
+            viewMode={viewMode}
+            emptyMessage='Aktif sipariş yok'
+            filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
+          />
         ) : (
           <div className='space-y-4'>
             <OrdersList
