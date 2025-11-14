@@ -42,7 +42,7 @@ interface MaskedTextProps {
 }
 
 /**
- * Generic component for displaying masked text with toggle visibility
+ * Generic component for displaying masked text with hold-to-show visibility
  */
 export function MaskedText({
   value,
@@ -56,11 +56,11 @@ export function MaskedText({
 }: MaskedTextProps) {
   const [isMasked, setIsMasked] = useState(defaultMasked)
 
-  const displayValue = isMasked ? maskFn(value) : value
+  // Hold-to-show handlers
+  const showUnmasked = () => setIsMasked(false)
+  const hideMasked = () => setIsMasked(true)
 
-  const toggleMask = () => {
-    setIsMasked(prev => !prev)
-  }
+  const displayValue = isMasked ? maskFn(value) : value
 
   const content =
     asLink && href ? (
@@ -77,10 +77,14 @@ export function MaskedText({
       <Button
         size={buttonSize}
         variant='ghost'
-        onClick={toggleMask}
         className='h-6 w-6 p-0'
         aria-label={isMasked ? 'Göster' : 'Gizle'}
         type='button'
+        onMouseDown={showUnmasked}
+        onTouchStart={showUnmasked}
+        onMouseUp={hideMasked}
+        onTouchEnd={hideMasked}
+        tabIndex={0}
       >
         {isMasked ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
       </Button>

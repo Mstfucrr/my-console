@@ -7,7 +7,7 @@ import { MaskedText } from '@/components/ui/masked-text'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { maskPhone } from '@/lib/utils'
+import { maskLastName, maskPhone } from '@/lib/utils'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
@@ -124,7 +124,12 @@ export function OrderDetailDialog() {
                 <CardContent className='space-y-4'>
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm'>Ad Soyad</span>
-                    <span className='text-sm'>{order.customerName}</span>
+                    <MaskedText
+                      value={order.customerName}
+                      maskFn={maskLastName}
+                      defaultMasked={true}
+                      textClassName='text-sm'
+                    />
                   </div>
 
                   <Separator />

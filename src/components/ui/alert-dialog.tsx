@@ -109,10 +109,7 @@ interface AlertDialogCancelProps extends React.ComponentPropsWithoutRef<typeof A
 }
 
 const AlertDialogCancel = ({ className, variant, color = 'destructive', ...props }: AlertDialogCancelProps) => (
-  <AlertDialogPrimitive.Cancel
-    className={cn(buttonVariants({ color, variant }), 'mt-2 sm:mt-0', className)}
-    {...props}
-  />
+  <AlertDialogPrimitive.Cancel className={cn(buttonVariants({ color, variant }), className)} {...props} />
 )
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 

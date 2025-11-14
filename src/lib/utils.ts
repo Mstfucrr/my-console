@@ -79,3 +79,16 @@ export function maskPhone(phone: string): string {
     preserveNonDigits: true
   })
 }
+
+export function maskLastName(fullName: string): string {
+  if (!fullName) return fullName
+  const [firstName, ...rest] = fullName.split(' ')
+  if (rest.length === 0) return firstName
+  const lastName = rest.join(' ')
+  return `${firstName} ${maskString(lastName, {
+    visibleStart: 1,
+    visibleEnd: 1,
+    maskChar: '*',
+    preserveNonDigits: false
+  })}`
+}

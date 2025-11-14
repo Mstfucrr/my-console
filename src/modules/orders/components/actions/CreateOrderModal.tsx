@@ -407,7 +407,7 @@ export function CreateOrderModal({ onSuccess, trigger }: CreateOrderModalProps) 
               </div>
 
               {/* Form Butonları */}
-              <div className='flex justify-end gap-3'>
+              <div className='flex items-center justify-end gap-3'>
                 <AlertDialogCancel color='default' variant='outline'>
                   İptal
                 </AlertDialogCancel>
