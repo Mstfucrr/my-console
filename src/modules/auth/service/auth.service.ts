@@ -18,23 +18,23 @@ class AuthService {
   async login(request: ILoginRequest): Promise<ILoginResponse> {
     const { data } = await publicAxiosInstance.post<ILoginResponse>('/auth/login', request)
     console.log('login response', data)
+    // return data
+    // await new Promise(resolve => setTimeout(resolve, 1500))
+    // console.log('login request', request)
+    // const response = {
+    //   accessToken: '1234567890',
+    //   userId: '1234567890',
+    //   accountId: '1234567890',
+    //   requiresOtp: true,
+    //   otpSessionId: '1234567890',
+    //   maskedPhoneNumber: '*** *** 1234'
+    // }
+
+    if (data.requiresOtp) return data
+
+    setToken({ accessToken: data.accessToken, refreshToken: data.accessToken })
+
     return data
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    console.log('login request', request)
-    const response = {
-      accessToken: '1234567890',
-      userId: '1234567890',
-      accountId: '1234567890',
-      requiresOtp: true,
-      otpSessionId: '1234567890',
-      maskedPhoneNumber: '*** *** 1234'
-    }
-
-    if (response.requiresOtp) return response
-
-    setToken({ accessToken: response.accessToken, refreshToken: response.accessToken })
-
-    return response
   }
 
   async verifyOtp(request: IVerifyOtpRequest): Promise<IVerifyOtpResponse> {

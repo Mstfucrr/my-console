@@ -33,9 +33,9 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
-      accountId: 'fiyuu',
-      identifier: 'efsane@fiyuu.com.tr',
-      password: '11111-222224!'
+      accountId: '9742949',
+      identifier: 'systemsupport@fiyuu.com.tr',
+      password: '12345.Ae'
     }
   })
 
@@ -54,7 +54,7 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
       }
     } catch (error) {
       console.error('login error', error)
-      toast.error('Giriş bilgileri hatalı. Lütfen tekrar deneyiniz.')
+      toast.error('Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
   }
 

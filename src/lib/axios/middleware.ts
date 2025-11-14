@@ -33,9 +33,11 @@ export const authHeaderMiddleware: RequestMiddleware = config => {
   if (config.headers['Authorization']) return config
 
   try {
-    config.headers['Authorization'] = `Bearer ${getToken().accessToken}`
-  } catch {
-    // Token bulunamadı, auth error middleware tarafından işlenecek
+    const { accessToken } = getToken()
+    if (accessToken) config.headers['Authorization'] = `Bearer ${accessToken}`
+    else throw new Error('Token bulunamadı')
+  } catch (error) {
+    console.error('authHeaderMiddleware: Token bulunamadı', error)
   }
 
   return config

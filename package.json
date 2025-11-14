@@ -64,6 +64,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "axios-auth-refresh": "^3.3.6",
+    "dotenv": "^17.2.3",
     "env-cmd": "10.1.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.1",

@@ -11,8 +11,8 @@ export function getItem(key: string) {
 const TOKEN_KEY = 'token'
 
 interface TokenType {
-  accessToken: string
-  refreshToken: string
+  accessToken: string | null
+  refreshToken: string | null
 }
 
 export function getToken(): TokenType {
@@ -23,7 +23,7 @@ export function getToken(): TokenType {
     return userData
   }
 
-  throw new Error('Token not found')
+  return { accessToken: null, refreshToken: null }
 }
 
 export function setToken(token: TokenType) {
