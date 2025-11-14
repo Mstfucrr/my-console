@@ -34,20 +34,20 @@ export default function StatCard({
         className
       )}
     >
-      <CardContent className='flex items-start justify-between gap-4 p-0'>
-        <div>
-          <p className='text-muted-foreground mb-3 text-sm font-medium'>{title}</p>
-          <span className={`text-foreground text-xl font-semibold max-xl:text-lg`}>
-            {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
-          </span>
+      <CardContent className='flex h-full flex-col justify-between gap-2 p-0'>
+        <div className='flex justify-between gap-4'>
+          <p className='text-muted-foreground text-sm font-medium'>{title}</p>
+          <div className='opacity-30'>
+            {typeof Icon === 'string' ? (
+              <span className={`text-2xl ${color}`}>{Icon}</span>
+            ) : (
+              <Icon className={`size-7 ${color}`} />
+            )}
+          </div>
         </div>
-        <div className='opacity-30'>
-          {typeof Icon === 'string' ? (
-            <span className={`text-2xl ${color}`}>{Icon}</span>
-          ) : (
-            <Icon className={`size-7 ${color}`} />
-          )}
-        </div>
+        <span className={`text-foreground text-xl font-semibold max-xl:text-lg`}>
+          {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
+        </span>
       </CardContent>
     </Card>
   )
