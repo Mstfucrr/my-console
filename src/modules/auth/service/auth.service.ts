@@ -72,21 +72,29 @@ class AuthService {
   }
 
   async passwordRecovery(request: IPasswordRecoveryRequest): Promise<IPasswordRecoveryResponse> {
-    // const { data } = await publicAxiosInstance.post('/auth/password-recovery', request)
+    // const { data } = await publicAxiosInstance.post<IPasswordRecoveryResponse>('/auth/password-recovery', request)
     // return data
     console.log('passwordRecovery request', request)
+    await new Promise(resolve => setTimeout(resolve, 2000))
     return {
-      recoverySessionId: '1234567890',
-      message: '1234567890'
+      recoverySessionId: 'recovery-session-123456',
+      message: 'Recovery code sent to your email'
     }
   }
 
   async confirmCode(request: IConfirmCodeRequest): Promise<IConfirmCodeResponse> {
-    // const { data } = await publicAxiosInstance.post('/auth/confirm-code', request)
+    // const { data } = await publicAxiosInstance.post<IConfirmCodeResponse>('/auth/confirm-code', request)
     // return data
     console.log('confirmCode request', request)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Mock validation
+    if (request.code !== '123456') {
+      throw new Error('Invalid recovery code')
+    }
+
     return {
-      message: '1234567890'
+      message: 'Password updated successfully'
     }
   }
 }

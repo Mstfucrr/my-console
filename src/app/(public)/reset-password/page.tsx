@@ -3,8 +3,9 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
+import { authService } from '@/modules/auth/service/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight, CheckCircle, Lock } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Lock, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -21,6 +22,7 @@ const PASSWORD_REGEXES = {
 
 const schema = z
   .object({
+    code: z.string().min(6, { message: 'Kod 6 haneli olmalıdır.' }).max(6, { message: 'Kod 6 haneli olmalıdır.' }),
     password: z
       .string()
       .min(8, { message: 'Şifre en az 8 karakter olmalıdır.' })
@@ -38,21 +40,21 @@ type ResetPasswordFormType = z.infer<typeof schema>
 
 function ResetPasswordFormInner() {
   const [isSuccess, setIsSuccess] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+  const recoverySessionId = searchParams.get('recoverySessionId')
+  const router = useRouter()
 
   const form = useForm<ResetPasswordFormType>({
     resolver: zodResolver(schema),
     mode: 'all',
     defaultValues: {
+      code: '',
       password: '',
       confirmPassword: ''
     }
   })
 
-  const { handleSubmit, control } = form
-  const router = useRouter()
+  const { handleSubmit, control, formState } = form
 
   // Centralized password checks for reusability
   const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
@@ -64,26 +66,32 @@ function ResetPasswordFormInner() {
   const isValid = isLengthValid && hasUppercase && hasLowercase && hasNumber
 
   useEffect(() => {
-    if (!token) {
+    if (!recoverySessionId) {
       toast.error('Geçersiz şifre sıfırlama bağlantısı.')
       router.push('/forgot-password')
     }
-  }, [token, router])
+  }, [recoverySessionId, router])
 
   const onSubmit = async (data: ResetPasswordFormType) => {
-    try {
-      setIsLoading(true)
-      // Simulated API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
+    if (!recoverySessionId) {
+      toast.error('Geçersiz şifre sıfırlama bağlantısı.')
+      router.push('/forgot-password')
+      return
+    }
 
-      console.log('Password reset for token:', token, 'new password:', data.password)
+    try {
+      // Backend'e confirm code isteği gönder
+      const response = await authService.confirmCode({
+        recoverySessionId,
+        code: data.code,
+        newPassword: data.password
+      })
+
       setIsSuccess(true)
-      toast.success('Şifreniz başarıyla güncellendi.')
+      toast.success(response.message || 'Şifreniz başarıyla güncellendi.')
     } catch (error) {
       console.error('reset password error', error)
       toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.')
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -118,11 +126,27 @@ function ResetPasswordFormInner() {
     <div className='w-full space-y-4'>
       <div className='text-center'>
         <h2 className='text-primary text-xl font-bold'>Yeni Şifre Belirle</h2>
-        <p className='mt-2 text-sm text-gray-600'>Güvenli bir şifre seçin ve tekrar girin.</p>
+        <p className='mt-2 text-sm text-gray-600'>
+          E-posta adresinize gönderilen 6 haneli kodu girin ve yeni şifrenizi belirleyin.
+        </p>
       </div>
 
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+          <FormInputField
+            name='code'
+            control={control}
+            type='text'
+            id='code'
+            size='lg'
+            disabled={formState.isSubmitting}
+            placeholder='6 haneli kodu giriniz'
+            Icon={Mail}
+            maxLength={6}
+            inputMode='numeric'
+            pattern='[0-9]*'
+          />
+
           <div className='relative'>
             <FormInputField
               name='password'
@@ -130,7 +154,7 @@ function ResetPasswordFormInner() {
               type='password'
               id='password'
               size='lg'
-              disabled={isLoading}
+              disabled={formState.isSubmitting}
               placeholder='Şifrenizi giriniz'
               Icon={Lock}
             />
@@ -143,7 +167,7 @@ function ResetPasswordFormInner() {
               type='password'
               id='confirmPassword'
               size='lg'
-              disabled={isLoading}
+              disabled={formState.isSubmitting}
               placeholder='Şifrenizi tekrar girin'
               Icon={Lock}
             />
@@ -160,7 +184,7 @@ function ResetPasswordFormInner() {
             </p>
           </div>
 
-          <LoadingButton className='w-full' isLoading={isLoading} size='lg' loadingText='Güncelleniyor...'>
+          <LoadingButton className='w-full' isLoading={formState.isSubmitting} size='lg' loadingText='Güncelleniyor...'>
             Şifreyi Güncelle
           </LoadingButton>
         </form>
