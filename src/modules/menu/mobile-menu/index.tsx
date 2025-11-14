@@ -3,6 +3,7 @@ import { SiteLogoBig } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIsDesktop } from '@/hooks/use-media-query'
+import { cn } from '@/lib/utils'
 import { menusConfig } from '@/modules/menu/menus'
 import { useSidebar } from '@/store/sidebar'
 import { motion } from 'framer-motion'
@@ -31,7 +32,7 @@ const MobileMenu = () => {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className='bg-primary-10 fixed top-14 z-50 w-full overflow-hidden shadow-md backdrop-blur-xl'
       >
-        <div className='overflow-y-auto pt-2'>
+        <div className='overflow-x-hidden overflow-y-auto pt-2'>
           <div className='flex h-full w-full flex-col pb-5'>
             <ScrollArea className='mt-2 max-h-[calc(100%-100px)] flex-1 px-4 pb-2'>
               <div className='flex h-full flex-1 items-center'>
@@ -48,7 +49,11 @@ const MobileMenu = () => {
         </div>
       </motion.div>
 
-      <div className='bg-primary-10 fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3'>
+      <div
+        className={cn('fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3', {
+          'bg-primary-10': mobileMenu
+        })}
+      >
         <Link href='/' aria-label='Home'>
           <SiteLogoBig className='text-primary w-32' />
         </Link>

@@ -60,7 +60,7 @@ export function OrdersStats() {
   const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData[stat.id] || 0 })), [statsData])
 
   return (
-    <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5'>
+    <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
       {stats.map(stat => (
         <StatCard {...stat} key={stat.id} className='size-full' isLoading={isStatsLoading} />
       ))}
