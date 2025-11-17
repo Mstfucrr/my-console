@@ -38,11 +38,17 @@ class AuthService {
   }
 
   async verifyOtp(request: IVerifyOtpRequest): Promise<IVerifyOtpResponse> {
-    // const { data } = await publicAxiosInstance.post<IVerifyOtpResponse>('/auth/otp-verify', {
-    //   otpSessionId: request.otpSessionId,
-    //   otpCode: request.otpCode
-    // })
-    // return data
+    const { data } = await publicAxiosInstance.post<IVerifyOtpResponse>('/auth/otp-verify', {
+      otpSessionId: request.otpSessionId,
+      otpCode: request.otpCode
+    })
+    console.log('verifyOtp response', data)
+
+    if (!data.userId) throw new Error('Invalid OTP')
+
+    setToken({ accessToken: data.accessToken, refreshToken: data.accessToken })
+
+    return data
     console.log('verifyOtp request', request)
     await new Promise(resolve => setTimeout(resolve, 1500))
     if (request.otpCode !== '123456') throw new Error('Invalid OTP')
@@ -86,15 +92,16 @@ class AuthService {
   }
 
   async confirmCode(request: IConfirmCodeRequest): Promise<IConfirmCodeResponse> {
-    // const { data } = await publicAxiosInstance.post<IConfirmCodeResponse>('/auth/confirm-code', request)
-    // return data
-    console.log('confirmCode request', request)
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const { data } = await publicAxiosInstance.post<IConfirmCodeResponse>('/auth/confirm-code', request)
+    console.log('confirmCode response', data)
+    return data
+    // console.log('confirmCode request', request)
+    // await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // Mock validation
-    if (request.code !== '123456') {
-      throw new Error('Invalid recovery code')
-    }
+    // // Mock validation
+    // if (request.code !== '123456') {
+    //   throw new Error('Invalid recovery code')
+    // }
 
     return {
       message: 'Password updated successfully'

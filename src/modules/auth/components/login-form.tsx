@@ -2,15 +2,11 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
 import { Lock, Mail, User } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { z } from 'zod'
-import { authService } from '../service/auth.service'
-import { ILoginRequest, ILoginResponse } from '../types'
+import { useAuth } from '../context/auth-context'
 
 const schema = z.object({
   accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
@@ -20,14 +16,8 @@ const schema = z.object({
 
 type LoginFormType = z.infer<typeof schema>
 
-interface LogInFormProps {
-  onOtpRequired: (loginData: ILoginResponse) => void
-}
-
-const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
-  const { mutateAsync: login, isPending: loginPending } = useMutation({
-    mutationFn: (request: ILoginRequest) => authService.login(request)
-  })
+const LogInForm = () => {
+  const { handleLogin, loadingState } = useAuth()
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
@@ -41,21 +31,8 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
 
   const { handleSubmit, control } = form
 
-  const router = useRouter()
-
   const onSubmit = async (data: LoginFormType) => {
-    try {
-      const loginResponse = await login(data)
-
-      if (loginResponse.requiresOtp) return onOtpRequired(loginResponse)
-      else {
-        toast.success('Başarılıyla giriş yaptınız.')
-        router.push('/')
-      }
-    } catch (error) {
-      console.error('login error', error)
-      toast.error('Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.')
-    }
+    await handleLogin(data)
   }
 
   return (
@@ -68,7 +45,7 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
             type='text'
             id='accountId'
             size='lg'
-            disabled={loginPending}
+            disabled={loadingState.login}
             Icon={User}
             placeholder='Hesap ID giriniz'
           />
@@ -78,7 +55,7 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
             type='text'
             id='identifier'
             size='lg'
-            disabled={loginPending}
+            disabled={loadingState.login}
             Icon={Mail}
             placeholder='E-posta veya kullanıcı adı giriniz'
           />
@@ -88,7 +65,7 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
             type='password'
             id='password'
             size='lg'
-            disabled={loginPending}
+            disabled={loadingState.login}
             Icon={Lock}
             placeholder='Şifrenizi giriniz'
           />
@@ -99,7 +76,7 @@ const LogInForm = ({ onOtpRequired }: LogInFormProps) => {
             </Link>
           </div>
 
-          <LoadingButton className='w-full' isLoading={loginPending} size='lg' loadingText='Giriş Yapılıyor...'>
+          <LoadingButton className='w-full' isLoading={loadingState.login} size='lg' loadingText='Giriş Yapılıyor...'>
             Giriş Yap
           </LoadingButton>
         </form>

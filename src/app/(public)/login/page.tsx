@@ -1,19 +1,11 @@
 'use client'
 import LogInForm from '@/modules/auth/components/login-form'
 import VerfiyForm from '@/modules/auth/components/verify-form'
-import { ILoginResponse } from '@/modules/auth/types'
+import { AuthProvider, useAuth } from '@/modules/auth/context/auth-context'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
 
 const LoginFormContent = () => {
-  const [isOtp, setIsOtp] = useState(false)
-  const [loginData, setLoginData] = useState<ILoginResponse | null>(null)
-
-  const handleOtpRequired = (loginData: ILoginResponse) => {
-    if (!loginData.otpSessionId) return
-    setLoginData(loginData)
-    setIsOtp(true)
-  }
+  const { isOtp } = useAuth()
 
   return (
     <div className='mb-3 text-center'>
@@ -26,7 +18,7 @@ const LoginFormContent = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <LogInForm onOtpRequired={handleOtpRequired} />
+            <LogInForm />
           </motion.div>
         ) : (
           <motion.div
@@ -36,10 +28,7 @@ const LoginFormContent = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <VerfiyForm
-              otpSessionId={loginData?.otpSessionId ?? ''}
-              maskedPhoneNumber={loginData?.maskedPhoneNumber ?? ''}
-            />
+            <VerfiyForm />
           </motion.div>
         )}
       </AnimatePresence>
@@ -48,7 +37,11 @@ const LoginFormContent = () => {
 }
 
 const LoginPage = () => {
-  return <LoginFormContent />
+  return (
+    <AuthProvider>
+      <LoginFormContent />
+    </AuthProvider>
+  )
 }
 
 export default LoginPage
