@@ -4,7 +4,6 @@ import { expect, test } from '@playwright/test'
 const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
 const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
 const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
-const TEST_OTP_CODE = process.env.TEST_OTP_CODE || '123456'
 
 test('OTP doğrulamalı giriş akışı', async ({ page }) => {
   // Login sayfasına git
@@ -22,9 +21,6 @@ test('OTP doğrulamalı giriş akışı', async ({ page }) => {
 
   // Giriş Yap butonuna bas
   await page.getByRole('button', { name: /Giriş Yap/i }).click()
-
-  // OTP ekranına geçiş yapıldığını kontrol et
-  await expect(page.getByRole('heading', { name: /Doğrulama Kodu/i })).toBeVisible({ timeout: 5000 })
 
   // Masked phone number'ın göründüğünü kontrol et
   await expect(page.getByText(/Numarasına gelen 6 haneli kodu giriniz/i)).toBeVisible()
@@ -95,8 +91,8 @@ test('OTP olmadan giriş akışı', async ({ page }) => {
   // Giriş Yap butonuna bas
   await page.getByRole('button', { name: /Giriş Yap/i }).click()
 
-  // OTP ekranının görünmediğini kontrol et
-  await expect(page.getByRole('heading', { name: /Doğrulama Kodu/i })).not.toBeVisible()
+  // Masked phone number'ın görünmediğini kontrol et
+  await expect(page.getByText(/Numarasına gelen 6 haneli kodu giriniz/i)).not.toBeVisible()
 
   // Başarılı giriş mesajını kontrol et (toast notification)
   await expect(page.locator('.Toastify__toast--success').getByText(/Başarılıyla giriş yaptınız/i)).toBeVisible({
