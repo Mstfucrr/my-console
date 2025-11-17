@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Timer logic
   useEffect(() => {
+    if (!otpState.sessionId || otpState.timer === 0) return
     const interval = setInterval(() => {
       setOtpState(prev => ({
         ...prev,
@@ -96,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [otpState.sessionId, otpState.timer])
 
   // Update isComplete when OTP values change
   const isOtpComplete = useMemo(() => otpState.values.every(digit => digit !== ''), [otpState.values])
@@ -109,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Reset OTP when timer completes
   const resetOtp = useCallback(() => {
+    console.log('resetOtp', otpArray)
     setOtpState(prev => ({
       ...prev,
       values: otpArray

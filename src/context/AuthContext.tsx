@@ -4,6 +4,7 @@ import { getToken, removeToken } from '@/lib/local-storage-helper'
 import { authService } from '@/modules/auth/service/auth.service'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, startTransition, useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 type AuthContextType = {
   isAuthenticated: boolean
@@ -34,7 +35,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [pathname, router])
 
   const logout = async () => {
-    await authService.logout()
+    await toast.promise(
+      async () => {
+        await authService.logout()
+      },
+      {
+        pending: 'Çıkış yapılıyor...',
+        success: 'Başarıyla çıkış yapıldı.',
+        error: 'Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.'
+      }
+    )
     removeToken()
     setIsAuthenticated(false)
     router.push('/login')
