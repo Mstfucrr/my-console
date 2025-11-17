@@ -2,10 +2,12 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { authService } from '@/modules/auth/service/auth.service'
+import { IPasswordRecoveryRequest } from '@/modules/auth/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { ArrowLeft, Mail, User } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
@@ -18,8 +20,10 @@ const schema = z.object({
 type ForgotPasswordFormType = z.infer<typeof schema>
 
 const ForgotPasswordForm = () => {
-  const [isEmailSent, setIsEmailSent] = useState(false)
-  const [recoverySessionId, setRecoverySessionId] = useState<string | null>(null)
+  const router = useRouter()
+  const { mutateAsync: passwordRecover } = useMutation({
+    mutationFn: (request: IPasswordRecoveryRequest) => authService.passwordRecovery(request)
+  })
 
   const form = useForm<ForgotPasswordFormType>({
     resolver: zodResolver(schema),
@@ -35,50 +39,17 @@ const ForgotPasswordForm = () => {
   const onSubmit = async (data: ForgotPasswordFormType) => {
     try {
       // Backend'e password recovery isteği gönder
-      const response = await authService.passwordRecovery({
+      const response = await passwordRecover({
         accountId: data.accountId,
         email: data.email
       })
 
-      // recoverySessionId'yi sakla (state veya localStorage'a)
-      setRecoverySessionId(response.recoverySessionId)
-      setIsEmailSent(true)
-      toast.success(response.message || 'Şifre sıfırlama kodu e-posta adresinize gönderildi.')
+      toast.success('Şifre sıfırlama kodu e-posta adresinize gönderildi.')
+      router.push(`/reset-password?recoverySessionId=${response.recoverySessionId}`)
     } catch (error) {
       console.error('forgot password error', error)
       toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
-  }
-
-  if (isEmailSent && recoverySessionId) {
-    return (
-      <div className='w-full space-y-4 text-center'>
-        <div className='flex items-center justify-center gap-2'>
-          <div className='flex h-16 w-16 items-center justify-center rounded-full bg-green-100'>
-            <Mail className='h-8 w-8 text-green-600' />
-          </div>
-          <h2 className='text-primary text-xl font-bold'>E-posta Gönderildi</h2>
-        </div>
-        <p className='text-gray-600'>
-          Şifre sıfırlama kodu <strong>{form.getValues('email')}</strong> adresine gönderildi.
-        </p>
-        <p className='text-sm text-gray-500'>E-postanızı kontrol edin ve kodu girin.</p>
-        <div className='flex flex-col gap-2'>
-          <Link
-            href={`/reset-password?recoverySessionId=${recoverySessionId}`}
-            className='text-primary text-sm hover:underline'
-          >
-            Kodu Gir ve Şifreyi Sıfırla
-          </Link>
-          <Link href='/login' className='text-primary text-sm hover:underline'>
-            Giriş sayfasına dön
-          </Link>
-          <button onClick={() => setIsEmailSent(false)} className='text-primary text-sm hover:underline'>
-            Başka e-posta ile dene
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (

@@ -74,8 +74,9 @@ class AuthService {
   }
 
   async passwordRecovery(request: IPasswordRecoveryRequest): Promise<IPasswordRecoveryResponse> {
-    // const { data } = await publicAxiosInstance.post<IPasswordRecoveryResponse>('/auth/password-recovery', request)
-    // return data
+    const { data } = await publicAxiosInstance.post<IPasswordRecoveryResponse>('/auth/password-recovery', request)
+    console.log('passwordRecovery response', data)
+    return data
     console.log('passwordRecovery request', request)
     await new Promise(resolve => setTimeout(resolve, 2000))
     return {
