@@ -1,11 +1,10 @@
-import { publicAxiosInstance } from '@/lib/axios'
-import { setToken } from '@/lib/local-storage-helper'
+import { privateAxiosInstance, publicAxiosInstance } from '@/lib/axios'
+import { getToken, setToken } from '@/lib/local-storage-helper'
 import type {
   IConfirmCodeRequest,
   IConfirmCodeResponse,
   ILoginRequest,
   ILoginResponse,
-  ILogoutRequest,
   IPasswordRecoveryRequest,
   IPasswordRecoveryResponse,
   IRefreshTokenRequest,
@@ -17,21 +16,7 @@ import type {
 class AuthService {
   async login(request: ILoginRequest): Promise<ILoginResponse> {
     const { data } = await publicAxiosInstance.post<ILoginResponse>('/auth/login', request)
-    console.log('login response', data)
-    // return data
-    // await new Promise(resolve => setTimeout(resolve, 1500))
-    // console.log('login request', request)
-    // const response = {
-    //   accessToken: '1234567890',
-    //   userId: '1234567890',
-    //   accountId: '1234567890',
-    //   requiresOtp: true,
-    //   otpSessionId: '1234567890',
-    //   maskedPhoneNumber: '*** *** 1234'
-    // }
-
     if (data.requiresOtp) return data
-
     setToken({ accessToken: data.accessToken, refreshToken: data.accessToken })
 
     return data
@@ -42,31 +27,18 @@ class AuthService {
       otpSessionId: request.otpSessionId,
       otpCode: request.otpCode
     })
-    console.log('verifyOtp response', data)
 
     if (!data.userId) throw new Error('Invalid OTP')
 
     setToken({ accessToken: data.accessToken, refreshToken: data.accessToken })
 
     return data
-    console.log('verifyOtp request', request)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    if (request.otpCode !== '123456') throw new Error('Invalid OTP')
-    const response = {
-      accessToken: '1234567890',
-      userId: '1234567890',
-      accountId: '1234567890'
-    }
-
-    setToken({ accessToken: response.accessToken, refreshToken: response.accessToken })
-
-    return response
   }
 
-  async logout(request: ILogoutRequest): Promise<void> {
-    // await privateAxiosInstance.post('/auth/logout', request)
-    console.log('logout request', request)
-    return
+  async logout(): Promise<void> {
+    const { accessToken } = getToken()
+    console.log('logout request', accessToken)
+    await privateAxiosInstance.post('/auth/logout', { accessToken })
   }
 
   async refreshToken(request: IRefreshTokenRequest): Promise<IRefreshTokenResponse> {

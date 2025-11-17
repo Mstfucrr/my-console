@@ -1,12 +1,13 @@
 'use client'
 
 import { getToken, removeToken } from '@/lib/local-storage-helper'
+import { authService } from '@/modules/auth/service/auth.service'
 import { usePathname, useRouter } from 'next/navigation'
 import { createContext, startTransition, useContext, useEffect, useState } from 'react'
 
 type AuthContextType = {
   isAuthenticated: boolean
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -32,7 +33,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
   }, [pathname, router])
 
-  const logout = () => {
+  const logout = async () => {
+    await authService.logout()
     removeToken()
     setIsAuthenticated(false)
     router.push('/login')
