@@ -38,6 +38,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await toast.promise(
       async () => {
         await authService.logout()
+        removeToken()
+        setIsAuthenticated(false)
+        router.push('/login')
       },
       {
         pending: 'Çıkış yapılıyor...',
@@ -45,9 +48,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         error: 'Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.'
       }
     )
-    removeToken()
-    setIsAuthenticated(false)
-    router.push('/login')
   }
 
   return <AuthContext.Provider value={{ isAuthenticated, logout }}>{children}</AuthContext.Provider>

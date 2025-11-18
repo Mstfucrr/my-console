@@ -110,7 +110,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Reset OTP when timer completes
   const resetOtp = useCallback(() => {
-    console.log('resetOtp', otpArray)
     setOtpState(prev => ({
       ...prev,
       values: otpArray

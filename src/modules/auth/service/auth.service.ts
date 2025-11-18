@@ -37,7 +37,6 @@ class AuthService {
 
   async logout(): Promise<void> {
     const { accessToken } = getToken()
-    console.log('logout request', accessToken)
     await privateAxiosInstance.post('/auth/logout', { accessToken })
   }
 
