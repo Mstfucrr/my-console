@@ -49,13 +49,15 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Create empty OTP array outside component to avoid recreation on every render
+const createEmptyOtpArray = () => Array.from({ length: TOTAL_OTP_FIELD }, () => '')
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
 
   // OTP state grouped
-  const otpArray: string[] = Array.from({ length: TOTAL_OTP_FIELD }, () => '')
   const [otpState, setOtpState] = useState<OtpState>({
-    values: otpArray,
+    values: createEmptyOtpArray(),
     timer: OTP_TIMEOUT,
     isComplete: false,
     sessionId: '',
@@ -112,10 +114,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const resetOtp = useCallback(() => {
     setOtpState(prev => ({
       ...prev,
-      values: otpArray
+      values: createEmptyOtpArray()
     }))
     setTimeout(() => otpInputRefs.current[0]?.focus(), 0)
-  }, [otpArray])
+  }, [])
 
   useEffect(() => {
     if (otpState.timer !== 0) return
@@ -129,7 +131,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (loginResponse.requiresOtp && loginResponse.otpSessionId) {
         setOtpState({
-          values: otpArray,
+          values: createEmptyOtpArray(),
           timer: OTP_TIMEOUT,
           isComplete: false,
           sessionId: loginResponse.otpSessionId,
@@ -154,7 +156,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!otpState.sessionId) return
 
     const enteredOtp = otpState.values.join('')
-    setOtpState(prev => ({ ...prev, values: otpArray }))
+    setOtpState(prev => ({ ...prev, values: createEmptyOtpArray() }))
 
     try {
       await toast.promise(
@@ -177,7 +179,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {
       setTimeout(() => otpInputRefs.current[0]?.focus(), 0)
     }
-  }, [otpState.sessionId, otpState.values, otpArray, verifyOtp, router, otpInputRefs])
+  }, [otpState.sessionId, otpState.values, verifyOtp, router, otpInputRefs])
 
   // OTP change handler
   const handleOtpChange = useCallback(
