@@ -1,14 +1,14 @@
 'use client'
-import { useIsDesktop } from '@/hooks/use-media-query'
+import { useIsMobile } from '@/hooks/use-media-query'
 import dynamic from 'next/dynamic'
 
 const Topbar = dynamic(() => import('./topbar'), { ssr: false })
 const MobileMenu = dynamic(() => import('./mobile-menu'), { ssr: false })
 
 const Sidebar = () => {
-  const isDesktop = useIsDesktop()
+  const isMobile = useIsMobile()
 
-  if (!isDesktop) return <MobileMenu />
+  if (isMobile) return <MobileMenu />
 
   return <Topbar />
 }

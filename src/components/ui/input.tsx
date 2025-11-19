@@ -116,7 +116,6 @@ export const inputVariants = cva(
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof inputVariants> {
-  removeWrapper?: boolean
   color?: InputColor
   variant?: InputVariant
   radius?: Radius
@@ -133,28 +132,10 @@ const Input = ({
   radius,
   variant,
   shadow,
-  removeWrapper = false,
   Icon,
   ref,
   ...props
 }: InputProps & { ref?: React.Ref<HTMLInputElement> }) => {
-  if (removeWrapper)
-    return (
-      <div className='relative'>
-        {Icon && (
-          <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
-            <Icon className='size-4' />
-          </div>
-        )}
-        <input
-          type={type}
-          className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
-          ref={ref}
-          {...props}
-        />
-      </div>
-    )
-
   return (
     <div className='relative w-full flex-1'>
       {Icon && (

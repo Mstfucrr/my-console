@@ -68,6 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Login request for resend
   const [loginRequest, setLoginRequest] = useState<ILoginRequest | null>(null)
   const otpInputRefs = useRef<Array<HTMLInputElement | null>>([])
+  const hasResetOnTimerComplete = useRef(false)
 
   // Mutations
   const { mutateAsync: login, isPending: isLoginPending } = useMutation({
@@ -90,16 +91,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Timer logic
   useEffect(() => {
-    if (!otpState.sessionId || otpState.timer === 0) return
+    if (!otpState.sessionId) return
     const interval = setInterval(() => {
-      setOtpState(prev => ({
-        ...prev,
-        timer: prev.timer === 0 ? 0 : prev.timer - 1
-      }))
+      setOtpState(prev => {
+        if (prev.timer === 0) return prev
+        return {
+          ...prev,
+          timer: prev.timer - 1
+        }
+      })
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [otpState.sessionId, otpState.timer])
+  }, [otpState.sessionId])
 
   // Update isComplete when OTP values change
   const isOtpComplete = useMemo(() => otpState.values.every(digit => digit !== ''), [otpState.values])
@@ -120,9 +124,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   useEffect(() => {
-    if (otpState.timer !== 0) return
+    if (otpState.timer !== 0 || !otpState.sessionId || hasResetOnTimerComplete.current) return
+    hasResetOnTimerComplete.current = true
     startTransition(() => resetOtp())
-  }, [otpState.timer, resetOtp])
+  }, [otpState.timer, otpState.sessionId, resetOtp])
 
   // Login handler
   const handleLogin = async (data: ILoginRequest) => {
@@ -130,6 +135,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const loginResponse = await login(data)
 
       if (loginResponse.requiresOtp && loginResponse.otpSessionId) {
+        hasResetOnTimerComplete.current = false
         setOtpState({
           values: createEmptyOtpArray(),
           timer: OTP_TIMEOUT,
@@ -139,7 +145,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           requiresOtp: loginResponse.requiresOtp ?? false
         })
         setLoginRequest(data)
-        resetOtp()
       } else {
         toast.success('Başarılıyla giriş yaptınız.')
         router.push('/')
@@ -227,6 +232,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const loginResponse = await login(loginRequest)
 
       if (loginResponse.requiresOtp && loginResponse.otpSessionId) {
+        hasResetOnTimerComplete.current = false
         setOtpState(prev => ({
           ...prev,
           timer: OTP_TIMEOUT,
