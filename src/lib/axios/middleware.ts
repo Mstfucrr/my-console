@@ -87,10 +87,6 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
     return Promise.reject(error)
   }
 
-  if (error.response?.data?.message) {
-    toast.error(error.response.data.message)
-  }
-
   return Promise.reject(error)
 }
 

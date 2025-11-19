@@ -59,7 +59,15 @@ export default function ReconciliationView() {
   const error = dataError || statsError
 
   if (error)
-    return <PageError errorMessage='Mutabakat verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
+    return (
+      <PageError
+        errorMessage='Mutabakat verileri yüklenirken bir hata oluştu'
+        onRefresh={refreshAllData}
+        isLoading={isDataFetching || isStatsLoading}
+        title='Mutabakat Verileri Yüklenemedi'
+        description='Mutabakat verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
+      />
+    )
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>

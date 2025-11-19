@@ -59,7 +59,16 @@ export default function ReportsView() {
 
   const error = reportsError || statsError
 
-  if (error) return <PageError errorMessage='Rapor verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
+  if (error)
+    return (
+      <PageError
+        errorMessage='Rapor verileri yüklenirken bir hata oluştu'
+        onRefresh={refreshAllData}
+        isLoading={isReportsFetching || isStatsLoading}
+        title='Rapor Verileri Yüklenemedi'
+        description='Rapor verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
+      />
+    )
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>

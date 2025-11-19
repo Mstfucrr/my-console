@@ -7,9 +7,18 @@ import { OrdersTabs } from './components/stats/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
-  const { error, refreshAllData } = useOrders()
+  const { error, refreshAllData, isFetchingActive, isFetchingCompleted } = useOrders()
 
-  if (error) return <PageError errorMessage='Sipariş verileri yüklenirken bir hata oluştu' onRefresh={refreshAllData} />
+  if (error)
+    return (
+      <PageError
+        errorMessage='Sipariş verileri yüklenirken bir hata oluştu'
+        onRefresh={refreshAllData}
+        isLoading={isFetchingActive || isFetchingCompleted}
+        title='Sipariş Verileri Yüklenemedi'
+        description='Sipariş verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
+      />
+    )
 
   return (
     <div className='flex flex-col gap-6 p-6 max-sm:p-0'>

@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
+import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
@@ -87,11 +87,11 @@ export default function DashboardView() {
     data: stats,
     isLoading,
     isFetching,
+    error,
     refetch
   } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats', dateRange],
-    queryFn: () => dashboardService.getStats(dateRange),
-    staleTime: 60_000
+    queryFn: () => dashboardService.getStats(dateRange)
   })
 
   const chartData = useMemo(() => {
@@ -118,16 +118,15 @@ export default function DashboardView() {
     )
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
-      <div className='p-6'>
-        <Card>
-          <CardContent className='flex h-48 flex-col items-center justify-center gap-3'>
-            <div className='text-muted-foreground text-sm'>Dashboard verileri yüklenemedi.</div>
-            <RefreshButton size='xs' onClick={refetch} isLoading={isFetching} />
-          </CardContent>
-        </Card>
-      </div>
+      <PageError
+        errorMessage='Dashboard verileri yüklenirken bir hata oluştu'
+        onRefresh={refetch}
+        isLoading={isFetching}
+        title='Dashboard Yüklenemedi'
+        description='Dashboard verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
+      />
     )
   }
 

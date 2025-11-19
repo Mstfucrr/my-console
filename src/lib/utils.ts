@@ -92,3 +92,5 @@ export function maskLastName(fullName: string): string {
     preserveNonDigits: false
   })}`
 }
+
+export const formatDateForApi = (date?: Date | string) => (date ? new Date(date).toISOString().slice(0, 16) : undefined)
