@@ -87,6 +87,12 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
     return Promise.reject(error)
   }
 
+  if (status === 401) {
+    localStorage.removeItem(STORAGE_KEY)
+    window.location.href = '/login'
+    return Promise.reject(error)
+  }
+
   return Promise.reject(error)
 }
 
