@@ -23,9 +23,9 @@ const LogInForm = () => {
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
-      accountId: '9742949',
-      identifier: 'systemsupport@fiyuu.com.tr',
-      password: '12345.Ae'
+      accountId: '',
+      identifier: '',
+      password: ''
     }
   })
 
