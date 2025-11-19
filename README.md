@@ -8,12 +8,19 @@ Modern ve ölçeklenebilir web uygulaması.
 - [Next.js](https://nextjs.org/) - React framework (v16.0.1)
 - [TypeScript](https://www.typescriptlang.org/) - Tip güvenliği (v5.8.2)
 - [Tailwind CSS](https://tailwindcss.com/) - Stil kütüphanesi (v4.1.16)
-- [Shadcn UI](https://ui.shadcn.com/) - UI komponent kütüphanesi
+- [Radix UI](https://www.radix-ui.com/) - Headless UI komponentleri (Shadcn UI'nin temelini oluşturur)
+- [Shadcn UI](https://ui.shadcn.com/) - UI komponent koleksiyonu
 - [TanStack Query](https://tanstack.com/query/latest) - Sunucu state yönetimi (v5.67.2)
+- [TanStack Table](https://tanstack.com/table/latest) - Tablo yönetimi (v8.21.3)
 - [React Hook Form](https://react-hook-form.com/) - Form yönetimi (v7.54.2)
 - [Zod](https://zod.dev/) - Form validasyonu (v3.24.2)
+- [Axios](https://axios-http.com/) - HTTP istemcisi (v1.8.2)
 - [Framer Motion](https://www.framer.com/motion/) - Animasyonlar (v12.4.11)
 - [Zustand](https://zustand-demo.pmnd.rs/) - State yönetimi (v5.0.3)
+- [ApexCharts](https://apexcharts.com/) - Grafik kütüphanesi (v5.3.2)
+- [Leaflet](https://leafletjs.com/) - Harita kütüphanesi (v1.9.4)
+- [React Toastify](https://fkhadra.github.io/react-toastify/) - Toast bildirimleri (v11.0.5)
+- [Date-fns](https://date-fns.org/) - Tarih işleme kütüphanesi (v4.1.0)
 - [Playwright](https://playwright.dev/) - E2E test framework (v1.56.1)
 - [ESLint](https://eslint.org/) (v9.39.1) & [Prettier](https://prettier.io/) (v3.5.3) - Kod formatı
 
