@@ -71,11 +71,8 @@ Uygulama `http://localhost:3000` adresinde çalışacaktır.
 # Geliştirme sunucusunu 3000 portunda başlatır ve hot-reload sağlar
 pnpm dev
 
-# Projeyi build eder
+# Projeyi build eder (SSG - statik dosyalar `out/` klasörüne export edilir)
 pnpm build
-
-# Production build'ini serve eder
-pnpm start
 
 # ESLint ile kod kalitesi ve syntax kontrolü yapar
 pnpm lint
@@ -223,6 +220,16 @@ Bu proje Node.js v22.21.1 kullanmaktadır. Versiyon yönetimi için:
 
 - **`.nvmrc`**: NVM kullanıcıları için otomatik versiyon seçimi (`nvm use`)
 - **`package.json`**: `engines` alanı ile versiyon kontrolü
-- **`Dockerfile`**: Docker container'larında kullanılan versiyon
 
 Farklı bir Node.js versiyonu kullanmak projede sorunlara yol açabilir.
+
+## 📦 Build ve Deployment
+
+Bu proje SSG (Static Site Generation) kullanmaktadır. Build işlemi sonrası statik dosyalar `out/` klasörüne export edilir.
+
+```bash
+# Build işlemi
+pnpm build
+
+# Build sonrası `out/` klasöründeki statik dosyalar herhangi bir statik web sunucusunda serve edilebilir
+```

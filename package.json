@@ -6,7 +6,6 @@
     "node": "22.21.1"
   },
   "scripts": {
-    "start": "next start",
     "dev": "env-cmd -f .env.local next dev",
     "build:dev": "env-cmd -f .env.local next build",
     "build": "next build",
