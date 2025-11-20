@@ -1,4 +1,4 @@
-import { Order } from '@/modules/types'
+import { LatestOrder } from '@/modules/types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { DateRange } from 'react-day-picker'
 import { dashboardService } from '../service'
@@ -17,7 +17,7 @@ export function useGetStats(
 
 export function useGetLatestOrders(
   dateRange?: DateRange,
-  options?: Omit<UseQueryOptions<Array<Order>, Error>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<Array<LatestOrder>, Error>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: ['latest-orders', dateRange],
@@ -33,6 +33,7 @@ export function useGetGraphs(
   return useQuery({
     queryKey: ['graphs', dateRange],
     queryFn: () => dashboardService.getGraphs(dateRange),
+    enabled: false,
     ...options
   })
 }

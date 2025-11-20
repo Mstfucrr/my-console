@@ -81,32 +81,32 @@ const buttonVariants = cva(
       {
         variant: 'soft',
         color: 'info',
-        className: 'text-info hover:text-info-foreground'
+        className: 'text-default bg-info/10 border-info/50 hover:text-info-foreground border'
       },
       {
         variant: 'soft',
         color: 'warning',
-        className: 'text-warning hover:text-warning-foreground'
+        className: 'text-default bg-warning/10 border-warning/50 hover:text-warning-foreground border'
       },
       {
         variant: 'soft',
         color: 'destructive',
-        className: 'text-destructive hover:text-destructive-foreground'
+        className: 'text-default bg-destructive/10 border-destructive/50 hover:text-destructive-foreground border'
       },
       {
         variant: 'soft',
         color: 'success',
-        className: 'text-success hover:text-success-foreground'
+        className: 'text-default bg-success/10 border-success/50 hover:text-success-foreground border'
       },
       {
         variant: 'soft',
         color: 'secondary',
-        className: 'text-muted-foreground dark:bg-opacity-50 hover:bg-default-500/50 dark:hover:bg-opacity-100'
+        className: 'text-default bg-secondary/10 border-secondary/50 hover:text-secondary-foreground border'
       },
       {
         variant: 'soft',
         color: 'default',
-        className: 'text-primary'
+        className: 'text-default bg-default/10 border-default/50 hover:text-default-foreground border'
       },
       {
         variant: 'ghost',

@@ -18,6 +18,13 @@ export interface LoginResponse {
   user: User
 }
 
+export interface LatestOrder {
+  orderId: string
+  status: OrderStatus
+  customerName: string
+  date: string
+  totalAmount: number
+}
 // Sipariş Yönetimi
 export interface Order {
   id: string

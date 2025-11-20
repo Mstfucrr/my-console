@@ -39,7 +39,8 @@ export function ReportsFilters({
     hasPendingChanges,
     handleApplyFilters,
     handleClearFilters,
-    updatePendingFilters
+    updatePendingFilters,
+    updateHotFilters
   } = useFilter(filters, onFiltersChange, onClearFilters, defaultFilters)
 
   // Convert pending filters to DateRange for the picker
@@ -53,7 +54,7 @@ export function ReportsFilters({
 
   // Handle date range change
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    updatePendingFilters({
+    updateHotFilters({
       dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
       dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined
     })

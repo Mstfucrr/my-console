@@ -6,9 +6,8 @@ import { useMemo, useState } from 'react'
 import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { cn } from '@/lib/utils'
 import { BarChart2, LucideIcon } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
@@ -16,9 +15,10 @@ import { DashboardDonut } from './components/DonutChart'
 
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
+import { ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
+import { StatusBadge } from '../orders/components/Badges'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import { OrderStatus, OrderStatusColor, OrderStatusLabel } from '../types'
 import QuickAction from './components/QuickAction'
@@ -30,6 +30,12 @@ const defaultDateRange = {
   from: new Date(new Date().setHours(0, 0, 0, 0)),
   to: new Date(new Date().setHours(23, 59, 59, 999))
 }
+
+// Kunnaıcı 30 günden fazla görüntüleyemez ve bugünü geçemez
+const MIN_MAX_DATE_RANGE = {
+  rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
+  rangeEnd: new Date()
+} as const
 
 type StatsList = {
   title: string
@@ -106,7 +112,7 @@ export default function DashboardView() {
   }
 
   return (
-    <div className='flex flex-col gap-6 pt-6 max-sm:p-0'>
+    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
       {/* Header */}
       <PageHeader
         title='Özet bilgiler'
@@ -117,6 +123,14 @@ export default function DashboardView() {
             <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
             <DateRangePicker
               dateRange={dateRange}
+              calendarProps={{
+                disabled: {
+                  before: MIN_MAX_DATE_RANGE.rangeStart,
+                  after: MIN_MAX_DATE_RANGE.rangeEnd
+                },
+                startMonth: MIN_MAX_DATE_RANGE.rangeStart,
+                endMonth: MIN_MAX_DATE_RANGE.rangeEnd
+              }}
               onDateRangeChange={setDateRange}
               placeholder='Dönem seçin'
               enableTimeSelection={true}
@@ -179,34 +193,29 @@ export default function DashboardView() {
           <Card>
             <CardHeader>
               <CardTitle className='text-base'>Son Siparişler</CardTitle>
+              <CardDescription>Zaman aralığından son siparişler.</CardDescription>
             </CardHeader>
             <CardContent>
               {latestOrders?.length && latestOrders?.length > 0 ? (
                 <div className='flex flex-col gap-3'>
                   {latestOrders.map(order => (
-                    <div key={order.id} className='flex items-center justify-between rounded-lg border p-3'>
+                    <div
+                      key={order.orderId}
+                      className='text-muted-foreground relative flex items-center justify-between rounded-lg border p-3'
+                    >
                       <div className='flex-1'>
-                        <div className='mb-1 flex items-center gap-2'>
-                          <span className='font-medium'>#{order.id}</span>
-                          <span
-                            className={cn(
-                              'rounded-full px-2 py-1 text-xs font-medium',
-                              ORDER_STATUS_COLORS[order.status]
-                            )}
-                          >
-                            {OrderStatusLabel[order.status]}
-                          </span>
-                        </div>
-                        <div className='text-muted-foreground text-sm'>{order.customerName}</div>
-                        <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
+                        <div className='text-sm font-medium'>{order.customerName}</div>
+                        <div className='text-xs'>{formatDateTR(order.date)}</div>
+                        <span className='text-xs font-light'>{order.orderId}</span>
                       </div>
-                      <div className='text-right'>
+                      <div className='flex flex-col gap-y-2 text-right'>
+                        <StatusBadge status={order.status} />
                         <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                       </div>
                     </div>
                   ))}
                   <Link href='/reports' className='w-full'>
-                    <Button variant='outline' className='mt-2 w-full bg-transparent'>
+                    <Button variant='outline' className='w-full bg-transparent'>
                       Tüm Siparişleri Görüntüle
                     </Button>
                   </Link>

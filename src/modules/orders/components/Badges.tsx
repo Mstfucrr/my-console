@@ -17,6 +17,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, variant = 'outline', className }: StatusBadgeProps) {
+  if (!status || !OrderStatusLabel[status]) return null
   return (
     <Badge className={cn(ORDER_STATUS_COLORS[status], 'shrink-0', className)} variant={variant}>
       {OrderStatusLabel[status]}

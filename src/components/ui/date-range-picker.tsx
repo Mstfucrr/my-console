@@ -19,6 +19,7 @@ interface DateRangePickerProps {
   className?: string
   enableTimeSelection?: boolean
   onApply?: () => void
+  calendarProps?: React.ComponentProps<typeof Calendar>
 }
 
 function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
@@ -36,6 +37,7 @@ export function DateRangePicker({
   className,
   enableTimeSelection = false,
   onApply,
+  calendarProps,
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
@@ -102,17 +104,16 @@ export function DateRangePicker({
     return format(displayDate, 'dd MMM yyyy', { locale: tr })
   }
 
+  const handleClear = () => {
+    setTempDateRange(undefined)
+    onDateRangeChange(undefined)
+  }
+
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button
-            id='date'
-            variant='outline'
-            size='sm'
-            className={cn('w-full justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}
-            {...props}
-          >
+          <Button id='date' variant='outline' className='font-normal' size='sm' {...props}>
             <CalendarIcon className='mr-2 h-4 w-4' />
             {dateRange?.from ? (
               dateRange.to ? (
@@ -130,12 +131,13 @@ export function DateRangePicker({
         <PopoverContent className='w-auto p-0'>
           <div className='p-3'>
             <Calendar
-              mode='range'
-              defaultMonth={tempDateRange?.from}
-              selected={tempDateRange}
-              onSelect={handleDateSelect}
               numberOfMonths={2}
+              defaultMonth={tempDateRange?.from}
               locale={tr}
+              {...calendarProps}
+              selected={tempDateRange}
+              mode='range'
+              onSelect={handleDateSelect}
             />
 
             {enableTimeSelection && (
@@ -170,6 +172,9 @@ export function DateRangePicker({
             )}
 
             <div className='mt-4 flex justify-end gap-2'>
+              <Button variant='outline' size='xs' onClick={handleClear}>
+                Temizle
+              </Button>
               <Button variant='outline' size='xs' onClick={() => setIsOpen(false)}>
                 İptal
               </Button>
