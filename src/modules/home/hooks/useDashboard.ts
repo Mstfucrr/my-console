@@ -9,7 +9,7 @@ export function useGetStats(
   options?: Omit<UseQueryOptions<DashboardStats, Error>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
-    queryKey: ['dashboard-stats', dateRange],
+    queryKey: ['dashboard-stats', JSON.stringify(dateRange)],
     queryFn: () => dashboardService.getStats(dateRange),
     ...options
   })
@@ -20,7 +20,7 @@ export function useGetLatestOrders(
   options?: Omit<UseQueryOptions<Array<LatestOrder>, Error>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
-    queryKey: ['latest-orders', dateRange],
+    queryKey: ['latest-orders', JSON.stringify(dateRange)],
     queryFn: () => dashboardService.getLatestOrders(dateRange),
     ...options
   })
@@ -31,7 +31,7 @@ export function useGetGraphs(
   options?: Omit<UseQueryOptions<DashboardGraphs, Error>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
-    queryKey: ['graphs', dateRange],
+    queryKey: ['graphs', JSON.stringify(dateRange)],
     queryFn: () => dashboardService.getGraphs(dateRange),
     enabled: false,
     ...options

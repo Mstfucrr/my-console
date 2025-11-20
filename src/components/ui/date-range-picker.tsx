@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 
 interface DateRangePickerProps {
   dateRange: DateRange | undefined
+  defaultDateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   className?: string
@@ -32,6 +33,7 @@ function getDisplayDate(date: Date) {
 
 export function DateRangePicker({
   dateRange,
+  defaultDateRange,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
   className,
@@ -105,8 +107,8 @@ export function DateRangePicker({
   }
 
   const handleClear = () => {
-    setTempDateRange(undefined)
-    onDateRangeChange(undefined)
+    setTempDateRange(defaultDateRange)
+    onDateRangeChange(defaultDateRange)
   }
 
   return (
@@ -172,9 +174,11 @@ export function DateRangePicker({
             )}
 
             <div className='mt-4 flex justify-end gap-2'>
-              <Button variant='outline' size='xs' onClick={handleClear}>
-                Temizle
-              </Button>
+              {dateRange && dateRange !== defaultDateRange && (
+                <Button variant='outline' size='xs' onClick={handleClear}>
+                  Temizle
+                </Button>
+              )}
               <Button variant='outline' size='xs' onClick={() => setIsOpen(false)}>
                 İptal
               </Button>

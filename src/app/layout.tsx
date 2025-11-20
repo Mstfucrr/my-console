@@ -1,6 +1,5 @@
 import '@/styles/globals.css'
 import { Open_Sans } from 'next/font/google'
-import Script from 'next/script'
 
 import { cn } from '@/lib/utils'
 import QueryProvider from '@/provider/QueryProvider'
@@ -28,11 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='tr'>
-      <head>
-        {process.env.NODE_ENV === 'development' && (
-          <Script src='//unpkg.com/react-scan/dist/auto.global.js' crossOrigin='anonymous' />
-        )}
-      </head>
+      {process.env.NODE_ENV === 'development' && (
+        <head>
+          {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+          <script crossOrigin='anonymous' src='//unpkg.com/react-scan/dist/auto.global.js' />
+        </head>
+      )}
       <body className={cn(openSans.className, 'antialiased')}>
         <QueryProvider>{children}</QueryProvider>
         <ToastContainer autoClose={2500} />

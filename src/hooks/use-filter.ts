@@ -25,6 +25,7 @@ export function useFilter<T extends BaseFilterProperties>(
 
   // Generic active filters check - checks all properties dynamically
   const hasActiveFilters = useMemo(() => {
+    console.log('filters', filters)
     return Object.entries(filters).some(([, value]) => {
       // Skip undefined values
       if (value === undefined || value === null) return false

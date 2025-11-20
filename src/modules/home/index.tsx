@@ -123,6 +123,7 @@ export default function DashboardView() {
             <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
             <DateRangePicker
               dateRange={dateRange}
+              defaultDateRange={defaultDateRange}
               calendarProps={{
                 disabled: {
                   before: MIN_MAX_DATE_RANGE.rangeStart,

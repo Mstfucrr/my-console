@@ -2,7 +2,9 @@
 
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Motorcycle } from '@/components/svg'
+import { MaskedText } from '@/components/ui/masked-text'
 import { formatCurrency } from '@/lib/formatCurrency'
+import { maskLastName } from '@/lib/utils'
 import type { Order } from '@/modules/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
@@ -17,6 +19,7 @@ interface OrdersListProps {
   viewMode: 'card' | 'list'
   emptyMessage: string
   filteredEmptyMessage: string
+  onViewDetails: (order: Order) => void
 }
 
 export function OrdersList({
@@ -25,9 +28,11 @@ export function OrdersList({
   isFetching,
   viewMode,
   emptyMessage,
-  filteredEmptyMessage
+  filteredEmptyMessage,
+  onViewDetails
 }: OrdersListProps) {
-  const { statusFilter, handleViewDetails } = useOrders()
+  const { filters } = useOrders()
+  const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
 
   const columns: ColumnDef<Order>[] = [
     {
@@ -38,7 +43,14 @@ export function OrdersList({
     {
       accessorKey: 'customerName',
       header: 'Müşteri',
-      cell: ({ row }) => <div className='font-medium'>{row.getValue('customerName')}</div>
+      cell: ({ row }) => (
+        <MaskedText
+          value={row.getValue('customerName')}
+          maskFn={maskLastName}
+          defaultMasked={true}
+          textClassName='font-medium'
+        />
+      )
     },
     {
       accessorKey: 'status',
@@ -88,7 +100,7 @@ export function OrdersList({
       return (
         <div className='flex h-48 items-center justify-center'>
           <div className='text-center'>
-            <p className='text-muted-foreground'>{statusFilter ? filteredEmptyMessage : emptyMessage}</p>
+            <p className='text-muted-foreground'>{hasActiveFilter ? filteredEmptyMessage : emptyMessage}</p>
           </div>
         </div>
       )
@@ -97,7 +109,7 @@ export function OrdersList({
     return (
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
         {orders.map(order => (
-          <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
+          <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />
         ))}
       </div>
     )
@@ -108,9 +120,9 @@ export function OrdersList({
       columns={columns}
       data={orders}
       isLoading={isLoading || isFetching}
-      emptyLabel={statusFilter ? filteredEmptyMessage : emptyMessage}
+      emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
       loadingLabel='Siparişler yükleniyor...'
-      onRowClick={order => handleViewDetails(order)}
+      onRowClick={onViewDetails}
       enableColumnVisibility={false}
     />
   )

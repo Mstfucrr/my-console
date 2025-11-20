@@ -1,7 +1,6 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { OrderDetailDialog } from './components/listing/OrderDetailDialog'
 import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersTabs } from './components/stats/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
@@ -25,8 +24,6 @@ function OrdersViewContent() {
       <OrdersStats />
 
       <OrdersTabs />
-
-      <OrderDetailDialog />
     </div>
   )
 }

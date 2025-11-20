@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
+import { Route } from 'next'
+import Link from 'next/link'
 import { useState } from 'react'
 
 interface MaskedTextProps {
@@ -30,7 +32,7 @@ interface MaskedTextProps {
   /**
    * href for the link (required if asLink is true)
    */
-  href?: string
+  href?: Route
   /**
    * Additional className for the text/link element
    */
@@ -62,18 +64,17 @@ export function MaskedText({
 
   const displayValue = isMasked ? maskFn(value) : value
 
-  const content =
-    asLink && href ? (
-      <a href={href} className={textClassName}>
-        {displayValue}
-      </a>
-    ) : (
-      <span className={textClassName}>{displayValue}</span>
-    )
+  if (!displayValue.length) return null
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {content}
+      {asLink && href ? (
+        <Link href={href} className={textClassName}>
+          {displayValue}
+        </Link>
+      ) : (
+        <span className={textClassName}>{displayValue}</span>
+      )}
       <Button
         size={buttonSize}
         variant='ghost'
