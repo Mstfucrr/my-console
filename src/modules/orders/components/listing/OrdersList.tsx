@@ -3,7 +3,6 @@
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Motorcycle } from '@/components/svg'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { cn } from '@/lib/utils'
 import type { Order } from '@/modules/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
@@ -96,7 +95,7 @@ export function OrdersList({
     }
 
     return (
-      <div className={cn('grid grid-cols-1 gap-4', 'md:grid-cols-3')}>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
         {orders.map(order => (
           <OrderCard key={order.id} order={order} onViewDetails={handleViewDetails} />
         ))}

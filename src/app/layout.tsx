@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang='tr'>
       <head>
-        {process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'test' && (
+        {process.env.NODE_ENV === 'development' && (
           <Script src='//unpkg.com/react-scan/dist/auto.global.js' crossOrigin='anonymous' />
         )}
       </head>

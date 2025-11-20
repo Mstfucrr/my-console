@@ -4,9 +4,9 @@ import { defineConfig, devices } from '@playwright/test'
  * Ortam değişkenlerini dosyadan oku.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from 'dotenv'
+import path from 'path'
+dotenv.config({ path: path.resolve(__dirname, '.env.test') })
 
 /**
  * https://playwright.dev/docs/test-configuration adresine bakınız.
@@ -78,9 +78,6 @@ export default defineConfig({
   webServer: {
     command: 'pnpm dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NEXT_PUBLIC_APP_ENV: 'test' // kendi flag’in: kodda process.env.NEXT_PUBLIC_APP_ENV==='test' kontrolü yap
-    }
+    reuseExistingServer: !process.env.CI
   }
 })

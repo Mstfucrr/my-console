@@ -50,9 +50,10 @@ const MobileMenu = () => {
       </motion.div>
 
       <div
-        className={cn('fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3', {
-          'bg-primary-10': mobileMenu
-        })}
+        className={cn(
+          'fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3',
+          mobileMenu ? 'bg-primary-10' : 'bg-background'
+        )}
       >
         <Link href='/' aria-label='Home'>
           <SiteLogoBig className='text-primary w-32' />

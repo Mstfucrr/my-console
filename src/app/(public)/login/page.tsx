@@ -1,16 +1,22 @@
 'use client'
 import LogInForm from '@/modules/auth/components/login-form'
 import VerfiyForm from '@/modules/auth/components/verify-form'
+import { ILoginResponse } from '@/modules/auth/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 
 const LoginFormContent = () => {
   const [isOtp, setIsOtp] = useState(false)
+  const [loginData, setLoginData] = useState<ILoginResponse | null>(null)
+
+  const handleOtpRequired = (loginData: ILoginResponse) => {
+    if (!loginData.otpSessionId) return
+    setLoginData(loginData)
+    setIsOtp(true)
+  }
 
   return (
     <div className='mb-3 text-center'>
-      {isOtp && <h1 className='text-primary -mt-3 mb-4 text-2xl font-bold'>Doğrulama Kodu</h1>}
-
       <AnimatePresence mode='wait'>
         {!isOtp ? (
           <motion.div
@@ -20,7 +26,7 @@ const LoginFormContent = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <LogInForm onOtpRequired={() => setIsOtp(true)} />
+            <LogInForm onOtpRequired={handleOtpRequired} />
           </motion.div>
         ) : (
           <motion.div
@@ -30,7 +36,10 @@ const LoginFormContent = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <VerfiyForm />
+            <VerfiyForm
+              otpSessionId={loginData?.otpSessionId ?? ''}
+              maskedPhoneNumber={loginData?.maskedPhoneNumber ?? ''}
+            />
           </motion.div>
         )}
       </AnimatePresence>

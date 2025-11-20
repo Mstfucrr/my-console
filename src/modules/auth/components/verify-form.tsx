@@ -19,33 +19,27 @@ import {
   useState
 } from 'react'
 import { toast } from 'react-toastify'
-import { authService, ISetCookieRequest, IVerifyOtpRequest } from '../service/auth.service'
+import { authService } from '../service/auth.service'
+import { IVerifyOtpRequest } from '../types'
 
-const VerfiyForm = () => {
-  const loginData = {
-    otpTimeout: 30,
-    phoneNumber: '1234567890',
-    installationId: '1234567890'
-  }
+const OTP_TIMEOUT = 60
 
-  const verifyOtpMutation = useMutation({
+interface VerfiyFormProps {
+  otpSessionId: string
+  maskedPhoneNumber: string
+}
+
+const VerfiyForm = ({ otpSessionId, maskedPhoneNumber }: VerfiyFormProps) => {
+  const { mutateAsync: verifyOtp, isPending: isVerifyOtpPending } = useMutation({
     mutationFn: (request: IVerifyOtpRequest) => authService.verifyOtp(request)
   })
-
-  const setCookieMutation = useMutation({
-    mutationFn: (request: ISetCookieRequest) => authService.setCookie(request)
-  })
-
   const totalOtpField = 6
   const otpArray: string[] = Array.from({ length: totalOtpField }, () => '')
   const [otp, setOtp] = useState<string[]>(otpArray)
   const otpFields = Array.from({ length: totalOtpField }, (_, index) => index)
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
-  const [timer, setTimer] = useState(loginData.otpTimeout)
-
-  const { mutateAsync: verifyOtp, isPending: isVerifyOtpPending } = verifyOtpMutation
-  const { mutateAsync: setCookie, isPending: isSetCookiePending } = setCookieMutation
+  const [timer, setTimer] = useState(OTP_TIMEOUT)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,25 +91,22 @@ const VerfiyForm = () => {
 
   const router = useRouter()
 
-  async function verifyOtpAndSetCookie() {
+  async function handleVerifyOtp() {
     const enteredOtp = otp.join('')
-    const { action_cookie, isOtpValid } = await verifyOtp({
-      installationId: loginData.installationId,
-      otp: enteredOtp,
-      phoneNumber: loginData.phoneNumber
+    const { userId } = await verifyOtp({
+      otpCode: enteredOtp,
+      otpSessionId: otpSessionId
     })
 
-    if (!isOtpValid) throw new Error('Invalid OTP')
-
-    await setCookie({ action_cookie })
+    if (!userId) throw new Error('Invalid OTP')
   }
 
   const handleSubmit = async () => {
-    if (!loginData || loginData.otpTimeout === 0) return
+    if (!otpSessionId) return
     setOtp(otpArray)
 
     toast
-      .promise(verifyOtpAndSetCookie, {
+      .promise(handleVerifyOtp, {
         pending: 'Kod doğrulanıyor...',
         success: 'Başarılıyla giriş yaptınız.',
         error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
@@ -125,12 +116,11 @@ const VerfiyForm = () => {
   }
 
   const handleResendOtp = () => {
-    setTimer(loginData.otpTimeout)
+    setTimer(OTP_TIMEOUT)
     resetOtp()
   }
 
   const isOtpComplete = otp.every(digit => digit !== '')
-  const maskedPhoneNumber = `**** *** ${loginData.phoneNumber.slice(-4)}`
 
   return (
     <div className='w-full'>
@@ -150,7 +140,7 @@ const VerfiyForm = () => {
               value={otp[index]}
               onChange={e => handleChange(e, index)}
               onKeyDown={event => handleKeyDown(index, event)}
-              disabled={isTimerComplete || isVerifyOtpPending || isSetCookiePending}
+              disabled={isTimerComplete || isVerifyOtpPending}
               autoFocus={index === 0}
               maxLength={1}
               className='focus:border-primary no-spin h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
@@ -168,11 +158,11 @@ const VerfiyForm = () => {
               className='bg-primary absolute z-[-1] h-full w-full rounded-xl'
               initial={{ width: '100%' }}
               animate={{
-                width: isVerifyOtpPending || isSetCookiePending ? '100%' : `${(timer / loginData.otpTimeout) * 100}%`
+                width: isVerifyOtpPending ? '100%' : `${(timer / OTP_TIMEOUT) * 100}%`
               }}
               transition={{ duration: 1 }}
             />
-            {!isTimerComplete || isVerifyOtpPending || isSetCookiePending ? (
+            {!isTimerComplete || isVerifyOtpPending ? (
               <LoadingButton
                 type='button'
                 variant='outline'
@@ -180,7 +170,7 @@ const VerfiyForm = () => {
                 size='lg'
                 onClick={handleSubmit}
                 disabled={!isOtpComplete}
-                isLoading={isVerifyOtpPending || isSetCookiePending}
+                isLoading={isVerifyOtpPending}
                 loadingText='Doğrulanıyor...'
               >
                 <Badge className='text-lg'>

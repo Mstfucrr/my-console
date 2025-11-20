@@ -33,9 +33,11 @@ export const authHeaderMiddleware: RequestMiddleware = config => {
   if (config.headers['Authorization']) return config
 
   try {
-    config.headers['Authorization'] = `Bearer ${getToken().accessToken}`
-  } catch {
-    // Token bulunamadı, auth error middleware tarafından işlenecek
+    const { accessToken } = getToken()
+    if (accessToken) config.headers['Authorization'] = `Bearer ${accessToken}`
+    else throw new Error('Token bulunamadı')
+  } catch (error) {
+    console.error('authHeaderMiddleware: Token bulunamadı', error)
   }
 
   return config
@@ -44,12 +46,8 @@ export const authHeaderMiddleware: RequestMiddleware = config => {
 // Public API çağrıları için hata yönetimi (login, register, vb.)
 export const publicErrorMiddleware: ErrorMiddleware = async error => {
   if (isNetworkError(error)) {
-    toast.error('Sunucuya bağlanırken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.')
+    console.error('publicErrorMiddleware: Sunucuya bağlanırken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.')
     return Promise.reject(error)
-  }
-
-  if (error.response?.data?.message) {
-    toast.error(error.response.data.message)
   }
 
   return Promise.reject(error)
