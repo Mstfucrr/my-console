@@ -5,12 +5,12 @@ import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
-import { useMemo } from 'react'
-import { OrdersContextType, useOrders } from '../../context/OrdersContext'
+import { memo, useMemo } from 'react'
+import { useOrdersStats } from '../../hooks/useOrdersStats'
 
 interface Stat {
   title: string
-  id: keyof OrdersContextType['stats']
+  id: 'total' | 'created' | 'shipped' | 'delivered' | 'cancelled'
   Icon: LucideIcon
   color: string
   value: number
@@ -54,10 +54,10 @@ const statsList: Array<Stat> = [
   }
 ]
 
-export function OrdersStats() {
-  const { stats: statsData, isStatsLoading } = useOrders()
+export const OrdersStats = memo(function OrdersStats() {
+  const { stats: statsData, isStatsLoading } = useOrdersStats()
 
-  const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData[stat.id] || 0 })), [statsData])
+  const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData?.[stat.id] || 0 })), [statsData])
 
   return (
     <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
@@ -66,4 +66,4 @@ export function OrdersStats() {
       ))}
     </div>
   )
-}
+})

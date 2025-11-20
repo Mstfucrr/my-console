@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/types'
+import type { OrderStatusesGroups } from '@/types'
 
 export interface ReportRecord {
   id: string
@@ -11,7 +11,7 @@ export interface ReportRecord {
   totalAmount: number
   platformFee: number
   netAmount: number
-  status: OrderStatus
+  status: OrderStatusesGroups
   paymentMethod: string
   deliveryAddress: string
   notes?: string

@@ -1,8 +1,8 @@
 'use client'
 
 import PageError from '@/components/page-error'
+import { OrdersTabs } from './components/OrdersTabs'
 import { OrdersStats } from './components/stats/OrdersStats'
-import { OrdersTabs } from './components/stats/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {

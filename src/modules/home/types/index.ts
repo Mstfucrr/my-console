@@ -1,8 +1,8 @@
-import { ChartDataPoint, OrderStatus } from '@/types'
+import { ChartDataPoint, OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
 
 export type OrdersByStatus = {
-  status: OrderStatus
+  status: OrderStatusesGroups
   count: number
   percentage: number
 }

@@ -1,7 +1,7 @@
 'use client'
 
-import { type Order, OrderStatusesGroups } from '@/types'
 import { getStatusValuesByGroup } from '@/constants/orders'
+import { type Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS, ACTIVE_STATUS_GROUPS, COMPLETED_STATUS, COMPLETED_STATUS_GROUPS } from '../constants'
@@ -16,18 +16,10 @@ export interface OrdersContextType {
   activeOrders: Order[]
   completedOrders: Order[]
   completedTotal: number
-  stats: {
-    total: number
-    created: number
-    shipped: number
-    delivered: number
-    cancelled: number
-  }
   isLoadingActive: boolean
   isFetchingActive: boolean
   isLoadingCompleted: boolean
   isFetchingCompleted: boolean
-  isStatsLoading: boolean
   error: string
   setActiveTab: (tab: 'active' | 'completed') => void
   handleCreateOrderSuccess: () => void
@@ -71,7 +63,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       return ACTIVE_STATUS
     }
     if (ACTIVE_STATUS_GROUPS.includes(filters.status)) {
-      return getStatusValuesFromGroup(filters.status)
+      return getStatusValuesByGroup(filters.status)
     }
     return []
   }, [filters.status])
@@ -103,7 +95,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       return COMPLETED_STATUS
     }
     if (COMPLETED_STATUS_GROUPS.includes(filters.status)) {
-      return getStatusValuesFromGroup(filters.status)
+      return getStatusValuesByGroup(filters.status)
     }
     return []
   }, [filters.status])
@@ -129,33 +121,11 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     enabled: filters.status === 'all' || COMPLETED_STATUS_GROUPS.includes(filters.status)
   })
 
-  // Stats query
-  const {
-    data: statsData,
-    error: statsError,
-    isLoading: isStatsLoading
-  } = useQuery({
-    queryKey: ['ordersStats', filters],
-    queryFn: async () => await ordersService.getOrdersStats()
-  })
-
   const activeOrders = activeOrdersData || []
   const completedOrders = completedOrdersData?.data || []
   const completedTotal = completedOrdersData?.total || 0
 
-  const stats = useMemo(
-    () =>
-      statsData ?? {
-        total: 0,
-        created: 0,
-        shipped: 0,
-        delivered: 0,
-        cancelled: 0
-      },
-    [statsData]
-  )
-
-  const error = activeOrdersError?.message || completedOrdersError?.message || statsError?.message || ''
+  const error = activeOrdersError?.message || completedOrdersError?.message || ''
 
   const handleCreateOrderSuccess = () => {
     refetchActiveOrders()
@@ -174,12 +144,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     activeOrders,
     completedOrders,
     completedTotal,
-    stats,
     isLoadingActive,
     isFetchingActive,
     isLoadingCompleted,
     isFetchingCompleted,
-    isStatsLoading,
     error,
     setActiveTab,
     handleCreateOrderSuccess,

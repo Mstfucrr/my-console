@@ -224,7 +224,13 @@ export const mockOrders: Order[] = [
     restaurant: mockRestaurants[0],
     paymentMethod: 'card',
     channel: 'migrosYemek',
-    customerPosition: [40.985, 29.045]
+    customerPosition: [40.985, 29.045],
+    courierInfo: {
+      id: 'CUR-007',
+      name: 'Selin Kılıç',
+      licensePlate: '34 SK 123',
+      position: [40.9923, 29.0234]
+    }
   },
   {
     id: 'ORD-2024-012',

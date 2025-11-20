@@ -3,6 +3,7 @@
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Motorcycle } from '@/components/svg'
 import { MaskedText } from '@/components/ui/masked-text'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { maskLastName } from '@/lib/utils'
 import type { Order } from '@/types'
@@ -58,9 +59,18 @@ export function OrdersList({
       cell: ({ row }) => {
         const order = row.original
         return (
-          <div className='flex items-center gap-1'>
+          <div className='flex items-center gap-3'>
             <StatusBadge status={order.status} />
-            {order.courierInfo && <Motorcycle className='text-primary size-6 shrink-0' />}
+            {order.courierInfo && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
+                  </TooltipTrigger>
+                  <TooltipContent>{order.courierInfo.name}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
         )
       }

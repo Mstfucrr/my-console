@@ -7,11 +7,12 @@ import { TabsWithList } from '@/components/ui/tabs'
 import type { Order, PaginationOptions } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
-import { useOrders } from '../../context/OrdersContext'
-import { OrderFilters } from '../filters/OrderFilters'
-import { OrderDetailDialog } from '../listing/OrderDetailDialog'
-import { OrdersList } from '../listing/OrdersList'
+import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
+import { useOrders } from '../context/OrdersContext'
+import { useOrdersStats } from '../hooks/useOrdersStats'
+import { OrderFilters } from './filters/OrderFilters'
+import { OrderDetailDialog } from './listing/OrderDetailDialog'
+import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
 export function OrdersTabs() {
@@ -25,9 +26,9 @@ export function OrdersTabs() {
     isFetchingActive,
     isLoadingCompleted,
     isFetchingCompleted,
-    stats,
     filters
   } = useOrders()
+  const { stats } = useOrdersStats()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -49,11 +50,17 @@ export function OrdersTabs() {
   }
 
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
-  const activeOrdersCount = hasActiveFilter ? activeOrders.length : stats.created + stats.shipped
-  const completedOrdersCount = hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled
+  const activeOrdersCount = useMemo(
+    () => (hasActiveFilter ? activeOrders.length : stats.created + stats.shipped),
+    [activeOrders.length, stats.created, stats.shipped, hasActiveFilter]
+  )
+  const completedOrdersCount = useMemo(
+    () => (hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled),
+    [completedOrders.length, stats.delivered, stats.cancelled, hasActiveFilter]
+  )
 
-  const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_STATUS.includes(filters.status)
-  const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_STATUS.includes(filters.status)
+  const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_STATUS_GROUPS.includes(filters.status)
+  const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_STATUS_GROUPS.includes(filters.status)
 
   const tabItems = useMemo(
     () => [
