@@ -1,4 +1,4 @@
-import { LatestOrder } from '@/modules/types'
+import { LatestOrder } from '@/types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { DateRange } from 'react-day-picker'
 import { dashboardService } from '../service'

@@ -1,9 +1,9 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
-import { OrderStatusLabel } from '@/modules/types'
+import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
+import { OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { OrdersContextType, useOrders } from '../../context/OrdersContext'
@@ -25,31 +25,31 @@ const statsList: Array<Stat> = [
     value: 0
   },
   {
-    title: OrderStatusLabel.created,
+    title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
     id: 'created',
-    Icon: OrderStatusIcons.created,
-    color: ORDER_STATUS_TEXT_COLORS['created'],
+    Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED],
     value: 0
   },
   {
-    title: OrderStatusLabel.shipped,
+    title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
     id: 'shipped',
-    Icon: OrderStatusIcons.shipped,
-    color: ORDER_STATUS_TEXT_COLORS['shipped'],
+    Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED],
     value: 0
   },
   {
-    title: OrderStatusLabel.delivered,
+    title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
     id: 'delivered',
-    Icon: OrderStatusIcons.delivered,
-    color: ORDER_STATUS_TEXT_COLORS['delivered'],
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED],
     value: 0
   },
   {
-    title: OrderStatusLabel.cancelled,
+    title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
     id: 'cancelled',
-    Icon: OrderStatusIcons.cancelled,
-    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
+    Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED],
     value: 0
   }
 ]

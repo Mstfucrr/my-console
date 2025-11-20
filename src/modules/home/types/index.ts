@@ -1,4 +1,4 @@
-import { ChartDataPoint, OrderStatus } from '@/modules/types'
+import { ChartDataPoint, OrderStatus } from '@/types'
 import { LucideIcon } from 'lucide-react'
 
 export type OrdersByStatus = {

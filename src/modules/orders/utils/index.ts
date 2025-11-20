@@ -1,4 +1,4 @@
-import { OrderChannel } from '@/modules/types'
+import { OrderChannel } from '@/types'
 
 function formatCurrencyTRY(amount: number | undefined) {
   if (!amount) return '0.00 ₺'

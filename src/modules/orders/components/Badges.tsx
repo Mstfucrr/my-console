@@ -3,24 +3,25 @@
 import CustomImage from '@/components/image'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { ORDER_STATUS_COLORS } from '@/constants'
+import { getStatusGroupByValue, ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders'
 import { cn } from '@/lib/utils'
-import type { OrderChannel, OrderStatus } from '@/modules/types'
-import { OrderStatusLabel } from '@/modules/types'
+import type { OrderChannel } from '@/types'
 import { CreditCard } from 'lucide-react'
 import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS, PAYMENT_METHOD_LABELS } from '../utils'
 
 interface StatusBadgeProps {
-  status: OrderStatus
+  status: number // OrderStatusesValues (0-10)
   variant?: 'outline' | 'soft'
   className?: string
 }
 
 export function StatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
-  if (!status || !OrderStatusLabel[status]) return null
+  const group = getStatusGroupByValue(status)
+  const groupInfo = OrderStatusGroup[group]
+
   return (
-    <Badge className={cn(ORDER_STATUS_COLORS[status], 'shrink-0', className)} variant={variant}>
-      {OrderStatusLabel[status]}
+    <Badge className={cn(ORDER_STATUS_BADGE_CLASSES[group], 'shrink-0', className)} variant={variant}>
+      {groupInfo.label}
     </Badge>
   )
 }

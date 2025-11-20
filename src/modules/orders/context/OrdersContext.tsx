@@ -1,9 +1,10 @@
 'use client'
 
-import { type Order, type OrderStatus } from '@/modules/types'
+import { type Order, OrderStatusesGroups } from '@/types'
+import { getStatusValuesByGroup } from '@/constants/orders'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
-import { ACTIVE_STATUS, COMPLETED_STATUS } from '../constants'
+import { ACTIVE_STATUS, ACTIVE_STATUS_GROUPS, COMPLETED_STATUS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service'
 import { OrderFilterProperties } from '../types'
 
@@ -50,8 +51,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setFilters(newFilters)
     // Auto-switch tab based on status
     if (newFilters.status !== 'all') {
-      const isActiveStatus = ACTIVE_STATUS.includes(newFilters.status)
-      const isCompletedStatus = COMPLETED_STATUS.includes(newFilters.status)
+      const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(newFilters.status)
+      const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(newFilters.status)
       if (isActiveStatus && !isCompletedStatus) {
         setActiveTab('active')
       } else if (isCompletedStatus && !isActiveStatus) {
@@ -64,7 +65,17 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setFilters(defaultOrderFilters)
   }
 
-  const activeStatuses = filters.status === 'all' ? ACTIVE_STATUS : filters.status
+  // Convert filter group to status values
+  const activeStatusValues = useMemo(() => {
+    if (filters.status === 'all') {
+      return ACTIVE_STATUS
+    }
+    if (ACTIVE_STATUS_GROUPS.includes(filters.status)) {
+      return getStatusValuesFromGroup(filters.status)
+    }
+    return []
+  }, [filters.status])
+
   const {
     data: activeOrdersData,
     isLoading: isLoadingActive,
@@ -76,17 +87,27 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: Array.isArray(activeStatuses) ? (activeStatuses as OrderStatus[]) : [activeStatuses],
+          status: activeStatusValues,
           search: filters.search
         },
         { page: 1, limit: 50 }
       )
       return response.data
     },
-    enabled: filters.status === 'all' || ACTIVE_STATUS.includes(filters.status)
+    enabled: filters.status === 'all' || ACTIVE_STATUS_GROUPS.includes(filters.status)
   })
 
-  const completedStatuses = filters.status === 'all' ? COMPLETED_STATUS : filters.status
+  // Convert filter group to status values
+  const completedStatusValues = useMemo(() => {
+    if (filters.status === 'all') {
+      return COMPLETED_STATUS
+    }
+    if (COMPLETED_STATUS_GROUPS.includes(filters.status)) {
+      return getStatusValuesFromGroup(filters.status)
+    }
+    return []
+  }, [filters.status])
+
   const {
     data: completedOrdersData,
     isLoading: isLoadingCompleted,
@@ -98,14 +119,14 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: Array.isArray(completedStatuses) ? (completedStatuses as OrderStatus[]) : [completedStatuses],
+          status: completedStatusValues,
           search: filters.search
         },
         { page: 1, limit: 50 }
       )
       return response
     },
-    enabled: filters.status === 'all' || COMPLETED_STATUS.includes(filters.status)
+    enabled: filters.status === 'all' || COMPLETED_STATUS_GROUPS.includes(filters.status)
   })
 
   // Stats query

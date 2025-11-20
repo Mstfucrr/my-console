@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/modules/types'
+import type { OrderStatus } from '@/types'
 
 export interface ReportRecord {
   id: string

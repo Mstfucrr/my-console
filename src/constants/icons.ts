@@ -1,5 +1,5 @@
 import { DeliveryCheckList, DeliveryShipmentPackagesAdd, Motorcycle } from '@/components/svg'
-import type { OrderStatus } from '@/modules/types'
+import { OrderStatusesGroups } from '@/types'
 import {
   BadgeTurkishLira,
   BarChart2,
@@ -20,12 +20,12 @@ export const ModuleIcons = {
   Home: Home
 } as const
 
-// Order Status Icons - Used consistently across all pages
-export const OrderStatusIcons: Record<OrderStatus, LucideIcon | typeof Motorcycle> = {
-  created: Clock,
-  shipped: Motorcycle,
-  delivered: CheckCircle,
-  cancelled: XCircle
+// Order Status Icons - Used consistently across all pages (group-based)
+export const OrderStatusIcons: Record<OrderStatusesGroups, LucideIcon | typeof Motorcycle> = {
+  [OrderStatusesGroups.CREATED]: Clock,
+  [OrderStatusesGroups.SHIPPED]: Motorcycle,
+  [OrderStatusesGroups.DELIVERED]: CheckCircle,
+  [OrderStatusesGroups.CANCELLED]: XCircle
 } as const
 
 // Other Dashboard Icons (non-status related)

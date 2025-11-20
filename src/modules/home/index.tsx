@@ -15,15 +15,14 @@ import { DashboardDonut } from './components/DonutChart'
 
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
+import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
+import { OrderStatusesGroups, OrderStatusValuesWithName } from '../../types'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { StatusBadge } from '../orders/components/Badges'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
-import { OrderStatus, OrderStatusColor, OrderStatusLabel } from '../types'
 import QuickAction from './components/QuickAction'
-import { mockDashboardStats } from './data'
-import { useGetGraphs, useGetLatestOrders, useGetStats } from './hooks/useDashboard'
+import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 import type { DashboardStats } from './types'
 
 const defaultDateRange = {
@@ -55,20 +54,20 @@ const statsList: Array<StatsList> = [
   {
     title: 'Teslim Edildi',
     id: 'deliveredOrder',
-    Icon: OrderStatusIcons.delivered,
-    color: ORDER_STATUS_TEXT_COLORS['delivered']
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
   },
   {
     title: 'Yola Çıktı',
     id: 'inProgressOrder',
-    Icon: OrderStatusIcons.shipped,
-    color: ORDER_STATUS_TEXT_COLORS['shipped']
+    Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
   },
   {
     title: 'İptal Edildi',
     id: 'cancelOrder',
-    Icon: OrderStatusIcons.cancelled,
-    color: ORDER_STATUS_TEXT_COLORS['cancelled']
+    Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED]
   }
 ]
 
@@ -83,23 +82,32 @@ export default function DashboardView() {
     refetch: latestOrdersRefetch
   } = useGetLatestOrders(dateRange)
 
-  const { data: graphs, isLoading: graphsLoading, error: graphsError, refetch: graphsRefetch } = useGetGraphs(dateRange)
-
   const handleRefresh = () => {
     refetch()
     latestOrdersRefetch()
-    graphsRefetch()
   }
 
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
-    return mockDashboardStats.ordersByStatus.map(s => ({
-      label: OrderStatusLabel[s.status as OrderStatus],
-      value: s.count,
-      color: OrderStatusColor[s.status as OrderStatus]
-    }))
-  }, [])
+    return [
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
+        value: stats?.deliveredOrder ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.DELIVERED].color
+      },
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
+        value: stats?.inProgressOrder ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.SHIPPED].color
+      },
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
+        value: stats?.cancelOrder ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.CANCELLED].color
+      }
+    ]
+  }, [stats])
 
-  if (error || latestOrdersError || graphsError) {
+  if (error || latestOrdersError) {
     return (
       <PageError
         errorMessage='Dashboard verileri yüklenirken bir hata oluştu'
@@ -173,7 +181,7 @@ export default function DashboardView() {
 
       {/* Chart + Recent Orders */}
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        {graphsLoading ? (
+        {isLoading ? (
           <Skeleton className='h-80 w-full' />
         ) : (
           <Card>
@@ -210,7 +218,7 @@ export default function DashboardView() {
                         <span className='text-xs font-light'>{order.orderId}</span>
                       </div>
                       <div className='flex flex-col gap-y-2 text-right'>
-                        <StatusBadge status={order.status} />
+                        <StatusBadge status={OrderStatusValuesWithName[order.status]} />
                         <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                       </div>
                     </div>

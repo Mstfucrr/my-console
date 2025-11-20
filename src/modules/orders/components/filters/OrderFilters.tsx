@@ -1,18 +1,19 @@
 'use client'
 
 import { FilterCard, SearchInput, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
+import { OrderStatusGroup } from '@/constants/orders'
 import { useFilter } from '@/hooks/use-filter'
-import { OrderStatusLabel } from '@/modules/types'
+import { OrderStatusesGroups } from '@/types'
 import { Filter, Search } from 'lucide-react'
 import { defaultOrderFilters, useOrders } from '../../context/OrdersContext'
 import type { OrderFilterProperties } from '../../types'
 
 const statusOptions: FilterOption[] = [
   { value: 'all', label: 'Tüm Durumlar' },
-  { value: 'created', label: OrderStatusLabel.created },
-  { value: 'shipped', label: OrderStatusLabel.shipped },
-  { value: 'delivered', label: OrderStatusLabel.delivered },
-  { value: 'cancelled', label: OrderStatusLabel.cancelled }
+  { value: OrderStatusesGroups.CREATED, label: OrderStatusGroup[OrderStatusesGroups.CREATED].label },
+  { value: OrderStatusesGroups.SHIPPED, label: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label },
+  { value: OrderStatusesGroups.DELIVERED, label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label },
+  { value: OrderStatusesGroups.CANCELLED, label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label }
 ]
 
 export function OrderFilters() {

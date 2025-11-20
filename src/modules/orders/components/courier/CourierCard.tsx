@@ -2,7 +2,7 @@ import { Motorcycle } from '@/components/svg'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import type { CourierInfo } from '@/modules/types'
+import type { CourierInfo } from '@/types'
 import { MapPinned } from 'lucide-react'
 
 type Props = {

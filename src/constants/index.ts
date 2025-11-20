@@ -1,2 +1,2 @@
 export * from './icons'
-export * from './order-colors'
+export * from './orders'

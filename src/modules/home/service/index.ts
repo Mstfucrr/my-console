@@ -1,6 +1,6 @@
 import { privateAxiosInstance } from '@/lib/axios'
 import { formatDateForApi } from '@/lib/utils'
-import { LatestOrder } from '@/modules/types'
+import { LatestOrder } from '@/types'
 import { DateRange } from 'react-day-picker'
 import type { DashboardGraphs, DashboardStats } from '../types'
 
