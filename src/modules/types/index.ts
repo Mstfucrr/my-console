@@ -74,19 +74,6 @@ export const OrderStatusColor = {
   cancelled: '#ef4444' // İptal Edildi - Red
 } as const
 // Dashboard İstatistikleri
-export interface DashboardStats {
-  todayOrders: number
-  deliveredOrders: number
-  onWayOrders: number
-  cancelledOrders: number
-  totalRevenue: number
-  pendingPayments: number
-  ordersByStatus: OrderStatusCount[]
-  recentApiErrors: APIError[]
-  recentOrders: Order[]
-  hourlyOrdersChart: ChartDataPoint[]
-  hourlyRevenueChart: ChartDataPoint[]
-}
 
 export interface ChartDataPoint {
   label: string

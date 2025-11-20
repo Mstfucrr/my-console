@@ -1,10 +1,12 @@
 import { OrderChannel } from '@/modules/types'
 
-function formatCurrencyTRY(amount: number) {
+function formatCurrencyTRY(amount: number | undefined) {
+  if (!amount) return '0.00 ₺'
   return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`
 }
 
-function formatDateTR(dateString: string) {
+function formatDateTR(dateString: string | undefined) {
+  if (!dateString) return ''
   return new Date(dateString).toLocaleString('tr-TR')
 }
 

@@ -7,6 +7,7 @@ import Menu from '@/modules/menu'
 import { motion } from 'framer-motion'
 import 'leaflet/dist/leaflet.css'
 import { usePathname } from 'next/navigation'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const mounted = useMounted()
@@ -19,7 +20,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className={cn('pt-20 transition-all duration-150 sm:pt-16')}>
         <div className='flex flex-col gap-4 pb-0'>
           <LayoutWrapper>
-            <div className='container mx-auto'>{children}</div>
+            <NuqsAdapter>
+              <div className='container mx-auto'>{children}</div>
+            </NuqsAdapter>
           </LayoutWrapper>
         </div>
       </div>

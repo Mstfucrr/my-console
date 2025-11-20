@@ -1,6 +1,5 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
@@ -10,20 +9,21 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { cn } from '@/lib/utils'
-import { BarChart2, Loader2, LucideIcon } from 'lucide-react'
+import { BarChart2, LucideIcon } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
-import { LineChart } from './components/LineChart'
 
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ORDER_STATUS_COLORS, ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
 import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
-import { OrderStatusColor, OrderStatusLabel } from '../types'
+import { OrderStatus, OrderStatusColor, OrderStatusLabel } from '../types'
 import QuickAction from './components/QuickAction'
-import { dashboardService } from './service'
+import { mockDashboardStats } from './data'
+import { useGetGraphs, useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 import type { DashboardStats } from './types'
 
 const defaultDateRange = {
@@ -42,87 +42,62 @@ type StatsList = {
 const statsList: Array<StatsList> = [
   {
     title: 'Toplam Sipariş',
-    id: 'todayOrders',
+    id: 'totalOrder',
     Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600'
   },
   {
     title: 'Teslim Edildi',
-    id: 'deliveredOrders',
+    id: 'deliveredOrder',
     Icon: OrderStatusIcons.delivered,
     color: ORDER_STATUS_TEXT_COLORS['delivered']
   },
   {
     title: 'Yola Çıktı',
-    id: 'onWayOrders',
+    id: 'inProgressOrder',
     Icon: OrderStatusIcons.shipped,
     color: ORDER_STATUS_TEXT_COLORS['shipped']
   },
   {
     title: 'İptal Edildi',
-    id: 'cancelledOrders',
+    id: 'cancelOrder',
     Icon: OrderStatusIcons.cancelled,
     color: ORDER_STATUS_TEXT_COLORS['cancelled']
-  },
-  {
-    title: 'Toplam Ciro',
-    id: 'totalRevenue',
-    Icon: StatCardIcons.TotalRevenue,
-    color: 'text-purple-600',
-    type: 'currency'
-  },
-  {
-    title: 'Tahsilat Bekleyen',
-    id: 'pendingPayments',
-    Icon: StatCardIcons.PendingPayments,
-    color: 'text-yellow-600',
-    type: 'currency'
   }
 ]
 
 export default function DashboardView() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
+  const { data: stats, isLoading, isFetching, error, refetch } = useGetStats(dateRange)
 
   const {
-    data: stats,
-    isLoading,
-    isFetching,
-    error,
-    refetch
-  } = useQuery<DashboardStats>({
-    queryKey: ['dashboard-stats', dateRange],
-    queryFn: () => dashboardService.getStats(dateRange)
-  })
+    data: latestOrders,
+    isLoading: latestOrdersLoading,
+    error: latestOrdersError,
+    refetch: latestOrdersRefetch
+  } = useGetLatestOrders(dateRange)
 
-  const chartData = useMemo(() => {
-    if (!stats) return []
-    return stats.ordersByStatus.map(s => ({
-      label: OrderStatusLabel[s.status],
-      value: s.count,
-      color: OrderStatusColor[s.status]
-    }))
-  }, [stats])
+  const { data: graphs, isLoading: graphsLoading, error: graphsError, refetch: graphsRefetch } = useGetGraphs(dateRange)
 
-  if (isLoading) {
-    return (
-      <div className='p-6'>
-        <Card>
-          <CardContent className='flex h-48 items-center justify-center'>
-            <div className='text-primary flex items-center justify-center gap-2 text-lg'>
-              <Loader2 className='size-7 animate-spin' />
-              <div className=''>Yükleniyor...</div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
+  const handleRefresh = () => {
+    refetch()
+    latestOrdersRefetch()
+    graphsRefetch()
   }
 
-  if (error || !stats) {
+  const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
+    return mockDashboardStats.ordersByStatus.map(s => ({
+      label: OrderStatusLabel[s.status as OrderStatus],
+      value: s.count,
+      color: OrderStatusColor[s.status as OrderStatus]
+    }))
+  }, [])
+
+  if (error || latestOrdersError || graphsError) {
     return (
       <PageError
         errorMessage='Dashboard verileri yüklenirken bir hata oluştu'
-        onRefresh={refetch}
+        onRefresh={handleRefresh}
         isLoading={isFetching}
         title='Dashboard Yüklenemedi'
         description='Dashboard verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
@@ -145,9 +120,6 @@ export default function DashboardView() {
               onDateRangeChange={setDateRange}
               placeholder='Dönem seçin'
               enableTimeSelection={true}
-              onApply={() => {
-                refetch()
-              }}
             />
           </div>
         }
@@ -163,7 +135,6 @@ export default function DashboardView() {
             <div className='grid grid-cols-2 gap-3'>
               <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
               <CreateOrderModal
-                onSuccess={refetch}
                 trigger={<QuickAction Icon={QuickActionIcons.NewOrder} title='Yeni Sipariş' color='text-green-600' />}
               />
               <QuickAction
@@ -180,104 +151,75 @@ export default function DashboardView() {
         {/* Stats */}
         <div className='grid grid-cols-3 gap-4 max-sm:grid-cols-2'>
           {statsList.map(stat => (
-            <StatCard key={stat.id} isLoading={isLoading} value={stats[stat.id] as number} {...stat} />
+            <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id] as number} {...stat} />
           ))}
         </div>
       </div>
 
       {/* Chart + Recent Orders */}
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Sipariş Durumu</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='flex h-80 items-center justify-center'>
-              <DashboardDonut data={chartData} />
-            </div>
-          </CardContent>
-        </Card>
+        {graphsLoading ? (
+          <Skeleton className='h-80 w-full' />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-base'>Sipariş Durumu</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex h-80 items-center justify-center'>
+                <DashboardDonut data={chartData} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Son Siparişler</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {stats.recentOrders.length > 0 ? (
-              <div className='flex flex-col gap-3'>
-                {stats.recentOrders.map(order => (
-                  <div key={order.id} className='flex items-center justify-between rounded-lg border p-3'>
-                    <div className='flex-1'>
-                      <div className='mb-1 flex items-center gap-2'>
-                        <span className='font-medium'>#{order.id}</span>
-                        <span
-                          className={cn(
-                            'rounded-full px-2 py-1 text-xs font-medium',
-                            ORDER_STATUS_COLORS[order.status]
-                          )}
-                        >
-                          {OrderStatusLabel[order.status]}
-                        </span>
+        {latestOrdersLoading ? (
+          <Skeleton className='h-80 w-full' />
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className='text-base'>Son Siparişler</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {latestOrders?.length && latestOrders?.length > 0 ? (
+                <div className='flex flex-col gap-3'>
+                  {latestOrders.map(order => (
+                    <div key={order.id} className='flex items-center justify-between rounded-lg border p-3'>
+                      <div className='flex-1'>
+                        <div className='mb-1 flex items-center gap-2'>
+                          <span className='font-medium'>#{order.id}</span>
+                          <span
+                            className={cn(
+                              'rounded-full px-2 py-1 text-xs font-medium',
+                              ORDER_STATUS_COLORS[order.status]
+                            )}
+                          >
+                            {OrderStatusLabel[order.status]}
+                          </span>
+                        </div>
+                        <div className='text-muted-foreground text-sm'>{order.customerName}</div>
+                        <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
                       </div>
-                      <div className='text-muted-foreground text-sm'>{order.customerName}</div>
-                      <div className='text-muted-foreground text-xs'>{formatDateTR(order.createdAt)}</div>
+                      <div className='text-right'>
+                        <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
+                      </div>
                     </div>
-                    <div className='text-right'>
-                      <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
-                    </div>
-                  </div>
-                ))}
-                <Link href='/reports' className='w-full'>
-                  <Button variant='outline' className='mt-2 w-full bg-transparent'>
-                    Tüm Siparişleri Görüntüle
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className='flex h-64 flex-col items-center justify-center text-center'>
-                <div className='mb-2 text-4xl'>📦</div>
-                <div className='text-muted-foreground'>Henüz sipariş yok!</div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Line Charts */}
-
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3' hidden>
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Sipariş Sayısı</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='h-80'>
-              <LineChart data={stats.hourlyOrdersChart} color='#2196F3' height={300} yAxisLabel='Adet' />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Ciro</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='h-80'>
-              <LineChart data={stats.hourlyRevenueChart} color='#FFD100' height={300} yAxisLabel='TL' />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Ortalama Teslimat Süresi</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='h-80'>
-              <LineChart data={stats.averageDeliveryTimeChart} color='#10B981' height={300} yAxisLabel='Dakika' />
-            </div>
-          </CardContent>
-        </Card>
+                  ))}
+                  <Link href='/reports' className='w-full'>
+                    <Button variant='outline' className='mt-2 w-full bg-transparent'>
+                      Tüm Siparişleri Görüntüle
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className='flex h-64 flex-col items-center justify-center text-center'>
+                  <div className='mb-2 text-4xl'>📦</div>
+                  <div className='text-muted-foreground'>Henüz sipariş yok!</div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   )

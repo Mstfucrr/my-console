@@ -1,7 +1,6 @@
 import { mockOrders } from '@/modules/mockData'
-import type { DashboardStats } from '../types'
 
-export const mockDashboardStats: DashboardStats = {
+export const mockDashboardStats = {
   todayOrders: 15,
   deliveredOrders: 12,
   onWayOrders: 2,

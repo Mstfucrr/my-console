@@ -21,6 +21,14 @@ interface DateRangePickerProps {
   onApply?: () => void
 }
 
+function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0, 0)
+}
+
+function getDisplayDate(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), 0, 0)
+}
+
 export function DateRangePicker({
   dateRange,
   onDateRangeChange,
@@ -32,12 +40,10 @@ export function DateRangePicker({
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
 
-  // Sync tempDateRange when dateRange prop changes
   useEffect(() => {
     startTransition(() => setTempDateRange(dateRange))
   }, [dateRange])
 
-  // Derive time strings from dateRange
   const derivedFromTime = useMemo(() => {
     if (!dateRange || !dateRange.from) return ''
     const fromHours = dateRange.from.getHours().toString().padStart(2, '0')
@@ -55,7 +61,6 @@ export function DateRangePicker({
   const [fromTime, setFromTime] = useState<string>(derivedFromTime)
   const [toTime, setToTime] = useState<string>(derivedToTime)
 
-  // Sync time inputs when dateRange changes
   useEffect(() => {
     startTransition(() => setFromTime(derivedFromTime))
   }, [derivedFromTime])
@@ -76,14 +81,12 @@ export function DateRangePicker({
 
       if (enableTimeSelection && fromTime && tempDateRange.from) {
         const [hours, minutes] = fromTime.split(':').map(Number)
-        finalRange.from = new Date(tempDateRange.from)
-        finalRange.from.setHours(hours, minutes, 0, 0)
+        finalRange.from = setDateTimeToLocal(tempDateRange.from, hours, minutes)
       }
 
       if (enableTimeSelection && toTime && tempDateRange.to) {
         const [hours, minutes] = toTime.split(':').map(Number)
-        finalRange.to = new Date(tempDateRange.to)
-        finalRange.to.setHours(hours, minutes, 0, 0)
+        finalRange.to = setDateTimeToLocal(tempDateRange.to, hours, minutes)
       }
 
       onDateRangeChange(finalRange)
@@ -93,10 +96,10 @@ export function DateRangePicker({
   }
 
   const formatDisplayDate = (date: Date) => {
-    if (enableTimeSelection) {
-      return format(date, 'dd MMM yyyy HH:mm', { locale: tr })
-    }
-    return format(date, 'dd MMM yyyy', { locale: tr })
+    const displayDate = getDisplayDate(date)
+    if (enableTimeSelection) return format(displayDate, 'dd MMM yyyy HH:mm', { locale: tr })
+
+    return format(displayDate, 'dd MMM yyyy', { locale: tr })
   }
 
   return (

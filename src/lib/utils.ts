@@ -93,4 +93,9 @@ export function maskLastName(fullName: string): string {
   })}`
 }
 
-export const formatDateForApi = (date?: Date | string) => (date ? new Date(date).toISOString().slice(0, 16) : undefined)
+export const formatDateForApi = (date?: Date | string) => {
+  if (!date) return undefined
+  const inputDate = new Date(date)
+  inputDate.setHours(inputDate.getHours() + 3)
+  return inputDate.toISOString().slice(0, 16)
+}

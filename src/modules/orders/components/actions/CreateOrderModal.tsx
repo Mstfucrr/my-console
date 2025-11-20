@@ -73,7 +73,7 @@ const createOrderSchema = z.object({
 type CreateOrderFormData = z.infer<typeof createOrderSchema>
 
 interface CreateOrderModalProps {
-  onSuccess: () => void
+  onSuccess?: () => void
   trigger?: React.ReactNode
 }
 
@@ -167,7 +167,7 @@ export function CreateOrderModal({ onSuccess, trigger, ...buttonProps }: CreateO
       await new Promise(resolve => setTimeout(resolve, 1500))
 
       toast.success('Sipariş başarıyla oluşturuldu!')
-      onSuccess()
+      onSuccess?.()
       form.reset()
       // Reset address state
       setSelectedCity('')
