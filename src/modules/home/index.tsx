@@ -26,7 +26,7 @@ import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 import type { DashboardStats } from './types'
 
 const defaultDateRange = {
-  from: new Date(new Date().setHours(0, 0, 0, 0)),
+  from: new Date(new Date().setHours(5, 0, 0, 0)),
   to: new Date(new Date().setHours(23, 59, 59, 999))
 }
 
