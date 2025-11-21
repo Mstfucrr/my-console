@@ -1,25 +1,29 @@
-
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       variables:
-        ENVIRONMENT: "prod"
+        ENVIRONMENT: 'prod'
         S3_BUCKET: $S3_BUCKET_PROD
         CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PROD
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PROD
+    - if: $CI_COMMIT_BRANCH == "preprod"
+      variables:
+        ENVIRONMENT: 'preprod'
+        S3_BUCKET: $S3_BUCKET_PREPROD
+        CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PREPROD
+        NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PREPROD
     - if: $CI_COMMIT_BRANCH != "main"
       variables:
-        ENVIRONMENT: "local"
+        ENVIRONMENT: 'dev'
         S3_BUCKET: $S3_BUCKET_DEV
         CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
- 
- 
+
 stages:
   - build
   - deploy
   - redeploy
- 
+
 node-build:
   stage: build
   image: node:22.21.1-alpine
@@ -33,8 +37,16 @@ node-build:
       NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
       EOF
   script:
-    - pnpm install --no-strict-peer-dependencies 
-    - pnpm build
+    - pnpm install --no-strict-peer-dependencies
+    - pnpm install env-cmd --save-dev
+    - |
+      if [ "$ENVIRONMENT" = "prod" ]; then
+        pnpm build
+      elif [ "$ENVIRONMENT" = "preprod" ]; then
+        pnpm build:preprod
+      else
+        pnpm build:dev
+      fi
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
       when: always
@@ -42,7 +54,7 @@ node-build:
   artifacts:
     paths:
       - out/
- 
+
 deploy:
   stage: deploy
   image: node:22.21.1-alpine
@@ -52,22 +64,23 @@ deploy:
     - aws --version
   script:
     - aws s3 sync out/ $S3_BUCKET
-    #- aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'  
+    #- aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: manual
+    - if: '$CI_COMMIT_BRANCH == "preprod"'
+      when: manual
     - if: '$CI_COMMIT_BRANCH != "main"'
-      when: on_success
- 
+      when: manual
 # rollback:
 #   stage: redeploy
-#   image: node:16.1.0-alpine  
+#   image: node:16.1.0-alpine
 #   before_script:
 #     - apk update
 #     - apk add --no-cache aws-cli
 #     - aws --version
 #   script:
 #     - aws s3 cp dist/index.html $S3_BUCKET/index.html
-#     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'  
+#     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
 #   rules:
 #     - when: manual
