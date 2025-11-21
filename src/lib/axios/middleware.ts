@@ -1,7 +1,6 @@
 import { getToken } from '@/lib/local-storage-helper'
 import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
-import { toast } from 'react-toastify'
 
 const STORAGE_KEY = 'user'
 
@@ -21,9 +20,6 @@ const isNetworkError = (error: AxiosError) =>
 
 const isAuthError = (error: AxiosError<BackendError>) =>
   error.response?.status === 401 || (error.response?.status === 403 && error.response.data?.error === 'Unauthorized')
-
-const getErrorMessage = (error: AxiosError<BackendError>, defaultMsg: string) =>
-  error.response?.data?.message || defaultMsg
 
 // Yönlendirme döngülerini önlemek için URL başına yasaklı hata sayısını takip eder
 const forbiddenCounts: Record<string, number> = {}
@@ -58,14 +54,12 @@ export const publicErrorMiddleware: ErrorMiddleware = async error => {
 // Private API çağrıları için hata yönetimi (kimlik doğrulama gerektirir)
 export const privateErrorMiddleware: ErrorMiddleware = async error => {
   if (isNetworkError(error) && window.location.pathname !== '/500') {
-    // window.location.href = '/500'
+    console.log('network error', error)
     return Promise.reject(error)
   }
 
   if (isAuthError(error)) {
-    localStorage.removeItem(STORAGE_KEY)
-    toast.error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.')
-    // window.location.href = '/login'
+    console.log('auth error', error)
     return Promise.reject(error)
   }
 
@@ -76,16 +70,16 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
   if (status === 403) {
     forbiddenCounts[url] = (forbiddenCounts[url] || 0) + 1
     if (forbiddenCounts[url] > 2 && window.location.pathname !== '/403') {
-      toast.error(getErrorMessage(error, 'Bu işlem için yetkiniz bulunmamaktadır.'))
-      // window.location.href = '/403'
+      console.log('forbidden error', error)
+      return Promise.reject(error)
+    } else {
+      return Promise.reject(error)
     }
-    return Promise.reject(error)
   }
 
   // 429 hatası: Rate limit aşıldı
   if (status === 429 && !window.location.pathname.includes('/429')) {
-    toast.error(getErrorMessage(error, 'Çok fazla istek gönderildi. Lütfen bekleyin.'))
-    // window.location.href = '/429'
+    console.log('rate limit error', error)
     return Promise.reject(error)
   }
 
@@ -112,7 +106,7 @@ export const tokenRefreshMiddleware = (instance: AxiosInstance, publicInstance: 
         }
       } catch {
         localStorage.removeItem(STORAGE_KEY)
-        // window.location.href = '/login'
+        console.log('token refresh error', failedRequest.response)
       }
     },
     { statusCodes: [401, 403] }
