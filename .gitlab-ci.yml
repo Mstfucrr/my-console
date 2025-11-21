@@ -12,7 +12,7 @@ workflow:
         S3_BUCKET: $S3_BUCKET_PREPROD
         CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PREPROD
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PREPROD
-    - if: $CI_COMMIT_BRANCH != "main"
+    - if: $CI_COMMIT_BRANCH == "dev"
       variables:
         ENVIRONMENT: 'dev'
         S3_BUCKET: $S3_BUCKET_DEV
@@ -64,7 +64,7 @@ deploy:
     - aws --version
   script:
     - aws s3 sync out/ $S3_BUCKET
-    #- aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
+    - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
       when: manual
