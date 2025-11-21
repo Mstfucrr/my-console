@@ -45,7 +45,7 @@ export default function QuickAction({
       <Card className='group hover:bg-accent/30 border-0 bg-transparent transition-all duration-200 hover:shadow-sm'>
         <CardContent className='p-3 py-4'>
           <div className='relative flex h-full items-center justify-center gap-3'>
-            <Icon className={cn('absolute right-10 size-12 opacity-30 max-sm:size-8', color)} />
+            <Icon className={cn('absolute right-10 size-9 opacity-30 max-sm:size-8', color)} />
             <div className='flex flex-1 flex-col text-left'>
               <h5 className='text-base leading-tight font-medium'>{title}</h5>
             </div>
