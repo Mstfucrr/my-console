@@ -37,7 +37,9 @@ export const authHeaderMiddleware: RequestMiddleware = config => {
     if (accessToken) config.headers['Authorization'] = `Bearer ${accessToken}`
     else throw new Error('Token bulunamadı')
   } catch (error) {
-    console.error('authHeaderMiddleware: Token bulunamadı', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('authHeaderMiddleware: Token bulunamadı', error)
+    }
   }
 
   return config
@@ -62,7 +64,7 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
 
   if (isAuthError(error)) {
     localStorage.removeItem(STORAGE_KEY)
-    toast.error(getErrorMessage(error, 'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.'))
+    toast.error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.')
     window.location.href = '/login'
     return Promise.reject(error)
   }
@@ -84,12 +86,6 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
   if (status === 429 && !window.location.pathname.includes('/429')) {
     toast.error(getErrorMessage(error, 'Çok fazla istek gönderildi. Lütfen bekleyin.'))
     window.location.href = '/429'
-    return Promise.reject(error)
-  }
-
-  if (status === 401) {
-    localStorage.removeItem(STORAGE_KEY)
-    window.location.href = '/login'
     return Promise.reject(error)
   }
 

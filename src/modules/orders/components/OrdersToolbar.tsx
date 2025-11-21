@@ -5,8 +5,8 @@ import { ButtonGroup } from '@/components/ui/button-group'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Filter, FilterX, LayoutGrid, LayoutList, Loader2, Menu, RefreshCw } from 'lucide-react'
-import { useOrders } from '../../context/OrdersContext'
-import { CreateOrderModal } from '../actions/CreateOrderModal'
+import { useOrders } from '../context/OrdersContext'
+import { CreateOrderModal } from './actions/CreateOrderModal'
 
 const viewModeButtons = [
   {

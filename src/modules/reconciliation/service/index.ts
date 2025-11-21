@@ -78,10 +78,6 @@ export const reconciliationService = {
 
   async reportIssue(recordId: string, issueDescription: string, statementFile?: File): Promise<{ success: boolean }> {
     // Simulate issue reporting
-    console.log(`Reporting issue for record ${recordId}: ${issueDescription}`)
-    if (statementFile) {
-      console.log(`Uploading current account statement file: ${statementFile.name}`)
-    }
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     // Update the record status in mock data

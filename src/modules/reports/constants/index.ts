@@ -1,9 +1,10 @@
 import type { BadgeProps } from '@/components/ui/badge'
-import { OrderStatusLabel } from '@/modules/types'
+import { OrderStatusGroup } from '@/constants/orders'
+import { OrderStatusesGroups } from '@/types'
 
 export const STATUS_TEXT = {
-  delivered: OrderStatusLabel.delivered,
-  cancelled: OrderStatusLabel.cancelled
+  delivered: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
+  cancelled: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label
 } as const
 
 export const STATUS_COLORS: Record<string, BadgeProps['color']> = {

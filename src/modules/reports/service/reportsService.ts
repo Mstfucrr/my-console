@@ -1,3 +1,4 @@
+import { OrderStatusesGroups } from '@/types'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord, ReportsStats } from '../types'
 
@@ -14,7 +15,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 250.0,
     platformFee: 25.0,
     netAmount: 225.0,
-    status: 'delivered',
+    status: OrderStatusesGroups.DELIVERED,
     paymentMethod: 'Banka Havalesi',
     deliveryAddress: 'Maltepe, İstanbul'
   },
@@ -29,7 +30,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 85.0,
     platformFee: 8.5,
     netAmount: 76.5,
-    status: 'cancelled',
+    status: OrderStatusesGroups.CANCELLED,
     paymentMethod: 'Nakit',
     deliveryAddress: 'Beykoz, İstanbul',
     notes: 'Müşteri adres bulamadı'
@@ -45,7 +46,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 120.0,
     platformFee: 12.0,
     netAmount: 108.0,
-    status: 'delivered',
+    status: OrderStatusesGroups.DELIVERED,
     paymentMethod: 'Kredi Kartı',
     deliveryAddress: 'Üsküdar, İstanbul'
   },
@@ -60,7 +61,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 300.0,
     platformFee: 30.0,
     netAmount: 270.0,
-    status: 'cancelled',
+    status: OrderStatusesGroups.CANCELLED,
     paymentMethod: 'Banka Havalesi',
     deliveryAddress: 'Beyoğlu, İstanbul',
     notes: 'Ürün hasarlı geldi'
@@ -76,7 +77,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 75.0,
     platformFee: 7.5,
     netAmount: 67.5,
-    status: 'cancelled',
+    status: OrderStatusesGroups.CANCELLED,
     paymentMethod: 'Kredi Kartı',
     deliveryAddress: 'Şişli, İstanbul',
     notes: 'Müşteri iptal etti'
@@ -92,7 +93,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 200.0,
     platformFee: 20.0,
     netAmount: 180.0,
-    status: 'delivered',
+    status: OrderStatusesGroups.DELIVERED,
     paymentMethod: 'Nakit',
     deliveryAddress: 'Beşiktaş, İstanbul'
   },
@@ -107,7 +108,7 @@ const mockReportsData: ReportRecord[] = [
     totalAmount: 150.0,
     platformFee: 15.0,
     netAmount: 135.0,
-    status: 'delivered',
+    status: OrderStatusesGroups.DELIVERED,
     paymentMethod: 'Kredi Kartı',
     deliveryAddress: 'Kadıköy, İstanbul',
     notes: 'Hızlı teslimat'

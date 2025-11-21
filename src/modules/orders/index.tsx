@@ -1,9 +1,8 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { OrderDetailDialog } from './components/listing/OrderDetailDialog'
+import { OrdersTabs } from './components/OrdersTabs'
 import { OrdersStats } from './components/stats/OrdersStats'
-import { OrdersTabs } from './components/stats/OrdersTabs'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
@@ -21,12 +20,10 @@ function OrdersViewContent() {
     )
 
   return (
-    <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
+    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
       <OrdersStats />
 
       <OrdersTabs />
-
-      <OrderDetailDialog />
     </div>
   )
 }

@@ -1,13 +1,8 @@
+import { getStatusGroupByValue } from '@/constants/orders'
 import { delay } from '@/lib/delay'
 import { mockOrders } from '@/modules/mockData'
-import type {
-  ApiResponse,
-  FilterOptions,
-  Order,
-  OrderStatusStats,
-  PaginatedResponse,
-  PaginationOptions
-} from '@/modules/types'
+import type { ApiResponse, FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
+import { OrderStatusesGroups } from '@/types'
 
 export const ordersService = {
   async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
@@ -19,7 +14,7 @@ export const ordersService = {
     if (filters) {
       if (filters.status && filters.status !== 'all') {
         if (Array.isArray(filters.status)) {
-          filteredOrders = filteredOrders.filter(order => filters.status!.includes(order.status))
+          filteredOrders = filteredOrders.filter(order => (filters.status as number[]).includes(order.status))
         } else {
           filteredOrders = filteredOrders.filter(order => order.status === filters.status)
         }
@@ -75,12 +70,19 @@ export const ordersService = {
 
   async getOrdersStats(): Promise<OrderStatusStats> {
     await delay(600)
+
+    // Group orders by status group
+    const created = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.CREATED).length
+    const shipped = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.SHIPPED).length
+    const delivered = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.DELIVERED).length
+    const cancelled = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.CANCELLED).length
+
     return {
       total: mockOrders.length,
-      created: mockOrders.filter(o => o.status === 'created').length,
-      shipped: mockOrders.filter(o => o.status === 'shipped').length,
-      delivered: mockOrders.filter(o => o.status === 'delivered').length,
-      cancelled: mockOrders.filter(o => o.status === 'cancelled').length
+      created,
+      shipped,
+      delivered,
+      cancelled
     }
   }
 }

@@ -8,7 +8,7 @@ import { Skeleton } from './ui/skeleton'
 export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
   title: string
-  value: number
+  value: number | undefined
   Icon: LucideIcon | string
   color: string
   type?: 'number' | 'currency'
@@ -25,6 +25,8 @@ export default function StatCard({
   ...props
 }: StatCardProps) {
   if (isLoading) return <Skeleton className='h-24 w-full' />
+
+  if (!value && value !== 0) return null
 
   return (
     <Card

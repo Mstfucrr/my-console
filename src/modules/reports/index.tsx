@@ -71,7 +71,7 @@ export default function ReportsView() {
     )
 
   return (
-    <div className='flex flex-col gap-6 p-6 max-sm:p-0'>
+    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
       {/* Sayfa Başlığı */}
 
       {/* İstatistik Kartları */}

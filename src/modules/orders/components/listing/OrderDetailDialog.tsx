@@ -8,28 +8,36 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { maskLastName, maskPhone } from '@/lib/utils'
+import type { Order } from '@/types'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
-import { useOrders } from '../../context/OrdersContext'
-import { formatDateTR } from '../../utils'
+import { formatDateTR, maskAddress } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 
 const CourierMap = dynamic(() => import('../courier/CourierMap'), { ssr: false })
 
-export function OrderDetailDialog() {
+interface OrderDetailDialogProps {
+  order: Order | null
+  onClose: () => void
+}
+
+export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
-  const {
-    // State
-    selectedOrder: order,
-    isModalVisible: open,
-    handleCloseModal: onClose
-  } = useOrders()
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setOpen(Boolean(order))
+  }, [order])
+
+  const handleClose = () => {
+    setOpen(false)
+    onClose()
+  }
 
   const handleToggleMap = () => setOpenMap(prev => !prev)
 
-  // Reset openMap when dialog closes
   useEffect(() => {
     if (open) return
     startTransition(() => setOpenMap(false))
@@ -38,7 +46,7 @@ export function OrderDetailDialog() {
   if (!order) return null
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent size='4xl' className='max-h-[90vh] p-1'>
         <DialogHeader className='p-6 pb-4'>
           <DialogTitle className='flex flex-wrap items-center gap-3'>
@@ -151,7 +159,11 @@ export function OrderDetailDialog() {
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
                     <div className='pl-6 text-right text-sm leading-relaxed'>
-                      {order.customerAddress}
+                      <MaskedText
+                        className='items-start justify-end'
+                        maskFn={maskAddress}
+                        value={order.customerAddress}
+                      />
                       <div className='text-muted-foreground mt-2 font-mono text-xs'>
                         ({order.customerPosition[0].toFixed(6)}, {order.customerPosition[1].toFixed(6)})
                       </div>

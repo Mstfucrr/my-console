@@ -1,6 +1,6 @@
 'use client'
 
-import type { CourierInfo } from '@/modules/types'
+import type { CourierInfo } from '@/types'
 import Leaflet from 'leaflet'
 import { useEffect, useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'

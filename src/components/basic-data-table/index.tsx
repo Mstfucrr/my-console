@@ -272,7 +272,11 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    style={{ width: header.getSize() }}
+                    style={{
+                      width: header.getSize(),
+                      minWidth: header.column.columnDef.minSize,
+                      maxWidth: header.column.columnDef.maxSize
+                    }}
                     className={cn(
                       'text-left',
                       (header.column.columnDef.meta as { align?: 'right' | 'left' })?.align === 'right' && 'text-right'

@@ -2,23 +2,26 @@
 
 import { Motorcycle } from '@/components/svg'
 import { Card, CardContent } from '@/components/ui/card'
+import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { getStatusGroupByValue } from '@/constants/orders'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { cn } from '@/lib/utils'
-import type { Order, OrderStatus } from '@/modules/types'
+import { cn, maskLastName } from '@/lib/utils'
+import type { Order } from '@/types'
+import { OrderStatusesGroups } from '@/types'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 
 interface OrderCardProps {
   order: Order
   onViewDetails: (order: Order) => void
-  onStatusUpdate?: (orderId: string, newStatus: OrderStatus) => void
+  onStatusUpdate?: (orderId: string, newStatus: number) => void
   onCancel?: (orderId: string) => void
   showActions?: boolean
 }
 
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
-  const isCreated = order.status === 'created'
+  const isCreated = getStatusGroupByValue(order.status) === OrderStatusesGroups.CREATED
 
   return (
     <Card
@@ -31,7 +34,12 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
           <div className='flex min-w-0 flex-1 flex-col justify-between'>
             <div className='mb-2 flex items-center gap-2'>
               <ChannelBadge channel={order.channel} />
-              <span className='truncate text-sm font-semibold'>{order.customerName}</span>
+              <MaskedText
+                value={order.customerName}
+                maskFn={maskLastName}
+                defaultMasked={true}
+                textClassName='truncate text-sm font-semibold'
+              />
               {order.courierInfo && (
                 <TooltipProvider>
                   <Tooltip>

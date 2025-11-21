@@ -42,16 +42,19 @@ export default function ReportsTable({
     {
       accessorKey: 'orderId',
       header: 'Sipariş No',
+      minSize: 100,
       cell: ({ row }) => <div className='font-medium'>{row.getValue('orderId')}</div>
     },
     {
       accessorKey: 'customerName',
       header: 'Müşteri Adı',
+      minSize: 150,
       cell: ({ row }) => <div className='font-medium'>{row.getValue('customerName')}</div>
     },
     {
       accessorKey: 'customerPhone',
       header: 'Telefon',
+      minSize: 150,
       cell: ({ row }) => <div className='text-sm text-gray-600'>{row.getValue('customerPhone')}</div>
     },
     {

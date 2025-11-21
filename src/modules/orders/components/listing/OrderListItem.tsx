@@ -3,7 +3,9 @@
 import { Motorcycle } from '@/components/svg'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
-import type { Order } from '@/modules/types'
+import type { Order } from '@/types'
+import { getStatusGroupByValue } from '@/constants/orders'
+import { OrderStatusesGroups } from '@/types'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 
@@ -13,7 +15,7 @@ interface OrderListItemProps {
 }
 
 export function OrderListItem({ order, onViewDetails }: OrderListItemProps) {
-  const isUrgent = order.status === 'created'
+  const isUrgent = getStatusGroupByValue(order.status) === OrderStatusesGroups.CREATED
 
   return (
     <div

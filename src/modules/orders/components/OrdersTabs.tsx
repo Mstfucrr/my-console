@@ -4,12 +4,15 @@ import { AnimatedFilters } from '@/components/animated-filters'
 import { Pagination } from '@/components/pagination'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { TabsWithList } from '@/components/ui/tabs'
+import type { Order, PaginationOptions } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { ACTIVE_STATUS, COMPLETED_STATUS } from '../../constants'
-import { useOrders } from '../../context/OrdersContext'
-import { OrderFilters } from '../filters/OrderFilters'
-import { OrdersList } from '../listing/OrdersList'
+import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
+import { useOrders } from '../context/OrdersContext'
+import { useOrdersStats } from '../hooks/useOrdersStats'
+import { OrderFilters } from './filters/OrderFilters'
+import { OrderDetailDialog } from './listing/OrderDetailDialog'
+import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
 export function OrdersTabs() {
@@ -19,26 +22,45 @@ export function OrdersTabs() {
     activeOrders,
     completedOrders,
     completedTotal,
-    completedPagination,
     isLoadingActive,
     isFetchingActive,
     isLoadingCompleted,
     isFetchingCompleted,
-    handleCompletedPageChange,
-    stats,
-    statusFilter
+    filters
   } = useOrders()
+  const { stats } = useOrdersStats()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
+    page: 1,
+    limit: 6
+  })
 
-  // Calculate counts based on filtered data
-  const activeOrdersCount = statusFilter ? activeOrders.length : stats.created + stats.shipped
-  const completedOrdersCount = statusFilter ? completedOrders.length : stats.delivered + stats.cancelled
+  const handleCompletedPageChange = (page: number) => {
+    setCompletedPagination(prev => ({ ...prev, page }))
+  }
 
-  // Avoid type errors by using type guards and explicit checks
-  const isActiveTabDisabled = Boolean(statusFilter && statusFilter.every(status => COMPLETED_STATUS.includes(status)))
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order)
+  }
 
-  const isCompletedTabDisabled = Boolean(statusFilter && statusFilter.every(status => ACTIVE_STATUS.includes(status)))
+  const handleCloseModal = () => {
+    setSelectedOrder(null)
+  }
+
+  const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
+  const activeOrdersCount = useMemo(
+    () => (hasActiveFilter ? activeOrders.length : stats.created + stats.shipped),
+    [activeOrders.length, stats.created, stats.shipped, hasActiveFilter]
+  )
+  const completedOrdersCount = useMemo(
+    () => (hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled),
+    [completedOrders.length, stats.delivered, stats.cancelled, hasActiveFilter]
+  )
+
+  const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_STATUS_GROUPS.includes(filters.status)
+  const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_STATUS_GROUPS.includes(filters.status)
 
   const tabItems = useMemo(
     () => [
@@ -63,8 +85,6 @@ export function OrdersTabs() {
       <CardHeader>
         <div className='flex flex-col gap-4'>
           <div className='flex flex-wrap items-center justify-between gap-2'>
-            {/* Yeni Sipariş Oluştur Modalı */}
-
             <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
 
             <OrdersToolbar
@@ -88,6 +108,7 @@ export function OrdersTabs() {
             viewMode={viewMode}
             emptyMessage='Aktif sipariş yok'
             filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
+            onViewDetails={handleViewDetails}
           />
         ) : (
           <div className='space-y-4'>
@@ -98,9 +119,9 @@ export function OrdersTabs() {
               viewMode={viewMode}
               emptyMessage='Tamamlanan sipariş bulunamadı'
               filteredEmptyMessage='Filtreye uygun tamamlanan sipariş yok'
+              onViewDetails={handleViewDetails}
             />
 
-            {/* Pagination only for completed orders and when no filter is active */}
             {completedTotal > completedPagination.limit && (
               <Pagination
                 page={completedPagination.page}
@@ -115,6 +136,7 @@ export function OrdersTabs() {
           </div>
         )}
       </CardContent>
+      <OrderDetailDialog order={selectedOrder} onClose={handleCloseModal} />
     </Card>
   )
 }

@@ -53,7 +53,7 @@ export function FilterCard<T>({
 
   return (
     <Card className={className}>
-      <CardHeader className='flex flex-row items-center justify-between space-y-0'>
+      <CardHeader className='mb-3! flex flex-row items-center justify-between space-y-0'>
         <div className='flex items-center gap-2'>
           <Icon className='text-primary' />
           <CardTitle className='text-base'>{title}</CardTitle>
@@ -82,7 +82,7 @@ export function SearchInput({
   placeholder,
   value,
   onChange,
-  showLabel = true,
+  showLabel = false,
   className,
   Icon
 }: {
@@ -129,7 +129,7 @@ export function StatusSelect<T extends string>({
   value,
   onChange,
   placeholder = 'Durum',
-  showLabel = true
+  showLabel = false
 }: {
   options: FilterOption[]
   value: T
@@ -169,7 +169,7 @@ export function DateFilters({
   dateRange,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
-  showLabel = true
+  showLabel = false
 }: {
   dateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void

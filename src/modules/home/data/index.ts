@@ -1,7 +1,7 @@
 import { mockOrders } from '@/modules/mockData'
-import type { DashboardStats } from '../types'
+import { OrderStatusesValues } from '@/types'
 
-export const mockDashboardStats: DashboardStats = {
+export const mockDashboardStats = {
   todayOrders: 15,
   deliveredOrders: 12,
   onWayOrders: 2,
@@ -9,9 +9,9 @@ export const mockDashboardStats: DashboardStats = {
   totalRevenue: 3250.75,
   pendingPayments: 1875.4,
   ordersByStatus: [
-    { status: 'delivered', count: 12, percentage: 80 },
-    { status: 'shipped', count: 2, percentage: 13.3 },
-    { status: 'cancelled', count: 1, percentage: 6.7 }
+    { status: OrderStatusesValues.DELIVERED, count: 12, percentage: 80 },
+    { status: OrderStatusesValues.ASSIGNED, count: 2, percentage: 13.3 },
+    { status: OrderStatusesValues.CANCELLED, count: 1, percentage: 6.7 }
   ],
   recentApiErrors: [
     {
