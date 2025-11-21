@@ -78,7 +78,7 @@ export function MaskedText({
       <Button
         size={buttonSize}
         variant='ghost'
-        className='h-6 w-6 p-0'
+        className='size-6! min-h-6 min-w-6 p-0'
         aria-label={isMasked ? 'Göster' : 'Gizle'}
         type='button'
         onMouseDown={showUnmasked}

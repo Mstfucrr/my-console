@@ -12,7 +12,7 @@ import type { Order } from '@/types'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
-import { formatDateTR } from '../../utils'
+import { formatDateTR, maskAddress } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 
@@ -159,7 +159,11 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                   <div className='flex items-center justify-between'>
                     <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
                     <div className='pl-6 text-right text-sm leading-relaxed'>
-                      {order.customerAddress}
+                      <MaskedText
+                        className='items-start justify-end'
+                        maskFn={maskAddress}
+                        value={order.customerAddress}
+                      />
                       <div className='text-muted-foreground mt-2 font-mono text-xs'>
                         ({order.customerPosition[0].toFixed(6)}, {order.customerPosition[1].toFixed(6)})
                       </div>
