@@ -33,7 +33,7 @@ node-build:
       NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
       EOF
   script:
-    - pnpm install --legacy-peer-deps  
+    - pnpm install --no-strict-peer-dependencies 
     - pnpm build
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
