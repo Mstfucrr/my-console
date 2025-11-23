@@ -58,8 +58,10 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
     return Promise.reject(error)
   }
 
-  if (isAuthError(error)) {
-    console.log('auth error', error)
+  if (isAuthError(error) && !window.location.pathname.includes('/login')) {
+    console.error('auth error', error)
+    localStorage.removeItem(STORAGE_KEY)
+    window.location.href = '/login'
     return Promise.reject(error)
   }
 

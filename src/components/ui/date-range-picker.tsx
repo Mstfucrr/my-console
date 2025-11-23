@@ -1,7 +1,7 @@
 'use client'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, X } from 'lucide-react'
 import { startTransition, useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
@@ -11,16 +11,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
+import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
 interface DateRangePickerProps {
   dateRange: DateRange | undefined
   defaultDateRange?: DateRange
+  defaultText?: string
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   className?: string
   enableTimeSelection?: boolean
   onApply?: () => void
   calendarProps?: React.ComponentProps<typeof Calendar>
+  quickClearable?: boolean
 }
 
 function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
@@ -34,15 +37,22 @@ function getDisplayDate(date: Date) {
 export function DateRangePicker({
   dateRange,
   defaultDateRange,
+  defaultText,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
   className,
   enableTimeSelection = false,
   onApply,
   calendarProps,
+  quickClearable = false,
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
+
+  const isDefaultDateRange = useMemo(
+    () => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange),
+    [dateRange, defaultDateRange]
+  )
 
   useEffect(() => {
     startTransition(() => setTempDateRange(dateRange))
@@ -111,25 +121,39 @@ export function DateRangePicker({
     onDateRangeChange(defaultDateRange)
   }
 
+  // Use React Compiler's inferred dependency for useMemo
+  // See lint: The inferred dependency is `dateRange`
+  const displayText = useMemo(() => {
+    if (isDefaultDateRange && defaultText) {
+      return defaultText
+    }
+
+    if (dateRange?.from) {
+      if (dateRange?.to) return `${formatDisplayDate(dateRange.from)} - ${formatDisplayDate(dateRange.to)}`
+      return formatDisplayDate(dateRange.from)
+    }
+    return placeholder
+  }, [dateRange, defaultText, formatDisplayDate, isDefaultDateRange, placeholder])
+
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button id='date' variant='outline' className='font-normal' size='sm' {...props}>
-            <CalendarIcon className='mr-2 h-4 w-4' />
-            {dateRange?.from ? (
-              dateRange.to ? (
-                <>
-                  {formatDisplayDate(dateRange.from)} - {formatDisplayDate(dateRange.to)}
-                </>
-              ) : (
-                formatDisplayDate(dateRange.from)
-              )
-            ) : (
-              <span>{placeholder}</span>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <ButtonGroup>
+          <PopoverTrigger asChild>
+            <Button id='date' variant='outline' className='font-normal' size='sm' {...props}>
+              <CalendarIcon className='mr-2 h-4 w-4' />
+              <span>{displayText}</span>
+            </Button>
+          </PopoverTrigger>
+          {dateRange && !isDefaultDateRange && quickClearable && (
+            <>
+              <ButtonGroupSeparator />
+              <Button onClick={handleClear} className='font-normal' size='icon-sm' {...props}>
+                <X className='size-4' />
+              </Button>
+            </>
+          )}
+        </ButtonGroup>
         <PopoverContent className='w-auto p-0'>
           <div className='p-3'>
             <Calendar
@@ -174,7 +198,7 @@ export function DateRangePicker({
             )}
 
             <div className='mt-4 flex justify-end gap-2'>
-              {dateRange && dateRange !== defaultDateRange && (
+              {dateRange && !isDefaultDateRange && (
                 <Button variant='outline' size='xs' onClick={handleClear}>
                   Temizle
                 </Button>

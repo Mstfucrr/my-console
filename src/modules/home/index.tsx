@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react'
 import PageError from '@/components/page-error'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { BarChart2, LucideIcon, Package } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
@@ -15,25 +15,31 @@ import { DashboardDonut } from './components/DonutChart'
 
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { OrderStatusIcons, QuickActionIcons, StatCardIcons } from '@/constants/icons'
+import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { OrderStatusesGroups, OrderStatusValuesWithName } from '../../types'
-import { CreateOrderModal } from '../orders/components/actions/CreateOrderModal'
 import { StatusBadge } from '../orders/components/Badges'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
-import QuickAction from './components/QuickAction'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 import type { DashboardStats } from './types'
 
-const defaultDateRange = {
-  from: new Date(new Date().setHours(5, 0, 0, 0)),
-  to: new Date(new Date().setHours(23, 59, 59, 999))
+const getOperationDateRange = () => {
+  const now = new Date()
+  const from = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0)
+  const to = new Date(from)
+  to.setDate(from.getDate() + 1)
+  to.setHours(5, 0, 0, 0)
+  return { from, to }
 }
 
-// Kunnaıcı 30 günden fazla görüntüleyemez ve bugünü geçemez
+const defaultDateRange = {
+  from: getOperationDateRange().from,
+  to: getOperationDateRange().to
+}
+
 const MIN_MAX_DATE_RANGE = {
-  rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
-  rangeEnd: new Date()
+  rangeStart: new Date(new Date().setHours(5, 0, 0, 0) - 30 * 24 * 60 * 60 * 1000),
+  rangeEnd: getOperationDateRange().to
 } as const
 
 type StatsList = {
@@ -108,6 +114,8 @@ export default function DashboardView() {
     ]
   }, [stats])
 
+  const isDefaultDateRange = useMemo(() => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange), [dateRange])
+
   if (error || latestOrdersError) {
     return (
       <PageError
@@ -133,6 +141,7 @@ export default function DashboardView() {
             <DateRangePicker
               dateRange={dateRange}
               defaultDateRange={defaultDateRange}
+              defaultText='Bugün'
               calendarProps={{
                 disabled: {
                   before: MIN_MAX_DATE_RANGE.rangeStart,
@@ -143,41 +152,20 @@ export default function DashboardView() {
               }}
               onDateRangeChange={setDateRange}
               placeholder='Dönem seçin'
-              enableTimeSelection={true}
+              enableTimeSelection
+              quickClearable
+              variant={isDefaultDateRange ? 'outline' : 'soft'}
+              color={isDefaultDateRange ? undefined : 'info'}
             />
           </div>
         }
       />
 
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-base'>Hızlı Eylemler</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid grid-cols-2 gap-3'>
-              <QuickAction href='/orders' Icon={QuickActionIcons.Orders} title='Siparişler' color='text-blue-600' />
-              <CreateOrderModal
-                trigger={<QuickAction Icon={QuickActionIcons.NewOrder} title='Yeni Sipariş' color='text-green-600' />}
-              />
-              <QuickAction
-                href='/reconciliation'
-                Icon={QuickActionIcons.Reconciliation}
-                title='Mutabakat'
-                color='text-orange-600'
-              />
-              <QuickAction href='/reports' Icon={QuickActionIcons.Reports} title='Raporlar' color='text-purple-600' />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Stats */}
-        <div className='grid grid-cols-2 gap-4'>
-          {statsList.map(stat => (
-            <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id] as number} {...stat} />
-          ))}
-        </div>
+      {/* Stats */}
+      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+        {statsList.map(stat => (
+          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id] as number} {...stat} />
+        ))}
       </div>
 
       {/* Chart + Recent Orders */}
@@ -212,7 +200,6 @@ export default function DashboardView() {
           <Card>
             <CardHeader>
               <CardTitle className='text-base'>Son Siparişler</CardTitle>
-              <CardDescription>Zaman aralığından son siparişler.</CardDescription>
             </CardHeader>
             <CardContent>
               {latestOrders?.length && latestOrders?.length > 0 ? (
