@@ -76,7 +76,7 @@ export function MobileMenu() {
           </Button>
         </div>
       </div>
-      <div className='fixed right-5 bottom-5 z-10'>
+      <div className='fixed right-5 bottom-5 z-50'>
         <SupportDialog />
       </div>
 

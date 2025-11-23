@@ -1,3 +1,5 @@
+import { CreateOrderView } from '@/modules/orders/create'
+
 export default function CreateOrderPage() {
-  return <div>CreateOrderPage</div>
+  return <CreateOrderView />
 }

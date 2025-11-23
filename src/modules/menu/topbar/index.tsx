@@ -35,7 +35,7 @@ export function Topbar() {
           </div>
         </div>
       </div>
-      <div className='fixed right-5 bottom-5'>
+      <div className='fixed right-5 bottom-5 z-50'>
         <SupportDialog />
       </div>
     </>

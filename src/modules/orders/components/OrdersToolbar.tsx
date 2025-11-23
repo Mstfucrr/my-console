@@ -6,7 +6,6 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Filter, FilterX, LayoutGrid, LayoutList, Loader2, Menu, RefreshCw } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
-import { CreateOrderModal } from './actions/CreateOrderModal'
 
 const viewModeButtons = [
   {
@@ -29,7 +28,7 @@ interface OrdersToolbarProps {
 }
 
 export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggleFilters }: OrdersToolbarProps) {
-  const { refreshAllData, isFetchingActive, isFetchingCompleted, handleCreateOrderSuccess } = useOrders()
+  const { refreshAllData, isFetchingActive, isFetchingCompleted } = useOrders()
 
   const isRefreshing = isFetchingActive || isFetchingCompleted
   return (
@@ -81,7 +80,6 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
           <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
         </Button>
       </div>
-      <CreateOrderModal onSuccess={handleCreateOrderSuccess} />
     </div>
   )
 }
