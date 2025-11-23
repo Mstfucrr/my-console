@@ -15,6 +15,7 @@ import { DashboardDonut } from './components/DonutChart'
 
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { OrderStatusesGroups } from '@/types'
@@ -23,23 +24,14 @@ import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 import type { DashboardStats } from './types'
 
-const getOperationDateRange = () => {
-  const now = new Date()
-  const from = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 5, 0, 0, 0)
-  const to = new Date(from)
-  to.setDate(from.getDate() + 1)
-  to.setHours(5, 0, 0, 0)
-  return { from, to }
-}
-
 const defaultDateRange = {
-  from: getOperationDateRange().from,
-  to: getOperationDateRange().to
+  from: new Date(getOperationDateRange().startDate),
+  to: new Date(getOperationDateRange().endDate)
 }
 
 const MIN_MAX_DATE_RANGE = {
   rangeStart: new Date(new Date().setHours(5, 0, 0, 0) - 30 * 24 * 60 * 60 * 1000),
-  rangeEnd: getOperationDateRange().to
+  rangeEnd: new Date(getOperationDateRange().endDate)
 } as const
 
 type StatsList = {

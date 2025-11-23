@@ -1,89 +1,65 @@
-import { delay } from '@/lib/delay'
-import { mockOrders } from '@/modules/mockData'
-import type { ApiResponse, FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
-import { OrderStatusesGroups } from '@/types'
+import { getOperationDateRange } from '@/constants'
+import { privateAxiosInstance } from '@/lib/axios/instances'
+import type { FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
+import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
+import { mapOrderDetailToOrder, mapOrderListItemToOrder, mapOrderStatsResponse } from '../utils/mappers'
 
 export const ordersService = {
   async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
-    await delay(800)
+    const page = pagination?.page || 1
+    const limit = pagination?.limit || 20
+    const { startDate, endDate } = getOperationDateRange()
 
-    let filteredOrders = [...mockOrders]
+    // Backend'e gönderilecek query parametreleri
+    const params: Record<string, string | number | string[]> = {
+      page,
+      limit,
+      startDate,
+      endDate
+    }
 
-    // Filtreleme
-    if (filters) {
-      if (filters.status && filters.status !== 'all') {
-        if (Array.isArray(filters.status)) {
-          filteredOrders = filteredOrders.filter(order =>
-            (filters.status as OrderStatusesGroups[]).includes(order.status)
-          )
-        } else {
-          filteredOrders = filteredOrders.filter(order => order.status === filters.status)
-        }
-      }
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase()
-        filteredOrders = filteredOrders.filter(
-          order =>
-            order.id.toLowerCase().includes(searchLower) || order.customerName.toLowerCase().includes(searchLower)
-        )
-      }
-      if (filters.dateFrom) {
-        filteredOrders = filteredOrders.filter(order => new Date(order.createdAt) >= new Date(filters.dateFrom!))
-      }
-      if (filters.dateTo) {
-        filteredOrders = filteredOrders.filter(order => new Date(order.createdAt) <= new Date(filters.dateTo!))
+    // Status filtresi: Backend artık array kabul ediyor
+    if (filters?.status && filters.status !== 'all') {
+      if (Array.isArray(filters.status)) {
+        // Backend array kabul ediyor, direkt gönder
+        params.status = filters.status
+      } else {
+        params.status = [filters.status]
       }
     }
 
-    // Sayfalama
-    const page = pagination?.page || 1
-    const limit = pagination?.limit || 10
-    const startIndex = (page - 1) * limit
-    const endIndex = startIndex + limit
-    const paginatedOrders = filteredOrders.slice(startIndex, endIndex)
+    // Search filtresi
+    if (filters?.search) {
+      params.search = filters.search
+    }
+
+    const response = await privateAxiosInstance.get<OrderListResponse>('/orders/order-list', { params })
+
+    // Backend response'ını frontend tipine map et
+    const orders = response.data.orders.map(mapOrderListItemToOrder)
 
     return {
-      data: paginatedOrders,
-      total: filteredOrders.length,
-      page,
-      limit,
-      totalPages: Math.ceil(filteredOrders.length / limit)
+      data: orders,
+      total: response.data.total,
+      page: response.data.page,
+      limit: response.data.limit,
+      totalPages: Math.ceil(response.data.total / response.data.limit)
     }
   },
 
-  async getOrderById(id: string): Promise<ApiResponse<Order>> {
-    await delay(600)
-    const order = mockOrders.find(o => o.id === id)
-
-    if (!order) {
-      return {
-        success: false,
-        data: {} as Order,
-        error: 'Sipariş bulunamadı'
-      }
-    }
-
-    return {
-      success: true,
-      data: order
-    }
+  async getOrderById(id: string): Promise<Order> {
+    const response = await privateAxiosInstance.get<OrderDetailResponse>(`/orders/order/${id}`)
+    return mapOrderDetailToOrder(response.data)
   },
 
   async getOrdersStats(): Promise<OrderStatusStats> {
-    await delay(600)
-
-    // Group orders by status group
-    const created = mockOrders.filter(o => o.status === OrderStatusesGroups.CREATED).length
-    const shipped = mockOrders.filter(o => o.status === OrderStatusesGroups.SHIPPED).length
-    const delivered = mockOrders.filter(o => o.status === OrderStatusesGroups.DELIVERED).length
-    const cancelled = mockOrders.filter(o => o.status === OrderStatusesGroups.CANCELLED).length
-
-    return {
-      total: mockOrders.length,
-      created,
-      shipped,
-      delivered,
-      cancelled
+    const { startDate, endDate } = getOperationDateRange()
+    const params: Record<string, string> = {
+      startDate,
+      endDate
     }
+
+    const response = await privateAxiosInstance.get<OrderStatsResponse>('/dashboard/order-stats', { params })
+    return mapOrderStatsResponse(response.data)
   }
 }

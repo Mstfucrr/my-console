@@ -1,6 +1,6 @@
 'use client'
 
-import { OrderStatusesGroups, type Order } from '@/types'
+import { type Order, OrderStatusesGroups } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
@@ -42,8 +42,9 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setFilters(newFilters)
     // Auto-switch tab based on status
     if (newFilters.status !== 'all') {
-      const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(newFilters.status)
-      const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(newFilters.status)
+      const statusValue = Array.isArray(newFilters.status) ? newFilters.status[0] : newFilters.status
+      const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
+      const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
       if (isActiveStatus && !isCompletedStatus) {
         setActiveTab('active')
       } else if (isCompletedStatus && !isActiveStatus) {
@@ -56,17 +57,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setFilters(defaultOrderFilters)
   }
 
-  // Convert filter group to status values
-  const activeStatusValues = useMemo(() => {
-    if (filters.status === 'all') {
-      return ACTIVE_STATUS_GROUPS
-    }
-    if (ACTIVE_STATUS_GROUPS.includes(filters.status)) {
-      return [filters.status as OrderStatusesGroups]
-    }
-    return []
-  }, [filters.status])
-
+  // Active orders query - ACTIVE_STATUS_GROUPS array olarak gönderiliyor
+  // Sadece active tab seçiliyse çalışır
   const {
     data: activeOrdersData,
     isLoading: isLoadingActive,
@@ -74,31 +66,22 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     error: activeOrdersError,
     refetch: refetchActiveOrders
   } = useQuery({
-    queryKey: ['activeOrders', filters],
+    queryKey: ['orders', 'active', ACTIVE_STATUS_GROUPS, filters.search],
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: activeStatusValues,
+          status: ACTIVE_STATUS_GROUPS,
           search: filters.search
         },
         { page: 1, limit: 50 }
       )
-      return response.data
+      return response
     },
-    enabled: filters.status === 'all' || ACTIVE_STATUS_GROUPS.includes(filters.status)
+    enabled: activeTab === 'active'
   })
 
-  // Convert filter group to status values
-  const completedStatusValues = useMemo(() => {
-    if (filters.status === 'all') {
-      return COMPLETED_STATUS_GROUPS
-    }
-    if (COMPLETED_STATUS_GROUPS.includes(filters.status)) {
-      return [filters.status as OrderStatusesGroups]
-    }
-    return []
-  }, [filters.status])
-
+  // Completed orders query - COMPLETED_STATUS_GROUPS array olarak gönderiliyor
+  // Sadece completed tab seçiliyse çalışır
   const {
     data: completedOrdersData,
     isLoading: isLoadingCompleted,
@@ -106,28 +89,39 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     error: completedOrdersError,
     refetch: refetchCompletedOrders
   } = useQuery({
-    queryKey: ['completedOrders', filters],
+    queryKey: ['orders', 'completed', COMPLETED_STATUS_GROUPS, filters.search],
     queryFn: async () => {
       const response = await ordersService.getOrders(
         {
-          status: completedStatusValues,
+          status: COMPLETED_STATUS_GROUPS,
           search: filters.search
         },
         { page: 1, limit: 50 }
       )
       return response
     },
-    enabled: filters.status === 'all' || COMPLETED_STATUS_GROUPS.includes(filters.status)
+    enabled: activeTab === 'completed'
   })
 
-  const activeOrders = activeOrdersData || []
-  const completedOrders = completedOrdersData?.data || []
-  const completedTotal = completedOrdersData?.total || 0
+  // Active orders - direkt backend'den gelen data
+  const activeOrders = useMemo(() => activeOrdersData?.data || [], [activeOrdersData])
 
-  const error = activeOrdersError?.message || completedOrdersError?.message || ''
+  // Completed orders - direkt backend'den gelen data
+  const completedOrders = useMemo(() => completedOrdersData?.data || [], [completedOrdersData])
+
+  // Completed total
+  const completedTotal = useMemo(() => completedOrdersData?.total || 0, [completedOrdersData?.total])
+
+  // Error handling
+  const error = useMemo(() => {
+    if (activeTab === 'active') return activeOrdersError?.message || ''
+    if (activeTab === 'completed') return completedOrdersError?.message || ''
+    return ''
+  }, [activeTab, activeOrdersError, completedOrdersError])
 
   const handleCreateOrderSuccess = () => {
     refetchActiveOrders()
+    refetchCompletedOrders()
   }
 
   const refreshAllData = () => {

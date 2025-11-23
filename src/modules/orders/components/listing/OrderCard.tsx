@@ -14,7 +14,7 @@ import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 interface OrderCardProps {
   order: Order
   onViewDetails: (order: Order) => void
-  onStatusUpdate?: (orderId: string, newStatus: number) => void
+  onStatusUpdate?: (orderId: string, newStatus: OrderStatusesGroups) => void
   onCancel?: (orderId: string) => void
   showActions?: boolean
 }

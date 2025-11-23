@@ -16,11 +16,10 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
-  const group = status
-  const groupInfo = OrderStatusGroup[group]
+  const groupInfo = OrderStatusGroup[status]
 
   return (
-    <Badge className={cn(ORDER_STATUS_BADGE_CLASSES[group], 'shrink-0', className)} variant={variant}>
+    <Badge className={cn(ORDER_STATUS_BADGE_CLASSES[status], 'shrink-0', className)} variant={variant}>
       {groupInfo.label}
     </Badge>
   )
