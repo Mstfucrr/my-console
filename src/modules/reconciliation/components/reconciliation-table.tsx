@@ -43,7 +43,7 @@ const STATUS_TEXT = {
 const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     accessorKey: 'period',
-    header: 'Mutabakat Dönemi',
+    header: 'Dönem',
     cell: ({ row }) => <span className='font-medium'>{row.getValue('period')}</span>
   },
   {
@@ -116,7 +116,7 @@ export default function ReconciliationTable({
   onRefresh
 }: ReconciliationTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<ReconciliationRecord | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
 
   const handleToggleModal = (record: ReconciliationRecord): void => {
     setSelectedRecord(prev => (prev ? null : record))
@@ -126,7 +126,7 @@ export default function ReconciliationTable({
     <>
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Mutabakat Kayıtları ({data.length})</CardTitle>
+          <CardTitle>Kayıtlar ({data.length})</CardTitle>
           <div className='flex flex-row items-center gap-2'>
             <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
             <Button color='primary' onClick={() => setShowFilters(!showFilters)}>

@@ -30,7 +30,7 @@ export function OrdersTabs() {
   } = useOrders()
   const { stats } = useOrdersStats()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
     page: 1,

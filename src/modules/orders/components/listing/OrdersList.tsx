@@ -23,6 +23,65 @@ interface OrdersListProps {
   onViewDetails: (order: Order) => void
 }
 
+const columns: ColumnDef<Order>[] = [
+  {
+    accessorKey: 'createdAt',
+    header: 'Oluşturulma Tarihi',
+    cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+  },
+  {
+    accessorKey: 'customerName',
+    header: 'Müşteri',
+    cell: ({ row }) => (
+      <MaskedText
+        value={row.getValue('customerName')}
+        maskFn={maskLastName}
+        defaultMasked={true}
+        textClassName='font-medium'
+      />
+    )
+  },
+  {
+    accessorKey: 'status',
+    header: 'Durum',
+    cell: ({ row }) => {
+      const order = row.original
+      return (
+        <div className='flex items-center gap-3'>
+          <StatusBadge status={order.status} />
+          {order.courierInfo && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
+                </TooltipTrigger>
+                <TooltipContent>{order.courierInfo.name}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'channel',
+    header: 'Kanal',
+    cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
+  },
+  {
+    accessorKey: 'paymentMethod',
+    header: 'Ödeme Yöntemi',
+    size: 100,
+    cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
+  },
+  {
+    accessorKey: 'totalAmount',
+    header: 'Tutar (₺)',
+    cell: ({ row }) => (
+      <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
+    )
+  }
+]
 export function OrdersList({
   orders,
   isLoading,
@@ -34,66 +93,6 @@ export function OrdersList({
 }: OrdersListProps) {
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
-
-  const columns: ColumnDef<Order>[] = [
-    {
-      accessorKey: 'createdAt',
-      header: 'Oluşturulma Tarihi',
-      cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
-    },
-    {
-      accessorKey: 'customerName',
-      header: 'Müşteri',
-      cell: ({ row }) => (
-        <MaskedText
-          value={row.getValue('customerName')}
-          maskFn={maskLastName}
-          defaultMasked={true}
-          textClassName='font-medium'
-        />
-      )
-    },
-    {
-      accessorKey: 'status',
-      header: 'Durum',
-      cell: ({ row }) => {
-        const order = row.original
-        return (
-          <div className='flex items-center gap-3'>
-            <StatusBadge status={order.status} />
-            {order.courierInfo && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-                  </TooltipTrigger>
-                  <TooltipContent>{order.courierInfo.name}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      accessorKey: 'channel',
-      header: 'Kanal',
-      cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
-    },
-    {
-      accessorKey: 'paymentMethod',
-      header: 'Ödeme Yöntemi',
-      size: 100,
-      cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
-    },
-    {
-      accessorKey: 'totalAmount',
-      header: 'Tutar (₺)',
-      cell: ({ row }) => (
-        <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
-      )
-    }
-  ]
 
   if (viewMode === 'card') {
     if (isLoading || isFetching) {

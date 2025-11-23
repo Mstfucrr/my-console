@@ -36,7 +36,7 @@ export default function ReportsTable({
   onClearFilters,
   onRefresh
 }: ReportsTableProps) {
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
 
   const columns: ColumnDef<ReportRecord>[] = [
     {
