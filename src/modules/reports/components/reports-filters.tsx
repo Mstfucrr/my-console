@@ -3,10 +3,15 @@
 import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
 import { format } from 'date-fns'
-import { Filter, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { PAYMENT_METHOD_OPTIONS, STATUS_OPTIONS } from '../constants'
+
+const MIN_MAX_DATE_RANGE = {
+  rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
+  rangeEnd: new Date()
+}
 
 export interface ReportsFilterProperties {
   status: string
@@ -62,12 +67,6 @@ export function ReportsFilters({
 
   return (
     <FilterCard
-      config={{
-        title: 'Rapor Filtreleri',
-        icon: Filter,
-        statusOptions: STATUS_OPTIONS,
-        showDateFilters: true
-      }}
       filters={filters}
       onFiltersChange={onFiltersChange}
       onClearFilters={handleClearFilters}
@@ -107,6 +106,14 @@ export function ReportsFilters({
             dateRange={dateRange}
             onDateRangeChange={handleDateRangeChange}
             placeholder='Tarih aralığı seçin'
+            calendarProps={{
+              disabled: {
+                before: MIN_MAX_DATE_RANGE.rangeStart,
+                after: MIN_MAX_DATE_RANGE.rangeEnd
+              },
+              startMonth: MIN_MAX_DATE_RANGE.rangeStart,
+              endMonth: MIN_MAX_DATE_RANGE.rangeEnd
+            }}
           />
         </div>
       </div>

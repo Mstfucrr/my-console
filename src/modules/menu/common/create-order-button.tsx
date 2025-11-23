@@ -7,7 +7,7 @@ export function CreateOrderButton() {
     <Link href='/orders/create'>
       <Button className='font-extrabold' color='success' size='xs'>
         <Plus className='size-4' />
-        <span className='ml-2 max-sm:sr-only'>Sipariş Oluştur</span>
+        <span className='ml-2 max-sm:sr-only'>Yeni Sipariş</span>
       </Button>
     </Link>
   )

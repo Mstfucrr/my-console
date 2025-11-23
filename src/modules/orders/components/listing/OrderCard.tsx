@@ -4,7 +4,6 @@ import { Motorcycle } from '@/components/svg'
 import { Card, CardContent } from '@/components/ui/card'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { getStatusGroupByValue } from '@/constants/orders'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn, maskLastName } from '@/lib/utils'
 import type { Order } from '@/types'
@@ -21,7 +20,7 @@ interface OrderCardProps {
 }
 
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
-  const isCreated = getStatusGroupByValue(order.status) === OrderStatusesGroups.CREATED
+  const isCreated = order.status === OrderStatusesGroups.CREATED
 
   return (
     <Card

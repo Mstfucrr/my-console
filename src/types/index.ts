@@ -1,6 +1,6 @@
 export interface LatestOrder {
   orderId: string
-  status: OrderStatusEnum
+  status: OrderStatusesGroups
   customerName: string
   date: string
   totalAmount: number
@@ -11,7 +11,7 @@ export interface Order {
   customerName: string
   customerPhone: string
   customerAddress: string
-  status: number // OrderStatusesValues
+  status: OrderStatusesGroups
   createdAt: string
   updatedAt: string
   totalAmount: number
@@ -49,7 +49,7 @@ export interface ChartDataPoint {
 }
 
 export interface OrderStatusCount {
-  status: number // OrderStatusesValues
+  status: OrderStatusesGroups
   count: number
   percentage: number
 }
@@ -74,7 +74,7 @@ export interface ApiResponse<T> {
 
 // Filtreleme ve Sayfalama
 export interface FilterOptions {
-  status?: number | Array<number> | 'all' // OrderStatusesValues or array of values
+  status?: OrderStatusesGroups | Array<OrderStatusesGroups> | 'all'
   dateFrom?: string
   dateTo?: string
   search?: string
@@ -109,33 +109,3 @@ export enum OrderStatusesGroups {
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled'
 }
-
-export enum OrderStatusesValues {
-  PREPARING = 0,
-  DELIVERED = 1,
-  NOT_COMPLETED = 2,
-  ASSIGNED = 3,
-  WAITING_FOR_CARRIER = 4,
-  CANCELLED = 5,
-  REDIRECTED = 6,
-  WAITING_FOR_REDIRECT = 7,
-  WAITING_FOR_CARRIER_CHANGE = 8,
-  WAITING_FOR_CANCEL_REQUEST = 9,
-  WAITING_FOR_RESTAURANT_APPROVAL = 10
-}
-
-export const OrderStatusValuesWithName = {
-  preparing: OrderStatusesValues.PREPARING,
-  delivered: OrderStatusesValues.DELIVERED,
-  not_completed: OrderStatusesValues.NOT_COMPLETED,
-  assigned: OrderStatusesValues.ASSIGNED,
-  waiting_for_carrier: OrderStatusesValues.WAITING_FOR_CARRIER,
-  cancelled: OrderStatusesValues.CANCELLED,
-  redirected: OrderStatusesValues.REDIRECTED,
-  waiting_for_redirect: OrderStatusesValues.WAITING_FOR_REDIRECT,
-  waiting_for_carrier_change: OrderStatusesValues.WAITING_FOR_CARRIER_CHANGE,
-  waiting_for_cancel_request: OrderStatusesValues.WAITING_FOR_CANCEL_REQUEST,
-  waiting_for_restaurant_approval: OrderStatusesValues.WAITING_FOR_RESTAURANT_APPROVAL
-} as const
-
-export type OrderStatusEnum = keyof typeof OrderStatusValuesWithName

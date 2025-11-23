@@ -4,7 +4,7 @@ import { FilterCard, SearchInput, StatusSelect, type FilterOption } from '@/comp
 import { OrderStatusGroup } from '@/constants/orders'
 import { useFilter } from '@/hooks/use-filter'
 import { OrderStatusesGroups } from '@/types'
-import { Filter, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { defaultOrderFilters, useOrders } from '../../context/OrdersContext'
 import type { OrderFilterProperties } from '../../types'
 
@@ -29,12 +29,6 @@ export function OrderFilters() {
 
   return (
     <FilterCard
-      config={{
-        title: 'Sipariş Filtreleri',
-        icon: Filter,
-        statusOptions: statusOptions,
-        showDateFilters: false
-      }}
       filters={filters}
       onFiltersChange={handleFiltersChange}
       onClearFilters={handleClearFilters}

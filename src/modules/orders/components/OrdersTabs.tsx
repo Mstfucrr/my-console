@@ -66,7 +66,7 @@ export function OrdersTabs() {
     () => [
       {
         value: 'active' as const,
-        label: <span>Aktif Siparişler ({activeOrdersCount})</span>,
+        label: <span>Aktif ({activeOrdersCount})</span>,
         Icon: Flame,
         disabled: isActiveTabDisabled
       },

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -21,15 +21,7 @@ export interface FilterProperties {
   dateTo?: string
 }
 
-export interface FilterConfig {
-  title: string
-  icon: LucideIcon
-  statusOptions?: FilterOption[]
-  showDateFilters?: boolean
-}
-
 export interface FilterCardProps<T> {
-  config: FilterConfig
   filters: T
   onFiltersChange: (filters: T) => void
   onClearFilters: () => void
@@ -41,7 +33,6 @@ export interface FilterCardProps<T> {
 }
 
 export function FilterCard<T>({
-  config,
   onClearFilters,
   onApply,
   hasActiveFilters,
@@ -49,15 +40,10 @@ export function FilterCard<T>({
   children,
   className
 }: FilterCardProps<T>) {
-  const { title, icon: Icon } = config
-
   return (
     <Card className={className}>
-      <CardHeader className='mb-3! flex flex-row items-center justify-between space-y-0'>
-        <div className='flex items-center gap-2'>
-          <Icon className='text-primary' />
-          <CardTitle className='text-base'>{title}</CardTitle>
-        </div>
+      <CardContent className='flex items-center gap-2 pt-4 max-md:flex-wrap'>
+        {children}
         <div className='flex items-center gap-2'>
           {hasPendingChanges && onApply && (
             <Button size='xs' onClick={onApply}>
@@ -72,8 +58,7 @@ export function FilterCard<T>({
             </Button>
           )}
         </div>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
+      </CardContent>
     </Card>
   )
 }
@@ -169,13 +154,14 @@ export function DateFilters({
   dateRange,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
-  showLabel = false
+  showLabel = false,
+  ...props
 }: {
   dateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   showLabel?: boolean
-}) {
+} & React.ComponentProps<typeof DateRangePicker>) {
   const isActive = dateRange && (dateRange.from || dateRange.to)
 
   return (
@@ -188,6 +174,7 @@ export function DateFilters({
         size='xs'
         color={isActive ? 'info' : undefined}
         variant={isActive ? 'soft' : 'outline'}
+        {...props}
       />
     </div>
   )

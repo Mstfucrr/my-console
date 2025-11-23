@@ -1,4 +1,3 @@
-import { getStatusGroupByValue } from '@/constants/orders'
 import { delay } from '@/lib/delay'
 import { mockOrders } from '@/modules/mockData'
 import type { ApiResponse, FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
@@ -14,7 +13,9 @@ export const ordersService = {
     if (filters) {
       if (filters.status && filters.status !== 'all') {
         if (Array.isArray(filters.status)) {
-          filteredOrders = filteredOrders.filter(order => (filters.status as number[]).includes(order.status))
+          filteredOrders = filteredOrders.filter(order =>
+            (filters.status as OrderStatusesGroups[]).includes(order.status)
+          )
         } else {
           filteredOrders = filteredOrders.filter(order => order.status === filters.status)
         }
@@ -72,10 +73,10 @@ export const ordersService = {
     await delay(600)
 
     // Group orders by status group
-    const created = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.CREATED).length
-    const shipped = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.SHIPPED).length
-    const delivered = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.DELIVERED).length
-    const cancelled = mockOrders.filter(o => getStatusGroupByValue(o.status) === OrderStatusesGroups.CANCELLED).length
+    const created = mockOrders.filter(o => o.status === OrderStatusesGroups.CREATED).length
+    const shipped = mockOrders.filter(o => o.status === OrderStatusesGroups.SHIPPED).length
+    const delivered = mockOrders.filter(o => o.status === OrderStatusesGroups.DELIVERED).length
+    const cancelled = mockOrders.filter(o => o.status === OrderStatusesGroups.CANCELLED).length
 
     return {
       total: mockOrders.length,

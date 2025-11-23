@@ -3,7 +3,6 @@
 import { FilterCard, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
 import { MONTHS, YEARS } from '@/constants/period'
 import { useFilter } from '@/hooks/use-filter'
-import { Filter } from 'lucide-react'
 import { defaultReconciliationFilters } from '..'
 import type { ReconciliationFilterProperties } from '../types'
 
@@ -34,12 +33,6 @@ export function ReconciliationFilters({
 
   return (
     <FilterCard
-      config={{
-        title: 'Mutabakat Filtreleri',
-        icon: Filter,
-        statusOptions: statuses,
-        showDateFilters: true
-      }}
       filters={filters}
       onFiltersChange={onFiltersChange}
       onClearFilters={handleClearFilters}

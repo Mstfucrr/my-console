@@ -1,10 +1,9 @@
 'use client'
 
-import { getStatusValuesByGroup } from '@/constants/orders'
-import { type Order } from '@/types'
+import { OrderStatusesGroups, type Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
-import { ACTIVE_STATUS, ACTIVE_STATUS_GROUPS, COMPLETED_STATUS, COMPLETED_STATUS_GROUPS } from '../constants'
+import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service'
 import { OrderFilterProperties } from '../types'
 
@@ -60,10 +59,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   // Convert filter group to status values
   const activeStatusValues = useMemo(() => {
     if (filters.status === 'all') {
-      return ACTIVE_STATUS
+      return ACTIVE_STATUS_GROUPS
     }
     if (ACTIVE_STATUS_GROUPS.includes(filters.status)) {
-      return getStatusValuesByGroup(filters.status)
+      return [filters.status as OrderStatusesGroups]
     }
     return []
   }, [filters.status])
@@ -92,10 +91,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   // Convert filter group to status values
   const completedStatusValues = useMemo(() => {
     if (filters.status === 'all') {
-      return COMPLETED_STATUS
+      return COMPLETED_STATUS_GROUPS
     }
     if (COMPLETED_STATUS_GROUPS.includes(filters.status)) {
-      return getStatusValuesByGroup(filters.status)
+      return [filters.status as OrderStatusesGroups]
     }
     return []
   }, [filters.status])

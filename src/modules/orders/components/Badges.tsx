@@ -3,20 +3,20 @@
 import CustomImage from '@/components/image'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { getStatusGroupByValue, ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders'
+import { ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders'
 import { cn } from '@/lib/utils'
-import type { OrderChannel } from '@/types'
+import type { OrderChannel, OrderStatusesGroups } from '@/types'
 import { CreditCard } from 'lucide-react'
 import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS, PAYMENT_METHOD_LABELS } from '../utils'
 
 interface StatusBadgeProps {
-  status: number // OrderStatusesValues (0-10)
+  status: OrderStatusesGroups
   variant?: 'outline' | 'soft'
   className?: string
 }
 
 export function StatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
-  const group = getStatusGroupByValue(status)
+  const group = status
   const groupInfo = OrderStatusGroup[group]
 
   return (

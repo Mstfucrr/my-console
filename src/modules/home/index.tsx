@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
-import { OrderStatusesGroups, OrderStatusValuesWithName } from '../../types'
+import { OrderStatusesGroups } from '@/types'
 import { StatusBadge } from '../orders/components/Badges'
 import { formatCurrencyTRY, formatDateTR } from '../orders/utils'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
@@ -216,7 +216,7 @@ export default function DashboardView() {
                           <span className='text-xs font-light'>{order.orderId}</span>
                         </div>
                         <div className='flex flex-col gap-y-2 text-right'>
-                          <StatusBadge status={OrderStatusValuesWithName[order.status]} />
+                          <StatusBadge status={order.status} />
                           <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                         </div>
                       </div>
