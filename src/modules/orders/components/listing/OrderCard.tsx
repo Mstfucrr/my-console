@@ -8,7 +8,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { cn, maskLastName } from '@/lib/utils'
 import type { Order } from '@/types'
 import { OrderStatusesGroups } from '@/types'
-import { formatDateTR } from '../../utils'
+import { formatDateTimeTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 
 interface OrderCardProps {
@@ -51,13 +51,13 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
               )}
             </div>
 
-            <div className='text-muted-foreground mt-2 flex items-center gap-2 text-xs'>
-              <span>{formatDateTR(order.createdAt)}</span>
+            <div className='mt-2 flex items-center gap-2 text-xs'>
+              <span>{formatDateTimeTR(order.createdAt)}</span>
             </div>
           </div>
 
           {/* Right side - Amount and action */}
-          <div className='flex flex-col items-end gap-2'>
+          <div className='flex flex-col items-end gap-4'>
             <div className='text-primary-700 text-lg font-bold whitespace-nowrap'>
               {formatCurrency(order.totalAmount)}
             </div>

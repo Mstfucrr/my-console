@@ -10,6 +10,11 @@ function formatDateTR(dateString: string | undefined) {
   return new Date(dateString).toLocaleString('tr-TR')
 }
 
+function formatDateTimeTR(dateString: string | undefined) {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+}
+
 const PAYMENT_METHOD_LABELS = {
   cash: 'Nakit',
   card: 'Kart',
@@ -76,6 +81,7 @@ export {
   CHANNEL_IMAGES,
   CHANNEL_LABELS,
   formatCurrencyTRY,
+  formatDateTimeTR,
   formatDateTR,
   maskAddress,
   maskPhone,
