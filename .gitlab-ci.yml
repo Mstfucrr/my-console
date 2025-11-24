@@ -68,7 +68,7 @@ node-build:
       else
         pnpm build:dev
       fi
-  when: manuel
+  when: manual
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "dev"'
   #     when: always
@@ -90,7 +90,7 @@ deploy:
   script:
     - aws s3 sync out/ $S3_BUCKET
     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
-  when: manuel
+  when: manual
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
   #     when: manual
