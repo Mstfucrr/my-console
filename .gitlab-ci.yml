@@ -18,6 +18,12 @@ workflow:
         S3_BUCKET: $S3_BUCKET_DEV
         CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
+    - if: '$CI_COMMIT_BRANCH != "dev" && $CI_COMMIT_BRANCH != "preprod" && $CI_COMMIT_BRANCH != "prod"'
+      variables:
+        ENVIRONMENT: 'dev'
+        S3_BUCKET: $S3_BUCKET_DEV
+        CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
+        NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
 
 stages:
   - syntax-check
@@ -34,14 +40,7 @@ syntax-check:
     - pnpm install --no-strict-peer-dependencies
     - pnpm lint
     - pnpm prettier-check
-  # rules:
-  #   - if: '$CI_COMMIT_BRANCH == "main"'
-  #     when: always
-  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
-  #     when: always
-  #   - if: '$CI_COMMIT_BRANCH == "dev"'
-  #     when: always
-  # allow_failure: true
+  when: always
   # only:
   #   - merge_requests
   
@@ -69,10 +68,14 @@ node-build:
       else
         pnpm build:dev
       fi
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "dev"'
-      when: always
-    - when: manual
+  when: manual
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "dev"'
+  #     when: always
+  #   - if: '$CI_COMMIT_BRANCH == "main"'
+  #     when: always
+  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
+  #     when: always
   artifacts:
     paths:
       - out/
@@ -87,13 +90,14 @@ deploy:
   script:
     - aws s3 sync out/ $S3_BUCKET
     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual
-    - if: '$CI_COMMIT_BRANCH == "preprod"'
-      when: manual
-    - if: '$CI_COMMIT_BRANCH != "main"'
-      when: manual
+  when: manual
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "main"'
+  #     when: manual
+  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
+  #     when: manual
+  #   - if: '$CI_COMMIT_BRANCH == "dev"'
+  #     when: manual
 # rollback:
 #   stage: redeploy
 #   image: node:16.1.0-alpine
