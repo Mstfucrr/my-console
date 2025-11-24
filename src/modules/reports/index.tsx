@@ -1,6 +1,7 @@
 'use client'
 
 import PageError from '@/components/page-error'
+import { formatDateForApi } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { type ReportsFilterProperties } from './components/reports-filters'
@@ -12,8 +13,8 @@ const defaultFilters: ReportsFilterProperties = {
   search: '',
   status: 'all',
   paymentMethod: 'all',
-  dateFrom: undefined,
-  dateTo: undefined
+  dateFrom: formatDateForApi(new Date(new Date().setDate(new Date().getDate() - 30))),
+  dateTo: formatDateForApi(new Date())
 }
 
 export default function ReportsView() {
