@@ -20,16 +20,15 @@ workflow:
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
 
 stages:
+  - syntax-check
   - build
   - deploy
   - redeploy
-  - syntax-check
 
 syntax-check:
   stage: syntax-check
   image: node:22.21.1-alpine
   before_script:
-    - echo "🔍 Running syntax checks for $ENVIRONMENT environment"
     - npm install -g pnpm
   script:
     - pnpm install --no-strict-peer-dependencies
