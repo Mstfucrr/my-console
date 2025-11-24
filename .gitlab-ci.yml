@@ -44,10 +44,10 @@ syntax-check:
 
 node-build:
   stage: build
-  image: node:22.21.1-
+  image: node:22.21.1-alpine
   needs:
     - job: syntax-check
-      artifacts: false
+      optional: false
   before_script:
     - echo "🚀 Building for $ENVIRONMENT environment"
     - apk add --no-cache figlet
@@ -81,6 +81,7 @@ deploy:
   image: node:22.21.1-alpine
   needs:
     - job: node-build
+      optional: false
   before_script:
     - apk update
     - apk add --no-cache aws-cli
