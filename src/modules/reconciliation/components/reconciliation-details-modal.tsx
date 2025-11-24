@@ -26,7 +26,7 @@ interface ReconciliationDetailsModalProps {
 
 export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [currentPage, setCurrentPage] = useState<ModalPage>('approve')
+  const [currentPage, setCurrentPage] = useState<ModalPage>('main')
   const queryClient = useQueryClient()
 
   // Upload File Mutation

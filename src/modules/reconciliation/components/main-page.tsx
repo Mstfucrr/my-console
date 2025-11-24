@@ -92,7 +92,7 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
       </div>
 
       {(hasInvoice || canApprove || canReport) && (
-        <DialogFooter className='bg-gray-50'>
+        <DialogFooter>
           <div className='flex w-full flex-wrap gap-3'>
             {hasInvoice && (
               <Button onClick={onViewInvoice} variant='outline' className='flex items-center gap-2'>
