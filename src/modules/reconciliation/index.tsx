@@ -10,9 +10,7 @@ import { reconciliationService } from './service'
 import type { ReconciliationFilterProperties } from './types'
 
 export const defaultReconciliationFilters: ReconciliationFilterProperties = {
-  status: 'all',
-  month: undefined,
-  year: undefined
+  status: 'all'
 }
 
 export default function ReconciliationView() {

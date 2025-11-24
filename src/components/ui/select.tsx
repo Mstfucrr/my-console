@@ -177,28 +177,24 @@ const SelectContent = ({
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectLabel = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>) => (
-  <SelectPrimitive.Label
-    className={cn('py-1.5 text-sm font-semibold ltr:pr-2 ltr:pl-8 rtl:pr-8 rtl:pl-2', className)}
-    {...props}
-  />
+  <SelectPrimitive.Label className={cn('py-1.5 pr-2 pl-8 text-sm font-semibold', className)} {...props} />
 )
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
 const SelectItem = ({ className, children, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>) => (
   <SelectPrimitive.Item
     className={cn(
-      'focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50',
+      'focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-default items-center justify-between gap-x-2 rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50',
       className
     )}
     {...props}
   >
-    <span className='absolute flex h-3.5 w-3.5 items-center justify-center ltr:right-2 rtl:left-2'>
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    <span className='flex h-3.5 w-3.5 items-center justify-center'>
       <SelectPrimitive.ItemIndicator>
         <Check className='h-4 w-4' />
       </SelectPrimitive.ItemIndicator>
     </span>
-
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 )
 SelectItem.displayName = SelectPrimitive.Item.displayName

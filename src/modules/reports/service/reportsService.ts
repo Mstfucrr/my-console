@@ -1,3 +1,5 @@
+import { privateAxiosInstance } from '@/lib/axios'
+import { formatDateForApi } from '@/lib/utils'
 import { OrderStatusesGroups } from '@/types'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord, ReportsStats } from '../types'
@@ -117,6 +119,13 @@ const mockReportsData: ReportRecord[] = [
 
 export const reportsService = {
   async getReports(filters?: ReportsFilterProperties): Promise<ReportRecord[]> {
+    const ordersResponse = await privateAxiosInstance.get('/reconciliation/report-orders-by-restaurant', {
+      params: {
+        startdate: formatDateForApi(filters?.dateFrom),
+        enddate: formatDateForApi(filters?.dateTo)
+      }
+    })
+    console.log('ordersResponse', ordersResponse.data)
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500))
 

@@ -16,5 +16,10 @@ export const menusConfig: MenuItem[] = [
     title: 'Mutabakat',
     Icon: ModuleIcons.Reconciliation,
     href: '/reconciliation'
+  },
+  {
+    title: 'Raporlar',
+    Icon: ModuleIcons.Reports,
+    href: '/reports'
   }
 ]

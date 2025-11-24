@@ -4,11 +4,13 @@ import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { MONTHS } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Filter, FilterX } from 'lucide-react'
 import { useState } from 'react'
 import type { ReconciliationFilterProperties, ReconciliationRecord } from '../types'
+import { ReconciliationConfirmStatus, STATUS_TEXT } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
 import { ReconciliationFilters } from './reconciliation-filters'
 
@@ -28,64 +30,70 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const STATUS_COLORS: Record<string, BadgeProps['color']> = {
-  pending: 'warning',
-  problematic: 'destructive',
-  approved: 'success'
+const STATUS_COLORS: Record<ReconciliationConfirmStatus, BadgeProps['color']> = {
+  [ReconciliationConfirmStatus.PENDING]: 'warning',
+  [ReconciliationConfirmStatus.FAILED]: 'destructive',
+  [ReconciliationConfirmStatus.APPROVED]: 'success'
 } as const
 
-const STATUS_TEXT = {
-  pending: 'Beklemede',
-  problematic: 'Onaylanmadı',
-  approved: 'Onaylandı'
-} as const
+// Helper function to format period
+const formatPeriod = (record: ReconciliationRecord): string => {
+  if (record.RecordPeriodName) {
+    return record.RecordPeriodName
+  }
+
+  return `${record.RecordPeriod}. Dönem - ${MONTHS[record.RecordMonth - 1]} ${record.RecordYear}`
+}
+
+// Helper function to convert ConfirmStatus to string for display
+const getStatusDisplay = (status: ReconciliationConfirmStatus): string => {
+  return STATUS_TEXT[status] || 'Bilinmeyen'
+}
+
+const getStatusColor = (status: ReconciliationConfirmStatus): BadgeProps['color'] => {
+  return STATUS_COLORS[status] || 'secondary'
+}
 
 const columns: ColumnDef<ReconciliationRecord>[] = [
   {
-    accessorKey: 'period',
-    header: 'Mutabakat Dönemi',
-    cell: ({ row }) => <span className='font-medium'>{row.getValue('period')}</span>
+    accessorKey: 'RecordPeriodName',
+    header: 'Dönem',
+    cell: ({ row }) => <span className='font-medium'>{formatPeriod(row.original)}</span>
   },
   {
-    accessorKey: 'totalOrderAmount',
+    accessorKey: 'TotalAmount',
     header: 'Toplam Sipariş Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('totalOrderAmount'), false)
+    cell: ({ row }) => formatCurrency(row.getValue('TotalAmount') as number, false)
   },
   {
-    accessorKey: 'distributionCount',
+    accessorKey: 'OrderCount',
     header: 'Dağıtım Adedi',
     meta: { align: 'right' },
-    cell: ({ row }) => row.getValue('distributionCount')
+    cell: ({ row }) => row.getValue('OrderCount')
   },
   {
-    accessorKey: 'debtBalance',
-    header: 'Borç Bakiye (₺)',
+    accessorKey: 'TotalDeliveryAmount',
+    header: 'Toplam Teslimat Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('debtBalance'), false)
+    cell: ({ row }) => formatCurrency(row.getValue('TotalDeliveryAmount') as number, false)
   },
   {
-    accessorKey: 'creditBalance',
-    header: 'Alacak Bakiye (₺)',
+    accessorKey: 'RestaurantPaymentAmount',
+    header: 'Restoran Ödeme Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('creditBalance'), false)
+    cell: ({ row }) => formatCurrency(row.getValue('RestaurantPaymentAmount') as number, false)
   },
   {
-    accessorKey: 'netAmount',
-    header: 'Net Tutar (₺)',
-    meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('netAmount'), false)
-  },
-  {
-    accessorKey: 'status',
+    accessorKey: 'ConfirmStatus',
     header: 'Durum',
     size: 20,
     maxSize: 20,
     cell: ({ row }) => {
-      const status = row.getValue('status') as string
+      const status = row.getValue('ConfirmStatus') as ReconciliationConfirmStatus
       return (
-        <Badge variant='outline' color={STATUS_COLORS[status] || 'secondary'}>
-          {STATUS_TEXT[status as keyof typeof STATUS_TEXT] || status}
+        <Badge variant='outline' color={getStatusColor(status)}>
+          {getStatusDisplay(status)}
         </Badge>
       )
     }
@@ -116,7 +124,7 @@ export default function ReconciliationTable({
   onRefresh
 }: ReconciliationTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<ReconciliationRecord | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
 
   const handleToggleModal = (record: ReconciliationRecord): void => {
     setSelectedRecord(prev => (prev ? null : record))
@@ -126,7 +134,7 @@ export default function ReconciliationTable({
     <>
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Mutabakat Kayıtları ({data.length})</CardTitle>
+          <CardTitle>Kayıtlar ({data.length})</CardTitle>
           <div className='flex flex-row items-center gap-2'>
             <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
             <Button color='primary' onClick={() => setShowFilters(!showFilters)}>

@@ -1,19 +1,40 @@
-import { mockReconciliationData } from '../data/mock-data'
-import type { ReconciliationFilterProperties, ReconciliationRecord, ReconciliationStats } from '../types'
+import { privateAxiosInstance } from '@/lib/axios'
+import {
+  ReconciliationConfirmStatus,
+  ReconciliationRecordResponse,
+  type ReconciliationFilterProperties,
+  type ReconciliationRecord,
+  type ReconciliationStats
+} from '../types'
+
+// Helper function to convert File to base64
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      const result = reader.result as string
+      // Remove data URL prefix (e.g., "data:application/pdf;base64,")
+      const base64 = result.split(',')[1]
+      resolve(base64)
+    }
+    reader.onerror = error => reject(error)
+  })
+}
 
 export const reconciliationService = {
   async getReconciliationData(filters?: ReconciliationFilterProperties): Promise<ReconciliationRecord[]> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 800))
-
-    let filteredData = [...mockReconciliationData]
-
-    // Apply status filter
-    if (filters?.status && filters.status !== 'all') {
-      filteredData = filteredData.filter(item => item.status === filters.status)
-    }
-
-    return filteredData
+    const confirmStatus = filters?.status === 'all' ? undefined : filters?.status
+    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company', {
+      params: {
+        confirmStatus: confirmStatus
+      }
+    })
+    // Map RecordID to id for table component compatibility
+    return response.data.rows.map(record => ({
+      ...record,
+      id: record.RecordID
+    }))
   },
 
   async getReconciliationStats(filters?: ReconciliationFilterProperties): Promise<ReconciliationStats> {
@@ -24,12 +45,12 @@ export const reconciliationService = {
     const data = await this.getReconciliationData(filters)
 
     return {
-      totalApproved: data.filter(item => item.status === 'approved').length,
-      totalPending: data.filter(item => item.status === 'pending').length,
-      totalFailed: data.filter(item => item.status === 'problematic').length,
-      monthlyRevenue: data.reduce((sum, item) => sum + item.totalOrderAmount, 0),
-      platformFees: data.reduce((sum, item) => sum + item.ataExpressDeliveryInvoice, 0),
-      netRevenue: data.reduce((sum, item) => sum + item.netAmount, 0)
+      totalApproved: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.APPROVED).length,
+      totalPending: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.PENDING).length,
+      totalFailed: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.FAILED).length,
+      monthlyRevenue: data.reduce((sum, item) => sum + item.TotalAmount, 0),
+      platformFees: data.reduce((sum, item) => sum + item.TotalPrePaidAmount, 0),
+      netRevenue: data.reduce((sum, item) => sum + item.TotalDeliveryAmount, 0)
     }
   },
 
@@ -39,53 +60,52 @@ export const reconciliationService = {
     await new Promise(resolve => setTimeout(resolve, 1000))
   },
 
-  async uploadInvoice(recordId: string, file: File): Promise<{ success: boolean; invoiceUrl?: string }> {
-    // Simulate file upload
-    console.log(`Uploading file ${file.name} for record ${recordId}`)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    // Simulate successful upload
-    return {
-      success: true,
-      invoiceUrl: `/invoices/${recordId}.pdf`
-    }
+  async uploadFile(file: File): Promise<{ url: string }> {
+    const fileBuffer = await fileToBase64(file)
+    const response = await privateAxiosInstance.post<{ statusCode: number; message: string; url: string }>(
+      '/reconciliation/upload-s3',
+      {
+        fileName: file.name,
+        fileBuffer,
+        mimetype: file.type
+      }
+    )
+    return { url: response.data.url }
   },
 
-  async uploadCurrentAccountStatement(recordId: string, file: File): Promise<{ success: boolean; fileUrl?: string }> {
-    // Simulate file upload
-    console.log(`Uploading current account statement file ${file.name} for record ${recordId}`)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    // Simulate successful upload
-    return {
-      success: true,
-      fileUrl: `/statements/${recordId}.pdf`
-    }
+  async approveReconciliation(
+    recordId: string,
+    confirmRecordId: string | undefined,
+    fileName?: string
+  ): Promise<{ message: string; affectedRows: number }> {
+    const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
+      '/reconciliation/confirmation-process',
+      {
+        recordID: parseInt(recordId, 10),
+        confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
+        confirmStatus: ReconciliationConfirmStatus.APPROVED,
+        fileName: fileName || undefined
+      }
+    )
+    return response.data
   },
 
-  async approveReconciliation(recordId: string): Promise<{ success: boolean }> {
-    // Simulate approval process
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // Update the record status in mock data
-    const recordIndex = mockReconciliationData.findIndex(record => record.id === recordId)
-    if (recordIndex !== -1) {
-      mockReconciliationData[recordIndex].status = 'approved'
-    }
-
-    return { success: true }
-  },
-
-  async reportIssue(recordId: string, issueDescription: string, statementFile?: File): Promise<{ success: boolean }> {
-    // Simulate issue reporting
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // Update the record status in mock data
-    const recordIndex = mockReconciliationData.findIndex(record => record.id === recordId)
-    if (recordIndex !== -1) {
-      mockReconciliationData[recordIndex].status = 'problematic'
-    }
-
-    return { success: true }
+  async reportIssue(
+    recordId: string,
+    confirmRecordId: string | undefined,
+    description: string,
+    fileName?: string
+  ): Promise<{ message: string; affectedRows: number }> {
+    const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
+      '/reconciliation/confirmation-process',
+      {
+        recordID: parseInt(recordId, 10),
+        confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
+        confirmStatus: ReconciliationConfirmStatus.FAILED,
+        note: description,
+        fileName: fileName || undefined
+      }
+    )
+    return response.data
   }
 }

@@ -10,12 +10,13 @@ import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { CreateOrderButton } from '../common/create-order-button'
 import { MenuItem } from '../common/menu-item'
 import { NotificationsPopover } from '../common/notifications-popover'
 import { SupportDialog } from '../common/support-dialog'
 import UserMenu from '../common/user-menu'
 
-const MobileMenu = () => {
+export function MobileMenu() {
   const { mobileMenu, setMobileMenu } = useSidebar()
   const isDesktop = useIsDesktop()
 
@@ -33,7 +34,7 @@ const MobileMenu = () => {
         className='bg-primary-10 fixed top-14 z-50 w-full overflow-hidden shadow-md backdrop-blur-xl'
       >
         <div className='overflow-x-hidden overflow-y-auto pt-2'>
-          <div className='flex h-full w-full flex-col pb-5'>
+          <div className='flex h-full w-full flex-col pb-2'>
             <ScrollArea className='mt-2 max-h-[calc(100%-100px)] flex-1 px-4 pb-2'>
               <div className='flex h-full flex-1 items-center'>
                 <nav className='flex h-full w-full items-center'>
@@ -60,6 +61,7 @@ const MobileMenu = () => {
         </Link>
 
         <div className='flex items-center gap-2'>
+          <CreateOrderButton />
           <NotificationsPopover />
           {/* <SupportDialog /> */}
           <UserMenu />
@@ -74,7 +76,7 @@ const MobileMenu = () => {
           </Button>
         </div>
       </div>
-      <div className='fixed right-5 bottom-5 z-10'>
+      <div className='fixed right-5 bottom-5 z-50'>
         <SupportDialog />
       </div>
 
@@ -87,5 +89,3 @@ const MobileMenu = () => {
     </>
   )
 }
-
-export default MobileMenu

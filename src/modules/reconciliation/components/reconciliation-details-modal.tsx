@@ -1,7 +1,7 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { reconciliationService } from '../service'
@@ -27,32 +27,52 @@ interface ReconciliationDetailsModalProps {
 export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [currentPage, setCurrentPage] = useState<ModalPage>('main')
+  const queryClient = useQueryClient()
 
-  // Upload Invoice Mutation
-  const { mutateAsync: uploadInvoice, isPending: isUploading } = useMutation({
-    mutationFn: ({ recordId, file }: { recordId: string; file: File }) =>
-      reconciliationService.uploadInvoice(recordId, file),
-    mutationKey: ['uploadInvoice']
+  // Upload File Mutation
+  const { mutateAsync: uploadFile, isPending: isUploading } = useMutation({
+    mutationFn: (file: File) => reconciliationService.uploadFile(file),
+    mutationKey: ['uploadFile']
   })
 
   // Approve Reconciliation Mutation
   const { mutateAsync: approveReconciliation, isPending: isApproving } = useMutation({
-    mutationFn: reconciliationService.approveReconciliation,
-    mutationKey: ['approveReconciliation']
+    mutationFn: ({
+      recordId,
+      confirmRecordId,
+      fileName
+    }: {
+      recordId: string
+      confirmRecordId: string | undefined
+      fileName?: string
+    }) => reconciliationService.approveReconciliation(recordId, confirmRecordId, fileName),
+    mutationKey: ['approveReconciliation'],
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['reconciliation'] })
+      queryClient.invalidateQueries({ queryKey: ['reconciliation-stats'] })
+    }
   })
 
   // Report Issue Mutation
   const { mutateAsync: reportIssue, isPending: isReporting } = useMutation({
     mutationFn: ({
       recordId,
+      confirmRecordId,
       description,
-      statementFile
+      fileName
     }: {
       recordId: string
+      confirmRecordId: string | undefined
       description: string
-      statementFile?: File
-    }) => reconciliationService.reportIssue(recordId, description, statementFile),
-    mutationKey: ['reportIssue']
+      fileName?: string
+    }) => reconciliationService.reportIssue(recordId, confirmRecordId, description, fileName),
+    mutationKey: ['reportIssue'],
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['reconciliation'] })
+      queryClient.invalidateQueries({ queryKey: ['reconciliation-stats'] })
+    }
   })
 
   const handleInvoiceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +81,13 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
 
     toast.promise(
       async () => {
-        await uploadInvoice({ recordId: record.id, file })
-        onClose()
+        await uploadFile(file)
+        // After upload, update the confirmation with the file name
+        await approveReconciliation({
+          recordId: record.RecordID,
+          confirmRecordId: record.ConfirmID,
+          fileName: file.name
+        })
       },
       {
         pending: 'Fatura yükleniyor...',
@@ -82,9 +107,10 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
   }
 
   const handleViewInvoice = () => {
-    if (!record) return
+    if (!record || !record.ConfirmID) return
 
-    const invoiceUrl = `/invoices/${record.id}.pdf`
+    // TODO: Get invoice URL from backend or S3
+    const invoiceUrl = `/invoices/${record.RecordID}.pdf`
     window.open(invoiceUrl, '_blank')
   }
 
@@ -94,8 +120,14 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     try {
       await toast.promise(
         async () => {
-          await uploadInvoice({ recordId: record.id, file: data.invoiceFile })
-          await approveReconciliation(record.id)
+          // First upload the file to S3
+          await uploadFile(data.invoiceFile)
+          // Then approve with the file name
+          await approveReconciliation({
+            recordId: record.RecordID,
+            confirmRecordId: record.ConfirmID,
+            fileName: data.invoiceFile.name
+          })
         },
         {
           pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
@@ -115,7 +147,15 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     try {
       await toast.promise(
         async () => {
-          await reportIssue({ recordId: record.id, description: data.description, statementFile: data.statementFile })
+          // First upload the statement file to S3
+          await uploadFile(data.statementFile)
+          // Then report issue with description and file name
+          await reportIssue({
+            recordId: record.RecordID,
+            confirmRecordId: record.ConfirmID,
+            description: data.description,
+            fileName: data.statementFile.name
+          })
         },
         {
           pending: 'Mutabık olmadığınızın bildirimi yapılıyor...',

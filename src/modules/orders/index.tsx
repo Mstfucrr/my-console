@@ -6,14 +6,14 @@ import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
-  const { error, refreshAllData, isFetchingActive, isFetchingCompleted } = useOrders()
+  const { error, refreshAllData, isFetching } = useOrders()
 
   if (error)
     return (
       <PageError
         errorMessage='Sipariş verileri yüklenirken bir hata oluştu'
         onRefresh={refreshAllData}
-        isLoading={isFetchingActive || isFetchingCompleted}
+        isLoading={isFetching}
         title='Sipariş Verileri Yüklenemedi'
         description='Sipariş verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
       />

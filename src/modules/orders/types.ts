@@ -4,4 +4,3 @@ export interface OrderFilterProperties {
   status: 'all' | OrderStatusesGroups
   search?: string
 }
-

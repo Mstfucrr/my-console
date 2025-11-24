@@ -3,12 +3,13 @@
 import { SiteLogoBig } from '@/components/svg'
 import { menusConfig } from '@/modules/menu/menus'
 import Link from 'next/link'
+import { CreateOrderButton } from '../common/create-order-button'
 import { MenuItem } from '../common/menu-item'
 import { NotificationsPopover } from '../common/notifications-popover'
 import { SupportDialog } from '../common/support-dialog'
 import UserMenu from '../common/user-menu'
 
-const Topbar = () => {
+export function Topbar() {
   return (
     <>
       <div className='bg-primary-10 fixed top-0 z-50 w-full border-b shadow-md backdrop-blur-xl'>
@@ -28,16 +29,15 @@ const Topbar = () => {
           </div>
 
           <div className='ml-auto flex items-center gap-2'>
+            <CreateOrderButton />
             <NotificationsPopover />
             <UserMenu />
           </div>
         </div>
       </div>
-      <div className='fixed right-5 bottom-5'>
+      <div className='fixed right-5 bottom-5 z-50'>
         <SupportDialog />
       </div>
     </>
   )
 }
-
-export default Topbar

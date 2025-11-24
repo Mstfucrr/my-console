@@ -9,9 +9,11 @@ import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { maskLastName, maskPhone } from '@/lib/utils'
 import type { Order } from '@/types'
+import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
+import { ordersService } from '../../service'
 import { formatDateTR, maskAddress } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
@@ -26,6 +28,18 @@ interface OrderDetailDialogProps {
 export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
+
+  // Eğer order'da customerPhone veya customerAddress yoksa, detay sayfasından çek
+  const needsDetailFetch = order && (!order.customerPhone || !order.customerAddress)
+
+  const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
+    queryKey: ['orderDetail', order?.id],
+    queryFn: () => ordersService.getOrderById(order!.id),
+    enabled: Boolean(needsDetailFetch && order?.id)
+  })
+
+  // Detay varsa onu kullan, yoksa mevcut order'ı kullan
+  const displayOrder = orderDetail || order
 
   useEffect(() => {
     setOpen(Boolean(order))
@@ -63,116 +77,137 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
           </DialogTitle>
         </DialogHeader>
 
-        {openMap && order.courierInfo ? (
-          <div className='flex h-104 w-full p-4 pt-0'>
-            <CourierMap
-              courierInfo={order.courierInfo!}
-              courierPosition={order.courierInfo.position}
-              customerPosition={order.customerPosition}
-              key={order.courierInfo.id}
-            />
+        {isLoadingDetail ? (
+          <div className='flex h-64 items-center justify-center'>
+            <p className='text-muted-foreground'>Sipariş detayları yükleniyor...</p>
           </div>
         ) : (
-          <ScrollArea className='max-h-[calc(90vh-120px)] p-6 pt-0'>
-            {/* Kurye Bilgileri */}
-            {order.courierInfo && <CourierCard courierInfo={order.courierInfo} handleToggleMap={handleToggleMap} />}
+          <>
+            {openMap && displayOrder?.courierInfo ? (
+              <div className='flex h-104 w-full p-4 pt-0'>
+                <CourierMap
+                  courierInfo={displayOrder.courierInfo}
+                  courierPosition={displayOrder.courierInfo.position}
+                  customerPosition={displayOrder.customerPosition}
+                  key={displayOrder.courierInfo.id}
+                />
+              </div>
+            ) : (
+              <ScrollArea className='max-h-[calc(90vh-120px)] p-6 pt-0'>
+                {/* Kurye Bilgileri */}
+                {displayOrder?.courierInfo && (
+                  <CourierCard courierInfo={displayOrder.courierInfo} handleToggleMap={handleToggleMap} />
+                )}
 
-            <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-              {/* Sipariş Bilgileri */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-base'>
-                    <Package className='h-4 w-4' />
-                    Sipariş Bilgileri
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-3'>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Sipariş ID</span>
-                    <span className='text-sm'>{order.id}</span>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Durum</span>
-                    <StatusBadge status={order.status} variant='soft' />
-                  </div>
-                  <Separator />
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Ödeme Yöntemi</span>
-                    <PaymentMethodBadge paymentMethod={order.paymentMethod} />
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Kanal</span>
-                    <ChannelBadge channel={order.channel} />
-                  </div>
-                  <Separator />
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground flex items-center gap-1 text-sm'>Oluşturulma</span>
-                    <span className='text-sm'>{formatDateTR(order.createdAt)}</span>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground flex items-center gap-1 text-sm'>Son Güncelleme</span>
-                    <span className='text-sm'>{formatDateTR(order.updatedAt)}</span>
-                  </div>
-                  <Separator />
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
-                    <span className='text-primary-700 text-xl font-bold'>{formatCurrency(order.totalAmount)}</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Müşteri Bilgileri */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2 text-base'>
-                    <User className='h-4 w-4' />
-                    Müşteri Bilgileri
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Ad Soyad</span>
-                    <MaskedText
-                      value={order.customerName}
-                      maskFn={maskLastName}
-                      defaultMasked={true}
-                      textClassName='text-sm'
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm'>Telefon</span>
-                    <MaskedText
-                      value={order.customerPhone}
-                      maskFn={maskPhone}
-                      defaultMasked={true}
-                      asLink={true}
-                      href={`tel:${order.customerPhone}`}
-                      textClassName='text-sm'
-                    />
-                  </div>
-
-                  <Separator />
-
-                  <div className='flex items-center justify-between'>
-                    <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
-                    <div className='pl-6 text-right text-sm leading-relaxed'>
-                      <MaskedText
-                        className='items-start justify-end'
-                        maskFn={maskAddress}
-                        value={order.customerAddress}
-                      />
-                      <div className='text-muted-foreground mt-2 font-mono text-xs'>
-                        ({order.customerPosition[0].toFixed(6)}, {order.customerPosition[1].toFixed(6)})
+                <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+                  {/* Sipariş Bilgileri */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='flex items-center gap-2 text-base'>
+                        <Package className='h-4 w-4' />
+                        Sipariş Bilgileri
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-3'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Sipariş ID</span>
+                        <span className='text-sm'>{displayOrder?.id}</span>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </ScrollArea>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Durum</span>
+                        {displayOrder && <StatusBadge status={displayOrder.status} variant='soft' />}
+                      </div>
+                      <Separator />
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Ödeme Yöntemi</span>
+                        {displayOrder && <PaymentMethodBadge paymentMethod={displayOrder.paymentMethod} />}
+                      </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Kanal</span>
+                        {displayOrder && <ChannelBadge channel={displayOrder.channel} />}
+                      </div>
+                      <Separator />
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground flex items-center gap-1 text-sm'>Oluşturulma</span>
+                        <span className='text-sm'>{displayOrder && formatDateTR(displayOrder.createdAt)}</span>
+                      </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground flex items-center gap-1 text-sm'>Son Güncelleme</span>
+                        <span className='text-sm'>{displayOrder && formatDateTR(displayOrder.updatedAt)}</span>
+                      </div>
+                      <Separator />
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
+                        <span className='text-primary-700 text-xl font-bold'>
+                          {displayOrder && formatCurrency(displayOrder.totalAmount)}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Müşteri Bilgileri */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='flex items-center gap-2 text-base'>
+                        <User className='h-4 w-4' />
+                        Müşteri Bilgileri
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-4'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Ad Soyad</span>
+                        {displayOrder && (
+                          <MaskedText
+                            value={displayOrder.customerName}
+                            maskFn={maskLastName}
+                            defaultMasked={true}
+                            textClassName='text-sm'
+                          />
+                        )}
+                      </div>
+
+                      <Separator />
+
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm'>Telefon</span>
+                        {displayOrder && displayOrder.customerPhone && (
+                          <MaskedText
+                            value={displayOrder.customerPhone}
+                            maskFn={maskPhone}
+                            defaultMasked={true}
+                            asLink={true}
+                            href={`tel:${displayOrder.customerPhone}`}
+                            textClassName='text-sm'
+                          />
+                        )}
+                      </div>
+
+                      <Separator />
+
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
+                        <div className='pl-6 text-right text-sm leading-relaxed'>
+                          {displayOrder && displayOrder.customerAddress && (
+                            <MaskedText
+                              className='items-start justify-end'
+                              maskFn={maskAddress}
+                              value={displayOrder.customerAddress}
+                            />
+                          )}
+                          {displayOrder && (
+                            <div className='text-muted-foreground mt-2 font-mono text-xs'>
+                              ({displayOrder.customerPosition[0].toFixed(6)},{' '}
+                              {displayOrder.customerPosition[1].toFixed(6)})
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </ScrollArea>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>

@@ -6,7 +6,6 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Filter, FilterX, LayoutGrid, LayoutList, Loader2, Menu, RefreshCw } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
-import { CreateOrderModal } from './actions/CreateOrderModal'
 
 const viewModeButtons = [
   {
@@ -29,9 +28,8 @@ interface OrdersToolbarProps {
 }
 
 export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggleFilters }: OrdersToolbarProps) {
-  const { refreshAllData, isFetchingActive, isFetchingCompleted, handleCreateOrderSuccess } = useOrders()
+  const { refreshAllData, isFetching } = useOrders()
 
-  const isRefreshing = isFetchingActive || isFetchingCompleted
   return (
     <div className='flex flex-row-reverse flex-wrap items-center gap-2'>
       {/* Mobile Dropdown Menu (lg: altında) */}
@@ -42,8 +40,8 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={refreshAllData} disabled={isRefreshing} className='flex items-center'>
-            {isRefreshing ? <Loader2 className='size-4 animate-spin' /> : <RefreshCw className='size-4' />}
+          <DropdownMenuItem onClick={refreshAllData} disabled={isFetching} className='flex items-center'>
+            {isFetching ? <Loader2 className='size-4 animate-spin' /> : <RefreshCw className='size-4' />}
             <span className='ml-2'>Yenile</span>
           </DropdownMenuItem>
           {viewModeButtons.map(({ label, Icon, value }) => (
@@ -61,7 +59,7 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
 
       {/* Desktop Toolbar (lg: ve üzeri) */}
       <div className='hidden flex-wrap items-center gap-2 lg:flex'>
-        <RefreshButton onClick={refreshAllData} isIconButton isLoading={isRefreshing} />
+        <RefreshButton onClick={refreshAllData} isIconButton isLoading={isFetching} />
         <ButtonGroup>
           {viewModeButtons.map(({ label, Icon, value }) => (
             <Button
@@ -81,7 +79,6 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
           <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
         </Button>
       </div>
-      <CreateOrderModal onSuccess={handleCreateOrderSuccess} />
     </div>
   )
 }

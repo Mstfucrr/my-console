@@ -2,12 +2,12 @@ import { DeliveryCheckList, DeliveryShipmentPackagesAdd, Motorcycle } from '@/co
 import { OrderStatusesGroups } from '@/types'
 import {
   BadgeTurkishLira,
-  BarChart2,
   CheckCircle,
   Clock,
   CreditCard,
   Home,
   LucideIcon,
+  Plus,
   ShoppingCart,
   XCircle
 } from 'lucide-react'
@@ -16,7 +16,8 @@ import {
 export const ModuleIcons = {
   Reconciliation: BadgeTurkishLira,
   Orders: ShoppingCart,
-  Reports: BarChart2,
+  OrdersCreate: Plus,
+  Reports: DeliveryCheckList,
   Home: Home
 } as const
 

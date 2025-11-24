@@ -36,7 +36,7 @@ export default function ReportsTable({
   onClearFilters,
   onRefresh
 }: ReportsTableProps) {
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
 
   const columns: ColumnDef<ReportRecord>[] = [
     {
@@ -101,25 +101,13 @@ export default function ReportsTable({
       accessorKey: 'paymentMethod',
       header: 'Ödeme Yöntemi',
       cell: ({ row }) => <div className='text-sm'>{row.getValue('paymentMethod')}</div>
-    },
-    {
-      accessorKey: 'deliveryAddress',
-      header: 'Teslimat Adresi',
-      cell: ({ row }) => {
-        const address = row.getValue('deliveryAddress') as string
-        return (
-          <div className='max-w-[200px] truncate text-sm text-gray-600' title={address}>
-            {address.length > 20 ? address.slice(0, 20) + '...' : address}
-          </div>
-        )
-      }
     }
   ]
 
   return (
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Eski Sipariş Raporları ({data.length})</CardTitle>
+        <CardTitle>Tamamlanmış Siparişler ({data.length})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
           <Button color='primary' onClick={() => setShowFilters(!showFilters)}>

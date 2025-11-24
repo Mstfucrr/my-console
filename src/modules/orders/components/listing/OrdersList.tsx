@@ -12,9 +12,10 @@ import { useOrders } from '../../context/OrdersContext'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import { OrderCard } from './OrderCard'
+import { OrderCardSkeleton } from './OrderCardSkeleton'
 
 interface OrdersListProps {
-  orders: Order[]
+  orders: Array<Order> | undefined
   isLoading: boolean
   isFetching: boolean
   viewMode: 'card' | 'list'
@@ -22,6 +23,66 @@ interface OrdersListProps {
   filteredEmptyMessage: string
   onViewDetails: (order: Order) => void
 }
+
+const columns: ColumnDef<Order>[] = [
+  {
+    accessorKey: 'createdAt',
+    header: 'Oluşturulma Tarihi',
+    cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+  },
+  {
+    accessorKey: 'customerName',
+    header: 'Müşteri',
+    cell: ({ row }) => (
+      <MaskedText
+        value={row.getValue('customerName')}
+        maskFn={maskLastName}
+        defaultMasked={true}
+        textClassName='font-medium'
+      />
+    )
+  },
+  {
+    accessorKey: 'status',
+    header: 'Durum',
+    cell: ({ row }) => {
+      const order = row.original
+      return (
+        <div className='flex items-center gap-3'>
+          <StatusBadge status={order.status} />
+          {order.courierInfo && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
+                </TooltipTrigger>
+                <TooltipContent>{order.courierInfo.name}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      )
+    }
+  },
+  {
+    accessorKey: 'channel',
+    header: 'Kanal',
+    cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
+  },
+  {
+    accessorKey: 'paymentMethod',
+    header: 'Ödeme Yöntemi',
+    size: 100,
+    cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
+  },
+  {
+    accessorKey: 'totalAmount',
+    header: 'Tutar (₺)',
+    cell: ({ row }) => (
+      <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
+    )
+  }
+]
 
 export function OrdersList({
   orders,
@@ -35,105 +96,40 @@ export function OrdersList({
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
 
-  const columns: ColumnDef<Order>[] = [
-    {
-      accessorKey: 'createdAt',
-      header: 'Oluşturulma Tarihi',
-      cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
-    },
-    {
-      accessorKey: 'customerName',
-      header: 'Müşteri',
-      cell: ({ row }) => (
-        <MaskedText
-          value={row.getValue('customerName')}
-          maskFn={maskLastName}
-          defaultMasked={true}
-          textClassName='font-medium'
-        />
-      )
-    },
-    {
-      accessorKey: 'status',
-      header: 'Durum',
-      cell: ({ row }) => {
-        const order = row.original
-        return (
-          <div className='flex items-center gap-3'>
-            <StatusBadge status={order.status} />
-            {order.courierInfo && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-                  </TooltipTrigger>
-                  <TooltipContent>{order.courierInfo.name}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      accessorKey: 'channel',
-      header: 'Kanal',
-      cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
-    },
-    {
-      accessorKey: 'paymentMethod',
-      header: 'Ödeme Yöntemi',
-      size: 100,
-      cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
-    },
-    {
-      accessorKey: 'totalAmount',
-      header: 'Tutar (₺)',
-      cell: ({ row }) => (
-        <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
-      )
-    }
-  ]
+  if (viewMode === 'list')
+    return (
+      <BasicDataTable
+        columns={columns}
+        data={orders ?? []}
+        isLoading={isLoading || isFetching}
+        emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
+        loadingLabel='Siparişler yükleniyor...'
+        onRowClick={onViewDetails}
+        enableColumnVisibility={false}
+      />
+    )
 
-  if (viewMode === 'card') {
-    if (isLoading || isFetching) {
-      return (
-        <div className='flex h-48 items-center justify-center'>
-          <div className='text-center'>
-            <p className='text-muted-foreground'>Siparişler yükleniyor...</p>
-          </div>
-        </div>
-      )
-    }
-
-    if (orders.length === 0) {
-      return (
-        <div className='flex h-48 items-center justify-center'>
-          <div className='text-center'>
-            <p className='text-muted-foreground'>{hasActiveFilter ? filteredEmptyMessage : emptyMessage}</p>
-          </div>
-        </div>
-      )
-    }
-
+  if (isLoading || isFetching)
     return (
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
-        {orders.map(order => (
-          <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <OrderCardSkeleton key={idx} />
         ))}
       </div>
     )
-  }
+
+  if (orders?.length === 0)
+    return (
+      <div className='flex h-48 items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-muted-foreground'>{hasActiveFilter ? filteredEmptyMessage : emptyMessage}</p>
+        </div>
+      </div>
+    )
 
   return (
-    <BasicDataTable
-      columns={columns}
-      data={orders}
-      isLoading={isLoading || isFetching}
-      emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
-      loadingLabel='Siparişler yükleniyor...'
-      onRowClick={onViewDetails}
-      enableColumnVisibility={false}
-    />
+    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
+      {orders?.map(order => <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />)}
+    </div>
   )
 }

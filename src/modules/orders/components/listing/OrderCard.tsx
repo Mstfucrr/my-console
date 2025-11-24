@@ -4,24 +4,23 @@ import { Motorcycle } from '@/components/svg'
 import { Card, CardContent } from '@/components/ui/card'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { getStatusGroupByValue } from '@/constants/orders'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn, maskLastName } from '@/lib/utils'
 import type { Order } from '@/types'
 import { OrderStatusesGroups } from '@/types'
-import { formatDateTR } from '../../utils'
+import { formatDateTimeTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 
 interface OrderCardProps {
   order: Order
   onViewDetails: (order: Order) => void
-  onStatusUpdate?: (orderId: string, newStatus: number) => void
+  onStatusUpdate?: (orderId: string, newStatus: OrderStatusesGroups) => void
   onCancel?: (orderId: string) => void
   showActions?: boolean
 }
 
 export function OrderCard({ order, onViewDetails }: OrderCardProps) {
-  const isCreated = getStatusGroupByValue(order.status) === OrderStatusesGroups.CREATED
+  const isCreated = order.status === OrderStatusesGroups.CREATED
 
   return (
     <Card
@@ -52,13 +51,13 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
               )}
             </div>
 
-            <div className='text-muted-foreground mt-2 flex items-center gap-2 text-xs'>
-              <span>{formatDateTR(order.createdAt)}</span>
+            <div className='mt-2 flex items-center gap-2 text-xs'>
+              <span>{formatDateTimeTR(order.createdAt)}</span>
             </div>
           </div>
 
           {/* Right side - Amount and action */}
-          <div className='flex flex-col items-end gap-2'>
+          <div className='flex flex-col items-end gap-4'>
             <div className='text-primary-700 text-lg font-bold whitespace-nowrap'>
               {formatCurrency(order.totalAmount)}
             </div>
