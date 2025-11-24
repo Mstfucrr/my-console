@@ -20,7 +20,7 @@ export const STATUS_OPTIONS = [
 
 export const PAYMENT_METHOD_OPTIONS = [
   { value: 'all', label: 'Tüm Ödeme Yöntemleri' },
-  { value: 'Kredi Kartı', label: 'Kredi Kartı' },
   { value: 'Nakit', label: 'Nakit' },
-  { value: 'Banka Havalesi', label: 'Banka Havalesi' }
+  { value: 'Kart', label: 'Kart' },
+  { value: 'Online', label: 'Online' }
 ]
