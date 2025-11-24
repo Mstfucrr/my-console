@@ -10,8 +10,8 @@ type RefreshButtonProps = ButtonProps & {
 
 export function RefreshButton({ onClick, isLoading = false, isIconButton = false, ...props }: RefreshButtonProps) {
   return (
-    <Button variant='soft' color='info' onClick={onClick} disabled={isLoading} {...props}>
-      <RefreshCw className={cn('h-4 w-4', { 'mr-2': !isIconButton }, isLoading && 'animate-spin')} />
+    <Button variant='soft' color='info' onClick={onClick} disabled={isLoading} size='icon-sm' {...props}>
+      <RefreshCw className={cn('size-4.5', { 'mr-2': !isIconButton }, isLoading && 'animate-spin')} />
       {!isIconButton && 'Yenile'}
     </Button>
   )

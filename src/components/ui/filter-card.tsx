@@ -46,14 +46,14 @@ export function FilterCard<T>({
       {(hasPendingChanges || hasActiveFilters) && (
         <div className='flex items-center gap-2'>
           {hasPendingChanges && onApply && (
-            <Button size='sm' onClick={onApply}>
-              <Check className='h-4 w-4' />
+            <Button size='icon-sm' onClick={onApply}>
+              <Check className='size-4.5' />
               <span className='sr-only'>Uygula</span>
             </Button>
           )}
           {hasActiveFilters && (
-            <Button size='sm' variant='outline' onClick={onClearFilters}>
-              <XCircle className='h-4 w-4' />
+            <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
+              <XCircle className='size-4.5' />
               <span className='sr-only'>Temizle</span>
             </Button>
           )}
@@ -194,9 +194,8 @@ export function FilterToggleButton({
   onToggle: () => void
 } & ButtonProps) {
   return (
-    <Button onClick={onToggle} {...props}>
-      {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-      {/* <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span> */}
+    <Button onClick={onToggle} size='icon-sm' {...props}>
+      {showFilters ? <FilterX className='size-4.5' /> : <Filter className='size-4.5' />}
     </Button>
   )
 }

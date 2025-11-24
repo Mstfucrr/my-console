@@ -106,7 +106,7 @@ const buttonVariants = cva(
       {
         variant: 'soft',
         color: 'default',
-        className: 'text-default bg-default/10 border-default/50 hover:text-default-foreground border'
+        className: 'text-default bg-default/10 border-default/50 border'
       },
       {
         variant: 'ghost',

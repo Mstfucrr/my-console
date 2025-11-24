@@ -66,11 +66,11 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
             <Button
               key={value}
               variant={viewMode === value ? null : 'soft'}
-              size='xs'
+              size='icon-sm'
               title={label}
               onClick={() => onViewModeChange(value)}
             >
-              <Icon className='size-4' />
+              <Icon className='size-4.5' />
               <span className='sr-only'>{label}</span>
             </Button>
           ))}
