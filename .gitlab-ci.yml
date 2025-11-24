@@ -34,7 +34,6 @@ syntax-check:
     - pnpm install --no-strict-peer-dependencies
     - pnpm lint
     - pnpm prettier-check
-  allow_failure: true
   only:
     - merge_requests
   
