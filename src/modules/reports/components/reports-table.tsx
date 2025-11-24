@@ -107,7 +107,7 @@ export default function ReportsTable({
   return (
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Geçmiş Sipariş Raporları ({data.length})</CardTitle>
+        <CardTitle>Tamamlanmış Siparişler ({data.length})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
           <Button color='primary' onClick={() => setShowFilters(!showFilters)}>

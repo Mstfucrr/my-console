@@ -1,4 +1,4 @@
-import type { Order, OrderChannel, PaymentMethod } from '@/types'
+import type { Order, OrderChannel } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import type {
   LatestOrderItemResponse,
@@ -6,28 +6,6 @@ import type {
   OrderListItemResponse,
   OrderStatsResponse
 } from '../types/api'
-
-// Backend response'larını frontend tiplerine map eden fonksiyonlar
-// Channel string'den OrderChannel'a çevir
-const channelMap: Record<string, OrderChannel> = {
-  yemeksepeti: 'yemeksepeti',
-  getir: 'getir',
-  trendyolGo: 'trendyolGo',
-  migrosYemek: 'migrosYemek',
-  tiklaGelsin: 'tiklaGelsin',
-  araGelsin: 'araGelsin',
-  fiyuu: 'fiyuu',
-  Console: 'manuel',
-  manuel: 'manuel'
-}
-
-// PaymentType string'den PaymentMethod'a çevir
-const paymentMap: Record<string, PaymentMethod> = {
-  'Kredi Kartı': 'card',
-  Nakit: 'cash',
-  Online: 'online',
-  'Banka Havalesi': 'online'
-}
 
 export function mapOrderListItemToOrder(item: OrderListItemResponse): Order {
   return {
@@ -55,8 +33,8 @@ export function mapOrderListItemToOrder(item: OrderListItemResponse): Order {
       isActive: true,
       createdAt: ''
     }, // Backend'den gelmiyor
-    paymentMethod: paymentMap[item.paymentType] || 'cash',
-    channel: channelMap[item.channel.toLowerCase()] || 'manuel',
+    paymentMethod: item.paymentType,
+    channel: item.channel as OrderChannel,
     customerPosition: [0, 0] // Backend'den gelmiyor
   }
 }
@@ -90,8 +68,8 @@ export function mapOrderDetailToOrder(detail: OrderDetailResponse): Order {
       isActive: true,
       createdAt: ''
     },
-    paymentMethod: paymentMap[detail.paymentMethod] || 'cash',
-    channel: channelMap[detail.channel.toLowerCase()] || 'manuel',
+    paymentMethod: detail.paymentMethod,
+    channel: detail.channel as OrderChannel,
     customerPosition: [0, 0]
   }
 }

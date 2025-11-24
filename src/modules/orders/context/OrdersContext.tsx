@@ -12,19 +12,15 @@ export interface OrdersContextType {
   filters: OrderFilterProperties
   handleFiltersChange: (newFilters: OrderFilterProperties) => void
   clearFilters: () => void
-  activeOrders: Order[]
-  completedOrders: Order[]
-  completedTotal: number
-  isLoadingActive: boolean
-  isFetchingActive: boolean
-  isLoadingCompleted: boolean
-  isFetchingCompleted: boolean
+  activeOrders: Array<Order> | undefined
+  completedOrders: Array<Order> | undefined
+  total: number
+  isLoading: boolean
+  isFetching: boolean
   error: string
   setActiveTab: (tab: 'active' | 'completed') => void
   handleCreateOrderSuccess: () => void
   refreshAllData: () => void
-  refetchActiveOrders: () => void
-  refetchCompletedOrders: () => void
 }
 
 export const defaultOrderFilters: OrderFilterProperties = {
@@ -57,76 +53,48 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     setFilters(defaultOrderFilters)
   }
 
-  // Active orders query - ACTIVE_STATUS_GROUPS array olarak gönderiliyor
-  // Sadece active tab seçiliyse çalışır
-  const {
-    data: activeOrdersData,
-    isLoading: isLoadingActive,
-    isFetching: isFetchingActive,
-    error: activeOrdersError,
-    refetch: refetchActiveOrders
-  } = useQuery({
-    queryKey: ['orders', 'active', ACTIVE_STATUS_GROUPS, filters.search],
-    queryFn: async () => {
-      const response = await ordersService.getOrders(
-        {
-          status: ACTIVE_STATUS_GROUPS,
-          search: filters.search
-        },
-        { page: 1, limit: 50 }
-      )
-      return response
-    },
-    enabled: activeTab === 'active'
-  })
+  const statusFilters = useMemo(() => {
+    if (filters.status !== 'all') {
+      return filters.status
+    }
+    return activeTab === 'active' ? ACTIVE_STATUS_GROUPS : COMPLETED_STATUS_GROUPS
+  }, [filters, activeTab])
 
-  // Completed orders query - COMPLETED_STATUS_GROUPS array olarak gönderiliyor
-  // Sadece completed tab seçiliyse çalışır
   const {
-    data: completedOrdersData,
-    isLoading: isLoadingCompleted,
-    isFetching: isFetchingCompleted,
-    error: completedOrdersError,
-    refetch: refetchCompletedOrders
+    data: ordersData,
+    isLoading: isLoadingOrders,
+    isFetching: isFetchingOrders,
+    error: ordersError,
+    refetch: refetchOrders
   } = useQuery({
-    queryKey: ['orders', 'completed', COMPLETED_STATUS_GROUPS, filters.search],
+    queryKey: ['orders', statusFilters, filters.search, activeTab],
     queryFn: async () => {
       const response = await ordersService.getOrders(
-        {
-          status: COMPLETED_STATUS_GROUPS,
-          search: filters.search
-        },
+        { status: statusFilters, search: filters.search },
         { page: 1, limit: 50 }
       )
       return response
-    },
-    enabled: activeTab === 'completed'
+    }
   })
 
   // Active orders - direkt backend'den gelen data
-  const activeOrders = useMemo(() => activeOrdersData?.data || [], [activeOrdersData])
+  const activeOrders = useMemo(
+    () => ordersData?.data.filter(order => ACTIVE_STATUS_GROUPS.includes(order.status)) || [],
+    [ordersData]
+  )
 
   // Completed orders - direkt backend'den gelen data
-  const completedOrders = useMemo(() => completedOrdersData?.data || [], [completedOrdersData])
-
-  // Completed total
-  const completedTotal = useMemo(() => completedOrdersData?.total || 0, [completedOrdersData?.total])
-
-  // Error handling
-  const error = useMemo(() => {
-    if (activeTab === 'active') return activeOrdersError?.message || ''
-    if (activeTab === 'completed') return completedOrdersError?.message || ''
-    return ''
-  }, [activeTab, activeOrdersError, completedOrdersError])
+  const completedOrders = useMemo(
+    () => ordersData?.data.filter(order => COMPLETED_STATUS_GROUPS.includes(order.status)) || [],
+    [ordersData]
+  )
 
   const handleCreateOrderSuccess = () => {
-    refetchActiveOrders()
-    refetchCompletedOrders()
+    refetchOrders()
   }
 
   const refreshAllData = () => {
-    refetchActiveOrders()
-    refetchCompletedOrders()
+    refetchOrders()
   }
 
   const value: OrdersContextType = {
@@ -136,17 +104,13 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     clearFilters,
     activeOrders,
     completedOrders,
-    completedTotal,
-    isLoadingActive,
-    isFetchingActive,
-    isLoadingCompleted,
-    isFetchingCompleted,
-    error,
+    total: ordersData?.total || 0,
+    isLoading: isLoadingOrders,
+    isFetching: isFetchingOrders,
+    error: ordersError?.message || '',
     setActiveTab,
     handleCreateOrderSuccess,
-    refreshAllData,
-    refetchActiveOrders,
-    refetchCompletedOrders
+    refreshAllData
   }
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>

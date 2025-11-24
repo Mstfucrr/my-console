@@ -17,7 +17,7 @@ export interface Order {
   totalAmount: number
   courierInfo?: CourierInfo
   restaurant: Restaurant
-  paymentMethod: PaymentMethod
+  paymentMethod: string
   channel: OrderChannel
   customerPosition: [number, number]
 }

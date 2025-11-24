@@ -16,18 +16,7 @@ import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
 export function OrdersTabs() {
-  const {
-    activeTab,
-    setActiveTab,
-    activeOrders,
-    completedOrders,
-    completedTotal,
-    isLoadingActive,
-    isFetchingActive,
-    isLoadingCompleted,
-    isFetchingCompleted,
-    filters
-  } = useOrders()
+  const { activeTab, setActiveTab, activeOrders, completedOrders, total, isLoading, isFetching, filters } = useOrders()
   const { stats } = useOrdersStats()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(true)
@@ -50,14 +39,16 @@ export function OrdersTabs() {
   }
 
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
-  const activeOrdersCount = useMemo(
-    () => (hasActiveFilter ? activeOrders.length : stats.created + stats.shipped),
-    [activeOrders.length, stats.created, stats.shipped, hasActiveFilter]
-  )
-  const completedOrdersCount = useMemo(
-    () => (hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled),
-    [completedOrders.length, stats.delivered, stats.cancelled, hasActiveFilter]
-  )
+
+  const activeOrdersCount = useMemo(() => {
+    if (!activeOrders) return 0
+    return hasActiveFilter ? activeOrders.length : stats.created + stats.shipped
+  }, [activeOrders, stats.created, stats.shipped, hasActiveFilter])
+
+  const completedOrdersCount = useMemo(() => {
+    if (!completedOrders) return 0
+    return hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled
+  }, [completedOrders, stats.delivered, stats.cancelled, hasActiveFilter])
 
   const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_STATUS_GROUPS.includes(filters.status)
   const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_STATUS_GROUPS.includes(filters.status)
@@ -103,8 +94,8 @@ export function OrdersTabs() {
         {activeTab === 'active' ? (
           <OrdersList
             orders={activeOrders}
-            isLoading={isLoadingActive}
-            isFetching={isFetchingActive}
+            isLoading={isLoading}
+            isFetching={isFetching}
             viewMode={viewMode}
             emptyMessage='Aktif sipariş yok'
             filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
@@ -114,20 +105,20 @@ export function OrdersTabs() {
           <div className='space-y-4'>
             <OrdersList
               orders={completedOrders}
-              isLoading={isLoadingCompleted}
-              isFetching={isFetchingCompleted}
+              isLoading={isLoading}
+              isFetching={isFetching}
               viewMode={viewMode}
               emptyMessage='Tamamlanan sipariş bulunamadı'
               filteredEmptyMessage='Filtreye uygun tamamlanan sipariş yok'
               onViewDetails={handleViewDetails}
             />
 
-            {completedTotal > completedPagination.limit && (
+            {total > completedPagination.limit && (
               <Pagination
                 page={completedPagination.page}
-                totalPages={Math.ceil(completedTotal / completedPagination.limit)}
+                totalPages={Math.ceil(total / completedPagination.limit)}
                 canPrev={completedPagination.page > 1}
-                canNext={completedPagination.page < Math.ceil(completedTotal / completedPagination.limit)}
+                canNext={completedPagination.page < Math.ceil(total / completedPagination.limit)}
                 onPrev={() => handleCompletedPageChange(completedPagination.page - 1)}
                 onNext={() => handleCompletedPageChange(completedPagination.page + 1)}
                 onPageClick={p => handleCompletedPageChange(p)}

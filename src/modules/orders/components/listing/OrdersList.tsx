@@ -14,7 +14,7 @@ import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import { OrderCard } from './OrderCard'
 
 interface OrdersListProps {
-  orders: Order[]
+  orders: Array<Order> | undefined
   isLoading: boolean
   isFetching: boolean
   viewMode: 'card' | 'list'
@@ -105,7 +105,7 @@ export function OrdersList({
       )
     }
 
-    if (orders.length === 0) {
+    if (orders?.length === 0) {
       return (
         <div className='flex h-48 items-center justify-center'>
           <div className='text-center'>
@@ -117,9 +117,7 @@ export function OrdersList({
 
     return (
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
-        {orders.map(order => (
-          <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />
-        ))}
+        {orders?.map(order => <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />)}
       </div>
     )
   }
@@ -127,7 +125,7 @@ export function OrdersList({
   return (
     <BasicDataTable
       columns={columns}
-      data={orders}
+      data={orders ?? []}
       isLoading={isLoading || isFetching}
       emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
       loadingLabel='Siparişler yükleniyor...'

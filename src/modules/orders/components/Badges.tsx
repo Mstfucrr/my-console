@@ -7,7 +7,7 @@ import { ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders
 import { cn } from '@/lib/utils'
 import type { OrderChannel, OrderStatusesGroups } from '@/types'
 import { CreditCard } from 'lucide-react'
-import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS, PAYMENT_METHOD_LABELS } from '../utils'
+import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS } from '../utils'
 
 interface StatusBadgeProps {
   status: OrderStatusesGroups
@@ -41,7 +41,7 @@ export function PaymentMethodBadge({ paymentMethod, showIcon = false, className 
       )}
     >
       {showIcon && <CreditCard className='mr-1 h-3 w-3' />}
-      {PAYMENT_METHOD_LABELS[paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] || paymentMethod}
+      {paymentMethod}
     </Badge>
   )
 }
