@@ -1,23 +1,23 @@
 workflow:
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      variables:
-        ENVIRONMENT: 'prod'
-        S3_BUCKET: $S3_BUCKET_PROD
-        CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PROD
-        NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PROD
-    - if: $CI_COMMIT_BRANCH == "preprod"
-      variables:
-        ENVIRONMENT: 'preprod'
-        S3_BUCKET: $S3_BUCKET_PREPROD
-        CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PREPROD
-        NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PREPROD
-    - if: $CI_COMMIT_BRANCH == "dev"
-      variables:
-        ENVIRONMENT: 'dev'
-        S3_BUCKET: $S3_BUCKET_DEV
-        CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
-        NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
+    # - if: $CI_COMMIT_BRANCH == "main"
+    #   variables:
+    #     ENVIRONMENT: 'prod'
+    #     S3_BUCKET: $S3_BUCKET_PROD
+    #     CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PROD
+    #     NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PROD
+    # - if: $CI_COMMIT_BRANCH == "preprod"
+    #   variables:
+    #     ENVIRONMENT: 'preprod'
+    #     S3_BUCKET: $S3_BUCKET_PREPROD
+    #     CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_PREPROD
+    #     NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_PREPROD
+    # - if: $CI_COMMIT_BRANCH == "dev"
+    #   variables:
+    #     ENVIRONMENT: 'dev'
+    #     S3_BUCKET: $S3_BUCKET_DEV
+    #     CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
+    #     NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
 
 stages:
   - syntax-check
