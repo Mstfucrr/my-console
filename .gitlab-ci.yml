@@ -34,16 +34,9 @@ syntax-check:
     - pnpm install --no-strict-peer-dependencies
     - pnpm lint
     - pnpm prettier-check
-  # rules:
-  #   - if: '$CI_COMMIT_BRANCH == "main"'
-  #     when: always
-  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
-  #     when: always
-  #   - if: '$CI_COMMIT_BRANCH == "dev"'
-  #     when: always
-  # allow_failure: true
-  # only:
-  #   - merge_requests
+  allow_failure: true
+  only:
+    - merge_requests
   
 
 node-build:
@@ -72,7 +65,10 @@ node-build:
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
       when: always
-    - when: manual
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "preprod"'
+      when: always
   artifacts:
     paths:
       - out/
@@ -92,7 +88,7 @@ deploy:
       when: manual
     - if: '$CI_COMMIT_BRANCH == "preprod"'
       when: manual
-    - if: '$CI_COMMIT_BRANCH != "main"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
       when: manual
 # rollback:
 #   stage: redeploy
