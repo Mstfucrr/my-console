@@ -11,3 +11,6 @@ package.json
 .env
 .env.*
 pnpm-lock.yaml
+.cursor/
+.vscode/
+.gitlab-ci.yml
