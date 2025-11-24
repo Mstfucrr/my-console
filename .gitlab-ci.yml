@@ -18,7 +18,7 @@ workflow:
         S3_BUCKET: $S3_BUCKET_DEV
         CLOUDFRONT_DIST_ID: $CLOUDFRONT_DIST_ID_DEV
         NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL_DEV
-    - if: '$CI_COMMIT_BRANCH =! "dev" && $CI_COMMIT_BRANCH =! "preprod" && $CI_COMMIT_BRANCH =! "prod"'
+    - if: '$CI_COMMIT_BRANCH != "dev" && $CI_COMMIT_BRANCH != "preprod" && $CI_COMMIT_BRANCH != "prod"'
       variables:
         ENVIRONMENT: 'dev'
         S3_BUCKET: $S3_BUCKET_DEV
