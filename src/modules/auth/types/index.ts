@@ -3,6 +3,7 @@ export interface ILoginRequest {
   accountId: string
   identifier: string
   password: string
+  turnstileToken?: string
 }
 
 // Backend LoginResponse'a uygun

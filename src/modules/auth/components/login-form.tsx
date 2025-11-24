@@ -3,7 +3,9 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Lock, Mail, User } from 'lucide-react'
+import { Turnstile } from 'next-turnstile'
 import Link from 'next/link'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useAuth } from '../context/auth-context'
@@ -18,6 +20,7 @@ type LoginFormType = z.infer<typeof schema>
 
 const LogInForm = () => {
   const { handleLogin, loadingState } = useAuth()
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
@@ -32,7 +35,7 @@ const LogInForm = () => {
   const { handleSubmit, control } = form
 
   const onSubmit = async (data: LoginFormType) => {
-    await handleLogin(data)
+    await handleLogin({ ...data, turnstileToken: turnstileToken ?? '' })
   }
 
   return (
@@ -70,13 +73,21 @@ const LogInForm = () => {
             placeholder='Şifrenizi giriniz'
           />
 
+          <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY} theme='light' onVerify={setTurnstileToken} />
+
           <div className='flex justify-end'>
             <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
               Şifremi unuttum?
             </Link>
           </div>
 
-          <LoadingButton className='w-full' isLoading={loadingState.login} size='lg' loadingText='Giriş Yapılıyor...'>
+          <LoadingButton
+            className='w-full'
+            isLoading={loadingState.login}
+            size='lg'
+            loadingText='Giriş Yapılıyor...'
+            disabled={!turnstileToken}
+          >
             Giriş Yap
           </LoadingButton>
         </form>
