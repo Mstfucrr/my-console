@@ -54,9 +54,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   }
 
   const statusFilters = useMemo(() => {
-    if (filters.status !== 'all') {
-      return filters.status
-    }
+    if (filters.status !== 'all') return filters.status
+
     return activeTab === 'active' ? ACTIVE_STATUS_GROUPS : COMPLETED_STATUS_GROUPS
   }, [filters, activeTab])
 
