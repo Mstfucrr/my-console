@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { CalendarIcon, X } from 'lucide-react'
-import { startTransition, useEffect, useMemo, useState } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 import { Button, ButtonProps } from '@/components/ui/button'
@@ -109,12 +109,15 @@ export function DateRangePicker({
     setIsOpen(false)
   }
 
-  const formatDisplayDate = (date: Date) => {
-    const displayDate = getDisplayDate(date)
-    if (enableTimeSelection) return format(displayDate, 'dd MMM yyyy HH:mm', { locale: tr })
+  const formatDisplayDate = useCallback(
+    (date: Date) => {
+      const displayDate = getDisplayDate(date)
+      if (enableTimeSelection) return format(displayDate, 'dd MMM yyyy HH:mm', { locale: tr })
 
-    return format(displayDate, 'dd MMM yyyy', { locale: tr })
-  }
+      return format(displayDate, 'dd MMM yyyy', { locale: tr })
+    },
+    [enableTimeSelection]
+  )
 
   const handleClear = () => {
     setTempDateRange(defaultDateRange)

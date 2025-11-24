@@ -125,6 +125,7 @@ export const reportsService = {
         enddate: formatDateForApi(filters?.dateTo)
       }
     })
+    console.log('ordersResponse', ordersResponse.data)
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500))
 

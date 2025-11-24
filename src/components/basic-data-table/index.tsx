@@ -233,7 +233,6 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
     ...tableProps
   })
 
-
   // Search binding to a specific column
   const searchColumn = searchableColumn ? table.getColumn(searchableColumn) : undefined
   const inputValue = typeof searchValue !== 'undefined' ? searchValue : (searchColumn?.getFilterValue() as string) || ''
