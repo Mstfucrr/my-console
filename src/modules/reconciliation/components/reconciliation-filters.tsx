@@ -3,13 +3,13 @@
 import { FilterCard, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
 import { defaultReconciliationFilters } from '..'
-import { ReconciliationConfirmStatus, type ReconciliationFilterProperties } from '../types'
+import { ReconciliationConfirmStatus, STATUS_TEXT, type ReconciliationFilterProperties } from '../types'
 
 const statuses: FilterOption[] = [
   { value: 'all', label: 'Tüm Durumlar' },
-  { value: ReconciliationConfirmStatus.APPROVED, label: 'Onaylandı' },
-  { value: ReconciliationConfirmStatus.PENDING, label: 'Beklemede' },
-  { value: ReconciliationConfirmStatus.FAILED, label: 'Onaylanmadı' }
+  { value: ReconciliationConfirmStatus.APPROVED, label: STATUS_TEXT[ReconciliationConfirmStatus.APPROVED] },
+  { value: ReconciliationConfirmStatus.PENDING, label: STATUS_TEXT[ReconciliationConfirmStatus.PENDING] },
+  { value: ReconciliationConfirmStatus.FAILED, label: STATUS_TEXT[ReconciliationConfirmStatus.FAILED] }
 ]
 
 export function ReconciliationFilters({
