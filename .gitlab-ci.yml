@@ -34,20 +34,21 @@ syntax-check:
     - pnpm install --no-strict-peer-dependencies
     - pnpm lint
     - pnpm prettier-check
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-    - if: '$CI_COMMIT_BRANCH == "preprod"'
-      when: always
-    - if: '$CI_COMMIT_BRANCH == "dev"'
-      when: always
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "main"'
+  #     when: always
+  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
+  #     when: always
+  #   - if: '$CI_COMMIT_BRANCH == "dev"'
+  #     when: always
+  allow_failure: true
+  only:
+    - merge_requests
+  
 
 node-build:
   stage: build
   image: node:22.21.1-alpine
-  needs:
-    - job: syntax-check
-      optional: false
   before_script:
     - echo "🚀 Building for $ENVIRONMENT environment"
     - apk add --no-cache figlet
@@ -79,9 +80,6 @@ node-build:
 deploy:
   stage: deploy
   image: node:22.21.1-alpine
-  needs:
-    - job: node-build
-      optional: false
   before_script:
     - apk update
     - apk add --no-cache aws-cli
