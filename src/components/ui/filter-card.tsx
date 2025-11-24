@@ -117,7 +117,7 @@ export function StatusSelect<T extends string>({
   showLabel = false
 }: {
   options: FilterOption[]
-  value: T
+  value: T | undefined
   onChange: (value: T) => void
   placeholder?: string
   showLabel?: boolean
@@ -139,7 +139,7 @@ export function StatusSelect<T extends string>({
           </SelectTrigger>
           <SelectContent>
             {options.map(option => (
-              <SelectItem key={option.value} value={option.value.toString()}>
+              <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
                 {option.label}
               </SelectItem>
             ))}

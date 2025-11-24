@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
+import { MONTHS } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { AlertTriangle, Check, Eye } from 'lucide-react'
 import type { ReconciliationRecord } from '../types'
+import { ReconciliationConfirmStatus } from '../types'
 
 interface MainPageProps {
   record: ReconciliationRecord
@@ -11,10 +13,23 @@ interface MainPageProps {
   onGoToReportPage: () => void
 }
 
+// Helper function to format period
+const formatPeriod = (record: ReconciliationRecord): string => {
+  if (record.RecordPeriodName) {
+    return record.RecordPeriodName
+  }
+
+  return `${record.RecordPeriod}. Dönem - ${MONTHS[record.RecordMonth - 1]} ${record.RecordYear}`
+}
+
 export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToReportPage }: MainPageProps) {
-  const hasInvoice = record.invoiceUploaded
-  const canReport = record.status === 'pending'
-  const canApprove = record.status !== 'approved'
+  // Check if invoice is uploaded (if ConfirmID exists and has a file name)
+  const hasInvoice = !!record.ConfirmID && record.ConfirmID !== '0' && !!record.ConfirmNote
+  // Can report if status is PENDING
+  const canReport = record.ConfirmStatus === ReconciliationConfirmStatus.PENDING
+  // Can approve if status is not APPROVED
+  const canApprove = record.ConfirmStatus !== ReconciliationConfirmStatus.APPROVED
+
   return (
     <>
       <div className='flex-1 space-y-4 overflow-y-auto'>
@@ -22,7 +37,7 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
         <div className='grid grid-cols-1 border-b pb-3 md:grid-cols-2'>
           <div className='flex flex-col gap-1 md:flex-row md:items-center md:justify-between'>
             <span className='text-sm text-gray-600'>Mutabakat Dönemi:</span>
-            <span className='text-sm font-medium'>{record.period}</span>
+            <span className='text-sm font-medium'>{formatPeriod(record)}</span>
           </div>
         </div>
 
@@ -31,38 +46,46 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
           <div className='space-y-3'>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
               <span className='text-sm text-gray-600'>Toplam Sipariş Tutarı:</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.totalOrderAmount)}</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalAmount)}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
               <span className='text-sm text-gray-600'>Dağıtım Adedi:</span>
-              <span className='text-sm font-medium'>{record.distributionCount}</span>
+              <span className='text-sm font-medium'>{record.OrderCount}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Ata Express Dağıtım Fatura:</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.ataExpressDeliveryInvoice)}</span>
+              <span className='text-sm text-gray-600'>Toplam Ön Ödemeli Tutar:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalPrePaidAmount)}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Düzenleyeceğiniz Fatura:</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.yourInvoiceAmount)}</span>
+              <span className='text-sm text-gray-600'>Toplam Teslimat Tutarı:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalDeliveryAmount)}</span>
+            </div>
+            <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
+              <span className='text-sm text-gray-600'>Restoran Ödeme Tutarı:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.RestaurantPaymentAmount)}</span>
             </div>
           </div>
 
           <div className='space-y-3'>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Yemek Kartı (Tahsilatı Ata&apos;da):</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.mealCardAtaCollection)}</span>
+              <span className='text-sm text-gray-600'>Yemek Kartı Tutarı:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalFoodCouponAmount)}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Yemek Kartı (Tahsilatı Firmanızda):</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.mealCardCompanyCollection)}</span>
+              <span className='text-sm text-gray-600'>Ön Ödemeli Yemek Kartı Tutarı:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalPrePaidFoodCouponAmount)}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Online Ödeme Tutarı:</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.onlinePaymentAmount)}</span>
+              <span className='text-sm text-gray-600'>İptal Adedi:</span>
+              <span className='text-sm font-medium'>{record.CancelCount}</span>
             </div>
             <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
-              <span className='text-sm text-gray-600'>Restorana Ödeme Tutarı:</span>
-              <span className='text-sm font-medium'>{formatCurrency(record.restaurantPaymentAmount)}</span>
+              <span className='text-sm text-gray-600'>İptal Tutarı:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalCancelAmount)}</span>
+            </div>
+            <div className='flex flex-col gap-1 border-b pb-2 md:flex-row md:items-center md:justify-between'>
+              <span className='text-sm text-gray-600'>Toplam Ciro:</span>
+              <span className='text-sm font-medium'>{formatCurrency(record.TotalTurnover)}</span>
             </div>
           </div>
         </div>

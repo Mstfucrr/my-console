@@ -101,18 +101,6 @@ export default function ReportsTable({
       accessorKey: 'paymentMethod',
       header: 'Ödeme Yöntemi',
       cell: ({ row }) => <div className='text-sm'>{row.getValue('paymentMethod')}</div>
-    },
-    {
-      accessorKey: 'deliveryAddress',
-      header: 'Teslimat Adresi',
-      cell: ({ row }) => {
-        const address = row.getValue('deliveryAddress') as string
-        return (
-          <div className='max-w-[200px] truncate text-sm text-gray-600' title={address}>
-            {address.length > 20 ? address.slice(0, 20) + '...' : address}
-          </div>
-        )
-      }
     }
   ]
 

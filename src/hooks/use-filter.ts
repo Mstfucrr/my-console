@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 // Generic filter properties interface
 export interface BaseFilterProperties {
-  status?: string
+  status?: string | number | undefined
   search?: string
   dateFrom?: string
   dateTo?: string

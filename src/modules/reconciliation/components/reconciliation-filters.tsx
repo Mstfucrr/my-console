@@ -1,16 +1,15 @@
 'use client'
 
 import { FilterCard, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
-import { MONTHS, YEARS } from '@/constants/period'
 import { useFilter } from '@/hooks/use-filter'
 import { defaultReconciliationFilters } from '..'
-import type { ReconciliationFilterProperties } from '../types'
+import { ReconciliationConfirmStatus, type ReconciliationFilterProperties } from '../types'
 
 const statuses: FilterOption[] = [
   { value: 'all', label: 'Tüm Durumlar' },
-  { value: 'approved', label: 'Onaylandı' },
-  { value: 'pending', label: 'Beklemede' },
-  { value: 'failed', label: 'Onaylanmadı' }
+  { value: ReconciliationConfirmStatus.APPROVED, label: 'Onaylandı' },
+  { value: ReconciliationConfirmStatus.PENDING, label: 'Beklemede' },
+  { value: ReconciliationConfirmStatus.FAILED, label: 'Onaylanmadı' }
 ]
 
 export function ReconciliationFilters({
@@ -44,25 +43,9 @@ export function ReconciliationFilters({
         {/* Status Select */}
         <StatusSelect
           options={statuses}
-          value={pendingFilters.status ?? 'all'}
-          onChange={value => updatePendingFilters({ status: value })}
+          value={pendingFilters.status?.toString()}
+          onChange={value => updatePendingFilters({ status: value as ReconciliationFilterProperties['status'] })}
           placeholder='Durum seçin'
-          showLabel={false}
-        />
-        {/* Month Select */}
-        <StatusSelect
-          options={MONTHS.map(month => ({ value: month, label: month }))}
-          value={pendingFilters.month ?? ''}
-          onChange={value => updatePendingFilters({ month: value })}
-          placeholder='Ay seçin'
-          showLabel={false}
-        />
-        {/* Year Select */}
-        <StatusSelect
-          options={YEARS.map(year => ({ value: year, label: year }))}
-          value={pendingFilters.year ?? ''}
-          onChange={value => updatePendingFilters({ year: value })}
-          placeholder='Yıl seçin'
           showLabel={false}
         />
       </div>
