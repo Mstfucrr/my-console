@@ -23,6 +23,25 @@ stages:
   - build
   - deploy
   - redeploy
+  - syntax-check
+
+syntax-check:
+  stage: syntax-check
+  image: node:22.21.1-alpine
+  before_script:
+    - echo "🔍 Running syntax checks for $ENVIRONMENT environment"
+    - npm install -g pnpm
+  script:
+    - pnpm install --no-strict-peer-dependencies
+    - pnpm lint
+    - pnpm prettier-check
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "preprod"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: always
 
 node-build:
   stage: build
