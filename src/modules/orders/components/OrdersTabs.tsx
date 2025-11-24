@@ -4,7 +4,7 @@ import { AnimatedFilters } from '@/components/animated-filters'
 import { Pagination } from '@/components/pagination'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { TabsWithList } from '@/components/ui/tabs'
-import type { Order, PaginationOptions } from '@/types'
+import type { Order } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
@@ -16,18 +16,25 @@ import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
 export function OrdersTabs() {
-  const { activeTab, setActiveTab, activeOrders, completedOrders, total, isLoading, isFetching, filters } = useOrders()
+  const {
+    activeTab,
+    setActiveTab,
+    activeOrders,
+    completedOrders,
+    total,
+    isLoading,
+    isFetching,
+    filters,
+    completedPagination,
+    setCompletedPagination
+  } = useOrders()
   const { stats } = useOrdersStats()
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
-    page: 1,
-    limit: 6
-  })
 
   const handleCompletedPageChange = (page: number) => {
-    setCompletedPagination(prev => ({ ...prev, page }))
+    setCompletedPagination({ ...completedPagination, page: page })
   }
 
   const handleViewDetails = (order: Order) => {
@@ -116,12 +123,9 @@ export function OrdersTabs() {
             {total > completedPagination.limit && (
               <Pagination
                 page={completedPagination.page}
-                totalPages={Math.ceil(total / completedPagination.limit)}
-                canPrev={completedPagination.page > 1}
-                canNext={completedPagination.page < Math.ceil(total / completedPagination.limit)}
-                onPrev={() => handleCompletedPageChange(completedPagination.page - 1)}
-                onNext={() => handleCompletedPageChange(completedPagination.page + 1)}
-                onPageClick={p => handleCompletedPageChange(p)}
+                pageSize={completedPagination.limit}
+                total={total}
+                onPageChange={handleCompletedPageChange}
               />
             )}
           </div>

@@ -1,7 +1,7 @@
 'use client'
 
-import { type Order, OrderStatusesGroups } from '@/types'
-import { useQuery } from '@tanstack/react-query'
+import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
+import { QueryOptions, useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service'
@@ -21,6 +21,8 @@ export interface OrdersContextType {
   setActiveTab: (tab: 'active' | 'completed') => void
   handleCreateOrderSuccess: () => void
   refreshAllData: () => void
+  completedPagination: PaginationOptions
+  setCompletedPagination: (pagination: PaginationOptions) => void
 }
 
 export const defaultOrderFilters: OrderFilterProperties = {
@@ -33,6 +35,11 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active')
   const [filters, setFilters] = useState<OrderFilterProperties>(defaultOrderFilters)
+
+  const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
+    page: 1,
+    limit: 20
+  })
 
   const handleFiltersChange = (newFilters: OrderFilterProperties) => {
     setFilters(newFilters)
@@ -59,6 +66,13 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     return activeTab === 'active' ? ACTIVE_STATUS_GROUPS : COMPLETED_STATUS_GROUPS
   }, [filters, activeTab])
 
+  const queryKey: QueryOptions['queryKey'] = useMemo(() => {
+    if (activeTab === 'active') {
+      return ['orders', statusFilters, filters.search, activeTab]
+    }
+    return ['orders', statusFilters, filters.search, activeTab, completedPagination]
+  }, [statusFilters, filters.search, activeTab, completedPagination])
+
   const {
     data: ordersData,
     isLoading: isLoadingOrders,
@@ -66,11 +80,11 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     error: ordersError,
     refetch: refetchOrders
   } = useQuery({
-    queryKey: ['orders', statusFilters, filters.search, activeTab],
+    queryKey,
     queryFn: async () => {
       const response = await ordersService.getOrders(
         { status: statusFilters, search: filters.search },
-        { page: 1, limit: 50 }
+        activeTab === 'active' ? undefined : { page: completedPagination.page, limit: completedPagination.limit }
       )
       return response
     }
@@ -109,7 +123,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     error: ordersError?.message || '',
     setActiveTab,
     handleCreateOrderSuccess,
-    refreshAllData
+    refreshAllData,
+
+    completedPagination,
+    setCompletedPagination
   }
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>

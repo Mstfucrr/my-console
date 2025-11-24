@@ -6,12 +6,12 @@ import { mapOrderDetailToOrder, mapOrderListItemToOrder, mapOrderStatsResponse }
 
 export const ordersService = {
   async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
-    const page = pagination?.page || 1
-    const limit = pagination?.limit || 20
+    const page = pagination?.page
+    const limit = pagination?.limit
     const { startDate, endDate } = getOperationDateRange()
 
     // Backend'e gönderilecek query parametreleri
-    const params: Record<string, string | number | string[]> = {
+    const params: Record<string, string | number | string[] | undefined> = {
       page,
       limit,
       startDate,

@@ -5,27 +5,39 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export type PaginationProps = {
   page: number
-  totalPages: number
-  canPrev: boolean
-  canNext: boolean
-  onPrev: () => void
-  onNext: () => void
-  onPageClick?: (page: number) => void
-  leftInfo?: string
+  pageSize: number
+  total: number
+  onPageChange: (page: number) => void
   className?: string
 }
 
-export function Pagination({
-  page,
-  totalPages,
-  canPrev,
-  canNext,
-  onPrev,
-  onNext,
-  onPageClick,
-  leftInfo,
-  className
-}: PaginationProps) {
+export function Pagination({ page, pageSize, total, onPageChange, className }: PaginationProps) {
+  const totalPages = Math.ceil(total / pageSize)
+  const canPrev = page > 1
+  const canNext = page < totalPages
+
+  const handlePrev = () => {
+    if (canPrev) {
+      onPageChange(page - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (canNext) {
+      onPageChange(page + 1)
+    }
+  }
+
+  const handlePageClick = (targetPage: number) => {
+    if (targetPage !== page && targetPage > 0 && targetPage <= totalPages) {
+      onPageChange(targetPage)
+    }
+  }
+
+  const startItem = total > 0 ? (page - 1) * pageSize + 1 : 0
+  const endItem = Math.min(page * pageSize, total)
+  const leftInfo = `${startItem}-${endItem} / ${total}`
+
   // örneğin 5. sayfadaysa şu şekilde gösterilecek:
   // 1 ... 4 5 6 ... 10
   const visiblePageButtons: (number | '...')[] = []
@@ -48,14 +60,14 @@ export function Pagination({
       <div className='text-muted-foreground flex-1 text-xs whitespace-nowrap sm:text-sm'>{leftInfo}</div>
 
       <div className='flex items-center gap-2'>
-        <Button variant='outline' size='icon' onClick={onPrev} disabled={!canPrev} className='h-8 w-8'>
+        <Button variant='outline' size='icon' onClick={handlePrev} disabled={!canPrev} className='h-8 w-8'>
           <ChevronLeft className='h-4 w-4' />
         </Button>
 
         {visiblePageButtons.map(p => (
           <Button
             key={`dt-page-${p}`}
-            onClick={() => onPageClick?.(p as number)}
+            onClick={() => handlePageClick(p as number)}
             variant={p === page ? 'soft' : 'ghost'}
             className={cn('h-8 w-8 px-0')}
             disabled={p === '...'}
@@ -64,7 +76,7 @@ export function Pagination({
           </Button>
         ))}
 
-        <Button variant='outline' size='icon' onClick={onNext} disabled={!canNext} className='h-8 w-8'>
+        <Button variant='outline' size='icon' onClick={handleNext} disabled={!canNext} className='h-8 w-8'>
           <ChevronRight className='h-4 w-4' />
         </Button>
       </div>

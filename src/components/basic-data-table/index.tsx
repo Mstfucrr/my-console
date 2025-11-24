@@ -233,9 +233,6 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
     ...tableProps
   })
 
-  const totalPages = manualPagination ? Math.max(1, Math.ceil((total ?? 0) / pageSize)) : table.getPageCount()
-  const canPrev = manualPagination ? page > 1 : table.getCanPreviousPage()
-  const canNext = manualPagination ? page < totalPages : table.getCanNextPage()
 
   // Search binding to a specific column
   const searchColumn = searchableColumn ? table.getColumn(searchableColumn) : undefined
@@ -333,18 +330,10 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
 
       {manualPagination && (
         <Pagination
-          page={manualPagination ? page : table.getState().pagination.pageIndex + 1}
-          totalPages={totalPages}
-          canPrev={canPrev}
-          canNext={canNext}
-          onPrev={() => (manualPagination ? onPageChange?.(page - 1) : table.previousPage())}
-          onNext={() => (manualPagination ? onPageChange?.(page + 1) : table.nextPage())}
-          onPageClick={p => (manualPagination ? onPageChange?.(p) : table.setPageIndex(p - 1))}
-          leftInfo={
-            manualPagination
-              ? `${(page - 1) * pageSize + (data.length ? 1 : 0)}-${Math.min(page * pageSize, total ?? 0)} / ${total ?? 0}`
-              : undefined
-          }
+          page={page}
+          pageSize={pageSize}
+          total={total ?? 0}
+          onPageChange={newPage => onPageChange?.(newPage)}
         />
       )}
     </div>
