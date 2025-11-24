@@ -1,6 +1,6 @@
 'use client'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -26,7 +26,7 @@ interface ReconciliationDetailsModalProps {
 
 export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [currentPage, setCurrentPage] = useState<ModalPage>('main')
+  const [currentPage, setCurrentPage] = useState<ModalPage>('approve')
   const queryClient = useQueryClient()
 
   // Upload File Mutation
@@ -191,25 +191,31 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
         className='hidden'
       />
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent size={currentPage === 'main' ? '3xl' : 'lg'} className='max-h-[90vh] overflow-y-auto'>
+        <DialogContent size={currentPage === 'main' ? '3xl' : 'lg'} className='p-2 sm:p-4'>
           <DialogHeader>
             <DialogTitle className='text-xl font-semibold'>{PAGE_TITLES[currentPage]}</DialogTitle>
           </DialogHeader>
 
-          {currentPage === 'main' && (
-            <MainPage
-              record={record}
-              onViewInvoice={handleViewInvoice}
-              onGoToApprovePage={handleGoToApprovePage}
-              onGoToReportPage={handleGoToReportPage}
-            />
-          )}
-          {currentPage === 'approve' && (
-            <ApprovePage onBack={handleBackToMain} onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />
-          )}
-          {currentPage === 'report' && (
-            <ReportPage onBack={handleBackToMain} onSubmit={handleReportIssue} isSubmitting={isReporting} />
-          )}
+          <DialogContentInner>
+            {currentPage === 'main' && (
+              <MainPage
+                record={record}
+                onViewInvoice={handleViewInvoice}
+                onGoToApprovePage={handleGoToApprovePage}
+                onGoToReportPage={handleGoToReportPage}
+              />
+            )}
+            {currentPage === 'approve' && (
+              <ApprovePage
+                onBack={handleBackToMain}
+                onSubmit={handleApprove}
+                isSubmitting={isApproving || isUploading}
+              />
+            )}
+            {currentPage === 'report' && (
+              <ReportPage onBack={handleBackToMain} onSubmit={handleReportIssue} isSubmitting={isReporting} />
+            )}
+          </DialogContentInner>
         </DialogContent>
       </Dialog>
     </>

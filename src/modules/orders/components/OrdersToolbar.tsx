@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { FilterToggleButton } from '@/components/ui/filter-card'
 import { Filter, FilterX, LayoutGrid, LayoutList, Loader2, Menu, RefreshCw } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
 
@@ -74,10 +75,7 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
             </Button>
           ))}
         </ButtonGroup>
-        <Button color='primary' onClick={onToggleFilters}>
-          {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-          <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-        </Button>
+        <FilterToggleButton showFilters={showFilters} onToggle={onToggleFilters} color='primary' />
       </div>
     </div>
   )

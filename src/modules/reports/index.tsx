@@ -1,7 +1,6 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { formatDateForApi } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { type ReportsFilterProperties } from './components/reports-filters'
@@ -9,16 +8,18 @@ import ReportsStats from './components/reports-stats'
 import ReportsTable from './components/reports-table'
 import { reportsService } from './service/reportsService'
 
-const defaultFilters: ReportsFilterProperties = {
+export const defaultReportsFilters: ReportsFilterProperties = {
   search: '',
   status: 'all',
   paymentMethod: 'all',
-  dateFrom: formatDateForApi(new Date(new Date().setDate(new Date().getDate() - 30))),
-  dateTo: formatDateForApi(new Date())
+  dateRange: {
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
+    to: new Date()
+  }
 }
 
 export default function ReportsView() {
-  const [filters, setFilters] = useState<ReportsFilterProperties>(defaultFilters)
+  const [filters, setFilters] = useState<ReportsFilterProperties>(defaultReportsFilters)
 
   // Fetch reports data with filters
   const {
@@ -29,8 +30,7 @@ export default function ReportsView() {
     refetch: refetchReports
   } = useQuery({
     queryKey: ['reports', filters],
-    queryFn: () => reportsService.getReports(filters),
-    staleTime: 60_000
+    queryFn: () => reportsService.getReports(filters)
   })
 
   // Fetch stats data with filters
@@ -41,8 +41,7 @@ export default function ReportsView() {
     refetch: refetchStats
   } = useQuery({
     queryKey: ['reports-stats', filters],
-    queryFn: () => reportsService.getReportsStats(filters),
-    staleTime: 60_000
+    queryFn: () => reportsService.getReportsStats(filters)
   })
 
   const handleFiltersChange = (newFilters: ReportsFilterProperties) => {
@@ -50,7 +49,7 @@ export default function ReportsView() {
   }
 
   const handleClearFilters = () => {
-    setFilters(defaultFilters)
+    setFilters(defaultReportsFilters)
   }
 
   const refreshAllData = () => {

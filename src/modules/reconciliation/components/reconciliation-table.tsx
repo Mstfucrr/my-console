@@ -4,10 +4,10 @@ import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FilterToggleButton } from '@/components/ui/filter-card'
 import { MONTHS } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Filter, FilterX } from 'lucide-react'
 import { useState } from 'react'
 import type { ReconciliationFilterProperties, ReconciliationRecord } from '../types'
 import { ReconciliationConfirmStatus, STATUS_TEXT } from '../types'
@@ -137,10 +137,11 @@ export default function ReconciliationTable({
           <CardTitle>Kayıtlar ({data.length})</CardTitle>
           <div className='flex flex-row items-center gap-2'>
             <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
-            <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-              {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-              <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-            </Button>
+            <FilterToggleButton
+              showFilters={showFilters}
+              onToggle={() => setShowFilters(!showFilters)}
+              color='primary'
+            />
           </div>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>

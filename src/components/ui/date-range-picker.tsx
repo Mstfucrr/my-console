@@ -10,7 +10,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, isSameDateRange } from '@/lib/utils'
 import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
 interface DateRangePickerProps {
@@ -49,10 +49,7 @@ export function DateRangePicker({
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
 
-  const isDefaultDateRange = useMemo(
-    () => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange),
-    [dateRange, defaultDateRange]
-  )
+  const isDefaultDateRange = isSameDateRange(dateRange, defaultDateRange)
 
   useEffect(() => {
     startTransition(() => setTempDateRange(dateRange))
@@ -124,12 +121,8 @@ export function DateRangePicker({
     onDateRangeChange(defaultDateRange)
   }
 
-  // Use React Compiler's inferred dependency for useMemo
-  // See lint: The inferred dependency is `dateRange`
   const displayText = useMemo(() => {
-    if (isDefaultDateRange && defaultText) {
-      return defaultText
-    }
+    if (isDefaultDateRange) return defaultText ?? placeholder
 
     if (dateRange?.from) {
       if (dateRange?.to) return `${formatDisplayDate(dateRange.from)} - ${formatDisplayDate(dateRange.to)}`

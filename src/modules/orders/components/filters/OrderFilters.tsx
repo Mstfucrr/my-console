@@ -36,25 +36,23 @@ export function OrderFilters() {
       hasActiveFilters={hasActiveFilters}
       hasPendingChanges={hasPendingChanges}
     >
-      <div className='flex w-full flex-col gap-4 lg:flex-row lg:items-end'>
-        {/* Search Input */}
-        <SearchInput
-          placeholder='Sipariş ID, müşteri adı, telefon numarası ile arama yapın...'
-          value={pendingFilters.search ?? ''}
-          onChange={value => updatePendingFilters({ search: value })}
-          Icon={Search}
-          showLabel={false}
-          className='w-full'
-        />
-        {/* Status Select */}
-        <StatusSelect
-          options={statusOptions}
-          value={pendingFilters.status ?? 'all'}
-          onChange={value => updatePendingFilters({ status: value as OrderFilterProperties['status'] })}
-          placeholder='Durum seçin'
-          showLabel={false}
-        />
-      </div>
+      {/* Search Input */}
+      <SearchInput
+        placeholder='Sipariş ID, müşteri adı, telefon numarası ile arama yapın...'
+        value={pendingFilters.search ?? ''}
+        onChange={value => updatePendingFilters({ search: value })}
+        Icon={Search}
+        showLabel={false}
+        className='w-full'
+      />
+      {/* Status Select */}
+      <StatusSelect
+        options={statusOptions}
+        value={pendingFilters.status ?? 'all'}
+        onChange={value => updatePendingFilters({ status: value as OrderFilterProperties['status'] })}
+        placeholder='Durum seçin'
+        showLabel={false}
+      />
     </FilterCard>
   )
 }

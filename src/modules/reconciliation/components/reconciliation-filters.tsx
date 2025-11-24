@@ -39,16 +39,14 @@ export function ReconciliationFilters({
       hasActiveFilters={hasActiveFilters}
       hasPendingChanges={hasPendingChanges}
     >
-      <div className='flex w-full flex-col gap-4 lg:flex-row lg:items-end'>
-        {/* Status Select */}
-        <StatusSelect
-          options={statuses}
-          value={pendingFilters.status?.toString()}
-          onChange={value => updatePendingFilters({ status: value as ReconciliationFilterProperties['status'] })}
-          placeholder='Durum seçin'
-          showLabel={false}
-        />
-      </div>
+      {/* Status Select */}
+      <StatusSelect
+        options={statuses}
+        value={pendingFilters.status?.toString()}
+        onChange={value => updatePendingFilters({ status: value as ReconciliationFilterProperties['status'] })}
+        placeholder='Durum seçin'
+        showLabel={false}
+      />
     </FilterCard>
   )
 }

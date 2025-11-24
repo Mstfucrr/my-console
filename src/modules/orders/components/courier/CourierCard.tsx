@@ -22,16 +22,16 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props)
   return (
     <Card className='mb-4 border bg-white p-4'>
       {/* Üst satır: tek bakışta özet */}
-      <div className='flex items-center justify-between gap-3 max-sm:flex-col'>
+      <div className='flex items-center justify-between gap-3'>
         <div className='flex items-center gap-3'>
           {/* Avatar / Baş harf */}
-          <div className='bg-muted text-muted-foreground grid size-10 place-items-center rounded-full text-sm font-semibold max-sm:hidden'>
+          <div className='bg-muted text-muted-foreground grid size-10 place-items-center rounded-full text-sm font-semibold'>
             <Motorcycle className='opacity-70' />
           </div>
 
           {/* İsim + pill'ler */}
           <div className='min-w-0 flex-1'>
-            <div className='flex items-center gap-2'>
+            <div className='flex flex-col items-start'>
               <h3 className='truncate text-base font-semibold tracking-tight'>{courierInfo?.name || 'Kurye'}</h3>
 
               {hasPlate && (
@@ -46,7 +46,7 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props)
         {/* Tek aksiyon: haritada gör */}
         <Button size='sm' variant='outline' onClick={handleToggleMap} className='gap-1'>
           <MapPinned className='h-4 w-4' />
-          Haritada Gör
+          <span className='max-sm:sr-only'>Haritada Gör</span>
         </Button>
       </div>
     </Card>

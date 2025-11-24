@@ -1,11 +1,11 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Check, LucideIcon, XCircle } from 'lucide-react'
+import { cn, isSameDateRange } from '@/lib/utils'
+import { Check, Filter, FilterX, LucideIcon, XCircle } from 'lucide-react'
 import { ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
 
@@ -41,25 +41,25 @@ export function FilterCard<T>({
   className
 }: FilterCardProps<T>) {
   return (
-    <Card className={className}>
-      <CardContent className='flex items-center gap-2 pt-4 max-md:flex-wrap'>
-        {children}
+    <div className={cn('flex w-full justify-end gap-2 pt-2 max-lg:flex-wrap', className)}>
+      <div className='flex w-full flex-wrap justify-end gap-2'>{children}</div>
+      {(hasPendingChanges || hasActiveFilters) && (
         <div className='flex items-center gap-2'>
           {hasPendingChanges && onApply && (
-            <Button size='xs' onClick={onApply}>
-              <Check className='mr-1 h-4 w-4' />
-              Uygula
+            <Button size='sm' onClick={onApply}>
+              <Check className='h-4 w-4' />
+              <span className='sr-only'>Uygula</span>
             </Button>
           )}
           {hasActiveFilters && (
-            <Button size='xs' variant='outline' onClick={onClearFilters}>
-              <XCircle className='mr-1 h-4 w-4' />
-              Temizle
+            <Button size='sm' variant='outline' onClick={onClearFilters}>
+              <XCircle className='h-4 w-4' />
+              <span className='sr-only'>Temizle</span>
             </Button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   )
 }
 
@@ -81,7 +81,7 @@ export function SearchInput({
   const isActive = value && value.length > 0
 
   return (
-    <div className={className}>
+    <div className={cn('flex-1', className)}>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>}
       <div className='relative'>
         <Input
@@ -89,18 +89,19 @@ export function SearchInput({
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}
-          size='sm'
+          size='md'
           color={isActive ? 'info' : undefined}
           variant={isActive ? 'faded' : 'bordered'}
+          className='w-full min-w-[180px]'
         />
         {value && value.length > 0 && (
           <Button
             size='icon-xs'
             variant='ghost'
             onClick={() => onChange(undefined)}
-            className='absolute top-0 right-0 h-full'
+            className='absolute top-1/2 right-0 -translate-y-1/2'
           >
-            <XCircle className='h-4 w-4' />
+            <XCircle className='size-5' />
             <span className='sr-only'>Temizle</span>
           </Button>
         )}
@@ -125,13 +126,13 @@ export function StatusSelect<T extends string>({
   const isActive = value && value !== 'all'
 
   return (
-    <div>
+    <div className='max-sm:w-full'>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>}
       <div className='flex flex-wrap items-center gap-2'>
         <Select value={value} onValueChange={onChange}>
           <SelectTrigger
             className='min-w-[180px]'
-            size='sm'
+            size='md'
             color={isActive ? 'info' : undefined}
             variant={isActive ? 'faded' : 'bordered'}
           >
@@ -155,27 +156,47 @@ export function DateFilters({
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
   showLabel = false,
+  defaultDateRange,
   ...props
 }: {
   dateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   showLabel?: boolean
+  defaultDateRange?: DateRange
 } & React.ComponentProps<typeof DateRangePicker>) {
-  const isActive = dateRange && (dateRange.from || dateRange.to)
+  const isDefaultDateRange = isSameDateRange(dateRange, defaultDateRange)
+  const isActive = dateRange && (dateRange.from || dateRange.to) && !isDefaultDateRange
 
   return (
     <div>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>}
       <DateRangePicker
         dateRange={dateRange}
+        defaultDateRange={defaultDateRange}
         onDateRangeChange={onDateRangeChange}
         placeholder={placeholder}
-        size='xs'
+        size='sm'
         color={isActive ? 'info' : undefined}
         variant={isActive ? 'soft' : 'outline'}
         {...props}
       />
     </div>
+  )
+}
+
+export function FilterToggleButton({
+  showFilters,
+  onToggle,
+  ...props
+}: {
+  showFilters: boolean
+  onToggle: () => void
+} & ButtonProps) {
+  return (
+    <Button onClick={onToggle} {...props}>
+      {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
+      {/* <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span> */}
+    </Button>
   )
 }

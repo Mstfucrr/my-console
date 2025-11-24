@@ -1,11 +1,12 @@
+import { isSameDateRange } from '@/lib/utils'
 import { useEffect, useMemo, useState } from 'react'
+import { DateRange } from 'react-day-picker'
 
 // Generic filter properties interface
 export interface BaseFilterProperties {
   status?: string | number | undefined
   search?: string
-  dateFrom?: string
-  dateTo?: string
+  dateRange?: DateRange
 }
 
 // Generic useFilter hook that works with any filter properties
@@ -26,7 +27,7 @@ export function useFilter<T extends BaseFilterProperties>(
   // Generic active filters check - checks all properties dynamically
   const hasActiveFilters = useMemo(
     () =>
-      Object.entries(filters).some(([, value]) => {
+      Object.entries(filters).some(([key, value]) => {
         // Skip undefined values
         if (value === undefined || value === null) return false
 
@@ -35,10 +36,15 @@ export function useFilter<T extends BaseFilterProperties>(
           return value !== '' && value !== 'all'
         }
 
+        // is Default Date Range
+        if (key === 'dateRange') {
+          return !isSameDateRange(value, defaultFilters.dateRange)
+        }
+
         // Check for truthy values
         return Boolean(value)
       }),
-    [filters]
+    [filters, defaultFilters]
   )
 
   // Generic pending changes check - compares all properties
@@ -60,6 +66,7 @@ export function useFilter<T extends BaseFilterProperties>(
   // Clear filters using default values
   const handleClearFilters = () => {
     setPendingFilters(defaultFilters)
+    updateHotFilters(defaultFilters)
     onClearFilters()
   }
 

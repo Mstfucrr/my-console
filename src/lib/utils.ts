@@ -1,4 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
+import { isSameDay, isSameHour, isSameMinute } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -98,4 +100,18 @@ export const formatDateForApi = (date?: Date | string) => {
   const inputDate = new Date(date)
   inputDate.setHours(inputDate.getHours() + 3)
   return inputDate.toISOString().slice(0, 16)
+}
+
+export const isSameDateRange = (dateRange1?: DateRange, dateRange2?: DateRange) => {
+  if (!dateRange1 || !dateRange2) return false
+  if (!dateRange1.from || !dateRange1.to) return false
+  if (!dateRange2.from || !dateRange2.to) return false
+  return (
+    isSameDay(dateRange1.from, dateRange2.from) &&
+    isSameHour(dateRange1.from, dateRange2.from) &&
+    isSameMinute(dateRange1.from, dateRange2.from) &&
+    isSameDay(dateRange1.to, dateRange2.to) &&
+    isSameHour(dateRange1.to, dateRange2.to) &&
+    isSameMinute(dateRange1.to, dateRange2.to)
+  )
 }

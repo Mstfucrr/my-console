@@ -11,7 +11,7 @@ const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement
   <div
     className={cn(
       'card-header border-border flex flex-col space-y-1 border-b px-4 py-4',
-      '[:has(+.card-content)]:mb-6', // eğer card-content varsa mb-6
+      '[:has(+.card-content)]:mb-3', // eğer card-content varsa mb-6
       '[:not(:has(+.card-content))]:mb-0', // eğer card-content yoksa mb-0
       className
     )}
@@ -21,7 +21,7 @@ const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <h3 className={cn('text-xl leading-none font-medium', className)} {...props} />
+  <h3 className={cn('text-lg leading-none font-medium md:text-xl', className)} {...props} />
 )
 CardTitle.displayName = 'CardTitle'
 

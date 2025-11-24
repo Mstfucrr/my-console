@@ -1,5 +1,4 @@
 import { privateAxiosInstance } from '@/lib/axios'
-import { formatDateForApi } from '@/lib/utils'
 import { OrderStatusesGroups } from '@/types'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord, ReportsStats } from '../types'
@@ -119,10 +118,13 @@ const mockReportsData: ReportRecord[] = [
 
 export const reportsService = {
   async getReports(filters?: ReportsFilterProperties): Promise<ReportRecord[]> {
+    const dateFrom = filters?.dateRange.from
+    const dateTo = filters?.dateRange.to
+
     const ordersResponse = await privateAxiosInstance.get('/reconciliation/report-orders-by-restaurant', {
       params: {
-        startdate: formatDateForApi(filters?.dateFrom),
-        enddate: formatDateForApi(filters?.dateTo)
+        startdate: dateFrom,
+        enddate: dateTo
       }
     })
     console.log('ordersResponse', ordersResponse.data)
@@ -153,12 +155,20 @@ export const reportsService = {
     }
 
     // Apply date range filters
-    if (filters?.dateFrom) {
-      filteredData = filteredData.filter(item => item.orderDate >= filters.dateFrom!)
+    if (filters?.dateRange.from) {
+      const fromTimestamp = new Date(filters.dateRange.from).getTime()
+      filteredData = filteredData.filter(item => {
+        const itemDate = new Date(item.orderDate).getTime()
+        return itemDate >= fromTimestamp
+      })
     }
 
-    if (filters?.dateTo) {
-      filteredData = filteredData.filter(item => item.orderDate <= filters.dateTo!)
+    if (filters?.dateRange.to) {
+      const toTimestamp = new Date(filters.dateRange.to).getTime()
+      filteredData = filteredData.filter(item => {
+        const itemDate = new Date(item.orderDate).getTime()
+        return itemDate <= toTimestamp
+      })
     }
 
     return filteredData

@@ -32,7 +32,7 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
 
   return (
     <>
-      <div className='flex-1 space-y-4 overflow-y-auto'>
+      <div className='flex-1 space-y-4'>
         {/* Mutabakat Dönemi */}
         <div className='grid grid-cols-1 border-b pb-3 md:grid-cols-2'>
           <div className='flex flex-col gap-1 md:flex-row md:items-center md:justify-between'>
@@ -92,7 +92,7 @@ export function MainPage({ record, onViewInvoice, onGoToApprovePage, onGoToRepor
       </div>
 
       {(hasInvoice || canApprove || canReport) && (
-        <DialogFooter className='-mx-6 -mb-6 border-t bg-gray-50 px-6 py-4 pt-4'>
+        <DialogFooter className='bg-gray-50'>
           <div className='flex w-full flex-wrap gap-3'>
             {hasInvoice && (
               <Button onClick={onViewInvoice} variant='outline' className='flex items-center gap-2'>
