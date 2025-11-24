@@ -12,6 +12,7 @@ import { useOrders } from '../../context/OrdersContext'
 import { formatDateTR } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import { OrderCard } from './OrderCard'
+import { OrderCardSkeleton } from './OrderCardSkeleton'
 
 interface OrdersListProps {
   orders: Array<Order> | undefined
@@ -82,6 +83,7 @@ const columns: ColumnDef<Order>[] = [
     )
   }
 ]
+
 export function OrdersList({
   orders,
   isLoading,
@@ -94,43 +96,40 @@ export function OrdersList({
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
 
-  if (viewMode === 'card') {
-    if (isLoading || isFetching) {
-      return (
-        <div className='flex h-48 items-center justify-center'>
-          <div className='text-center'>
-            <p className='text-muted-foreground'>Siparişler yükleniyor...</p>
-          </div>
-        </div>
-      )
-    }
+  if (viewMode === 'list')
+    return (
+      <BasicDataTable
+        columns={columns}
+        data={orders ?? []}
+        isLoading={isLoading || isFetching}
+        emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
+        loadingLabel='Siparişler yükleniyor...'
+        onRowClick={onViewDetails}
+        enableColumnVisibility={false}
+      />
+    )
 
-    if (orders?.length === 0) {
-      return (
-        <div className='flex h-48 items-center justify-center'>
-          <div className='text-center'>
-            <p className='text-muted-foreground'>{hasActiveFilter ? filteredEmptyMessage : emptyMessage}</p>
-          </div>
-        </div>
-      )
-    }
-
+  if (isLoading || isFetching)
     return (
       <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
-        {orders?.map(order => <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />)}
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <OrderCardSkeleton key={idx} />
+        ))}
       </div>
     )
-  }
+
+  if (orders?.length === 0)
+    return (
+      <div className='flex h-48 items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-muted-foreground'>{hasActiveFilter ? filteredEmptyMessage : emptyMessage}</p>
+        </div>
+      </div>
+    )
 
   return (
-    <BasicDataTable
-      columns={columns}
-      data={orders ?? []}
-      isLoading={isLoading || isFetching}
-      emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
-      loadingLabel='Siparişler yükleniyor...'
-      onRowClick={onViewDetails}
-      enableColumnVisibility={false}
-    />
+    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
+      {orders?.map(order => <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />)}
+    </div>
   )
 }

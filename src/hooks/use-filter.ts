@@ -24,30 +24,33 @@ export function useFilter<T extends BaseFilterProperties>(
   }, [filters])
 
   // Generic active filters check - checks all properties dynamically
-  const hasActiveFilters = useMemo(() => {
-    console.log('filters', filters)
-    return Object.entries(filters).some(([, value]) => {
-      // Skip undefined values
-      if (value === undefined || value === null) return false
+  const hasActiveFilters = useMemo(
+    () =>
+      Object.entries(filters).some(([, value]) => {
+        // Skip undefined values
+        if (value === undefined || value === null) return false
 
-      // Check for non-empty strings (excluding 'all' for select fields)
-      if (typeof value === 'string') {
-        return value !== '' && value !== 'all'
-      }
+        // Check for non-empty strings (excluding 'all' for select fields)
+        if (typeof value === 'string') {
+          return value !== '' && value !== 'all'
+        }
 
-      // Check for truthy values
-      return Boolean(value)
-    })
-  }, [filters])
+        // Check for truthy values
+        return Boolean(value)
+      }),
+    [filters]
+  )
 
   // Generic pending changes check - compares all properties
-  const hasPendingChanges = useMemo(() => {
-    return Object.keys(pendingFilters).some(key => {
-      const pendingValue = pendingFilters[key as keyof T]
-      const currentValue = filters[key as keyof T]
-      return pendingValue !== currentValue
-    })
-  }, [pendingFilters, filters])
+  const hasPendingChanges = useMemo(
+    () =>
+      Object.keys(pendingFilters).some(key => {
+        const pendingValue = pendingFilters[key as keyof T]
+        const currentValue = filters[key as keyof T]
+        return pendingValue !== currentValue
+      }),
+    [pendingFilters, filters]
+  )
 
   // Apply filters
   const handleApplyFilters = () => {

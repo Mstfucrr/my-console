@@ -56,27 +56,27 @@ export function Pagination({ page, pageSize, total, onPageChange, className }: P
   }
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-4 px-2 py-2 sm:px-0', className)}>
+    <div className={cn('flex flex-wrap items-center gap-2 px-2 py-2 sm:px-0', className)}>
       <div className='text-muted-foreground flex-1 text-xs whitespace-nowrap sm:text-sm'>{leftInfo}</div>
 
-      <div className='flex items-center gap-2'>
-        <Button variant='outline' size='icon' onClick={handlePrev} disabled={!canPrev} className='h-8 w-8'>
+      <div className='flex items-center gap-1'>
+        <Button variant='outline' className='size-7 p-0' onClick={handlePrev} disabled={!canPrev}>
           <ChevronLeft className='h-4 w-4' />
         </Button>
 
         {visiblePageButtons.map(p => (
           <Button
             key={`dt-page-${p}`}
+            className='size-7 p-0'
             onClick={() => handlePageClick(p as number)}
-            variant={p === page ? 'soft' : 'ghost'}
-            className={cn('h-8 w-8 px-0')}
-            disabled={p === '...'}
+            variant={p === page ? undefined : p === '...' ? 'ghost' : 'outline'}
+            disabled={p === '...' || p === page}
           >
             {p}
           </Button>
         ))}
 
-        <Button variant='outline' size='icon' onClick={handleNext} disabled={!canNext} className='h-8 w-8'>
+        <Button variant='outline' className='size-7 p-0' onClick={handleNext} disabled={!canNext}>
           <ChevronRight className='h-4 w-4' />
         </Button>
       </div>
