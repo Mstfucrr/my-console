@@ -317,7 +317,7 @@ export function BasicDataTable<TData extends { id?: string }, TValue = never>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={computedColumns.length / 2} className='text-muted-foreground h-24 text-center'>
+                <TableCell colSpan={2} className='text-muted-foreground h-24 text-center'>
                   {emptyLabel}
                 </TableCell>
               </TableRow>

@@ -21,7 +21,7 @@ const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <h3 className={cn('text-lg leading-none font-medium md:text-xl', className)} {...props} />
+  <h3 className={cn('text-base leading-none font-medium sm:text-lg md:text-xl', className)} {...props} />
 )
 CardTitle.displayName = 'CardTitle'
 

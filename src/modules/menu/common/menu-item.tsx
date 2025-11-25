@@ -24,7 +24,7 @@ export function MenuItem({ item }: MenuItemProps) {
             { 'bg-primary text-primary-foreground': isActive }
           )}
         >
-          {item.Icon && <item.Icon className='size-5' />}
+          {item.Icon && <item.Icon className='size-4.5' />}
           <span className='whitespace-nowrap'>{item.title}</span>
         </Button>
       </Link>

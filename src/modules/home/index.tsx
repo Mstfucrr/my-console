@@ -121,7 +121,7 @@ export default function DashboardView() {
   }
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
+    <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
       {/* Header */}
       <PageHeader
         title='Özet bilgiler'
@@ -196,7 +196,7 @@ export default function DashboardView() {
             <CardContent>
               {latestOrders?.length && latestOrders?.length > 0 ? (
                 <>
-                  <div className='flex max-h-[300px] flex-col gap-3 overflow-y-auto'>
+                  <div className='mb-2 flex max-h-[300px] flex-col gap-2 overflow-y-auto'>
                     {latestOrders.map(order => (
                       <div
                         key={order.orderId}

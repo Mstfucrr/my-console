@@ -10,6 +10,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn, isSameDateRange } from '@/lib/utils'
 import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
@@ -50,6 +51,8 @@ export function DateRangePicker({
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
 
   const isDefaultDateRange = isSameDateRange(dateRange, defaultDateRange)
+
+  const isSmallerThanTablet = useIsSmallerThanTablet()
 
   useEffect(() => {
     startTransition(() => setTempDateRange(dateRange))
@@ -153,7 +156,7 @@ export function DateRangePicker({
         <PopoverContent className='w-auto p-0'>
           <div className='p-3'>
             <Calendar
-              numberOfMonths={2}
+              numberOfMonths={isSmallerThanTablet ? 1 : 2}
               defaultMonth={tempDateRange?.from}
               locale={tr}
               {...calendarProps}
@@ -164,7 +167,7 @@ export function DateRangePicker({
 
             {enableTimeSelection && (
               <div className='mt-4 space-y-3 border-t pt-3'>
-                <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+                <div className='grid grid-cols-2 gap-3 sm:grid-cols-2'>
                   <div>
                     <Label htmlFor='from-time' className='text-xs'>
                       Başlangıç Saati
