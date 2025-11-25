@@ -44,6 +44,7 @@ export interface IRefreshTokenResponse {
 export interface IPasswordRecoveryRequest {
   accountId: string
   email: string
+  turnstileToken?: string
 }
 
 // Backend PasswordRecoveryResponse'a uygun
@@ -57,6 +58,7 @@ export interface IConfirmCodeRequest {
   recoverySessionId: string
   code: string
   newPassword: string
+  turnstileToken?: string
 }
 
 // Backend ConfirmCodeResponse'a uygun

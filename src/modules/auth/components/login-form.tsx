@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useAuth } from '../context/auth-context'
+import { useTurnstile } from '../hooks/useTurnstile'
 import { AuthTurnstile } from './turnstile'
 
 const schema = z.object({
@@ -19,7 +20,7 @@ type LoginFormType = z.infer<typeof schema>
 
 export function LoginForm() {
   const { handleLogin, loadingState } = useAuth()
-  // const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const turnstileState = useTurnstile()
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(schema),
@@ -34,7 +35,10 @@ export function LoginForm() {
   const { handleSubmit, control } = form
 
   const onSubmit = async (data: LoginFormType) => {
-    await handleLogin(data)
+    await handleLogin({
+      ...data,
+      turnstileToken: turnstileState.token || undefined
+    })
   }
 
   return (
@@ -72,7 +76,7 @@ export function LoginForm() {
             placeholder='Şifrenizi giriniz'
           />
 
-          <AuthTurnstile />
+          <AuthTurnstile turnstileState={turnstileState} />
 
           <div className='flex justify-end'>
             <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
@@ -80,13 +84,7 @@ export function LoginForm() {
             </Link>
           </div>
 
-          <LoadingButton
-            className='w-full'
-            isLoading={loadingState.login}
-            size='lg'
-            loadingText='Giriş Yapılıyor...'
-            // disabled={!turnstileToken}
-          >
+          <LoadingButton className='w-full' isLoading={loadingState.login} size='lg' loadingText='Giriş Yapılıyor...'>
             Giriş Yap
           </LoadingButton>
         </form>

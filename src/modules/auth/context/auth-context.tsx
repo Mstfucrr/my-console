@@ -131,10 +131,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Login handler
   const handleLogin = async (data: ILoginRequest) => {
-    // if (!data.turnstileToken) {
-    //   toast.error('Lütfen güvenlik doğrulamasını tamamlayın.')
-    //   return
-    // }
+    if (!data.turnstileToken) {
+      toast.warning('Lütfen güvenlik doğrulamasını tamamlayınız.')
+      return
+    }
 
     try {
       const loginResponse = await login(data)
