@@ -84,6 +84,7 @@ export function ReportsFilters({
           endMonth: MIN_MAX_DATE_RANGE.rangeEnd
         }}
         defaultDateRange={defaultReportsFilters.dateRange}
+        defaultText='Bugün'
       />
     </FilterCard>
   )

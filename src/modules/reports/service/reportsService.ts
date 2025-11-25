@@ -13,7 +13,6 @@ export const reportsService = {
         enddate: dateTo
       }
     })
-    console.log('ordersResponse', ordersResponse.data)
 
     return ordersResponse.data.rows
   },
