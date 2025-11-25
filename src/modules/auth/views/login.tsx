@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import LogInForm from '../components/login-form'
-import VerfiyForm from '../components/verify-form'
+import { LoginForm } from '../components/login-form'
+import { VerifyForm } from '../components/verify-form'
 import { useAuth } from '../context/auth-context'
 
 export function LoginView() {
@@ -17,7 +17,7 @@ export function LoginView() {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <LogInForm />
+            <LoginForm />
           </motion.div>
         ) : (
           <motion.div
@@ -27,7 +27,7 @@ export function LoginView() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <VerfiyForm />
+            <VerifyForm />
           </motion.div>
         )}
       </AnimatePresence>

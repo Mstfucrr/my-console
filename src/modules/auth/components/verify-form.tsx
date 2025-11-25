@@ -10,7 +10,7 @@ import { useAuth } from '../context/auth-context'
 const TOTAL_OTP_FIELD = 6
 const OTP_TIMEOUT = 60
 
-const VerfiyForm = () => {
+export function VerifyForm() {
   const { otpState, loadingState, handleOtpChange, handleOtpKeyDown, handleVerifyOtp, handleResendOtp, otpInputRefs } =
     useAuth()
 
@@ -94,5 +94,3 @@ const VerfiyForm = () => {
     </div>
   )
 }
-
-export default VerfiyForm

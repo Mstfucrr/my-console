@@ -3,11 +3,11 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Lock, Mail, User } from 'lucide-react'
-import { Turnstile } from 'next-turnstile'
 import Link from 'next/link'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useAuth } from '../context/auth-context'
+import { AuthTurnstile } from './turnstile'
 
 const schema = z.object({
   accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
@@ -17,7 +17,7 @@ const schema = z.object({
 
 type LoginFormType = z.infer<typeof schema>
 
-const LogInForm = () => {
+export function LoginForm() {
   const { handleLogin, loadingState } = useAuth()
   // const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
@@ -72,7 +72,7 @@ const LogInForm = () => {
             placeholder='Şifrenizi giriniz'
           />
 
-          <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY} theme='light' />
+          <AuthTurnstile />
 
           <div className='flex justify-end'>
             <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
@@ -94,5 +94,3 @@ const LogInForm = () => {
     </div>
   )
 }
-
-export default LogInForm
