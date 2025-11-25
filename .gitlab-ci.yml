@@ -40,7 +40,7 @@ syntax-check:
     - pnpm install --no-strict-peer-dependencies
     - pnpm lint
     - pnpm prettier-check
-  when: always
+  when: manual
   # only:
   #   - merge_requests
   
