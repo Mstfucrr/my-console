@@ -117,7 +117,7 @@ function TableOverlayLoader({ label }: { label?: string }) {
   )
 }
 
-export function BasicDataTable<TData extends { id?: string }, TValue = never>({
+export function BasicDataTable<TData, TValue = never>({
   columns,
   data,
   className,

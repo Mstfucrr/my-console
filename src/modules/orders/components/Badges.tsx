@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders'
 import { cn } from '@/lib/utils'
 import type { OrderChannel, OrderStatusesGroups } from '@/types'
-import { CreditCard } from 'lucide-react'
+import { Globe, Wallet } from 'lucide-react'
 import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS } from '../utils'
 
 interface StatusBadgeProps {
@@ -29,9 +29,15 @@ interface PaymentMethodBadgeProps {
   paymentMethod: string
   showIcon?: boolean
   className?: string
+  IsPrepaid?: boolean
 }
 
-export function PaymentMethodBadge({ paymentMethod, showIcon = false, className }: PaymentMethodBadgeProps) {
+export function PaymentMethodBadge({
+  paymentMethod,
+  showIcon = false,
+  className,
+  IsPrepaid = false // sipariş online ödeme ise true, kapıda ödeme ise false
+}: PaymentMethodBadgeProps) {
   return (
     <Badge
       className={cn(
@@ -40,7 +46,7 @@ export function PaymentMethodBadge({ paymentMethod, showIcon = false, className 
         className
       )}
     >
-      {showIcon && <CreditCard className='mr-1 h-3 w-3' />}
+      {showIcon && (IsPrepaid ? <Globe className='mr-1 h-3 w-3' /> : <Wallet className='mr-1 h-3 w-3' />)}
       {paymentMethod}
     </Badge>
   )

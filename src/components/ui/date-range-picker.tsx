@@ -1,7 +1,7 @@
 'use client'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
-import { CalendarIcon, X } from 'lucide-react'
+import { CalendarIcon, FilterX } from 'lucide-react'
 import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
@@ -147,8 +147,8 @@ export function DateRangePicker({
           {dateRange && !isDefaultDateRange && quickClearable && (
             <>
               <ButtonGroupSeparator />
-              <Button onClick={handleClear} className='font-normal' size='icon-sm' {...props}>
-                <X className='size-4' />
+              <Button onClick={handleClear} className='size-9 p-0 font-normal' {...props}>
+                <FilterX className='size-4.5' />
               </Button>
             </>
           )}

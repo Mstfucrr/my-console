@@ -5,7 +5,7 @@ import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn, isSameDateRange } from '@/lib/utils'
-import { Check, Filter, FilterX, LucideIcon, XCircle } from 'lucide-react'
+import { Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
 import { ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
 
@@ -194,8 +194,9 @@ export function FilterToggleButton({
   onToggle: () => void
 } & ButtonProps) {
   return (
-    <Button onClick={onToggle} size='icon-sm' {...props}>
-      {showFilters ? <FilterX className='size-4.5' /> : <Filter className='size-4.5' />}
+    <Button className='relative' onClick={onToggle} size='icon-sm' {...props}>
+      <Filter className='mr-1 size-4.5' />
+      <ChevronDown className={cn('absolute right-0 bottom-0 size-4.5', showFilters ? 'rotate-180' : 'rotate-0')} />
     </Button>
   )
 }

@@ -43,7 +43,7 @@ export function PageHeader({
               )}{' '}
               {title}
             </CardTitle>
-            {description && <p className='text-muted-foreground text-sm'>{description}</p>}
+            {description && <p className='text-muted-foreground mt-1 text-sm'>{description}</p>}
           </div>
           <div className='flex items-center gap-2'>
             {actions}

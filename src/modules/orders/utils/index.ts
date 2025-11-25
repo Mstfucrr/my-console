@@ -1,8 +1,9 @@
 import { OrderChannel } from '@/types'
 
-function formatCurrencyTRY(amount: number | undefined) {
+function formatCurrencyTRY(amount: number | undefined, showSymbol = true) {
   if (!amount) return '0.00 ₺'
-  return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`
+  if (showSymbol) return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`
+  return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}`
 }
 
 function formatDateTR(dateString: string | undefined) {

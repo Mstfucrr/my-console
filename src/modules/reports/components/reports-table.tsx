@@ -1,12 +1,13 @@
 import { AnimatedFilters } from '@/components/animated-filters'
 import { BasicDataTable } from '@/components/basic-data-table'
-import { Badge } from '@/components/ui/badge'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterToggleButton } from '@/components/ui/filter-card'
+import { PaymentMethodBadge, StatusBadge } from '@/modules/orders/components/Badges'
+import { formatCurrencyTRY } from '@/modules/orders/utils'
+import { OrderStatusesGroups } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
-import { STATUS_COLORS, STATUS_TEXT } from '../constants'
 import type { ReportRecord } from '../types'
 import { ReportsFilters, type ReportsFilterProperties } from './reports-filters'
 
@@ -23,73 +24,46 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('tr-TR')
 }
 
-const formatCurrency = (amount: number) => {
-  return `₺${amount.toFixed(2)}`
-}
-
 const columns: ColumnDef<ReportRecord>[] = [
   {
-    accessorKey: 'orderId',
-    header: 'Sipariş No',
+    accessorKey: 'OrderId',
+    header: 'Sipariş ID',
     minSize: 100,
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('orderId')}</div>
+    cell: ({ row }) => <div className='font-medium'>{row.getValue('OrderId')}</div>
   },
   {
-    accessorKey: 'customerName',
-    header: 'Müşteri Adı',
+    accessorKey: 'CreatedOn',
+    header: 'Oluşturulma Tarihi',
+    cell: ({ row }) => formatDate(row.getValue('CreatedOn'))
+  },
+  {
+    accessorKey: 'customer_name',
+    header: 'Müşteri',
     minSize: 150,
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('customerName')}</div>
+    cell: ({ row }) => <div className='font-medium'>{row.getValue('customer_name')}</div>
   },
   {
-    accessorKey: 'customerPhone',
-    header: 'Telefon',
-    minSize: 150,
-    cell: ({ row }) => <div className='text-sm text-gray-600'>{row.getValue('customerPhone')}</div>
-  },
-  {
-    accessorKey: 'orderDate',
-    header: 'Sipariş Tarihi',
-    cell: ({ row }) => formatDate(row.getValue('orderDate'))
-  },
-  {
-    accessorKey: 'deliveryDate',
-    header: 'Teslimat Tarihi',
-    cell: ({ row }) => formatDate(row.getValue('deliveryDate'))
-  },
-  {
-    accessorKey: 'totalAmount',
-    header: 'Toplam Tutar',
-    meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('totalAmount'))
-  },
-  {
-    accessorKey: 'platformFee',
-    header: 'Platform Komisyonu',
-    meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('platformFee'))
-  },
-  {
-    accessorKey: 'netAmount',
-    header: 'Net Tutar',
-    meta: { align: 'right' },
-    cell: ({ row }) => <div className='font-medium'>{formatCurrency(row.getValue('netAmount'))}</div>
-  },
-  {
-    accessorKey: 'status',
+    accessorKey: 'Status',
     header: 'Durum',
     cell: ({ row }) => {
-      const status = row.getValue('status') as string
-      return (
-        <Badge variant='outline' className='text-nowrap' color={STATUS_COLORS[status] || 'secondary'}>
-          {STATUS_TEXT[status as keyof typeof STATUS_TEXT] || status}
-        </Badge>
-      )
+      const status = row.getValue('Status') as OrderStatusesGroups
+      return <StatusBadge status={OrderStatusesGroups.DELIVERED} />
     }
   },
   {
-    accessorKey: 'paymentMethod',
+    accessorKey: 'Name',
     header: 'Ödeme Yöntemi',
-    cell: ({ row }) => <div className='text-sm'>{row.getValue('paymentMethod')}</div>
+    cell: ({ row }) => {
+      const { IsPrepaid, Name: paymentMethod } = row.original
+      return <PaymentMethodBadge className='text-nowrap' showIcon paymentMethod={paymentMethod} IsPrepaid={IsPrepaid} />
+    }
+  },
+  {
+    accessorKey: 'TotalAmount',
+    header: 'Tutar (₺)',
+    meta: { align: 'right' },
+    size: 100,
+    cell: ({ row }) => formatCurrencyTRY(row.getValue('TotalAmount'), false)
   }
 ]
 
@@ -106,7 +80,7 @@ export default function ReportsTable({
   return (
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Tamamlanmış Siparişler ({data.length})</CardTitle>
+        <CardTitle>Tamamlanan Siparişler ({data.length})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
           <FilterToggleButton showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} color='primary' />

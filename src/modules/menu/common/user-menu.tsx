@@ -1,46 +1,30 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ConfirmButton } from '@/components/ui/confirm-button'
 import { useAuth } from '@/context/AuthContext'
-import { LogOut, User as UserIcon } from 'lucide-react'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
+import { LogOut } from 'lucide-react'
 
-type UserMenuProps = {
-  name?: string
-  restaurant?: string
-}
-
-const UserMenu = ({ name, restaurant }: UserMenuProps) => {
+const UserMenu = () => {
   const { logout } = useAuth()
-  const displayName = name || 'Kullanıcı Adı'
-  const displayRestaurant = restaurant || 'Restoran Adı'
+
+  const isSmallerThanTablet = useIsSmallerThanTablet()
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant='ghost' className='flex h-12 items-center gap-3 px-2'>
-          <div className='bg-primary text-primary-foreground grid size-9 place-items-center rounded-full'>
-            <UserIcon className='size-5' />
-          </div>
-          <div className='hidden min-w-0 flex-col text-left leading-tight sm:flex'>
-            <span className='truncate text-sm font-semibold'>{displayName}</span>
-            <span className='truncate text-xs'>{displayRestaurant}</span>
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align='end' sideOffset={8} className='w-full p-0 max-md:w-40'>
-        <div className='border-t'>
-          <button
-            type='button'
-            onClick={logout}
-            className='text-destructive hover:bg-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm'
-          >
-            <LogOut className='size-4' />
-            Çıkış Yap
-          </button>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <ConfirmButton
+      type='button'
+      size={isSmallerThanTablet ? 'icon-sm' : 'icon-sm'}
+      onConfirm={logout}
+      color='destructive'
+      variant='outline'
+      confirmationMessage='Çıkış yapmak istediğinize emin misiniz?'
+      confirmButtonMessage='Çıkış Yap'
+      cancelButtonMessage='İptal'
+      confirmButtonColor='destructive'
+    >
+      <LogOut className='size-4' />
+      <span className='sr-only ml-2'>Çıkış Yap</span>
+    </ConfirmButton>
   )
 }
 

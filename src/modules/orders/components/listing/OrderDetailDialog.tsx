@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Separator } from '@/components/ui/separator'
-import { formatCurrency } from '@/lib/formatCurrency'
 import { maskLastName, maskPhone } from '@/lib/utils'
 import type { Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
@@ -13,7 +12,7 @@ import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
 import { ordersService } from '../../service'
-import { formatDateTimeTR, maskAddress } from '../../utils'
+import { formatCurrencyTRY, formatDateTimeTR, maskAddress } from '../../utils'
 import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 import { OrderDetailSkeleton } from './OrderDetailSkeleton'
@@ -145,7 +144,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
                           <span className='text-primary-700 text-xl font-bold'>
-                            {displayOrder && formatCurrency(displayOrder.totalAmount)}
+                            {displayOrder && formatCurrencyTRY(displayOrder.totalAmount)}
                           </span>
                         </div>
                       </CardContent>

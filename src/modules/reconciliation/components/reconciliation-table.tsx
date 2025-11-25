@@ -1,32 +1,23 @@
-import { AnimatedFilters } from '@/components/animated-filters'
 import { BasicDataTable } from '@/components/basic-data-table'
 import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FilterToggleButton } from '@/components/ui/filter-card'
 import { MONTHS } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
-import type { ReconciliationFilterProperties, ReconciliationRecord } from '../types'
+import type { ReconciliationRecord } from '../types'
 import { ReconciliationConfirmStatus, STATUS_TEXT } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
-import { ReconciliationFilters } from './reconciliation-filters'
 
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
   isLoading: boolean
-
-  filters: ReconciliationFilterProperties
-  onFiltersChange: (f: ReconciliationFilterProperties) => void
-  onClearFilters: () => void
-  onRefresh: () => void
 }
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData = unknown> {
-    handleToggleModal?: (record: TData) => void
+    handleOpenModal?: (page: 'approve' | 'report', record: TData) => void
   }
 }
 
@@ -43,15 +34,6 @@ const formatPeriod = (record: ReconciliationRecord): string => {
   }
 
   return `${record.RecordPeriod}. Dönem - ${MONTHS[record.RecordMonth - 1]} ${record.RecordYear}`
-}
-
-// Helper function to convert ConfirmStatus to string for display
-const getStatusDisplay = (status: ReconciliationConfirmStatus): string => {
-  return STATUS_TEXT[status] || 'Bilinmeyen'
-}
-
-const getStatusColor = (status: ReconciliationConfirmStatus): BadgeProps['color'] => {
-  return STATUS_COLORS[status] || 'secondary'
 }
 
 const columns: ColumnDef<ReconciliationRecord>[] = [
@@ -92,8 +74,8 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
     cell: ({ row }) => {
       const status = row.getValue('ConfirmStatus') as ReconciliationConfirmStatus
       return (
-        <Badge variant='outline' color={getStatusColor(status)}>
-          {getStatusDisplay(status)}
+        <Badge variant='outline' color={STATUS_COLORS[status] || 'secondary'}>
+          {STATUS_TEXT[status]}
         </Badge>
       )
     }
@@ -102,32 +84,29 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
     id: 'actions',
     header: 'İşlemler',
     cell: ({ row, table }) => {
-      const handleToggleModal = table.options.meta?.handleToggleModal as
-        | ((record: ReconciliationRecord) => void)
+      const handleOpenModal = table.options.meta?.handleOpenModal as
+        | ((page: 'approve' | 'report', record: ReconciliationRecord) => void)
         | undefined
 
       return (
-        <Button variant='outline' color='primary' onClick={() => handleToggleModal?.(row.original)}>
-          Detay
-        </Button>
+        <div className='flex flex-row items-center gap-2'>
+          <Button variant='outline' color='success' onClick={() => handleOpenModal?.('approve', row.original)}>
+            Onayla
+          </Button>
+          <Button variant='outline' color='destructive' onClick={() => handleOpenModal?.('report', row.original)}>
+            Kontrole Gönder
+          </Button>
+        </div>
       )
     }
   }
 ]
 
-export default function ReconciliationTable({
-  data,
-  filters,
-  onFiltersChange,
-  onClearFilters,
-  isLoading,
-  onRefresh
-}: ReconciliationTableProps) {
-  const [selectedRecord, setSelectedRecord] = useState<ReconciliationRecord | null>(null)
-  const [showFilters, setShowFilters] = useState(true)
+export default function ReconciliationTable({ data, isLoading }: ReconciliationTableProps) {
+  const [selected, setSelected] = useState<{ page: 'approve' | 'report'; record: ReconciliationRecord } | null>(null)
 
-  const handleToggleModal = (record: ReconciliationRecord): void => {
-    setSelectedRecord(prev => (prev ? null : record))
+  const handleOpenModal = (page: 'approve' | 'report', record: ReconciliationRecord): void => {
+    setSelected({ page, record })
   }
 
   return (
@@ -135,40 +114,26 @@ export default function ReconciliationTable({
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
           <CardTitle>Kayıtlar ({data.length})</CardTitle>
-          <div className='flex flex-row items-center gap-2'>
-            <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
-            <FilterToggleButton
-              showFilters={showFilters}
-              onToggle={() => setShowFilters(!showFilters)}
-              color='primary'
-            />
-          </div>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
-          <AnimatedFilters isOpen={showFilters}>
-            <ReconciliationFilters
-              filters={filters}
-              onFiltersChange={onFiltersChange}
-              onClearFilters={onClearFilters}
-            />
-          </AnimatedFilters>
           <BasicDataTable
             columns={columns}
             data={data}
             isLoading={isLoading}
             emptyLabel='Mutabakat kaydı bulunamadı'
             loadingLabel='Mutabakat kayıtları yükleniyor...'
-            meta={{ handleToggleModal }}
+            meta={{ handleOpenModal }}
             enableColumnVisibility={false}
           />
         </CardContent>
       </Card>
 
-      {selectedRecord && (
+      {selected && (
         <ReconciliationDetailsModal
-          record={selectedRecord}
-          isOpen={!!selectedRecord}
-          onClose={() => setSelectedRecord(null)}
+          page={selected.page}
+          record={selected.record}
+          isOpen={!!selected}
+          onClose={() => setSelected(null)}
         />
       )}
     </>

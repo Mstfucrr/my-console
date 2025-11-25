@@ -61,10 +61,6 @@ export function MobileMenu() {
         </Link>
 
         <div className='flex items-center gap-2'>
-          <CreateOrderButton />
-          <NotificationsPopover />
-          {/* <SupportDialog /> */}
-          <UserMenu />
           <Button
             variant='outline'
             size='icon'
@@ -74,6 +70,10 @@ export function MobileMenu() {
           >
             {mobileMenu ? <X /> : <Menu />}
           </Button>
+          <CreateOrderButton />
+          <NotificationsPopover />
+          {/* <SupportDialog /> */}
+          <UserMenu />
         </div>
       </div>
       <div className='fixed right-5 bottom-5 z-50'>

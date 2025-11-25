@@ -3,7 +3,7 @@ import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { Button } from '@/components/ui/button'
 import { Form, FormDescription } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertTriangle, ArrowLeft } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -17,12 +17,11 @@ const reportSchema = z.object({
 type ReportFormData = z.infer<typeof reportSchema>
 
 interface ReportPageProps {
-  onBack: () => void
   onSubmit: (data: ReportFormData) => void
   isSubmitting: boolean
 }
 
-export function ReportPage({ onBack, onSubmit, isSubmitting }: ReportPageProps) {
+export function ReportPage({ onSubmit, isSubmitting }: ReportPageProps) {
   const form = useForm<ReportFormData>({
     resolver: zodResolver(reportSchema),
     defaultValues: {
@@ -55,23 +54,19 @@ export function ReportPage({ onBack, onSubmit, isSubmitting }: ReportPageProps) 
             <FormFileField
               name='statementFile'
               control={form.control}
-              label='Cari ekstre dosyanızı seçiniz:'
+              label='Dosya Seçiniz'
               accept='.jpeg,.doc,.docx,.xls,.xlsx,.pdf'
               required
               maxSize={10 * 1024 * 1024}
             />
             <FormDescription className='text-muted-foreground text-xs'>
-              Cari ekstre dosyasının boyutu 10MB&apos;den büyük olamaz ve sadece jpeg, word, excel ve pdf dosya türleri
+              Dosya boyutu 10MB&apos;den büyük olamaz ve sadece jpeg, doc, docx, xls, xlsx ve pdf dosya türleri
               yükleyebilirsiniz.
             </FormDescription>
           </div>
         </div>
 
         <div className='flex w-full justify-between py-4'>
-          <Button type='button' onClick={onBack} variant='outline' className='flex items-center gap-2'>
-            <ArrowLeft className='h-4 w-4' />
-            Geri
-          </Button>
           <Button type='submit' color='destructive' className='flex items-center gap-2' disabled={isSubmitting}>
             <AlertTriangle className='h-4 w-4' />
             {isSubmitting ? 'Gönderiliyor...' : 'Mutabık Olmadığınızı Bildirin'}

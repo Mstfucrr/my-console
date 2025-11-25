@@ -2,31 +2,29 @@
 
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { toast } from 'react-toastify'
 import { reconciliationService } from '../service'
 import type { ReconciliationRecord } from '../types'
 import { ApprovePage } from './approve-page'
-import { MainPage } from './main-page'
 import { ReportPage } from './report-page'
 
-type ModalPage = 'main' | 'approve' | 'report'
+type ModalPage = 'approve' | 'report'
 
 const PAGE_TITLES: Record<ModalPage, string> = {
-  main: 'Mutabakat Detayları',
   approve: 'Mutabakat Onayı',
   report: 'Kontrole Gönder'
 }
 
 interface ReconciliationDetailsModalProps {
+  page: ModalPage
   record: ReconciliationRecord
   isOpen: boolean
   onClose: () => void
 }
 
-export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
+export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: ReconciliationDetailsModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [currentPage, setCurrentPage] = useState<ModalPage>('main')
   const queryClient = useQueryClient()
 
   // Upload File Mutation
@@ -97,21 +95,8 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     )
   }
 
-  const resetPageState = () => {
-    setCurrentPage('main')
-  }
-
   const handleClose = () => {
-    resetPageState()
     onClose()
-  }
-
-  const handleViewInvoice = () => {
-    if (!record || !record.ConfirmID) return
-
-    // TODO: Get invoice URL from backend or S3
-    const invoiceUrl = `/invoices/${record.RecordID}.pdf`
-    window.open(invoiceUrl, '_blank')
   }
 
   const handleApprove = async (data: { invoiceFile: File }) => {
@@ -169,18 +154,6 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     }
   }
 
-  const handleGoToApprovePage = () => {
-    setCurrentPage('approve')
-  }
-
-  const handleGoToReportPage = () => {
-    setCurrentPage('report')
-  }
-
-  const handleBackToMain = () => {
-    resetPageState()
-  }
-
   return (
     <>
       <input
@@ -191,30 +164,14 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
         className='hidden'
       />
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent size={currentPage === 'main' ? '3xl' : 'lg'} className='p-2 sm:p-4'>
+        <DialogContent size='lg' className='p-2 sm:p-4'>
           <DialogHeader>
-            <DialogTitle className='text-xl font-semibold'>{PAGE_TITLES[currentPage]}</DialogTitle>
+            <DialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</DialogTitle>
           </DialogHeader>
 
           <DialogContentInner>
-            {currentPage === 'main' && (
-              <MainPage
-                record={record}
-                onViewInvoice={handleViewInvoice}
-                onGoToApprovePage={handleGoToApprovePage}
-                onGoToReportPage={handleGoToReportPage}
-              />
-            )}
-            {currentPage === 'approve' && (
-              <ApprovePage
-                onBack={handleBackToMain}
-                onSubmit={handleApprove}
-                isSubmitting={isApproving || isUploading}
-              />
-            )}
-            {currentPage === 'report' && (
-              <ReportPage onBack={handleBackToMain} onSubmit={handleReportIssue} isSubmitting={isReporting} />
-            )}
+            {page === 'approve' && <ApprovePage onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />}
+            {page === 'report' && <ReportPage onSubmit={handleReportIssue} isSubmitting={isReporting} />}
           </DialogContentInner>
         </DialogContent>
       </Dialog>

@@ -2,7 +2,7 @@ import { FormFileField } from '@/components/form/FormFileField'
 import { Button } from '@/components/ui/button'
 import { Form, FormDescription } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -15,12 +15,11 @@ const approveSchema = z.object({
 type ApproveFormData = z.infer<typeof approveSchema>
 
 interface ApprovePageProps {
-  onBack: () => void
   onSubmit: (data: ApproveFormData) => void
   isSubmitting: boolean
 }
 
-export function ApprovePage({ onBack, onSubmit, isSubmitting }: ApprovePageProps) {
+export function ApprovePage({ onSubmit, isSubmitting }: ApprovePageProps) {
   const form = useForm<ApproveFormData>({
     resolver: zodResolver(approveSchema),
     defaultValues: {
@@ -54,10 +53,6 @@ export function ApprovePage({ onBack, onSubmit, isSubmitting }: ApprovePageProps
         </div>
 
         <div className='flex w-full justify-between py-4'>
-          <Button type='button' onClick={onBack} variant='outline' className='flex items-center gap-2'>
-            <ArrowLeft className='h-4 w-4' />
-            Geri
-          </Button>
           <Button type='submit' color='success' className='flex items-center gap-2' disabled={isSubmitting}>
             <Check className='h-4 w-4' />
             {isSubmitting ? 'Gönderiliyor...' : 'Faturayı Gönder'}

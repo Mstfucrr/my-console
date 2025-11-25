@@ -2,7 +2,6 @@ import { privateAxiosInstance } from '@/lib/axios'
 import {
   ReconciliationConfirmStatus,
   ReconciliationRecordResponse,
-  type ReconciliationFilterProperties,
   type ReconciliationRecord,
   type ReconciliationStats
 } from '../types'
@@ -23,18 +22,9 @@ const fileToBase64 = (file: File): Promise<string> => {
 }
 
 export const reconciliationService = {
-  async getReconciliationData(filters?: ReconciliationFilterProperties): Promise<ReconciliationRecord[]> {
-    const confirmStatus = filters?.status === 'all' ? undefined : filters?.status
-    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company', {
-      params: {
-        confirmStatus: confirmStatus
-      }
-    })
-    // Map RecordID to id for table component compatibility
-    return response.data.rows.map(record => ({
-      ...record,
-      id: record.RecordID
-    }))
+  async getReconciliationData(): Promise<ReconciliationRecord[]> {
+    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company')
+    return response.data.rows
   },
 
   async getReconciliationStats(): Promise<ReconciliationStats> {

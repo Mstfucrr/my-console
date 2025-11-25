@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { addressData } from '@/modules/citiesData'
-import { ShoppingCart } from 'lucide-react'
 import { paymentMethods } from './constants'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
@@ -29,7 +28,6 @@ export function CreateOrderView() {
   return (
     <div className='flex flex-col gap-6 pt-6 pb-16 max-sm:p-0'>
       <div className='flex items-center gap-2'>
-        <ShoppingCart className='h-5 w-5' />
         <h1 className='text-2xl font-semibold'>Yeni Sipariş Oluştur</h1>
       </div>
 

@@ -9,7 +9,7 @@ import { defaultOrderFilters, useOrders } from '../../context/OrdersContext'
 import type { OrderFilterProperties } from '../../types'
 
 const statusOptions: FilterOption[] = [
-  { value: 'all', label: 'Tüm Durumlar' },
+  { value: 'all', label: 'Durumlar' },
   { value: OrderStatusesGroups.CREATED, label: OrderStatusGroup[OrderStatusesGroups.CREATED].label },
   { value: OrderStatusesGroups.SHIPPED, label: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label },
   { value: OrderStatusesGroups.DELIVERED, label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label },

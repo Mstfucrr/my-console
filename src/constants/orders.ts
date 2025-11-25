@@ -20,22 +20,26 @@ export const OrderStatusGroup = {
   [OrderStatusesGroups.CREATED]: {
     label: 'Beklemede',
     color: '#fb923c',
-    icon: ClockIcon
+    icon: ClockIcon,
+    value: 0
   },
   [OrderStatusesGroups.SHIPPED]: {
     label: 'Yola Çıktı',
     color: '#f59e0b',
-    icon: Motorcycle
+    icon: Motorcycle,
+    value: 3
   },
   [OrderStatusesGroups.DELIVERED]: {
     label: 'Teslim Edildi',
     color: '#16a34a',
-    icon: CheckCircle
+    icon: CheckCircle,
+    value: 1
   },
   [OrderStatusesGroups.CANCELLED]: {
     label: 'İptal Edildi',
     color: '#ef4444',
-    icon: XCircle
+    icon: XCircle,
+    value: 5
   }
 } as const
 
