@@ -1,4 +1,4 @@
-import { isSameDateRange } from '@/lib/utils'
+import { isSameDateRange } from '@/lib/utils/date'
 import { useEffect, useMemo, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 

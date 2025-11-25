@@ -3,8 +3,8 @@ import { BasicDataTable } from '@/components/basic-data-table'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterToggleButton } from '@/components/ui/filter-card'
-import { PaymentMethodBadge, StatusBadge } from '@/modules/orders/components/Badges'
-import { formatCurrencyTRY } from '@/modules/orders/utils'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
+import { OrderStatusBadge, PaymentMethodBadge } from '@/modules/orders/components/Badges'
 import { OrderStatusesGroups } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
@@ -46,8 +46,8 @@ const columns: ColumnDef<ReportRecord>[] = [
     accessorKey: 'Status',
     header: 'Durum',
     cell: ({ row }) => {
-      const status = row.getValue('Status') as OrderStatusesGroups
-      return <StatusBadge status={OrderStatusesGroups.DELIVERED} />
+      const status = row.getValue('Status') === 1 ? OrderStatusesGroups.DELIVERED : OrderStatusesGroups.CANCELLED
+      return <OrderStatusBadge status={status} />
     }
   },
   {

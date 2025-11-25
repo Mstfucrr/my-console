@@ -8,7 +8,7 @@ export function getItem(key: string) {
   return ''
 }
 
-const TOKEN_KEY = 'token'
+const TOKEN_KEY = 'user'
 
 interface TokenType {
   accessToken: string | null
@@ -45,11 +45,8 @@ export function getItemJson(key: string) {
 
 export function getOrDefault<T>(key: string, defaultObject: T) {
   const item = localStorage.getItem(key)
-  if (item) {
-    return JSON.parse(item) as T
-  }
-
-  return defaultObject
+  if (!item) return defaultObject
+  return JSON.parse(item) as T
 }
 
 export function setItem(key: string, value: string) {

@@ -1,4 +1,4 @@
-import { ChartDataPoint, OrderStatusesGroups } from '@/types'
+import { OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
 
 export type OrdersByStatus = {
@@ -20,12 +20,6 @@ export interface DashboardStats {
   deliveredOrder: number
   inProgressOrder: number
   cancelOrder: number
-}
-
-export interface DashboardGraphs {
-  orderCount: ChartDataPoint[]
-  revenue: ChartDataPoint[]
-  deliveryTime: ChartDataPoint[]
 }
 
 export type Stats = {

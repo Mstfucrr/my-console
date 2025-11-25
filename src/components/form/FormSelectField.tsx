@@ -5,8 +5,8 @@ import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
 import { ScrollArea } from '../ui/scroll-area'
 
 interface SelectOption {
-  value: string
-  label: string
+  value: string | number
+  label: string | number
 }
 
 interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 'value' | 'onValueChange'> {
@@ -55,7 +55,7 @@ export function FormSelectField<T extends FieldValues>({
             {options.length > 0 ? (
               <ScrollArea className='max-h-48 overflow-y-auto'>
                 {options.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
+                  <SelectItem key={option.value} value={option.value.toString()}>
                     {option.label}
                   </SelectItem>
                 ))}

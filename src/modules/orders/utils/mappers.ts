@@ -25,14 +25,6 @@ export function mapOrderListItemToOrder(item: OrderListItemResponse): Order {
           position: [0, 0] // Backend'den gelmiyor
         }
       : undefined,
-    restaurant: {
-      id: '',
-      name: '',
-      address: '',
-      phone: '',
-      isActive: true,
-      createdAt: ''
-    }, // Backend'den gelmiyor
     paymentMethod: item.paymentType,
     channel: item.channel as OrderChannel,
     customerPosition: [0, 0] // Backend'den gelmiyor
@@ -60,14 +52,6 @@ export function mapOrderDetailToOrder(detail: OrderDetailResponse): Order {
               : [0, 0]
         }
       : undefined,
-    restaurant: {
-      id: '',
-      name: '',
-      address: '',
-      phone: '',
-      isActive: true,
-      createdAt: ''
-    },
     paymentMethod: detail.paymentMethod,
     channel: detail.channel as OrderChannel,
     customerPosition: [0, 0]

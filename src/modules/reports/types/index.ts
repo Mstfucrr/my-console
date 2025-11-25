@@ -22,10 +22,3 @@ export interface ReportsFilters {
   }
   paymentMethod: string
 }
-
-export interface ReportsStats {
-  totalOrders: number
-  totalRevenue: number
-  totalFees: number
-  netRevenue: number
-}

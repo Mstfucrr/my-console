@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
-import { cn, isSameDateRange } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { isSameDateRange } from '@/lib/utils/date'
 import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
 interface DateRangePickerProps {

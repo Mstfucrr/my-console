@@ -1,3 +1,4 @@
+import { FilterOption } from '@/components/ui/filter-card'
 import { z } from 'zod'
 
 const transformPriceToNumber = (price: string) => {
@@ -45,12 +46,7 @@ export const createOrderSchema = z.object({
   ringDoorBell: z.boolean().default(true)
 })
 
-export interface PaymentMethodOption {
-  value: string
-  label: string
-}
-
-export const paymentMethods: PaymentMethodOption[] = [
+export const paymentMethods: FilterOption[] = [
   { value: 'cash', label: 'Nakit' },
   { value: 'card', label: 'Kredi Kartı' },
   { value: 'online', label: 'Online Ödeme' }

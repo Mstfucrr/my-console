@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { LogOut } from 'lucide-react'
 
-const UserMenu = () => {
+export function LogoutButton() {
   const { logout } = useAuth()
 
   const isSmallerThanTablet = useIsSmallerThanTablet()
@@ -27,5 +27,3 @@ const UserMenu = () => {
     </ConfirmButton>
   )
 }
-
-export default UserMenu

@@ -29,11 +29,6 @@ export interface IVerifyOtpResponse {
   accountId: string
 }
 
-// Backend LogoutDto'ya uygun
-export interface ILogoutRequest {
-  accessToken: string
-}
-
 // Backend RefreshTokenDto'ya uygun
 export interface IRefreshTokenRequest {
   refreshToken: string

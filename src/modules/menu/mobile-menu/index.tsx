@@ -5,16 +5,16 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIsDesktop } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { menusConfig } from '@/modules/menu/menus'
-import { useSidebar } from '@/store/sidebar'
+import { useSidebar } from '@/store/menu'
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { CreateOrderButton } from '../common/create-order-button'
+import { LogoutButton } from '../common/logout-button'
 import { MenuItem } from '../common/menu-item'
 import { NotificationsPopover } from '../common/notifications-popover'
 import { SupportDialog } from '../common/support-dialog'
-import UserMenu from '../common/user-menu'
 
 export function MobileMenu() {
   const { mobileMenu, setMobileMenu } = useSidebar()
@@ -72,8 +72,7 @@ export function MobileMenu() {
           </Button>
           <CreateOrderButton />
           <NotificationsPopover />
-          {/* <SupportDialog /> */}
-          <UserMenu />
+          <LogoutButton />
         </div>
       </div>
       <div className='fixed right-5 bottom-5 z-50'>

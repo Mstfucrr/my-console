@@ -1,6 +1,6 @@
 import { privateAxiosInstance } from '@/lib/axios'
 import type { ReportsFilterProperties } from '../components/reports-filters'
-import type { ReportRecord, ReportsStats } from '../types'
+import type { ReportRecord } from '../types'
 
 export const reportsService = {
   async getReports(filters?: ReportsFilterProperties): Promise<ReportRecord[]> {
@@ -15,16 +15,5 @@ export const reportsService = {
     })
 
     return ordersResponse.data.rows
-  },
-
-  async getReportsStats(filters?: ReportsFilterProperties): Promise<ReportsStats> {
-    const data = await this.getReports(filters)
-
-    return {
-      totalOrders: data.length,
-      totalRevenue: data.reduce((sum, item) => sum + item.TotalAmount, 0),
-      totalFees: 0,
-      netRevenue: 0
-    }
   }
 }

@@ -1,8 +1,6 @@
-import { getToken } from '@/lib/local-storage-helper'
+import { getToken, removeToken, setToken } from '@/lib/local-storage-helper'
 import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
-
-const STORAGE_KEY = 'user'
 
 // Backend hata yanıt formatı
 interface BackendError {
@@ -60,7 +58,7 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
 
   if (isAuthError(error) && !window.location.pathname.includes('/login')) {
     console.error('auth error', error)
-    localStorage.removeItem(STORAGE_KEY)
+    removeToken()
     window.location.href = '/login'
     return Promise.reject(error)
   }
@@ -102,12 +100,12 @@ export const tokenRefreshMiddleware = (instance: AxiosInstance, publicInstance: 
       try {
         const { refreshToken } = getToken()
         const { data } = await publicInstance.post<{ accessToken: string }>('/auth/refresh', { refreshToken })
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ accessToken: data.accessToken, refreshToken }))
+        setToken({ accessToken: data.accessToken, refreshToken })
         if (failedRequest.response?.config) {
           failedRequest.response.config.headers['Authorization'] = `Bearer ${data.accessToken}`
         }
       } catch {
-        localStorage.removeItem(STORAGE_KEY)
+        removeToken()
         console.log('token refresh error', failedRequest.response)
       }
     },

@@ -63,12 +63,6 @@ export const STATUS_TEXT: Record<ReconciliationConfirmStatus, string> = {
   [ReconciliationConfirmStatus.APPROVED]: 'Onaylandı'
 } as const
 
-export interface ReconciliationStats {
-  paidAmount: number
-  pendingPayment: number
-  totalTurnover: number
-}
-
 export interface ReconciliationFilterProperties {
   status?: ReconciliationConfirmStatus | 'all'
 }

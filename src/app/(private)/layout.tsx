@@ -3,7 +3,7 @@ import LayoutLoader from '@/components/layout-loader'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { useMounted } from '@/hooks/use-mounted'
 import { cn } from '@/lib/utils'
-import Menu from '@/modules/menu'
+import { TopbarAndMobileMenu } from '@/modules/menu'
 import { motion } from 'framer-motion'
 import 'leaflet/dist/leaflet.css'
 import { usePathname, useRouter } from 'next/navigation'
@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <AuthGuard>
-        <Menu />
+        <TopbarAndMobileMenu />
         <div className={cn('pt-20 transition-all duration-150 sm:pt-16')}>
           <div className='flex flex-col gap-4 pb-0'>
             <LayoutWrapper>

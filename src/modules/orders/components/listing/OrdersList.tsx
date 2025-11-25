@@ -5,12 +5,12 @@ import { Motorcycle } from '@/components/svg'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { maskLastName } from '@/lib/utils'
+import { formatDateTR } from '@/lib/utils/date'
+import { maskLastName } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
-import { formatDateTR } from '../../utils'
-import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
+import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import { OrderCard } from './OrderCard'
 import { OrderCardSkeleton } from './OrderCardSkeleton'
 
@@ -49,7 +49,7 @@ const columns: ColumnDef<Order>[] = [
       const order = row.original
       return (
         <div className='flex items-center gap-3'>
-          <StatusBadge status={order.status} />
+          <OrderStatusBadge status={order.status} />
           {order.courierInfo && (
             <TooltipProvider>
               <Tooltip>

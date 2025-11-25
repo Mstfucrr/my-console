@@ -13,7 +13,7 @@ import { useOrdersStats } from '../../hooks/useOrdersStats'
 
 interface Stat {
   title: string
-  id: 'total' | 'created' | 'shipped' | 'delivered' | 'cancelled'
+  id: 'total' | OrderStatusesGroups
   Icon: LucideIcon
   color: string
   value: number
@@ -29,28 +29,28 @@ const statsList: Array<Stat> = [
   },
   {
     title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
-    id: 'created',
+    id: OrderStatusesGroups.CREATED,
     Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED],
     value: 0
   },
   {
     title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
-    id: 'shipped',
+    id: OrderStatusesGroups.SHIPPED,
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED],
     value: 0
   },
   {
     title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
-    id: 'delivered',
+    id: OrderStatusesGroups.DELIVERED,
     Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED],
     value: 0
   },
   {
     title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
-    id: 'cancelled',
+    id: OrderStatusesGroups.CANCELLED,
     Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED],
     value: 0

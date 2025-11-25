@@ -1,27 +1,5 @@
 import { OrderChannel } from '@/types'
 
-function formatCurrencyTRY(amount: number | undefined, showSymbol = true) {
-  if (!amount) return '0.00 ₺'
-  if (showSymbol) return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺`
-  return `${amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })}`
-}
-
-function formatDateTR(dateString: string | undefined) {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString('tr-TR')
-}
-
-function formatDateTimeTR(dateString: string | undefined) {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-}
-
-const PAYMENT_METHOD_LABELS = {
-  cash: 'Nakit',
-  card: 'Kart',
-  online: 'Online'
-} as const
-
 const PAYMENT_METHOD_COLORS = {
   cash: 'bg-green-100 text-green-800',
   card: 'bg-blue-100 text-blue-800',
@@ -61,31 +39,4 @@ const CHANNEL_IMAGES: Record<OrderChannel, string> = {
   manuel: 'no-channel.png'
 } as const
 
-// Masking helpers
-const maskPhone = (phone: string) => {
-  // Show only first 3 and last 2 digits, mask the rest
-  if (!phone) return ''
-  const digits = phone.replace(/\D/g, '')
-  if (digits.length < 5) return '*'.repeat(digits.length)
-  return `${digits.slice(0, 3)}${'*'.repeat(digits.length - 5)}${digits.slice(-2)}`
-}
-
-const maskAddress = (address: string) => {
-  // Show only first 8 chars, mask the rest except last 4
-  if (!address) return ''
-  if (address.length <= 12) return address[0] + '*'.repeat(address.length - 2) + address[address.length - 1]
-  return `${address.slice(0, 8)}${'*'.repeat(6)}`
-}
-
-export {
-  CHANNEL_COLORS,
-  CHANNEL_IMAGES,
-  CHANNEL_LABELS,
-  formatCurrencyTRY,
-  formatDateTimeTR,
-  formatDateTR,
-  maskAddress,
-  maskPhone,
-  PAYMENT_METHOD_COLORS,
-  PAYMENT_METHOD_LABELS
-}
+export { CHANNEL_COLORS, CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS }

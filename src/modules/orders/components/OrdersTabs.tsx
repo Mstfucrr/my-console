@@ -78,6 +78,20 @@ export function OrdersTabs() {
     [activeOrdersCount, completedOrdersCount, isActiveTabDisabled, isCompletedTabDisabled]
   )
 
+  const orderListProps = useMemo(() => {
+    if (activeTab === 'active')
+      return {
+        orders: activeOrders,
+        emptyMessage: 'Aktif sipariş bulunamadı',
+        filteredEmptyMessage: 'Filtreye uygun aktif sipariş yok'
+      }
+    return {
+      orders: completedOrders,
+      emptyMessage: 'Tamamlanan sipariş bulunamadı',
+      filteredEmptyMessage: 'Filtreye uygun tamamlanan sipariş yok'
+    }
+  }, [activeTab, activeOrders, completedOrders])
+
   return (
     <Card>
       <CardHeader>
@@ -98,38 +112,26 @@ export function OrdersTabs() {
         <AnimatedFilters isOpen={showFilters}>
           <OrderFilters />
         </AnimatedFilters>
-        {activeTab === 'active' ? (
+        <div className='flex flex-col gap-4'>
           <OrdersList
-            orders={activeOrders}
+            orders={orderListProps.orders}
             isLoading={isLoading}
             isFetching={isFetching}
             viewMode={viewMode}
-            emptyMessage='Aktif sipariş yok'
-            filteredEmptyMessage='Filtreye uygun aktif sipariş yok'
+            emptyMessage={orderListProps.emptyMessage}
+            filteredEmptyMessage={orderListProps.filteredEmptyMessage}
             onViewDetails={handleViewDetails}
           />
-        ) : (
-          <div className='space-y-4'>
-            <OrdersList
-              orders={completedOrders}
-              isLoading={isLoading}
-              isFetching={isFetching}
-              viewMode={viewMode}
-              emptyMessage='Tamamlanan sipariş bulunamadı'
-              filteredEmptyMessage='Filtreye uygun tamamlanan sipariş yok'
-              onViewDetails={handleViewDetails}
-            />
 
-            {total > completedPagination.limit && (
-              <Pagination
-                page={completedPagination.page}
-                pageSize={completedPagination.limit}
-                total={total}
-                onPageChange={handleCompletedPageChange}
-              />
-            )}
-          </div>
-        )}
+          {total > completedPagination.limit && (
+            <Pagination
+              page={completedPagination.page}
+              pageSize={completedPagination.limit}
+              total={total}
+              onPageChange={handleCompletedPageChange}
+            />
+          )}
+        </div>
       </CardContent>
       <OrderDetailDialog order={selectedOrder} onClose={handleCloseModal} />
     </Card>

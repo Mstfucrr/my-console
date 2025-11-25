@@ -15,7 +15,7 @@ interface StatusBadgeProps {
   className?: string
 }
 
-export function StatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
+export function OrderStatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
   const groupInfo = OrderStatusGroup[status]
 
   return (

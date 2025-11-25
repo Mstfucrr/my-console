@@ -4,11 +4,13 @@ import { Motorcycle } from '@/components/svg'
 import { Card, CardContent } from '@/components/ui/card'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, maskLastName } from '@/lib/utils'
+import { cn } from '@/lib/utils'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
+import { formatDateTimeTR } from '@/lib/utils/date'
+import { maskLastName } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import { OrderStatusesGroups } from '@/types'
-import { formatCurrencyTRY, formatDateTimeTR } from '../../utils'
-import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
+import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 
 interface OrderCardProps {
   order: Order
@@ -61,7 +63,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
               {formatCurrencyTRY(order.totalAmount)}
             </div>
             <div className='flex flex-wrap items-center gap-2'>
-              <StatusBadge status={order.status} />
+              <OrderStatusBadge status={order.status} />
               <PaymentMethodBadge paymentMethod={order.paymentMethod} />
             </div>
           </div>

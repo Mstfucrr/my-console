@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { formatCurrencyTRY } from '@/modules/orders/utils'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
 import type { LucideIcon } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
 import { Skeleton } from './ui/skeleton'

@@ -5,15 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Separator } from '@/components/ui/separator'
-import { maskLastName, maskPhone } from '@/lib/utils'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
+import { formatDateTimeTR } from '@/lib/utils/date'
+import { maskAddress, maskLastName, maskPhone } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
 import { ordersService } from '../../service'
-import { formatCurrencyTRY, formatDateTimeTR, maskAddress } from '../../utils'
-import { ChannelBadge, PaymentMethodBadge, StatusBadge } from '../Badges'
+
+import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 import { OrderDetailSkeleton } from './OrderDetailSkeleton'
 
@@ -114,7 +116,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Durum</span>
                           {displayOrder && (
-                            <StatusBadge className='max-sm:ml-2' status={displayOrder.status} variant='soft' />
+                            <OrderStatusBadge className='max-sm:ml-2' status={displayOrder.status} variant='soft' />
                           )}
                         </div>
                         <Separator />

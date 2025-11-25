@@ -1,10 +1,5 @@
 import { privateAxiosInstance } from '@/lib/axios'
-import {
-  ReconciliationConfirmStatus,
-  ReconciliationRecordResponse,
-  type ReconciliationRecord,
-  type ReconciliationStats
-} from '../types'
+import { ReconciliationConfirmStatus, ReconciliationRecordResponse, type ReconciliationRecord } from '../types'
 
 // Helper function to convert File to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -25,17 +20,6 @@ export const reconciliationService = {
   async getReconciliationData(): Promise<ReconciliationRecord[]> {
     const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company')
     return response.data.rows
-  },
-
-  async getReconciliationStats(): Promise<ReconciliationStats> {
-    const response = await privateAxiosInstance.get<ReconciliationStats>('/reconciliation/stats')
-
-    const data = response.data
-    return {
-      paidAmount: data.paidAmount,
-      pendingPayment: data.pendingPayment,
-      totalTurnover: data.totalTurnover
-    }
   },
 
   async exportReconciliationReport(dateRange?: { from: Date; to: Date }): Promise<void> {

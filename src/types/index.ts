@@ -16,7 +16,6 @@ export interface Order {
   updatedAt: string
   totalAmount: number
   courierInfo?: CourierInfo
-  restaurant: Restaurant
   paymentMethod: string
   channel: OrderChannel
   customerPosition: [number, number]
@@ -39,37 +38,6 @@ export interface CourierInfo {
   name: string
   licensePlate?: string
   position: [number, number]
-}
-
-// Dashboard İstatistikleri
-
-export interface ChartDataPoint {
-  label: string
-  value: number
-}
-
-export interface OrderStatusCount {
-  status: OrderStatusesGroups
-  count: number
-  percentage: number
-}
-
-// Restoran Yönetimi
-export interface Restaurant {
-  id: string
-  name: string
-  address: string
-  phone: string
-  isActive: boolean
-  createdAt: string
-}
-
-// Genel API Response
-export interface ApiResponse<T> {
-  success: boolean
-  data: T
-  message?: string
-  error?: string
 }
 
 // Filtreleme ve Sayfalama

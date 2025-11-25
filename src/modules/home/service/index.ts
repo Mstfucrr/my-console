@@ -1,8 +1,8 @@
 import { privateAxiosInstance } from '@/lib/axios'
-import { formatDateForApi } from '@/lib/utils'
+import { formatDateForApi } from '@/lib/utils/date'
 import { LatestOrder } from '@/types'
 import { DateRange } from 'react-day-picker'
-import type { DashboardGraphs, DashboardStats } from '../types'
+import type { DashboardStats } from '../types'
 
 class DashboardService {
   async getStats(dateRange?: DateRange): Promise<DashboardStats> {
@@ -23,28 +23,6 @@ class DashboardService {
       }
     })
     return data.orders
-  }
-
-  async getGraphs(dateRange?: DateRange): Promise<DashboardGraphs> {
-    const { data } = await privateAxiosInstance.get('/dashboard/graphs', {
-      params: {
-        startDate: formatDateForApi(dateRange?.from),
-        endDate: formatDateForApi(dateRange?.to)
-      }
-    })
-
-    if (!data)
-      return {
-        orderCount: [],
-        revenue: [],
-        deliveryTime: []
-      }
-
-    return {
-      orderCount: data['order-count'],
-      revenue: data.revenue,
-      deliveryTime: data['delivery-time']
-    }
   }
 }
 
