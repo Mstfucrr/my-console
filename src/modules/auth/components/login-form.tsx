@@ -3,6 +3,7 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Lock, Mail, User } from 'lucide-react'
+import { Turnstile } from 'next-turnstile'
 import Link from 'next/link'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -71,7 +72,7 @@ const LogInForm = () => {
             placeholder='Şifrenizi giriniz'
           />
 
-          {/* <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY} theme='light' onVerify={setTurnstileToken} /> */}
+          <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY} theme='light' />
 
           <div className='flex justify-end'>
             <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
