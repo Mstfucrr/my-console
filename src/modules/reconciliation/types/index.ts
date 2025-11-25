@@ -64,13 +64,11 @@ export const STATUS_TEXT: Record<ReconciliationConfirmStatus, string> = {
 } as const
 
 export interface ReconciliationStats {
-  totalPending: number
-  totalApproved: number
-  totalFailed: number
-  monthlyRevenue: number
-  platformFees: number
-  netRevenue: number
+  paidAmount: number
+  pendingPayment: number
+  totalTurnover: number
 }
+
 export interface ReconciliationFilterProperties {
   status?: ReconciliationConfirmStatus | 'all'
 }

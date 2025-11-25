@@ -37,20 +37,14 @@ export const reconciliationService = {
     }))
   },
 
-  async getReconciliationStats(filters?: ReconciliationFilterProperties): Promise<ReconciliationStats> {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500))
+  async getReconciliationStats(): Promise<ReconciliationStats> {
+    const response = await privateAxiosInstance.get<ReconciliationStats>('/reconciliation/stats')
 
-    // Get filtered data for accurate stats
-    const data = await this.getReconciliationData(filters)
-
+    const data = response.data
     return {
-      totalApproved: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.APPROVED).length,
-      totalPending: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.PENDING).length,
-      totalFailed: data.filter(item => item.ConfirmStatus === ReconciliationConfirmStatus.FAILED).length,
-      monthlyRevenue: data.reduce((sum, item) => sum + item.TotalAmount, 0),
-      platformFees: data.reduce((sum, item) => sum + item.TotalPrePaidAmount, 0),
-      netRevenue: data.reduce((sum, item) => sum + item.TotalDeliveryAmount, 0)
+      paidAmount: data.paidAmount,
+      pendingPayment: data.pendingPayment,
+      totalTurnover: data.totalTurnover
     }
   },
 

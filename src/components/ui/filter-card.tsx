@@ -89,7 +89,7 @@ export function SearchInput({
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}
-          size='md'
+          size='sm'
           color={isActive ? 'info' : undefined}
           variant={isActive ? 'faded' : 'bordered'}
           className='w-full min-w-[180px]'
@@ -132,7 +132,7 @@ export function StatusSelect<T extends string>({
         <Select value={value} onValueChange={onChange}>
           <SelectTrigger
             className='min-w-[180px]'
-            size='md'
+            size='sm'
             color={isActive ? 'info' : undefined}
             variant={isActive ? 'faded' : 'bordered'}
           >
@@ -176,7 +176,7 @@ export function DateFilters({
         defaultDateRange={defaultDateRange}
         onDateRangeChange={onDateRangeChange}
         placeholder={placeholder}
-        size='sm'
+        size='xs'
         color={isActive ? 'info' : undefined}
         variant={isActive ? 'soft' : 'outline'}
         {...props}

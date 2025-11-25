@@ -25,8 +25,7 @@ export default function ReconciliationView() {
     refetch: refetchData
   } = useQuery({
     queryKey: ['reconciliation', filters],
-    queryFn: () => reconciliationService.getReconciliationData(filters),
-    staleTime: 60_000
+    queryFn: () => reconciliationService.getReconciliationData(filters)
   })
 
   // Fetch stats data with filters
@@ -34,10 +33,11 @@ export default function ReconciliationView() {
     data: stats,
     isLoading: isStatsLoading,
     error: statsError,
-    refetch: refetchStats
+    refetch: refetchStats,
+    isFetching: isStatsFetching
   } = useQuery({
-    queryKey: ['reconciliation-stats', filters],
-    queryFn: () => reconciliationService.getReconciliationStats(filters),
+    queryKey: ['reconciliation-stats'],
+    queryFn: () => reconciliationService.getReconciliationStats(),
     staleTime: 60_000
   })
 
@@ -71,19 +71,7 @@ export default function ReconciliationView() {
     <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
       {/* <ReconciliationHeader  /> */}
 
-      <ReconciliationStats
-        isLoading={isStatsLoading}
-        stats={
-          stats || {
-            totalApproved: 0,
-            totalPending: 0,
-            totalFailed: 0,
-            monthlyRevenue: 0,
-            platformFees: 0,
-            netRevenue: 0
-          }
-        }
-      />
+      <ReconciliationStats isLoading={isStatsLoading || isStatsFetching} stats={stats} />
 
       <ReconciliationInfoAlert />
 
