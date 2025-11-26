@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { addressData } from '@/modules/citiesData'
-import { ShoppingCartIcon } from 'lucide-react'
+import { BookOpenIcon, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
 import { paymentMethods } from './constants'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
@@ -38,7 +38,9 @@ export function CreateOrderView() {
             {/* Müşteri Bilgileri */}
             <Card>
               <CardHeader>
-                <CardTitle className='flex items-center gap-2 text-lg'>👤 Müşteri Bilgileri</CardTitle>
+                <CardTitle className='flex items-center gap-2 text-lg'>
+                  <UserIcon className='size-4.5' /> Müşteri Bilgileri
+                </CardTitle>
               </CardHeader>
               <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormInputField
@@ -69,7 +71,9 @@ export function CreateOrderView() {
             {/* Sipariş Bilgileri */}
             <Card>
               <CardHeader>
-                <CardTitle className='flex items-center gap-2 text-lg'>📋 Sipariş Bilgileri</CardTitle>
+                <CardTitle className='flex items-center gap-2 text-lg'>
+                  <BookOpenIcon className='size-4.5' /> Sipariş Bilgileri
+                </CardTitle>
               </CardHeader>
               <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormInputField
@@ -106,7 +110,9 @@ export function CreateOrderView() {
           {/* Adres Bilgileri */}
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2 text-lg'>🏠 Adres Bilgileri</CardTitle>
+              <CardTitle className='flex items-center gap-2 text-lg'>
+                <MapPinIcon className='size-4.5' /> Adres Bilgileri
+              </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'>
