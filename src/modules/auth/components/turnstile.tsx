@@ -15,7 +15,6 @@ export function AuthTurnstile({ turnstileState }: AuthTurnstileProps) {
   const errorMessage = useMemo(() => {
     if (turnstileStatus === 'error') return 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.'
     if (turnstileStatus === 'expired') return 'Güvenlik doğrulaması süresi doldu. Lütfen tekrar deneyiniz.'
-    if (turnstileStatus === 'required') return 'Lütfen güvenlik doğrulamasını tamamlayın.'
     return null
   }, [turnstileStatus])
 
