@@ -29,31 +29,27 @@ export function PageHeader({
   rightSide
 }: PageHeaderProps) {
   return (
-    <>
-      <title>{`${title} - Partner`}</title>
-
-      <Card className='max-sm:mt-5'>
-        <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2'>
-          <div>
-            <CardTitle className='flex items-center gap-2 text-2xl'>
-              {typeof Icon === 'string' ? (
-                <span className={`text-2xl ${iconColor}`}>{Icon}</span>
-              ) : (
-                <Icon className={`size-7 ${iconColor}`} />
-              )}{' '}
-              {title}
-            </CardTitle>
-            {description && <p className='text-muted-foreground mt-1 text-sm'>{description}</p>}
-          </div>
-          <div className='flex items-center gap-2'>
-            {actions}
-            {rightSide}
-            {showRefreshButton && onRefresh && (
-              <RefreshButton size='xs' isIconButton onClick={onRefresh} isLoading={isLoading} />
-            )}
-          </div>
-        </CardHeader>
-      </Card>
-    </>
+    <Card className='max-sm:mt-3'>
+      <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2'>
+        <div>
+          <CardTitle className='flex items-center gap-2 text-lg md:text-2xl'>
+            {typeof Icon === 'string' ? (
+              <span className={`text-2xl ${iconColor}`}>{Icon}</span>
+            ) : (
+              <Icon className={`size-7 ${iconColor}`} />
+            )}{' '}
+            {title}
+          </CardTitle>
+          {description && <p className='text-muted-foreground mt-1 text-sm'>{description}</p>}
+        </div>
+        <div className='flex items-center gap-2'>
+          {actions}
+          {rightSide}
+          {showRefreshButton && onRefresh && (
+            <RefreshButton size='xs' isIconButton onClick={onRefresh} isLoading={isLoading} />
+          )}
+        </div>
+      </CardHeader>
+    </Card>
   )
 }

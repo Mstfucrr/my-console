@@ -191,7 +191,7 @@ export function CreateOrderView() {
           </Card>
 
           {/* Form Butonları */}
-          <div className='flex items-center justify-end border-t pt-6'>
+          <div className='flex items-center justify-end'>
             <Button
               type='submit'
               disabled={isSubmitting}
