@@ -3,12 +3,7 @@
 import PageError from '@/components/page-error'
 import { useQuery } from '@tanstack/react-query'
 import ReconciliationTable from './components/reconciliation-table'
-import { reconciliationService } from './service'
-import type { ReconciliationFilterProperties } from './types'
-
-export const defaultReconciliationFilters: ReconciliationFilterProperties = {
-  status: 'all'
-}
+import { reconciliationService } from './service/reconciliation.service'
 
 export default function ReconciliationView() {
   const {

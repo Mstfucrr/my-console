@@ -1,14 +1,13 @@
 import { BasicDataTable } from '@/components/basic-data-table'
-import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MONTHS } from '@/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
+import { formatDateTR } from '@/lib/utils/date'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { ReconciliationRecord } from '../types'
-import { ReconciliationConfirmStatus, STATUS_TEXT } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
+import ReconciliationStatusBadge from './reconciliation-status-badge'
 
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
@@ -21,64 +20,45 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const STATUS_COLORS: Record<ReconciliationConfirmStatus, BadgeProps['color']> = {
-  [ReconciliationConfirmStatus.PENDING]: 'warning',
-  [ReconciliationConfirmStatus.FAILED]: 'destructive',
-  [ReconciliationConfirmStatus.APPROVED]: 'success'
-} as const
-
-// Helper function to format period
-const formatPeriod = (record: ReconciliationRecord): string => {
-  if (record.RecordPeriodName) {
-    return record.RecordPeriodName
-  }
-
-  return `${record.RecordPeriod}. Dönem - ${MONTHS[record.RecordMonth - 1]} ${record.RecordYear}`
-}
-
 const columns: ColumnDef<ReconciliationRecord>[] = [
   {
-    accessorKey: 'RecordPeriodName',
+    accessorKey: 'period',
     header: 'Dönem',
-    cell: ({ row }) => <span className='font-medium'>{formatPeriod(row.original)}</span>
+    cell: ({ row }) => <span className='font-medium'>{row.original.period}</span>
   },
   {
-    accessorKey: 'TotalAmount',
+    accessorKey: 'totalOrderAmount',
     header: 'Toplam Sipariş Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('TotalAmount') as number, false)
+    cell: ({ row }) => formatCurrency(row.original.totalOrderAmount, false)
   },
   {
-    accessorKey: 'OrderCount',
+    accessorKey: 'distributionCount',
     header: 'Dağıtım Adedi',
     meta: { align: 'right' },
-    cell: ({ row }) => row.getValue('OrderCount')
+    cell: ({ row }) => row.original.distributionCount
   },
   {
-    accessorKey: 'TotalDeliveryAmount',
+    accessorKey: 'totalDeliveryAmount',
     header: 'Toplam Teslimat Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('TotalDeliveryAmount') as number, false)
+    cell: ({ row }) => formatCurrency(row.original.totalDeliveryAmount, false)
   },
   {
-    accessorKey: 'RestaurantPaymentAmount',
+    accessorKey: 'restaurantPaymentAmount',
     header: 'Restoran Ödeme Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('RestaurantPaymentAmount') as number, false)
+    cell: ({ row }) => formatCurrency(row.original.restaurantPaymentAmount, false)
   },
   {
-    accessorKey: 'ConfirmStatus',
+    accessorKey: 'status',
     header: 'Durum',
-    size: 20,
-    maxSize: 20,
-    cell: ({ row }) => {
-      const status = row.getValue('ConfirmStatus') as ReconciliationConfirmStatus
-      return (
-        <Badge variant='outline' color={STATUS_COLORS[status] || 'secondary'}>
-          {STATUS_TEXT[status]}
-        </Badge>
-      )
-    }
+    cell: ({ row }) => <ReconciliationStatusBadge status={row.original.status} />
+  },
+  {
+    accessorKey: 'ConfirmDate',
+    header: 'Onay Tarihi',
+    cell: ({ row }) => (row.original.ConfirmDate ? formatDateTR(row.original.ConfirmDate) : '-')
   },
   {
     id: 'actions',
@@ -90,10 +70,20 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
 
       return (
         <div className='flex flex-row items-center gap-2'>
-          <Button variant='outline' color='success' onClick={() => handleOpenModal?.('approve', row.original)}>
+          <Button
+            size='xs'
+            variant='outline'
+            color='success'
+            onClick={() => handleOpenModal?.('approve', row.original)}
+          >
             Onayla
           </Button>
-          <Button variant='outline' color='destructive' onClick={() => handleOpenModal?.('report', row.original)}>
+          <Button
+            size='xs'
+            variant='outline'
+            color='destructive'
+            onClick={() => handleOpenModal?.('report', row.original)}
+          >
             Kontrole Gönder
           </Button>
         </div>

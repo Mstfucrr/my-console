@@ -6,7 +6,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { type ReportsFilterProperties } from './components/reports-filters'
 import ReportsTable from './components/reports-table'
-import { reportsService } from './service/reportsService'
+import { reportsService } from './service/reports.service'
 
 export const defaultReportsFilters: ReportsFilterProperties = {
   search: '',

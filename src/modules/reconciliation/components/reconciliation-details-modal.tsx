@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { toast } from 'react-toastify'
-import { reconciliationService } from '../service'
+import { reconciliationService } from '../service/reconciliation.service'
 import type { ReconciliationRecord } from '../types'
 import { ApprovePage } from './approve-page'
 import { ReportPage } from './report-page'

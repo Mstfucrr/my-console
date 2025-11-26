@@ -1,8 +1,10 @@
 import { isSameDay, isSameHour, isSameMinute } from 'date-fns'
 import type { DateRange } from 'react-day-picker'
 
-export function formatDateTR(dateString: string | undefined) {
+export function formatDateTR(dateString: string | undefined, includeTime = false) {
   if (!dateString) return ''
+  if (!includeTime)
+    return new Date(dateString).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' })
   return new Date(dateString).toLocaleString('tr-TR')
 }
 
