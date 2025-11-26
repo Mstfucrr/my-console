@@ -1,29 +1,13 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-type TurnstileStatus = 'success' | 'error' | 'expired' | 'required'
+type TurnstileStatus = 'success' | 'error' | 'expired' | 'required' | 'loading'
 
-/**
- * Hook for managing Turnstile token state
- * Provides token state and handlers for success, error, and expire events
- *
- * @returns Object containing token, handlers, and reset function
- *
- * @example
- * ```tsx
- * const { token, handlers, resetToken } = useTurnstile()
- *
- * return (
- *   <>
- *     <AuthTurnstile {...handlers} />
- *     <button onClick={() => submit({ turnstileToken: token })}>Submit</button>
- *   </>
- * )
- * ```
- */
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 export function useTurnstile() {
-  const [turnstileStatus, setTurnstileStatus] = useState<TurnstileStatus>('required')
+  const [turnstileStatus, setTurnstileStatus] = useState<TurnstileStatus | undefined>(undefined)
   const [token, setToken] = useState<string | null>(null)
 
   const handleSuccess = useCallback((newToken: string) => {
@@ -46,13 +30,37 @@ export function useTurnstile() {
     setTurnstileStatus('required')
   }, [])
 
+  const handleLoad = useCallback(() => {
+    setTurnstileStatus('loading')
+  }, [])
+
+  useEffect(() => {
+    console.log('turnstileStatus', turnstileStatus)
+  }, [turnstileStatus])
+
+  const isValid = useMemo(() => {
+    if (isDevelopment || turnstileStatus === undefined || turnstileStatus === 'loading') return true
+    return turnstileStatus === 'success' && token !== null
+  }, [turnstileStatus, token])
+
+  const errorMessage = useMemo(() => {
+    if (isDevelopment || turnstileStatus === undefined || turnstileStatus === 'loading') return null
+    if (turnstileStatus === 'error') return 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.'
+    if (turnstileStatus === 'expired') return 'Güvenlik doğrulaması süresi doldu. Lütfen tekrar deneyiniz.'
+    if (turnstileStatus === 'required') return 'Lütfen güvenlik doğrulamasını tamamlayınız.'
+    return null
+  }, [turnstileStatus])
+
   return {
     token,
     turnstileStatus,
+    isValid,
+    errorMessage,
     handlers: {
       onSuccess: handleSuccess,
       onError: handleError,
-      onExpire: handleExpire
+      onExpire: handleExpire,
+      onLoad: handleLoad
     },
     resetToken
   }
