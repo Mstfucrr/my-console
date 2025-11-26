@@ -53,6 +53,7 @@ node-build:
   image: node:22.21.1-alpine
   before_script:
     - echo "🚀 Building for $ENVIRONMENT environment"
+    - echo CF key=$NEXT_PUBLIC_TURNSTILE_SITEKEY
     - apk add --no-cache figlet
     - figlet "Fiyuu Partners Build"
     - npm install -g pnpm
