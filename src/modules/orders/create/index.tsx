@@ -28,7 +28,7 @@ export function CreateOrderView() {
   } = useCreateOrder()
 
   return (
-    <div className='flex flex-col gap-6 pt-6 pb-16 max-sm:p-0'>
+    <div className='flex flex-col gap-6 pt-6 pb-16! max-sm:p-0'>
       <PageHeader title='Yeni Sipariş Oluştur' icon={ShoppingCartIcon} />
 
       <Form {...form}>
@@ -40,18 +40,16 @@ export function CreateOrderView() {
               <CardHeader>
                 <CardTitle className='flex items-center gap-2 text-lg'>👤 Müşteri Bilgileri</CardTitle>
               </CardHeader>
-              <CardContent className='space-y-4'>
-                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                  <FormInputField
-                    name='firstName'
-                    autoFocus
-                    required
-                    control={form.control}
-                    label='Ad'
-                    placeholder='Ahmet'
-                  />
-                  <FormInputField name='lastName' required control={form.control} label='Soyad' placeholder='Yılmaz' />
-                </div>
+              <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                <FormInputField
+                  name='firstName'
+                  autoFocus
+                  required
+                  control={form.control}
+                  label='Ad'
+                  placeholder='Ahmet'
+                />
+                <FormInputField name='lastName' required control={form.control} label='Soyad' placeholder='Yılmaz' />
                 <FormInputField
                   name='customerPhone'
                   required
@@ -73,7 +71,7 @@ export function CreateOrderView() {
               <CardHeader>
                 <CardTitle className='flex items-center gap-2 text-lg'>📋 Sipariş Bilgileri</CardTitle>
               </CardHeader>
-              <CardContent className='space-y-4'>
+              <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormInputField
                   name='preparationTime'
                   required
@@ -90,6 +88,17 @@ export function CreateOrderView() {
                   type='number'
                   placeholder='0.00'
                 />
+                <FormSelectField
+                  name='paymentTypeSId'
+                  control={form.control}
+                  label='Ödeme Tipi'
+                  placeholder='Ödeme tipi seçiniz'
+                  options={paymentMethods}
+                />
+                <div className='flex gap-4 self-center justify-self-center text-nowrap md:flex-col'>
+                  <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />
+                  <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' />
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -100,7 +109,7 @@ export function CreateOrderView() {
               <CardTitle className='flex items-center gap-2 text-lg'>🏠 Adres Bilgileri</CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <div className='relative grid grid-cols-1 gap-4 md:grid-cols-3'>
+              <div className='relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'>
                 <FormCommandSelectField
                   name='city'
                   required
@@ -132,9 +141,7 @@ export function CreateOrderView() {
                   }))}
                   disabled={!selectedDistrict}
                 />
-              </div>
 
-              <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <FormInputField
                   name='street'
                   required
@@ -150,67 +157,42 @@ export function CreateOrderView() {
                   placeholder='123'
                 />
                 <FormInputField name='floor' control={form.control} label='Kat' placeholder='3' />
-              </div>
 
-              <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <FormInputField name='buildingName' control={form.control} label='Bina Adı' placeholder='Plaza Adı' />
                 <FormInputField name='doorNumber' required control={form.control} label='Daire No' placeholder='12' />
                 <FormInputField name='postalCode' control={form.control} label='Posta Kodu' placeholder='34710' />
               </div>
 
-              <FormTextareaField
-                name='fullAddress'
-                required
-                control={form.control}
-                label='Tam Adres'
-                placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'
-                rows={3}
-              />
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                <FormTextareaField
+                  name='fullAddress'
+                  required
+                  control={form.control}
+                  label='Tam Adres'
+                  placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'
+                  rows={3}
+                />
 
-              <FormTextareaField
-                name='addressDirection'
-                control={form.control}
-                label='Adres Tarifi'
-                placeholder='Apartman kapısı mavi renkte, zil 3. katta...'
-                rows={2}
-              />
+                <FormTextareaField
+                  name='addressDirection'
+                  control={form.control}
+                  label='Adres Tarifi'
+                  placeholder='Apartman kapısı mavi renkte, zil 3. katta...'
+                  rows={2}
+                />
+              </div>
             </CardContent>
           </Card>
 
-          {/* Ödeme ve Teslimat Bilgileri */}
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-            {/* Ödeme Bilgileri */}
-            <Card>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2 text-lg'>💳 Ödeme Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FormSelectField
-                  name='paymentTypeSId'
-                  control={form.control}
-                  label='Ödeme Tipi'
-                  placeholder='Ödeme tipi seçiniz'
-                  options={paymentMethods}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Teslimat Bilgileri */}
-            <Card>
-              <CardHeader>
-                <CardTitle className='flex items-center gap-2 text-lg'>🚚 Teslimat Bilgileri</CardTitle>
-              </CardHeader>
-              <CardContent className='space-y-4'>
-                <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />
-
-                <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' />
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Form Butonları */}
           <div className='flex items-center justify-end border-t pt-6'>
-            <Button type='submit' disabled={isSubmitting} color='success' size='sm' className='min-w-[120px]'>
+            <Button
+              type='submit'
+              disabled={isSubmitting}
+              color='success'
+              size='sm'
+              className='min-w-[120px] max-sm:w-full'
+            >
               {isSubmitting ? 'Oluşturuluyor...' : 'Siparişi Oluştur'}
             </Button>
           </div>

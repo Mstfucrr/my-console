@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 type TurnstileStatus = 'success' | 'error' | 'expired' | 'required' | 'loading'
 
@@ -34,10 +34,6 @@ export function useTurnstile() {
     setTurnstileStatus('loading')
   }, [])
 
-  useEffect(() => {
-    console.log('turnstileStatus', turnstileStatus)
-  }, [turnstileStatus])
-
   const isValid = useMemo(() => {
     if (isDevelopment || turnstileStatus === undefined || turnstileStatus === 'loading') return true
     return turnstileStatus === 'success' && token !== null
@@ -45,10 +41,8 @@ export function useTurnstile() {
 
   const errorMessage = useMemo(() => {
     if (isDevelopment || turnstileStatus === undefined || turnstileStatus === 'loading') return null
-    if (turnstileStatus === 'error') return 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.'
-    if (turnstileStatus === 'expired') return 'Güvenlik doğrulaması süresi doldu. Lütfen tekrar deneyiniz.'
-    if (turnstileStatus === 'required') return 'Lütfen güvenlik doğrulamasını tamamlayınız.'
-    return null
+    else if (turnstileStatus === 'error') return 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyiniz.'
+    else return null
   }, [turnstileStatus])
 
   return {

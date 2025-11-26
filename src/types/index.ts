@@ -16,7 +16,7 @@ export interface Order {
   updatedAt: string
   totalAmount: number
   courierInfo?: CourierInfo
-  paymentMethod: string
+  paymentType: string
   channel: OrderChannel
   customerPosition: [number, number]
 }
@@ -56,9 +56,6 @@ export interface PaginationOptions {
 export interface PaginatedResponse<T> {
   data: T[]
   total: number
-  page: number
-  limit: number
-  totalPages: number
 }
 
 export type OrderStatusStats = {

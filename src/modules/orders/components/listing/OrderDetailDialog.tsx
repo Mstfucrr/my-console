@@ -125,7 +125,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                           {displayOrder && (
                             <PaymentMethodBadge
                               className='w-full text-right max-sm:ml-2'
-                              paymentMethod={displayOrder.paymentMethod}
+                              paymentMethod={displayOrder.paymentType}
                             />
                           )}
                         </div>

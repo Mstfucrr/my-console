@@ -1,23 +1,8 @@
 // Backend API Response Types
 
-import { OrderStatusesGroups } from '@/types'
+import type { CourierInfo, Order } from '@/types'
 
-export interface OrderListItemResponse {
-  orderId: string
-  orderTime: string
-  systemEntryTime: string
-  departureTime?: string
-  deliveryTime?: string
-  totalOrderDuration?: number
-  customerName: string
-  products?: string
-  carrierName?: string
-  deliveryDateTime?: string
-  status: OrderStatusesGroups
-  paymentType: string
-  channel: string
-  totalAmount: number
-}
+export type OrderListItemResponse = Order
 
 export interface OrderListResponse {
   orders: OrderListItemResponse[]
@@ -26,25 +11,9 @@ export interface OrderListResponse {
   limit: number
 }
 
-export interface CarrierInfoResponse {
-  name?: string
-  plate?: string
-  latitude?: number
-  longitude?: number
-}
+export type OrderDetailResponse = Order
 
-export interface OrderDetailResponse {
-  orderId: string
-  customerName: string
-  paymentMethod: string
-  channel: string
-  time: string
-  lastUpdate: string
-  totalAmount: number
-  customerPhone: string
-  deliveryAddress: string
-  carrier?: CarrierInfoResponse
-}
+export type CarrierInfoResponse = CourierInfo
 
 export interface OrderStatsResponse {
   totalOrder: number
@@ -53,13 +22,9 @@ export interface OrderStatsResponse {
   cancelOrder: number
 }
 
-export interface LatestOrderItemResponse {
-  orderId: string
-  status: OrderStatusesGroups
-  customerName: string
-  date: string
-  totalAmount: number
-}
+import type { LatestOrder } from '@/types'
+
+export type LatestOrderItemResponse = LatestOrder
 
 export interface LatestOrdersResponse {
   orders: LatestOrderItemResponse[]

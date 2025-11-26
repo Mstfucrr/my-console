@@ -2,7 +2,7 @@ import { getOperationDateRange } from '@/constants'
 import { privateAxiosInstance } from '@/lib/axios/instances'
 import type { FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
 import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
-import { mapOrderDetailToOrder, mapOrderListItemToOrder, mapOrderStatsResponse } from '../utils/mappers'
+import { mapOrderStatsResponse } from '../utils/mappers'
 
 export const ordersService = {
   async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
@@ -35,21 +35,16 @@ export const ordersService = {
 
     const response = await privateAxiosInstance.get<OrderListResponse>('/orders/order-list', { params })
 
-    // Backend response'ını frontend tipine map et
-    const orders = response.data.orders.map(mapOrderListItemToOrder)
-
+    const { orders, total } = response.data
     return {
       data: orders,
-      total: response.data.total,
-      page: response.data.page,
-      limit: response.data.limit,
-      totalPages: Math.ceil(response.data.total / response.data.limit)
+      total
     }
   },
 
   async getOrderById(id: string): Promise<Order> {
     const response = await privateAxiosInstance.get<OrderDetailResponse>(`/orders/order/${id}`)
-    return mapOrderDetailToOrder(response.data)
+    return response.data
   },
 
   async getOrdersStats(): Promise<OrderStatusStats> {
