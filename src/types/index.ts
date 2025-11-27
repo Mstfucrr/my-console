@@ -29,9 +29,8 @@ export type OrderChannel =
   | 'tiklaGelsin'
   | 'araGelsin'
   | 'fiyuu'
+  | 'Console'
   | 'manuel'
-
-export type PaymentMethod = 'cash' | 'card' | 'online'
 
 export interface CourierInfo {
   id: string
