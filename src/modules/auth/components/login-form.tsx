@@ -80,7 +80,7 @@ export function LoginForm() {
 
           <div className='flex justify-end'>
             <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
-              Şifremi unuttum?
+              Şifremi unuttum
             </Link>
           </div>
 
