@@ -129,7 +129,7 @@ export function OrdersList({
 
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
-      {orders?.map(order => <OrderCard key={order.id} order={order} onViewDetails={onViewDetails} />)}
+      {orders?.map(order => <OrderCard key={order.orderId} order={order} onViewDetails={onViewDetails} />)}
     </div>
   )
 }

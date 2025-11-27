@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
+import { AuthTurnstile } from '../components/turnstile'
+import { useTurnstile } from '../hooks/useTurnstile'
 
 const schema = z.object({
   accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
@@ -21,6 +23,7 @@ type ForgotPasswordFormType = z.infer<typeof schema>
 
 export function ForgotPasswordView() {
   const router = useRouter()
+  const turnstileState = useTurnstile()
   const { mutateAsync: passwordRecover } = useMutation({
     mutationFn: (request: IPasswordRecoveryRequest) => authService.passwordRecovery(request)
   })
@@ -41,7 +44,8 @@ export function ForgotPasswordView() {
       // Backend'e password recovery isteği gönder
       const response = await passwordRecover({
         accountId: data.accountId,
-        email: data.email
+        email: data.email,
+        turnstileToken: turnstileState.token || undefined
       })
 
       toast.success('Şifre sıfırlama kodu e-posta adresinize gönderildi.')
@@ -84,6 +88,8 @@ export function ForgotPasswordView() {
             placeholder='E-posta giriniz'
             Icon={Mail}
           />
+
+          <AuthTurnstile turnstileState={turnstileState} />
 
           <LoadingButton
             className='w-full'

@@ -7,10 +7,10 @@ export interface LatestOrder {
 }
 // Sipariş Yönetimi
 export interface Order {
-  id: string
+  orderId: string
   customerName: string
   customerPhone: string
-  customerAddress: string
+  deliveryAddress: string
   status: OrderStatusesGroups
   createdAt: string
   updatedAt: string
@@ -18,7 +18,7 @@ export interface Order {
   courierInfo?: CourierInfo
   paymentType: string
   channel: OrderChannel
-  customerPosition: [number, number]
+  customerPosition?: [number, number]
 }
 
 export type OrderChannel =

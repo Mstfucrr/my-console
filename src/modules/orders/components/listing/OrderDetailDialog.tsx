@@ -31,12 +31,12 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [open, setOpen] = useState(false)
 
   // Eğer order'da customerPhone veya customerAddress yoksa, detay sayfasından çek
-  const needsDetailFetch = order && (!order.customerPhone || !order.customerAddress)
+  const needsDetailFetch = order && (!order.customerPhone || !order.deliveryAddress)
 
   const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
-    queryKey: ['orderDetail', order?.id],
-    queryFn: () => ordersService.getOrderById(order!.id),
-    enabled: Boolean(needsDetailFetch && order?.id)
+    queryKey: ['orderDetail', order?.orderId],
+    queryFn: () => ordersService.getOrderById(order!.orderId),
+    enabled: Boolean(needsDetailFetch && order?.orderId)
   })
 
   // Detay varsa onu kullan, yoksa mevcut order'ı kullan
@@ -111,7 +111,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                       <CardContent className='space-y-3'>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Sipariş ID</span>
-                          <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{displayOrder?.id}</span>
+                          <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{displayOrder?.orderId}</span>
                         </div>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Durum</span>
@@ -194,17 +194,17 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
                           <div className='pl-6 text-right text-sm leading-relaxed'>
-                            {displayOrder && displayOrder.customerAddress && (
+                            {displayOrder && displayOrder.deliveryAddress && (
                               <MaskedText
                                 className='items-start justify-end'
                                 maskFn={maskAddress}
-                                value={displayOrder.customerAddress}
+                                value={displayOrder.deliveryAddress}
                               />
                             )}
                             {displayOrder && (
                               <div className='text-muted-foreground mt-2 font-mono text-xs'>
-                                ({displayOrder.customerPosition[0].toFixed(6)},{' '}
-                                {displayOrder.customerPosition[1].toFixed(6)})
+                                ({displayOrder.customerPosition?.[0]?.toFixed(6)},{' '}
+                                {displayOrder.customerPosition?.[1]?.toFixed(6)})
                               </div>
                             )}
                           </div>

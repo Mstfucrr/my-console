@@ -7,8 +7,6 @@ import type {
   ILoginResponse,
   IPasswordRecoveryRequest,
   IPasswordRecoveryResponse,
-  IRefreshTokenRequest,
-  IRefreshTokenResponse,
   IVerifyOtpRequest,
   IVerifyOtpResponse
 } from '@/modules/auth/types'
@@ -40,43 +38,14 @@ class AuthService {
     await privateAxiosInstance.post('/auth/logout', { accessToken })
   }
 
-  async refreshToken(request: IRefreshTokenRequest): Promise<IRefreshTokenResponse> {
-    // const { data } = await publicAxiosInstance.post<IRefreshTokenResponse>('/auth/refresh', request)
-    // return data
-    console.log('refreshToken request', request)
-    return {
-      accessToken: '1234567890',
-      refreshToken: '1234567890'
-    }
-  }
-
   async passwordRecovery(request: IPasswordRecoveryRequest): Promise<IPasswordRecoveryResponse> {
     const { data } = await publicAxiosInstance.post<IPasswordRecoveryResponse>('/auth/password-recovery', request)
-    console.log('passwordRecovery response', data)
     return data
-    console.log('passwordRecovery request', request)
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    return {
-      recoverySessionId: 'recovery-session-123456',
-      message: 'Recovery code sent to your email'
-    }
   }
 
   async confirmCode(request: IConfirmCodeRequest): Promise<IConfirmCodeResponse> {
     const { data } = await publicAxiosInstance.post<IConfirmCodeResponse>('/auth/confirm-code', request)
-    console.log('confirmCode response', data)
     return data
-    // console.log('confirmCode request', request)
-    // await new Promise(resolve => setTimeout(resolve, 2000))
-
-    // // Mock validation
-    // if (request.code !== '123456') {
-    //   throw new Error('Invalid recovery code')
-    // }
-
-    return {
-      message: 'Password updated successfully'
-    }
   }
 }
 

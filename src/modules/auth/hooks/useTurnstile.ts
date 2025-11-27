@@ -12,25 +12,30 @@ export function useTurnstile() {
 
   const handleSuccess = useCallback((newToken: string) => {
     setToken(newToken)
+    console.log('turnstile success', newToken)
     setTurnstileStatus('success')
   }, [])
 
   const handleError = useCallback(() => {
     setToken(null)
+    console.log('turnstile error')
     setTurnstileStatus('error')
   }, [])
 
   const handleExpire = useCallback(() => {
     setToken(null)
+    console.log('turnstile expired')
     setTurnstileStatus('expired')
   }, [])
 
   const resetToken = useCallback(() => {
     setToken(null)
+    console.log('turnstile reset')
     setTurnstileStatus('required')
   }, [])
 
   const handleLoad = useCallback(() => {
+    console.log('turnstile load')
     setTurnstileStatus('loading')
   }, [])
 

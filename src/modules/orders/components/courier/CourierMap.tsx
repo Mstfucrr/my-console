@@ -15,7 +15,7 @@ Leaflet.Icon.Default.mergeOptions({
 interface CourierMapProps {
   courierInfo: CourierInfo
   courierPosition: [number, number]
-  customerPosition: [number, number]
+  customerPosition?: [number, number]
 }
 
 export default function CourierMap({ courierInfo, courierPosition, customerPosition }: CourierMapProps) {
@@ -58,14 +58,16 @@ export default function CourierMap({ courierInfo, courierPosition, customerPosit
       </Marker>
 
       {/* Customer Marker */}
-      <Marker position={customerPosition}>
-        <Popup>
-          <div className='text-center'>
-            <div className='font-semibold text-green-600'>🏠 Teslimat Adresi</div>
-            <div className='text-sm'>Müşteri Konumu</div>
-          </div>
-        </Popup>
-      </Marker>
+      {customerPosition && (
+        <Marker position={customerPosition}>
+          <Popup>
+            <div className='text-center'>
+              <div className='font-semibold text-green-600'>🏠 Teslimat Adresi</div>
+              <div className='text-sm'>Müşteri Konumu</div>
+            </div>
+          </Popup>
+        </Marker>
+      )}
     </MapContainer>
   )
 }
