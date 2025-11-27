@@ -36,8 +36,8 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormType) => {
     await handleLogin({
-      ...data,
-      turnstileToken: turnstileState.token || undefined
+      ...data
+      // turnstileToken: turnstileState.token || undefined
     })
   }
 

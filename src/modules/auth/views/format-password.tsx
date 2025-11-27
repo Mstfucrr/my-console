@@ -44,8 +44,8 @@ export function ForgotPasswordView() {
       // Backend'e password recovery isteği gönder
       const response = await passwordRecover({
         accountId: data.accountId,
-        email: data.email,
-        turnstileToken: turnstileState.token || undefined
+        email: data.email
+        // turnstileToken: turnstileState.token || undefined
       })
 
       toast.success('Şifre sıfırlama kodu e-posta adresinize gönderildi.')
