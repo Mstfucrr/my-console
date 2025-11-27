@@ -96,6 +96,7 @@ export function ForgotPasswordView() {
             isLoading={form.formState.isSubmitting}
             size='lg'
             loadingText='Gönderiliyor...'
+            disabled={!turnstileState.isValid}
           >
             Şifre Sıfırlama Kodu Gönder
           </LoadingButton>
