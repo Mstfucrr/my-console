@@ -84,13 +84,7 @@ export function LoginForm() {
             </Link>
           </div>
 
-          <LoadingButton
-            className='w-full'
-            isLoading={loadingState.login}
-            size='lg'
-            loadingText='Giriş Yapılıyor...'
-            disabled={!turnstileState.isValid}
-          >
+          <LoadingButton className='w-full' isLoading={loadingState.login} size='lg' loadingText='Giriş Yapılıyor...'>
             Giriş Yap
           </LoadingButton>
         </form>
