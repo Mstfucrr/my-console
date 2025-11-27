@@ -56,7 +56,7 @@ export function useTurnstile() {
     isValid,
     errorMessage,
     handlers: {
-      onSuccess: handleSuccess,
+      onVerify: handleSuccess,
       onError: handleError,
       onExpire: handleExpire,
       onLoad: handleLoad
