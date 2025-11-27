@@ -14,7 +14,8 @@ const CHANNEL_LABELS: Record<OrderChannel, string> = {
   tiklaGelsin: 'Tıkla Gelsin',
   araGelsin: 'Ara Gelsin',
   fiyuu: 'Fiyuu',
-  manuel: 'Manuel'
+  manuel: 'Manuel',
+  Console: 'Console'
 } as const
 
 const CHANNEL_COLORS: Record<OrderChannel, string> = {
@@ -25,7 +26,8 @@ const CHANNEL_COLORS: Record<OrderChannel, string> = {
   tiklaGelsin: 'bg-blue-100 text-blue-800',
   araGelsin: 'bg-yellow-100 text-yellow-800',
   fiyuu: 'bg-pink-100 text-pink-800',
-  manuel: 'bg-gray-100 text-gray-800'
+  manuel: 'bg-gray-100 text-gray-800',
+  Console: 'bg-gray-100 text-gray-800'
 } as const
 
 const CHANNEL_IMAGES: Record<OrderChannel, string> = {
@@ -36,7 +38,8 @@ const CHANNEL_IMAGES: Record<OrderChannel, string> = {
   tiklaGelsin: 'tiklagelsin.png',
   araGelsin: 'aragelsin.png',
   fiyuu: 'fiyuu.png',
-  manuel: 'no-channel.png'
+  manuel: 'no-channel.png',
+  Console: 'no-channel.png'
 } as const
 
 export { CHANNEL_COLORS, CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS }
