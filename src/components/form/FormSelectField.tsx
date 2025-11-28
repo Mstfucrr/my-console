@@ -2,7 +2,6 @@ import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, type SelectProps } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
-import { ScrollArea } from '../ui/scroll-area'
 
 interface SelectOption {
   value: string | number
@@ -53,13 +52,13 @@ export function FormSelectField<T extends FieldValues>({
           </SelectTrigger>
           <SelectContent>
             {options.length > 0 ? (
-              <ScrollArea className='max-h-48 overflow-y-auto'>
+              <div className='max-h-48 overflow-y-auto'>
                 {options.map(option => (
                   <SelectItem key={option.value} value={option.value.toString()}>
                     {option.label}
                   </SelectItem>
                 ))}
-              </ScrollArea>
+              </div>
             ) : (
               <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
                 Bir sonuç bulunamadı.

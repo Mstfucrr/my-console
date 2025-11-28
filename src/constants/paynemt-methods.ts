@@ -1,7 +1,6 @@
 import { FilterOption } from '@/components/ui/filter-card'
 
 export const PAYMENT_METHODS: FilterOption[] = [
-  { value: 'all', label: 'Ödeme yöntemleri' },
   { value: 'cash', label: 'Nakit' },
   { value: 'offline-credit-card', label: 'Kapıda Ödeme (Kredi/Banka Kartı)' },
   { value: 'offline-sodexo', label: 'Sodexo' },

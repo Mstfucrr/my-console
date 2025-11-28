@@ -1,13 +1,12 @@
 'use client'
 
 import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
-import { PAYMENT_METHODS } from '@/constants/paynemt-methods'
 import { useFilter } from '@/hooks/use-filter'
 import { OrderStatusesGroups } from '@/types'
 import { Search } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import { defaultReportsFilters } from '..'
-import { STATUS_OPTIONS } from '../constants'
+import { PAYMENT_METHOD_OPTIONS, STATUS_OPTIONS } from '../constants'
 
 const MIN_MAX_DATE_RANGE = {
   rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -67,7 +66,7 @@ export function ReportsFilters({
       />
 
       <StatusSelect
-        options={PAYMENT_METHODS}
+        options={PAYMENT_METHOD_OPTIONS}
         value={pendingFilters.paymentMethod ?? 'all'}
         onChange={value => updatePendingFilters({ paymentMethod: value })}
         placeholder='Ödeme yöntemi seçin'
