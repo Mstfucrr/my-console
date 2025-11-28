@@ -327,7 +327,7 @@ export function BasicDataTable<TData, TValue = never>({
         <AnimatePresence>{showOverlayLoader && <TableOverlayLoader label={loadingLabel} />}</AnimatePresence>
       </div>
 
-      {manualPagination && (
+      {manualPagination && total > pageSize && (
         <Pagination
           page={page}
           pageSize={pageSize}
