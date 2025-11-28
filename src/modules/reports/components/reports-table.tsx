@@ -29,7 +29,7 @@ const columns: ColumnDef<ReportRecord>[] = [
     accessorKey: 'OrderId',
     header: 'Sipariş ID',
     minSize: 100,
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('OrderId')}</div>
+    cell: ({ row }) => <div className='text-xs'>{row.getValue('OrderId')}</div>
   },
   {
     accessorKey: 'CreatedOn',

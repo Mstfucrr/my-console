@@ -53,7 +53,7 @@ export function ReportsFilters({
       hasPendingChanges={hasPendingChanges}
     >
       <SearchInput
-        placeholder='Sipariş no, müşteri adı veya telefon ara...'
+        placeholder='Sipariş ID veya Müşteri Adı ile arama yapın...'
         value={pendingFilters.search ?? ''}
         onChange={value => updatePendingFilters({ search: value })}
         Icon={Search}

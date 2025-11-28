@@ -22,7 +22,7 @@ export function getOperationDateRange(): { startDate: string; endDate: string } 
   const currentHour = now.getHours()
   const baseDate = new Date(now)
 
-  if (currentHour < 22) {
+  if (currentHour < 5) {
     baseDate.setDate(now.getDate() - 1)
   }
 
