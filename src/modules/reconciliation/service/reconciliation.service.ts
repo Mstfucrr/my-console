@@ -46,14 +46,16 @@ export const reconciliationService = {
     confirmRecordId: string | undefined,
     fileName?: string
   ): Promise<{ message: string; affectedRows: number }> {
+    const payload = {
+      recordID: parseInt(recordId, 10),
+      confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
+      confirmStatus: ReconciliationConfirmStatus.APPROVED,
+      fileName: fileName
+    }
+
     const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
       '/reconciliation/confirmation-process',
-      {
-        recordID: parseInt(recordId, 10),
-        confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
-        confirmStatus: ReconciliationConfirmStatus.APPROVED,
-        fileName: fileName || undefined
-      }
+      payload
     )
     return response.data
   },
@@ -64,15 +66,17 @@ export const reconciliationService = {
     description: string,
     fileName?: string
   ): Promise<{ message: string; affectedRows: number }> {
+    const payload = {
+      recordID: parseInt(recordId, 10),
+      confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
+      confirmStatus: ReconciliationConfirmStatus.FAILED,
+      note: description,
+      fileName: fileName
+    }
+
     const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
       '/reconciliation/confirmation-process',
-      {
-        recordID: parseInt(recordId, 10),
-        confirmRecordID: confirmRecordId ? parseInt(confirmRecordId, 10) : 0,
-        confirmStatus: ReconciliationConfirmStatus.FAILED,
-        note: description,
-        fileName: fileName || undefined
-      }
+      payload
     )
     return response.data
   }

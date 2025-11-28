@@ -25,7 +25,7 @@ export interface ReconciliationRecordResponse {
 export enum ReconciliationStatus {
   PENDING = 'pending',
   APPROVED = 'approved',
-  FAILED = 'failed'
+  FAILED = 'problematic'
 }
 
 export type ReconciliationStatusType =

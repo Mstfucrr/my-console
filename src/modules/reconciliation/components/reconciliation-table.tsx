@@ -63,6 +63,7 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     id: 'actions',
     header: 'İşlemler',
+    meta: { align: 'right' },
     cell: ({ row, table }) => {
       const handleOpenModal = table.options.meta?.handleOpenModal as
         | ((page: 'approve' | 'report', record: ReconciliationRecord) => void)
@@ -75,7 +76,7 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
       const isReportable = status === ReconciliationStatus.PENDING
 
       return (
-        <div className='flex flex-row items-center gap-2'>
+        <div className='flex flex-row items-center justify-end gap-2'>
           <Button
             size='xs'
             variant='outline'

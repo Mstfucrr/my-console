@@ -55,7 +55,7 @@ export function ReportPage({ onSubmit, isSubmitting }: ReportPageProps) {
               name='statementFile'
               control={form.control}
               label='Dosya Seçiniz'
-              accept='.jpeg,.doc,.docx,.xls,.xlsx,.pdf'
+              accept='.jpeg,.doc,.docx,.xls,.xlsx,.pdf,.jpg,.png'
               required
               maxSize={10 * 1024 * 1024}
             />
