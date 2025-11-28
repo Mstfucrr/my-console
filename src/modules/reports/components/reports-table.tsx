@@ -1,18 +1,18 @@
 import { AnimatedFilters } from '@/components/animated-filters'
-import { BasicDataTable } from '@/components/basic-data-table'
+import { BasicDataTable, BasicDataTableProps } from '@/components/basic-data-table'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterToggleButton } from '@/components/ui/filter-card'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { OrderStatusBadge, PaymentMethodBadge } from '@/modules/orders/components/Badges'
-import { OrderStatusesGroups } from '@/types'
+import { OrderStatusesGroups, PaginatedResponse } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { ReportRecord } from '../types'
 import { ReportsFilters, type ReportsFilterProperties } from './reports-filters'
 
 interface ReportsTableProps {
-  data: ReportRecord[]
+  data: PaginatedResponse<ReportRecord>['data']
   isLoading: boolean
   filters: ReportsFilterProperties
   onFiltersChange: (f: ReportsFilterProperties) => void
@@ -73,8 +73,9 @@ export default function ReportsTable({
   filters,
   onFiltersChange,
   onClearFilters,
-  onRefresh
-}: ReportsTableProps) {
+  onRefresh,
+  ...props
+}: ReportsTableProps & Omit<BasicDataTableProps<ReportRecord>, 'columns' | 'data'>) {
   const [showFilters, setShowFilters] = useState(true)
 
   return (
@@ -96,6 +97,7 @@ export default function ReportsTable({
           isLoading={isLoading}
           emptyLabel='Rapor kaydı bulunamadı'
           loadingLabel='Rapor kayıtları yükleniyor...'
+          {...props}
         />
       </CardContent>
     </Card>

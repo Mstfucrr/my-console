@@ -111,7 +111,7 @@ export function SearchInput({
   )
 }
 
-export function StatusSelect<T extends string>({
+export function StatusSelect<T extends string | number>({
   options,
   value,
   onChange,
@@ -130,7 +130,7 @@ export function StatusSelect<T extends string>({
     <div className='max-sm:w-full'>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>}
       <div className='flex flex-wrap items-center gap-2'>
-        <Select value={value} onValueChange={onChange}>
+        <Select value={value?.toString()} onValueChange={value => onChange(value as T)}>
           <SelectTrigger
             className='min-w-[180px]'
             size='sm'

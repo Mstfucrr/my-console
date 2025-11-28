@@ -2,6 +2,7 @@
 
 import PageError from '@/components/page-error'
 import { getOperationDateRange } from '@/constants'
+import { PaginationOptions } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { type ReportsFilterProperties } from './components/reports-filters'
@@ -21,20 +22,39 @@ export const defaultReportsFilters: ReportsFilterProperties = {
 export default function ReportsView() {
   const [filters, setFilters] = useState<ReportsFilterProperties>(defaultReportsFilters)
 
+  const [reportsPagination, setReportsPagination] = useState<PaginationOptions>({
+    page: 1,
+    limit: 20
+  })
+
+  const handleReportsPageSizeChange = (size: number) => {
+    setReportsPagination({ ...reportsPagination, limit: size })
+  }
+
+  const handleReportsPageChange = (page: number) => {
+    setReportsPagination({ ...reportsPagination, page })
+  }
+
   const {
-    data: reportsData = [],
+    data: reportsData,
     isLoading: isReportsLoading,
     isFetching: isReportsFetching,
     error: error,
     refetch: refetchReports
   } = useQuery({
-    queryKey: ['reports', filters],
-    queryFn: () => reportsService.getReports(filters),
+    queryKey: ['reports', filters, reportsPagination],
+    queryFn: () => reportsService.getReports(filters, reportsPagination),
     placeholderData: keepPreviousData
   })
 
   const handleFiltersChange = (newFilters: ReportsFilterProperties) => {
     setFilters(newFilters)
+  }
+
+  const handleRefresh = () => {
+    setReportsPagination({ ...reportsPagination, page: 1 })
+    setFilters(defaultReportsFilters)
+    refetchReports()
   }
 
   const handleClearFilters = () => {
@@ -45,7 +65,7 @@ export default function ReportsView() {
     return (
       <PageError
         errorMessage='Rapor verileri yüklenirken bir hata oluştu'
-        onRefresh={refetchReports}
+        onRefresh={handleRefresh}
         isLoading={isReportsFetching}
         title='Rapor Verileri Yüklenemedi'
         description='Rapor verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
@@ -55,12 +75,17 @@ export default function ReportsView() {
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
       <ReportsTable
-        data={reportsData}
+        data={reportsData?.data || []}
         isLoading={isReportsLoading || isReportsFetching}
         filters={filters}
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
         onRefresh={refetchReports}
+        onPageChange={handleReportsPageChange}
+        page={reportsPagination.page}
+        pageSize={reportsPagination.limit}
+        total={reportsData?.total}
+        onPageSizeChange={handleReportsPageSizeChange}
       />
     </div>
   )

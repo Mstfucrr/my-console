@@ -49,9 +49,6 @@ export function OrdersTabs() {
 
   const activeOrdersCount = useMemo(() => {
     if (!activeOrders) return 0
-    console.log('activeOrders', activeOrders.length)
-    console.log('stats.created', stats.created)
-    console.log('stats.shipped', stats.shipped)
     return hasActiveFilter ? activeOrders.length : stats.created + stats.shipped
   }, [activeOrders, stats.created, stats.shipped, hasActiveFilter])
 

@@ -8,8 +8,6 @@ export const ordersService = {
     const page = pagination?.page
     const limit = pagination?.limit
     const { startDate, endDate } = getOperationDateRange()
-    console.log('startDate', startDate)
-    console.log('endDate', endDate)
     // Backend'e gönderilecek query parametreleri
     const params: Record<string, string | number | string[] | undefined> = {
       page,
@@ -17,7 +15,6 @@ export const ordersService = {
       startDate,
       endDate
     }
-    console.log('params', params)
 
     // Status filtresi: Backend artık array kabul ediyor
     if (filters?.status && filters.status !== 'all') {

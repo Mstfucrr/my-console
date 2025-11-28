@@ -9,9 +9,9 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
+import { PAYMENT_METHODS } from '@/constants/paynemt-methods'
 import { addressData } from '@/modules/citiesData'
 import { BookOpenIcon, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
-import { paymentMethods } from './constants'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
 export function CreateOrderView() {
@@ -97,7 +97,7 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Ödeme Tipi'
                   placeholder='Ödeme tipi seçiniz'
-                  options={paymentMethods}
+                  options={PAYMENT_METHODS}
                 />
                 <div className='flex gap-4 self-center justify-self-center text-nowrap md:flex-col'>
                   <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />

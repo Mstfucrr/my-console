@@ -1,11 +1,13 @@
 'use client'
 
 import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
+import { PAYMENT_METHODS } from '@/constants/paynemt-methods'
 import { useFilter } from '@/hooks/use-filter'
+import { OrderStatusesGroups } from '@/types'
 import { Search } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import { defaultReportsFilters } from '..'
-import { PAYMENT_METHOD_OPTIONS, STATUS_OPTIONS } from '../constants'
+import { STATUS_OPTIONS } from '../constants'
 
 const MIN_MAX_DATE_RANGE = {
   rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -13,9 +15,9 @@ const MIN_MAX_DATE_RANGE = {
 }
 
 export interface ReportsFilterProperties {
-  status: string
-  search: string
-  paymentMethod: string
+  status: OrderStatusesGroups | 'all'
+  search?: string
+  paymentMethod?: string
   dateRange: DateRange
 }
 
@@ -34,13 +36,12 @@ export function ReportsFilters({
     hasPendingChanges,
     handleApplyFilters,
     handleClearFilters,
-    updatePendingFilters,
-    updateHotFilters
+    updatePendingFilters
   } = useFilter(filters, onFiltersChange, onClearFilters, defaultReportsFilters)
 
   // Handle date range change
   const handleDateRangeChange = (range: DateRange | undefined) => {
-    updateHotFilters({ dateRange: range })
+    updatePendingFilters({ dateRange: range })
   }
 
   return (
@@ -66,7 +67,7 @@ export function ReportsFilters({
       />
 
       <StatusSelect
-        options={PAYMENT_METHOD_OPTIONS}
+        options={PAYMENT_METHODS}
         value={pendingFilters.paymentMethod ?? 'all'}
         onChange={value => updatePendingFilters({ paymentMethod: value })}
         placeholder='Ödeme yöntemi seçin'
@@ -85,6 +86,11 @@ export function ReportsFilters({
         }}
         defaultDateRange={defaultReportsFilters.dateRange}
         defaultText='Bugün'
+        quickApplyable
+        quickClearable
+        quickClearableButtonProps={{
+          className: 'size-8 p-0'
+        }}
       />
     </FilterCard>
   )

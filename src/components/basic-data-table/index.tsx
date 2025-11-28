@@ -333,6 +333,7 @@ export function BasicDataTable<TData, TValue = never>({
           pageSize={pageSize}
           total={total ?? 0}
           onPageChange={newPage => onPageChange?.(newPage)}
+          onPageSizeChange={onPageSizeChange}
         />
       )}
     </div>

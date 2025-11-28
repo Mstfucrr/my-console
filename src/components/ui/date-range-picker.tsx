@@ -26,6 +26,8 @@ interface DateRangePickerProps {
   onApply?: () => void
   calendarProps?: React.ComponentProps<typeof Calendar>
   quickClearable?: boolean
+  quickClearableButtonProps?: ButtonProps
+  quickApplyable?: boolean
 }
 
 function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
@@ -47,6 +49,8 @@ export function DateRangePicker({
   onApply,
   calendarProps,
   quickClearable = false,
+  quickApplyable = false,
+  quickClearableButtonProps,
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
@@ -88,11 +92,14 @@ export function DateRangePicker({
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setTempDateRange(range)
+    if (quickApplyable && range) {
+      handleApply(range)
+    }
   }
 
-  const handleApply = () => {
+  const handleApply = (range?: DateRange) => {
     if (tempDateRange) {
-      const finalRange: DateRange = { ...tempDateRange }
+      const finalRange: DateRange = range ? range : { ...tempDateRange }
 
       if (enableTimeSelection && fromTime && tempDateRange.from) {
         const [hours, minutes] = fromTime.split(':').map(Number)
@@ -107,7 +114,7 @@ export function DateRangePicker({
       onDateRangeChange(finalRange)
     }
     onApply?.()
-    setIsOpen(false)
+    if (!quickApplyable) setIsOpen(false)
   }
 
   const formatDisplayDate = useCallback(
@@ -148,7 +155,12 @@ export function DateRangePicker({
           {dateRange && !isDefaultDateRange && quickClearable && (
             <>
               <ButtonGroupSeparator />
-              <Button onClick={handleClear} className='size-9 p-0 font-normal' {...props}>
+              <Button
+                onClick={handleClear}
+                className='size-9 p-0 font-normal'
+                {...props}
+                {...quickClearableButtonProps}
+              >
                 <FilterX className='size-4.5' />
               </Button>
             </>
@@ -204,11 +216,13 @@ export function DateRangePicker({
                 </Button>
               )}
               <Button variant='outline' size='xs' onClick={() => setIsOpen(false)}>
-                İptal
+                Kapat
               </Button>
-              <Button size='xs' onClick={handleApply}>
-                Uygula
-              </Button>
+              {!quickApplyable && (
+                <Button size='xs' onClick={() => handleApply()}>
+                  Uygula
+                </Button>
+              )}
             </div>
           </div>
         </PopoverContent>
