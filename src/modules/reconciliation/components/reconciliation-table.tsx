@@ -5,7 +5,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
-import type { ReconciliationRecord } from '../types'
+import { ReconciliationStatus, type ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
 import ReconciliationStatusBadge from './reconciliation-status-badge'
 
@@ -68,6 +68,12 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
         | ((page: 'approve' | 'report', record: ReconciliationRecord) => void)
         | undefined
 
+      const status = row.original.status
+
+      if (status === ReconciliationStatus.APPROVED) return 'Mutabıkız'
+
+      const isReportable = status === ReconciliationStatus.PENDING
+
       return (
         <div className='flex flex-row items-center gap-2'>
           <Button
@@ -78,14 +84,16 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
           >
             Onayla
           </Button>
-          <Button
-            size='xs'
-            variant='outline'
-            color='destructive'
-            onClick={() => handleOpenModal?.('report', row.original)}
-          >
-            Kontrole Gönder
-          </Button>
+          {isReportable && (
+            <Button
+              size='xs'
+              variant='outline'
+              color='destructive'
+              onClick={() => handleOpenModal?.('report', row.original)}
+            >
+              Kontrole Gönder
+            </Button>
+          )}
         </div>
       )
     }
