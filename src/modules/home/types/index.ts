@@ -15,13 +15,6 @@ export type RecentApiError = {
   statusCode: number
 }
 
-export interface DashboardStats {
-  totalOrder: number
-  deliveredOrder: number
-  inProgressOrder: number
-  cancelOrder: number
-}
-
 export type Stats = {
   title: string
   value: number

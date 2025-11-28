@@ -20,10 +20,10 @@ import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { formatDateTR } from '@/lib/utils/date'
+import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
-import type { DashboardStats } from './types'
 
 const defaultDateRange = {
   from: new Date(getOperationDateRange().startDate),
@@ -37,7 +37,7 @@ const MIN_MAX_DATE_RANGE = {
 
 type StatsList = {
   title: string
-  id: keyof DashboardStats
+  id: keyof OrderStatusStats
   Icon: LucideIcon
   color: string
   type?: 'currency'
@@ -46,25 +46,25 @@ type StatsList = {
 const statsList: Array<StatsList> = [
   {
     title: 'Toplam Sipariş',
-    id: 'totalOrder',
+    id: 'total',
     Icon: StatCardIcons.TotalOrders,
     color: 'text-blue-600'
   },
   {
     title: 'Teslim Edildi',
-    id: 'deliveredOrder',
+    id: 'delivered',
     Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
   },
   {
     title: 'Yola Çıktı',
-    id: 'inProgressOrder',
+    id: 'shipped',
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
   },
   {
     title: 'İptal Edildi',
-    id: 'cancelOrder',
+    id: 'cancelled',
     Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED]
   }
@@ -86,26 +86,30 @@ export default function DashboardView() {
     latestOrdersRefetch()
   }
 
+  const isEmptyStats = useMemo(
+    () => !stats || (stats?.delivered === 0 && stats?.shipped === 0 && stats?.cancelled === 0),
+    [stats]
+  )
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
-    if (!stats || (stats.deliveredOrder === 0 && stats.inProgressOrder === 0 && stats.cancelOrder === 0)) return []
+    if (isEmptyStats) return []
     return [
       {
         label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
-        value: stats?.deliveredOrder ?? 0,
+        value: stats?.delivered ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.DELIVERED].color
       },
       {
         label: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
-        value: stats?.inProgressOrder ?? 0,
+        value: stats?.shipped ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.SHIPPED].color
       },
       {
         label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
-        value: stats?.cancelOrder ?? 0,
+        value: stats?.cancelled ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.CANCELLED].color
       }
     ]
-  }, [stats])
+  }, [isEmptyStats, stats])
 
   const isDefaultDateRange = useMemo(() => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange), [dateRange])
 
@@ -157,7 +161,7 @@ export default function DashboardView() {
       {/* Stats */}
       <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
         {statsList.map(stat => (
-          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id] as number} {...stat} />
+          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id]} {...stat} />
         ))}
       </div>
 

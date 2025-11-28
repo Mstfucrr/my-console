@@ -1,11 +1,10 @@
 import { privateAxiosInstance } from '@/lib/axios'
 import { formatDateForApi } from '@/lib/utils/date'
-import { LatestOrder } from '@/types'
+import { LatestOrder, OrderStatusStats } from '@/types'
 import { DateRange } from 'react-day-picker'
-import type { DashboardStats } from '../types'
 
 class DashboardService {
-  async getStats(dateRange?: DateRange): Promise<DashboardStats> {
+  async getStats(dateRange?: DateRange): Promise<OrderStatusStats> {
     const { data } = await privateAxiosInstance.get('/dashboard/order-stats', {
       params: {
         startDate: formatDateForApi(dateRange?.from),

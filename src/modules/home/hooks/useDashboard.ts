@@ -1,12 +1,11 @@
-import { LatestOrder } from '@/types'
+import { LatestOrder, OrderStatusStats } from '@/types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { DateRange } from 'react-day-picker'
 import { dashboardService } from '../service'
-import type { DashboardStats } from '../types'
 
 export function useGetStats(
   dateRange?: DateRange,
-  options?: Omit<UseQueryOptions<DashboardStats, Error>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<OrderStatusStats, Error>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: ['dashboard-stats', JSON.stringify(dateRange)],
