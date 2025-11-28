@@ -64,7 +64,7 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
             </div>
             <div className='flex flex-wrap items-center gap-2'>
               <OrderStatusBadge status={order.status} />
-              <PaymentMethodBadge paymentMethod={order.paymentType} />
+              <PaymentMethodBadge showIcon paymentMethod={order.paymentType} IsPrepaid={order.isPrepaid} />
             </div>
           </div>
         </div>

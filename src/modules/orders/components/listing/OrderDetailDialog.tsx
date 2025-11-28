@@ -126,6 +126,8 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                             <PaymentMethodBadge
                               className='w-full text-right max-sm:ml-2'
                               paymentMethod={displayOrder.paymentType}
+                              showIcon
+                              IsPrepaid={displayOrder.isPrepaid}
                             />
                           )}
                         </div>

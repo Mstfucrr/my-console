@@ -16,10 +16,11 @@ export type OrderDetailResponse = Order
 export type CarrierInfoResponse = CourierInfo
 
 export interface OrderStatsResponse {
-  totalOrder: number
-  deliveredOrder: number
-  inProgressOrder: number
-  cancelOrder: number
+  created: number
+  shipped: number
+  delivered: number
+  cancelled: number
+  total: number
 }
 
 import type { LatestOrder } from '@/types'

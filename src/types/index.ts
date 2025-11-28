@@ -11,6 +11,8 @@ export interface Order {
   customerName: string
   customerPhone: string
   deliveryAddress: string
+  customerPosition?: [number, number]
+  isPrepaid: boolean
   status: OrderStatusesGroups
   createdAt: string
   updatedAt: string
@@ -18,7 +20,6 @@ export interface Order {
   courierInfo?: CourierInfo
   paymentType: string
   channel: OrderChannel
-  customerPosition?: [number, number]
 }
 
 export type OrderChannel =
