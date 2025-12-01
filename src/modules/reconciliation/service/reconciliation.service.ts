@@ -16,21 +16,15 @@ const fileToBase64 = (file: File): Promise<string> => {
   })
 }
 
-export const reconciliationService = {
+class ReconciliationService {
   async getReconciliationData(): Promise<ReconciliationRecord[]> {
     const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company')
     return response.data.rows
-  },
-
-  async exportReconciliationReport(dateRange?: { from: Date; to: Date }): Promise<void> {
-    // Simulate export functionality
-    console.log('Exporting reconciliation report', dateRange)
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  },
+  }
 
   async uploadFile(file: File): Promise<{ url: string }> {
     const fileBuffer = await fileToBase64(file)
-    const response = await privateAxiosInstance.post<{ statusCode: number; message: string; url: string }>(
+    const { data } = await privateAxiosInstance.post<{ statusCode: number; message: string; url: string }>(
       '/reconciliation/upload-s3',
       {
         fileName: file.name,
@@ -38,8 +32,8 @@ export const reconciliationService = {
         mimetype: file.type
       }
     )
-    return { url: response.data.url }
-  },
+    return { url: data.url }
+  }
 
   async approveReconciliation(
     recordId: string,
@@ -53,12 +47,12 @@ export const reconciliationService = {
       fileName: fileName
     }
 
-    const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
+    const { data } = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
       '/reconciliation/confirmation-process',
       payload
     )
-    return response.data
-  },
+    return data
+  }
 
   async reportIssue(
     recordId: string,
@@ -74,10 +68,14 @@ export const reconciliationService = {
       fileName: fileName
     }
 
-    const response = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
+    const { data } = await privateAxiosInstance.post<{ message: string; affectedRows: number }>(
       '/reconciliation/confirmation-process',
       payload
     )
-    return response.data
+    return data
   }
 }
+
+const reconciliationService = new ReconciliationService()
+
+export { reconciliationService }

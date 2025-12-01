@@ -3,7 +3,7 @@ import { PaginatedResponse, PaginationOptions } from '@/types'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord } from '../types'
 
-export const reportsService = {
+class ReportsService {
   async getReports(
     filters?: ReportsFilterProperties,
     pagination?: PaginationOptions
@@ -27,14 +27,18 @@ export const reportsService = {
       params.paymentType = filters?.paymentMethod
     }
 
-    const response = await privateAxiosInstance.get('/reconciliation/report-orders-by-restaurant', {
+    const { data } = await privateAxiosInstance.get('/reconciliation/report-orders-by-restaurant', {
       params
     })
 
-    const { rows, total } = response.data
+    const { rows, total } = data
     return {
       data: rows,
       total
     }
   }
 }
+
+const reportsService = new ReportsService()
+
+export { reportsService }

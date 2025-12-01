@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
-import { ordersService } from '../../service'
+import { ordersService } from '../../service/order.service'
 
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'

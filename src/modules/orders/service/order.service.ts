@@ -1,9 +1,17 @@
 import { getOperationDateRange } from '@/constants'
 import { privateAxiosInstance } from '@/lib/axios/instances'
-import type { FilterOptions, Order, OrderStatusStats, PaginatedResponse, PaginationOptions } from '@/types'
+import type { Order, OrderStatusStats, OrderStatusesGroups, PaginatedResponse, PaginationOptions } from '@/types'
 import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
 
-export const ordersService = {
+// Filtreleme ve Sayfalama
+export interface FilterOptions {
+  status?: OrderStatusesGroups | Array<OrderStatusesGroups> | 'all'
+  dateFrom?: string
+  dateTo?: string
+  search?: string
+}
+
+class OrdersService {
   async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
     const page = pagination?.page
     const limit = pagination?.limit
@@ -38,12 +46,12 @@ export const ordersService = {
       data: orders,
       total
     }
-  },
+  }
 
   async getOrderById(id: string): Promise<Order> {
     const response = await privateAxiosInstance.get<OrderDetailResponse>(`/orders/order/${id}`)
     return response.data
-  },
+  }
 
   async getOrdersStats(): Promise<OrderStatusStats> {
     const { startDate, endDate } = getOperationDateRange()
@@ -56,3 +64,7 @@ export const ordersService = {
     return data
   }
 }
+
+const ordersService = new OrdersService()
+
+export { ordersService }

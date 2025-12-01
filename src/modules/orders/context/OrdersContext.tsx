@@ -2,9 +2,9 @@
 
 import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
 import { QueryOptions, useQuery } from '@tanstack/react-query'
-import { createContext, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
-import { ordersService } from '../service'
+import { ordersService } from '../service/order.service'
 import { OrderFilterProperties } from '../types'
 
 export interface OrdersContextType {
@@ -19,7 +19,6 @@ export interface OrdersContextType {
   isFetching: boolean
   error: string
   setActiveTab: (tab: 'active' | 'completed') => void
-  handleCreateOrderSuccess: () => void
   refreshAllData: () => void
   completedPagination: PaginationOptions
   setCompletedPagination: (pagination: PaginationOptions) => void
@@ -41,7 +40,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     limit: 20
   })
 
-  const handleFiltersChange = (newFilters: OrderFilterProperties) => {
+  const handleFiltersChange = useCallback((newFilters: OrderFilterProperties) => {
     setFilters(newFilters)
     // Auto-switch tab based on status
     if (newFilters.status !== 'all') {
@@ -54,11 +53,11 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
         setActiveTab('completed')
       }
     }
-  }
+  }, [])
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setFilters(defaultOrderFilters)
-  }
+  }, [])
 
   const statusFilters = useMemo(() => {
     if (filters.status !== 'all') return filters.status
@@ -81,13 +80,11 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     refetch: refetchOrders
   } = useQuery({
     queryKey,
-    queryFn: async () => {
-      const response = await ordersService.getOrders(
+    queryFn: () =>
+      ordersService.getOrders(
         { status: statusFilters, search: filters.search },
         activeTab === 'active' ? undefined : { page: completedPagination.page, limit: completedPagination.limit }
       )
-      return response
-    }
   })
 
   // Active orders - direkt backend'den gelen data
@@ -102,32 +99,45 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     [ordersData]
   )
 
-  const handleCreateOrderSuccess = () => {
+  const refreshAllData = useCallback(() => {
     refetchOrders()
-  }
+  }, [refetchOrders])
 
-  const refreshAllData = () => {
-    refetchOrders()
-  }
+  const value: OrdersContextType = useMemo(
+    () => ({
+      activeTab,
+      filters,
+      handleFiltersChange,
+      clearFilters,
+      activeOrders,
+      completedOrders,
+      total: ordersData?.total || 0,
+      isLoading: isLoadingOrders,
+      isFetching: isFetchingOrders,
+      error: ordersError?.message || '',
+      setActiveTab,
+      refreshAllData,
 
-  const value: OrdersContextType = {
-    activeTab,
-    filters,
-    handleFiltersChange,
-    clearFilters,
-    activeOrders,
-    completedOrders,
-    total: ordersData?.total || 0,
-    isLoading: isLoadingOrders,
-    isFetching: isFetchingOrders,
-    error: ordersError?.message || '',
-    setActiveTab,
-    handleCreateOrderSuccess,
-    refreshAllData,
-
-    completedPagination,
-    setCompletedPagination
-  }
+      completedPagination,
+      setCompletedPagination
+    }),
+    [
+      activeTab,
+      filters,
+      handleFiltersChange,
+      clearFilters,
+      activeOrders,
+      completedOrders,
+      ordersData,
+      isLoadingOrders,
+      isFetchingOrders,
+      ordersError,
+      setActiveTab,
+      refreshAllData,
+      completedPagination,
+      setCompletedPagination
+    ]
+  )
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>
 }

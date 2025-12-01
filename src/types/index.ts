@@ -40,14 +40,6 @@ export interface CourierInfo {
   position: [number, number]
 }
 
-// Filtreleme ve Sayfalama
-export interface FilterOptions {
-  status?: OrderStatusesGroups | Array<OrderStatusesGroups> | 'all'
-  dateFrom?: string
-  dateTo?: string
-  search?: string
-}
-
 export interface PaginationOptions {
   page: number
   limit: number

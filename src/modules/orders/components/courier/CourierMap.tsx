@@ -5,6 +5,8 @@ import Leaflet from 'leaflet'
 import { useEffect, useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 
+import 'leaflet/dist/leaflet.css' // Buraya taşı
+
 // Fix Leaflet icons
 Leaflet.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',

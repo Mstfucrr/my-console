@@ -1,3 +1,4 @@
+// TODO: bu veri şuanda create order için kullanılıyor, backend entegrasyonu ile silinecek
 export const addressData: {
   cities: string[]
   districts: { [key: string]: string[] }

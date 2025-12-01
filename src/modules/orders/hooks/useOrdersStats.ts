@@ -3,7 +3,7 @@
 import { OrderStatusStats } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { ordersService } from '../service'
+import { ordersService } from '../service/order.service'
 
 export function useOrdersStats() {
   const {
@@ -12,7 +12,7 @@ export function useOrdersStats() {
     isLoading: isStatsLoading
   } = useQuery<OrderStatusStats, Error>({
     queryKey: ['ordersStats'],
-    queryFn: async () => await ordersService.getOrdersStats()
+    queryFn: () => ordersService.getOrdersStats()
   })
 
   const stats = useMemo(

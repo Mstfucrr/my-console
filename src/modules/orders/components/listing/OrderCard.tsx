@@ -10,6 +10,7 @@ import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import { OrderStatusesGroups } from '@/types'
+import { memo } from 'react'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 
 interface OrderCardProps {
@@ -20,7 +21,7 @@ interface OrderCardProps {
   showActions?: boolean
 }
 
-export function OrderCard({ order, onViewDetails }: OrderCardProps) {
+export const OrderCard = memo(function OrderCard({ order, onViewDetails }: OrderCardProps) {
   const isCreated = order.status === OrderStatusesGroups.CREATED
 
   return (
@@ -66,4 +67,4 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
       </CardContent>
     </Card>
   )
-}
+})

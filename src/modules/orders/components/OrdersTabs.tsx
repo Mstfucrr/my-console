@@ -6,18 +6,23 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { TabsWithList } from '@/components/ui/tabs'
 import type { Order } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { useOrders } from '../context/OrdersContext'
 import { useOrdersStats } from '../hooks/useOrdersStats'
 import { OrderFilters } from './filters/OrderFilters'
-import { OrderDetailDialog } from './listing/OrderDetailDialog'
 import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
 export type OrdersViewMode = 'card' | 'table'
 
 const DEFAULT_VIEW_MODE: OrdersViewMode = 'table'
+
+const OrderDetailDialog = dynamic(
+  () => import('./listing/OrderDetailDialog').then(mod => ({ default: mod.OrderDetailDialog })),
+  { ssr: false }
+)
 
 export function OrdersTabs() {
   const {

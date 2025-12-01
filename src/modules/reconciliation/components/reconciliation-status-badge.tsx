@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
-import { ReconciliationStatusType, STATUS_COLORS, STATUS_TEXT } from '../types'
+import { STATUS_COLORS, STATUS_TEXT } from '../constants'
+import { ReconciliationStatusType } from '../types'
 
 interface ReconciliationStatusBadgeProps {
   status: ReconciliationStatusType

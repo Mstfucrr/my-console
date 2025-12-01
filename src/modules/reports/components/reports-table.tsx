@@ -4,6 +4,7 @@ import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterToggleButton } from '@/components/ui/filter-card'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
+import { formatDateTR } from '@/lib/utils/date'
 import { OrderStatusBadge, PaymentMethodBadge } from '@/modules/orders/components/Badges'
 import { OrderStatusesGroups, PaginatedResponse } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -20,10 +21,6 @@ interface ReportsTableProps {
   onRefresh: () => void
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('tr-TR')
-}
-
 const columns: ColumnDef<ReportRecord>[] = [
   {
     accessorKey: 'OrderId',
@@ -34,7 +31,7 @@ const columns: ColumnDef<ReportRecord>[] = [
   {
     accessorKey: 'CreatedOn',
     header: 'Oluşturulma Tarihi',
-    cell: ({ row }) => formatDate(row.getValue('CreatedOn'))
+    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'))
   },
   {
     accessorKey: 'customer_name',

@@ -7,7 +7,7 @@ import { ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders
 import { cn } from '@/lib/utils'
 import type { OrderChannel, OrderStatusesGroups } from '@/types'
 import { Globe, Wallet } from 'lucide-react'
-import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS } from '../utils'
+import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS } from '../constants'
 
 interface StatusBadgeProps {
   status: OrderStatusesGroups
