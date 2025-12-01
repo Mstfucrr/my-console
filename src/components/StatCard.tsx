@@ -32,11 +32,11 @@ export default function StatCard({
     <Card
       {...props}
       className={cn(
-        'border-border/50 hover:border-border/80 rounded-lg border p-4 transition-colors duration-200',
+        'border-border/50 hover:border-border/80 rounded-lg border p-2 transition-colors duration-200 sm:p-4',
         className
       )}
     >
-      <CardContent className='flex h-full flex-col justify-between gap-2 p-0'>
+      <CardContent className='flex h-full flex-col justify-between p-0 sm:gap-2'>
         <div className='flex justify-between gap-4'>
           <p className='text-muted-foreground text-sm font-medium'>{title}</p>
           <div className='opacity-30'>
@@ -47,7 +47,7 @@ export default function StatCard({
             )}
           </div>
         </div>
-        <span className={`text-foreground text-xl font-semibold max-xl:text-lg`}>
+        <span className={`text-foreground text-xl font-semibold max-xl:text-lg max-sm:text-base`}>
           {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
         </span>
       </CardContent>

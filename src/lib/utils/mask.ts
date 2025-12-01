@@ -75,15 +75,16 @@ export function maskPhone(phone: string): string {
 
 export function maskLastName(fullName: string): string {
   if (!fullName) return fullName
-  const [firstName, ...rest] = fullName.split(' ')
-  if (rest.length === 0) return firstName
-  const lastName = rest.join(' ')
-  return `${firstName} ${maskString(lastName, {
+  // son kelimeyi maskle
+  const lastWord = fullName.split(' ').pop()
+  if (!lastWord) return fullName
+  const maskedLastWord = maskString(lastWord, {
     visibleStart: 1,
     visibleEnd: 1,
     maskChar: '*',
     preserveNonDigits: false
-  })}`
+  })
+  return `${fullName.split(' ').slice(0, -1).join(' ')} ${maskedLastWord}`
 }
 
 export function maskAddress(address: string) {

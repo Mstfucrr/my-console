@@ -30,16 +30,15 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
       onClick={() => onViewDetails(order)}
     >
       <CardContent className='p-4'>
-        <div className='flex items-start justify-between gap-3'>
-          {/* Left side - Main info */}
-          <div className='flex min-w-0 flex-1 flex-col justify-between'>
-            <div className='mb-2 flex items-center gap-2'>
+        <div className='flex flex-col items-start justify-between gap-3'>
+          <div className='flex w-full items-center justify-between gap-2'>
+            <div className='flex items-center gap-2'>
               <ChannelBadge channel={order.channel} />
               <MaskedText
                 value={order.customerName}
                 maskFn={maskLastName}
                 defaultMasked={true}
-                textClassName='truncate text-sm font-semibold'
+                textClassName='text-sm font-semibold'
               />
               {order.courierInfo && (
                 <TooltippedElement tooltipContent={order.courierInfo.name}>
@@ -48,16 +47,11 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
               )}
             </div>
 
-            <div className='mt-2 flex items-center gap-2 text-xs'>
-              <span>{formatDateTimeTR(order.createdAt)}</span>
-            </div>
+            <div className='text-primary-700 text-lg font-bold text-nowrap'>{formatCurrencyTRY(order.totalAmount)}</div>
           </div>
 
-          {/* Right side - Amount and action */}
-          <div className='flex flex-col items-end gap-4'>
-            <div className='text-primary-700 text-lg font-bold whitespace-nowrap'>
-              {formatCurrencyTRY(order.totalAmount)}
-            </div>
+          <div className='flex w-full items-center justify-between gap-2 text-xs'>
+            <span className=''>{formatDateTimeTR(order.createdAt)}</span>
             <div className='flex flex-wrap items-center gap-2'>
               <OrderStatusBadge status={order.status} />
               <PaymentMethodBadge showIcon paymentMethod={order.paymentType} IsPrepaid={order.isPrepaid} />
