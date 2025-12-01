@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <AuthProvider>
       <AuthGuard>
         <TopbarAndMobileMenu />
-        <div className={cn('pt-20 transition-all duration-150 sm:pt-16')}>
+        <div className={cn('pt-20 transition-all duration-150 sm:pt-16 pb-20 sm:pb-0')}>
           <div className='flex flex-col gap-4 pb-0'>
             <LayoutWrapper>
               <NuqsAdapter>
