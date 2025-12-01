@@ -12,12 +12,12 @@ export function BottomNavigation() {
   const pathname = usePathname()
 
   return (
-    <nav className='border-border bg-background/95 supports-backdrop-filter:bg-background/60 fixed right-0 bottom-0 left-0 z-50 border-t backdrop-blur'>
+    <nav className='border-border bg-muted/40 fixed bottom-1 left-1/2 z-50 w-[95%] -translate-x-1/2 rounded-3xl border-t backdrop-blur-2xl'>
       {/* iOS home indicator için padding */}
       <div className='safe-area-inset-bottom'>
-        <div className='relative flex items-center justify-between px-1 py-2'>
+        <div className='relative flex items-center justify-between gap-x-2'>
           {/* Sol taraf - İlk 2 item */}
-          <div className='flex flex-1 items-center justify-around'>
+          <div className='flex flex-1 items-center justify-around gap-x-2'>
             {menusConfig.slice(0, 2).map(item => (
               <BottomNavigationItem
                 key={item.title}
@@ -43,9 +43,13 @@ export function BottomNavigation() {
               aria-label='Yeni Sipariş Oluştur'
             >
               <Plus className='size-7' strokeWidth={2.5} />
-              <span className='sr-only'>Yeni Sipariş</span>
             </Link>
-            <span className={cn('mt-1 -mb-2 text-xs', isLocationMatch('/orders/create', pathname) && 'font-semibold')}>
+            <span
+              className={cn(
+                'mt-1 -mb-2 text-center text-[10px] text-nowrap',
+                isLocationMatch('/orders/create', pathname) && 'font-semibold'
+              )}
+            >
               Yeni Sipariş
             </span>
             {isLocationMatch('/orders/create', pathname) && (
@@ -54,7 +58,7 @@ export function BottomNavigation() {
           </div>
 
           {/* Sağ taraf - Son 2 item */}
-          <div className='flex flex-1 items-center justify-around'>
+          <div className='flex flex-1 items-center justify-around gap-x-2'>
             {menusConfig.slice(2, 4).map(item => (
               <BottomNavigationItem
                 key={item.title}
