@@ -15,6 +15,10 @@ import { OrderDetailDialog } from './listing/OrderDetailDialog'
 import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
+export type OrdersViewMode = 'card' | 'table'
+
+const DEFAULT_VIEW_MODE: OrdersViewMode = 'table'
+
 export function OrdersTabs() {
   const {
     activeTab,
@@ -29,7 +33,7 @@ export function OrdersTabs() {
     setCompletedPagination
   } = useOrders()
   const { stats } = useOrdersStats()
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
+  const [viewMode, setViewMode] = useState<OrdersViewMode>(DEFAULT_VIEW_MODE)
   const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 

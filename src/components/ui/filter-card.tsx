@@ -9,6 +9,7 @@ import { isSameDateRange } from '@/lib/utils/date'
 import { Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
 import { ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
+import { TooltippedElement } from '../tooltipped-element'
 
 export interface FilterOption {
   value: string | number
@@ -47,16 +48,20 @@ export function FilterCard<T>({
       {(hasPendingChanges || hasActiveFilters) && (
         <div className='flex items-center gap-2'>
           {hasPendingChanges && onApply && (
-            <Button size='icon-sm' onClick={onApply}>
-              <Check className='size-4.5' />
-              <span className='sr-only'>Uygula</span>
-            </Button>
+            <TooltippedElement tooltipContent='Filtreleri Uygula'>
+              <Button size='icon-sm' onClick={onApply}>
+                <Check className='size-4.5' />
+                <span className='sr-only'>Uygula</span>
+              </Button>
+            </TooltippedElement>
           )}
           {hasActiveFilters && (
-            <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
-              <XCircle className='size-4.5' />
-              <span className='sr-only'>Temizle</span>
-            </Button>
+            <TooltippedElement tooltipContent='Filtreleri Temizle'>
+              <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
+                <XCircle className='size-4.5' />
+                <span className='sr-only'>Temizle</span>
+              </Button>
+            </TooltippedElement>
           )}
         </div>
       )}
@@ -195,9 +200,11 @@ export function FilterToggleButton({
   onToggle: () => void
 } & ButtonProps) {
   return (
-    <Button className='relative' onClick={onToggle} size='icon-sm' {...props}>
-      <Filter className='mr-1 size-4.5' />
-      <ChevronDown className={cn('absolute right-0 bottom-0 size-4.5', showFilters ? 'rotate-180' : 'rotate-0')} />
-    </Button>
+    <TooltippedElement tooltipContent={`Filtreleri ${showFilters ? 'gizle' : 'göster'}`}>
+      <Button className='relative' onClick={onToggle} size='icon-sm' {...props}>
+        <Filter className='mr-1 size-4.5' />
+        <ChevronDown className={cn('absolute right-0 bottom-0 size-4.5', showFilters ? 'rotate-180' : 'rotate-0')} />
+      </Button>
+    </TooltippedElement>
   )
 }

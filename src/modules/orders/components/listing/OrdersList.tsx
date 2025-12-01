@@ -11,6 +11,7 @@ import type { Order } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
+import type { OrdersViewMode } from '../OrdersTabs'
 import { OrderCard } from './OrderCard'
 import { OrderCardSkeleton } from './OrderCardSkeleton'
 
@@ -18,7 +19,7 @@ interface OrdersListProps {
   orders: Array<Order> | undefined
   isLoading: boolean
   isFetching: boolean
-  viewMode: 'card' | 'list'
+  viewMode: OrdersViewMode
   emptyMessage: string
   filteredEmptyMessage: string
   onViewDetails: (order: Order) => void
@@ -67,13 +68,14 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'channel',
     header: 'Kanal',
+    size: 50,
     cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
   },
   {
-    accessorKey: 'paymentMethod',
+    accessorKey: 'paymentType',
     header: 'Ödeme Yöntemi',
     size: 100,
-    cell: ({ row }) => <PaymentMethodBadge paymentMethod={row.getValue('paymentMethod')} />
+    cell: ({ row }) => <PaymentMethodBadge className='text-nowrap' paymentMethod={row.getValue('paymentType')} />
   },
   {
     accessorKey: 'totalAmount',
@@ -96,7 +98,7 @@ export function OrdersList({
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
 
-  if (viewMode === 'list')
+  if (viewMode === 'table')
     return (
       <BasicDataTable
         columns={columns}

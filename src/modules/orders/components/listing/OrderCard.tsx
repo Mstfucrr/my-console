@@ -1,9 +1,9 @@
 'use client'
 
 import { Motorcycle } from '@/components/svg'
+import { TooltippedElement } from '@/components/tooltipped-element'
 import { Card, CardContent } from '@/components/ui/card'
 import { MaskedText } from '@/components/ui/masked-text'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { formatDateTimeTR } from '@/lib/utils/date'
@@ -41,14 +41,9 @@ export function OrderCard({ order, onViewDetails }: OrderCardProps) {
                 textClassName='truncate text-sm font-semibold'
               />
               {order.courierInfo && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-                    </TooltipTrigger>
-                    <TooltipContent>{order.courierInfo.name}</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <TooltippedElement tooltipContent={order.courierInfo.name}>
+                  <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
+                </TooltippedElement>
               )}
             </div>
 

@@ -1,12 +1,14 @@
 'use client'
 
+import { TooltippedElement } from '@/components/tooltipped-element'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { FilterToggleButton } from '@/components/ui/filter-card'
-import { Filter, FilterX, LayoutGrid, LayoutList, Loader2, Menu, RefreshCw } from 'lucide-react'
+import { Filter, FilterX, LayoutGrid, Loader2, Menu, RefreshCw, Table } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
+import type { OrdersViewMode } from './OrdersTabs'
 
 const viewModeButtons = [
   {
@@ -15,15 +17,15 @@ const viewModeButtons = [
     value: 'card' as const
   },
   {
-    label: 'Liste Görünümü',
-    Icon: LayoutList,
-    value: 'list' as const
+    label: 'Tablo Görünümü',
+    Icon: Table,
+    value: 'table' as const
   }
 ]
 
 interface OrdersToolbarProps {
-  viewMode: 'card' | 'list'
-  onViewModeChange: (mode: 'card' | 'list') => void
+  viewMode: OrdersViewMode
+  onViewModeChange: (mode: OrdersViewMode) => void
   showFilters: boolean
   onToggleFilters: () => void
 }
@@ -61,20 +63,21 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
       {/* Desktop Toolbar (lg: ve üzeri) */}
       <div className='hidden flex-wrap items-center gap-2 lg:flex'>
         <RefreshButton onClick={refreshAllData} isIconButton isLoading={isFetching} />
-        <ButtonGroup>
-          {viewModeButtons.map(({ label, Icon, value }) => (
-            <Button
-              key={value}
-              variant={viewMode === value ? null : 'soft'}
-              size='icon-sm'
-              title={label}
-              onClick={() => onViewModeChange(value)}
-            >
-              <Icon className='size-4.5' />
-              <span className='sr-only'>{label}</span>
-            </Button>
-          ))}
-        </ButtonGroup>
+        <TooltippedElement tooltipContent='Görünüm Modunu Değiştir'>
+          <ButtonGroup>
+            {viewModeButtons.map(({ label, Icon, value }) => (
+              <Button
+                key={value}
+                variant={viewMode === value ? null : 'soft'}
+                size='icon-sm'
+                onClick={() => onViewModeChange(value)}
+              >
+                <Icon className='size-4.5' />
+                <span className='sr-only'>{label}</span>
+              </Button>
+            ))}
+          </ButtonGroup>
+        </TooltippedElement>
         <FilterToggleButton showFilters={showFilters} onToggle={onToggleFilters} color='primary' />
       </div>
     </div>
