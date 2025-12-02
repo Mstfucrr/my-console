@@ -31,7 +31,6 @@ const schema = z
     confirmPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
   })
   .superRefine((data, ctx) => {
-    console.log('data', data.confirmPassword, data.password)
     if (data.confirmPassword === '' || data.password === '') return
     if (data.confirmPassword !== data.password) {
       ctx.addIssue({
