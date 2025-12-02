@@ -30,9 +30,16 @@ const schema = z
       .regex(PASSWORD_REGEXES.number.regex, { message: PASSWORD_REGEXES.number.message }),
     confirmPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
   })
-  .refine(data => data.password === data.confirmPassword, {
-    message: 'Şifreler eşleşmiyor.',
-    path: ['confirmPassword']
+  .superRefine((data, ctx) => {
+    console.log('data', data.confirmPassword, data.password)
+    if (data.confirmPassword === '' || data.password === '') return
+    if (data.confirmPassword !== data.password) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Şifreler eşleşmiyor.',
+        path: ['confirmPassword']
+      })
+    }
   })
 
 type ResetPasswordFormType = z.infer<typeof schema>
