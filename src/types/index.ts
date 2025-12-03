@@ -66,3 +66,9 @@ export enum OrderStatusesGroups {
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled'
 }
+
+export interface PaymentMethod {
+  id: string
+  key: string
+  name: string
+}

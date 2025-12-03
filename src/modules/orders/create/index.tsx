@@ -9,9 +9,9 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
-import { PAYMENT_METHODS } from '@/constants/paynemt-methods'
 import { addressData } from '@/modules/citiesData'
-import { BookOpenIcon, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
+import { usePaymentMethods } from '@/service/payment-methods.service'
+import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
 export function CreateOrderView() {
@@ -26,6 +26,13 @@ export function CreateOrderView() {
     handleDistrictChange,
     onSubmit
   } = useCreateOrder()
+
+  const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
+
+  const paymentMethodOptions = paymentMethods?.map(paymentMethod => ({
+    value: paymentMethod.key,
+    label: paymentMethod.name
+  }))
 
   return (
     <div className='flex flex-col gap-6 pt-6 pb-16! max-sm:p-0'>
@@ -92,13 +99,20 @@ export function CreateOrderView() {
                   type='number'
                   placeholder='0.00'
                 />
-                <FormSelectField
-                  name='paymentTypeSId'
-                  control={form.control}
-                  label='Ödeme Tipi'
-                  placeholder='Ödeme tipi seçiniz'
-                  options={PAYMENT_METHODS}
-                />
+                {isLoadingPaymentMethods ? (
+                  <div className='flex items-center justify-center'>
+                    <Loader2 className='size-4 animate-spin' />
+                  </div>
+                ) : paymentMethodOptions ? (
+                  <FormSelectField
+                    name='paymentTypeSId'
+                    control={form.control}
+                    label='Ödeme Tipi'
+                    placeholder='Ödeme tipi seçiniz'
+                    options={paymentMethodOptions}
+                    disabled={isLoadingPaymentMethods}
+                  />
+                ) : null}
                 <div className='flex gap-4 self-center justify-self-center text-nowrap md:flex-col'>
                   <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />
                   <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' />

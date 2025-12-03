@@ -2,11 +2,12 @@
 
 import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
+import { usePaymentMethods } from '@/service/payment-methods.service'
 import { OrderStatusesGroups } from '@/types'
-import { Search } from 'lucide-react'
+import { Loader2, Search } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import { defaultReportsFilters } from '..'
-import { PAYMENT_METHOD_OPTIONS, STATUS_OPTIONS } from '../constants'
+import { STATUS_OPTIONS } from '../constants'
 
 const MIN_MAX_DATE_RANGE = {
   rangeStart: new Date(new Date().setDate(new Date().getDate() - 30)),
@@ -43,6 +44,15 @@ export function ReportsFilters({
     updatePendingFilters({ dateRange: range })
   }
 
+  const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
+
+  const paymentMethodOptions = paymentMethods
+    ?.map(paymentMethod => ({
+      value: paymentMethod.id,
+      label: paymentMethod.name
+    }))
+    .concat({ value: 'all', label: 'Ödeme Yöntemleri' })
+
   return (
     <FilterCard
       filters={filters}
@@ -65,12 +75,18 @@ export function ReportsFilters({
         placeholder='Durum seçin'
       />
 
-      <StatusSelect
-        options={PAYMENT_METHOD_OPTIONS}
-        value={pendingFilters.paymentMethod ?? 'all'}
-        onChange={value => updatePendingFilters({ paymentMethod: value })}
-        placeholder='Ödeme yöntemi seçin'
-      />
+      {isLoadingPaymentMethods ? (
+        <div className='flex items-center justify-center'>
+          <Loader2 className='size-4 animate-spin' />
+        </div>
+      ) : paymentMethodOptions ? (
+        <StatusSelect
+          options={paymentMethodOptions}
+          value={pendingFilters.paymentMethod ?? 'all'}
+          onChange={value => updatePendingFilters({ paymentMethod: value })}
+          placeholder='Ödeme yöntemi seçin'
+        />
+      ) : null}
       <DateFilters
         dateRange={pendingFilters.dateRange}
         onDateRangeChange={handleDateRangeChange}

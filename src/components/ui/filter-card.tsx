@@ -145,11 +145,13 @@ export function StatusSelect<T extends string | number>({
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
-            {options.map(option => (
-              <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
-                {option.label}
-              </SelectItem>
-            ))}
+            <div className='max-h-48 overflow-y-auto pr-0.5'>
+              {options.map(option => (
+                <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </div>
           </SelectContent>
         </Select>
       </div>
