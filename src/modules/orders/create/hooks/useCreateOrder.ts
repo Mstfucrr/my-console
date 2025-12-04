@@ -1,110 +1,94 @@
-import { addressData } from '@/modules/citiesData'
+import type { County, District, Province, Street } from '@/service/location.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import { ordersService } from '../../service/order.service'
 import { createOrderSchema } from '../constants'
 import type { CreateOrderFormData } from '../types'
 
 export function useCreateOrder() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedCity, setSelectedCity] = useState<string>('')
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('')
-  const [availableDistricts, setAvailableDistricts] = useState<string[]>([])
-  const [availableNeighborhoods, setAvailableNeighborhoods] = useState<string[]>([])
+  const { mutateAsync: createOrder, isPending: isSubmitting } = useMutation({
+    mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order)
+  })
 
   const form = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema)
+    // defaultValues: testAutoFillFormData
   })
 
-  // Şehir değiştiğinde ilçeleri güncelle
-  const handleCityChange = (city: string) => {
-    setSelectedCity(city)
-    setSelectedDistrict('')
-    setAvailableDistricts(addressData.districts[city] || [])
-    setAvailableNeighborhoods([])
-    form.setValue('county', '')
-    form.setValue('neighborhood', '')
+  useEffect(() => {
+    console.log(form.formState.errors)
+  }, [form.formState.errors])
+
+  // Form değerlerini watch ile takip et
+  // Şehir
+  const cityId = useWatch({ control: form.control, name: 'city.id' })
+  // İlçe
+  const countyId = useWatch({ control: form.control, name: 'county.id' })
+  // Mahalle
+  const districtId = useWatch({ control: form.control, name: 'district.id' })
+  // Sokak
+  const streetId = useWatch({ control: form.control, name: 'street.id' })
+
+  // Şehir değiştiğinde ilçe ve mahalleyi temizle
+  const handleCityChange = (cityId: string, provinces?: Province[]) => {
+    const selectedProvince = provinces?.find(p => p.il_id.toString() === cityId)
+    if (selectedProvince) {
+      form.setValue('city', { id: cityId, name: selectedProvince.il_adi })
+      form.setValue('county', { id: '', name: '' })
+      form.setValue('district', { id: '', name: '' })
+      form.setValue('street', { id: '', name: '' })
+    }
   }
 
-  // İlçe değiştiğinde mahalleleri güncelle
-  const handleDistrictChange = (district: string) => {
-    setSelectedDistrict(district)
-    setAvailableNeighborhoods(addressData.neighborhoods[district] || [])
-    form.setValue('neighborhood', '')
+  // İlçe değiştiğinde mahalleyi temizle
+  const handleCountyChange = (countyId: string, counties?: County[]) => {
+    const selectedCounty = counties?.find(c => c.ilce_id.toString() === countyId)
+    if (selectedCounty) {
+      form.setValue('county', { id: countyId, name: selectedCounty.ilce_adi })
+      form.setValue('district', { id: '', name: '' })
+      form.setValue('street', { id: '', name: '' })
+    }
+  }
+
+  // Mahalle değiştiğinde sokağı temizle
+  const handleDistrictChange = (districtId: string, districts?: District[]) => {
+    const selectedDistrict = districts?.find(d => d.mahalle_id.toString() === districtId)
+    if (selectedDistrict) {
+      form.setValue('district', { id: districtId, name: selectedDistrict.mahalle_adi })
+      form.setValue('street', { id: '', name: '' })
+    }
+  }
+
+  // Sokak değiştiğinde adresi temizle
+  const handleStreetChange = (streetId: string, streets?: Street[]) => {
+    const selectedStreet = streets?.find(s => s.sokak_id.toString() === streetId)
+    if (selectedStreet) {
+      form.setValue('street', { id: streetId, name: selectedStreet.sokak_adi })
+    }
   }
 
   const onSubmit = async (data: CreateOrderFormData) => {
-    setIsSubmitting(true)
-    try {
-      // Create order object according to the required JSON structure
-      const orderData = {
-        orderId: `ORD-${Date.now()}`,
-        storeId: 'store_001',
-        salesChannelSId: 'portal',
-        isTestOrder: false,
-        restaurantSId: 'rest_001',
-        paymentMethod: data.paymentTypeSId,
-        integration: 'manuel',
-        preparationTime: data.preparationTime,
-        customer: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          customerPhone: data.customerPhone,
-          extensionPhone: data.extensionPhone || undefined
-        },
-        address: {
-          city: data.city,
-          county: data.county,
-          neighborhood: data.neighborhood,
-          street: data.street,
-          buildingName: data.buildingName || undefined,
-          buildingNumber: data.buildingNumber || undefined,
-          floor: data.floor || undefined,
-          doorNumber: data.doorNumber || undefined,
-          addressDirection: data.addressDirection || undefined,
-          fullAddress: data.fullAddress,
-          countryCode: 'TR',
-          postalCode: data.postalCode || undefined
-        },
-        payment: {
-          paymentTypeSId: data.paymentTypeSId,
-          totalPrice: data.totalAmount
-        },
-        delivery: {
-          contactlessDelivery: data.contactlessDelivery,
-          ringDoorBell: data.ringDoorBell,
-          category: 'standard',
-          type: 'delivery'
-        }
-      }
-
-      console.log('Creating order:', orderData)
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
-      toast.success('Sipariş başarıyla oluşturuldu!')
-      router.push('/orders')
-    } catch (error) {
-      toast.error('Sipariş oluşturulurken bir hata oluştu.')
-      console.error('Error creating order:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
+    toast.promise(async () => await createOrder(data), {
+      pending: 'Sipariş oluşturuluyor...',
+      success: 'Sipariş başarıyla oluşturuldu',
+      error: 'Sipariş oluşturulurken bir hata oluştu'
+    })
   }
 
   return {
     form,
     isSubmitting,
-    selectedCity,
-    selectedDistrict,
-    availableDistricts,
-    availableNeighborhoods,
+    cityId,
+    countyId,
+    districtId,
+    streetId,
     handleCityChange,
+    handleCountyChange,
     handleDistrictChange,
+    handleStreetChange,
     onSubmit
   }
 }

@@ -73,7 +73,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                 </Button>
               </div>
             ) : (
-              <span>Sipariş Detayı</span>
+              <span>Sipariş Bilgileri</span>
             )}
           </DialogTitle>
         </DialogHeader>

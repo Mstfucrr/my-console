@@ -19,7 +19,9 @@ export function BottomNavigationItem({ href, label, icon: Icon, isActive }: Bott
       className={cn(
         'relative flex flex-col items-center justify-center gap-1 rounded-3xl px-2 py-3 text-center transition-colors',
         'min-w-[60px] flex-1',
-        isActive ? 'text-primary bg-background' : 'text-muted-foreground hover:text-foreground'
+        isActive
+          ? 'text-primary bg-background border-primary -mb-1.5 scale-105 border-b-2'
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
       <Icon className={cn('size-5 transition-all', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
@@ -28,7 +30,6 @@ export function BottomNavigationItem({ href, label, icon: Icon, isActive }: Bott
       >
         {label}
       </span>
-      {isActive && <div className='bg-primary absolute -bottom-1 h-0.5 w-[70%]' />}
     </Link>
   )
 }

@@ -27,10 +27,30 @@ export const createOrderSchema = z.object({
     .refine(value => value > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
 
   // Adres Bilgileri
-  city: z.string().min(1, 'Şehir zorunludur').default(''),
-  county: z.string().min(1, 'İlçe zorunludur').default(''),
-  neighborhood: z.string().min(1, 'Mahalle zorunludur').default(''),
-  street: z.string().min(1, 'Sokak zorunludur').default(''),
+  city: z
+    .object({
+      id: z.string().min(1, 'Şehir zorunludur'),
+      name: z.string()
+    })
+    .default({ id: '', name: '' }),
+  county: z
+    .object({
+      id: z.string().min(1, 'İlçe zorunludur'),
+      name: z.string()
+    })
+    .default({ id: '', name: '' }),
+  district: z
+    .object({
+      id: z.string().min(1, 'Mahalle zorunludur'),
+      name: z.string()
+    })
+    .default({ id: '', name: '' }),
+  street: z
+    .object({
+      id: z.string().min(1, 'Sokak zorunludur'),
+      name: z.string()
+    })
+    .default({ id: '', name: '' }),
   buildingNumber: z.string().min(1, 'Bina numarası zorunludur').default(''),
   floor: z.string().optional(),
   buildingName: z.string().optional(),
@@ -44,3 +64,24 @@ export const createOrderSchema = z.object({
   contactlessDelivery: z.boolean().default(false),
   ringDoorBell: z.boolean().default(true)
 })
+
+// for test auto fill form data
+export const testAutoFillFormData = {
+  firstName: 'Emre',
+  lastName: 'Yılmaz',
+  customerPhone: '5426658959',
+  extensionPhone: '1001',
+  preparationTime: '30',
+  totalAmount: '150.0',
+  city: { id: '', name: '' },
+  county: { id: '', name: '' },
+  district: { id: '', name: '' },
+  street: { id: '', name: '' },
+  buildingNumber: '22',
+  floor: '12',
+  buildingName: 'Yıldız Apt.',
+  doorNumber: '12',
+  postalCode: '34710',
+  fullAddress: 'Rüstem Paşa, Hasırcılar Cd. 70-72, 34116 Fatih/İstanbul',
+  addressDirection: 'Zili çalmadan arayın'
+}

@@ -1,6 +1,7 @@
 import { getOperationDateRange } from '@/constants'
 import { privateAxiosInstance } from '@/lib/axios/instances'
 import type { Order, OrderStatusStats, OrderStatusesGroups, PaginatedResponse, PaginationOptions } from '@/types'
+import { CreateOrderFormData } from '../create/types'
 import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
 
 // Filtreleme ve Sayfalama
@@ -62,6 +63,21 @@ class OrdersService {
 
     const { data } = await privateAxiosInstance.get<OrderStatsResponse>('/dashboard/order-stats', { params })
     return data
+  }
+
+  async createOrder(order: CreateOrderFormData): Promise<Order> {
+    // Form'daki obje yapısını backend'in beklediği string formatına çevir
+    console.log('order', order)
+    const payload = {
+      ...order,
+      district: undefined,
+      city: order.city.name,
+      county: order.county.name,
+      neighborhood: order.district.name,
+      street: order.street.name
+    }
+    const response = await privateAxiosInstance.post<Order>('/orders/create', payload)
+    return response.data
   }
 }
 

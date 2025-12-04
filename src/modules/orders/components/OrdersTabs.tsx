@@ -17,7 +17,7 @@ import { OrdersToolbar } from './OrdersToolbar'
 
 export type OrdersViewMode = 'card' | 'table'
 
-const DEFAULT_VIEW_MODE: OrdersViewMode = 'table'
+const DEFAULT_VIEW_MODE: OrdersViewMode = 'card'
 
 const OrderDetailDialog = dynamic(
   () => import('./listing/OrderDetailDialog').then(mod => ({ default: mod.OrderDetailDialog })),

@@ -219,7 +219,7 @@ export default function DashboardView() {
                       </div>
                     ))}
                   </div>
-                  <Link href='/reports' className='w-full'>
+                  <Link href='/orders' className='w-full'>
                     <Button variant='outline' className='w-full bg-transparent'>
                       Tüm Siparişleri Görüntüle
                     </Button>
