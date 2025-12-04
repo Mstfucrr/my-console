@@ -66,9 +66,9 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
         <DialogHeader>
           <DialogTitle>
             {openMap ? (
-              <div className='flex items-center gap-2'>
+              <div className='-mb-2 flex w-full items-center justify-between gap-2 pr-10 pl-4'>
                 <span>Kurye Haritası</span>
-                <Button size='xs' color='secondary' variant='outline' onClick={handleToggleMap}>
+                <Button size='xs' variant='outline' onClick={handleToggleMap}>
                   <ArrowLeft className='mr-1 size-4' /> Geri Dön
                 </Button>
               </div>
@@ -203,12 +203,19 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                                 value={displayOrder.deliveryAddress}
                               />
                             )}
-                            {displayOrder && (
-                              <div className='text-muted-foreground mt-2 font-mono text-xs'>
-                                ({displayOrder.customerPosition?.[0]?.toFixed(6)},{' '}
-                                {displayOrder.customerPosition?.[1]?.toFixed(6)})
-                              </div>
-                            )}
+                            {displayOrder &&
+                              displayOrder.customerPosition?.[0] != null &&
+                              displayOrder.customerPosition?.[1] != null && (
+                                <a
+                                  className='text-muted-foreground hover:text-primary mt-2 font-mono text-xs underline'
+                                  href={`https://maps.google.com/?q=${displayOrder.customerPosition[0]},${displayOrder.customerPosition[1]}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                >
+                                  ({displayOrder.customerPosition[0].toFixed(6)},{' '}
+                                  {displayOrder.customerPosition[1].toFixed(6)})
+                                </a>
+                              )}
                           </div>
                         </div>
                       </CardContent>

@@ -39,7 +39,7 @@ export function VerifyForm() {
               disabled={isTimerComplete || loadingState.verify || loadingState.resend}
               autoFocus={index === 0}
               maxLength={1}
-              className='focus:border-primary no-spin h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
+              className='focus:border-primary no-spin max-xs:size-10 size-12 rounded-lg border-2 text-center text-xl font-semibold'
               ref={(ref: HTMLInputElement | null) => {
                 otpInputRefs.current[index] = ref
               }}
