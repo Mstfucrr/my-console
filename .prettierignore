@@ -1,0 +1,16 @@
+
+build/*
+dist/*
+out/*
+public/*
+.next/*
+node_modules/*
+package.json
+*.log
+.htaccess
+.env
+.env.*
+pnpm-lock.yaml
+.cursor/
+.vscode/
+.gitlab-ci.yml
