@@ -4,11 +4,16 @@ const transformPriceToNumber = (price: string) => {
   return Number(price)
 }
 
+const PHONE_REGEX = /^(05|5|905|)[0-9][0-9][1-9]([0-9]){6}$/
+
 export const createOrderSchema = z.object({
   // Müşteri Bilgileri
   firstName: z.string().min(2, 'Ad en az 2 karakter olmalıdır').default(''),
   lastName: z.string().min(2, 'Soyad en az 2 karakter olmalıdır').default(''),
-  customerPhone: z.string().min(10, 'Telefon numarası en az 10 karakter olmalıdır').default(''),
+  customerPhone: z
+    .string()
+    .default('')
+    .refine(value => PHONE_REGEX.test(value), { message: 'Geçersiz telefon numarası' }),
   extensionPhone: z.string().optional(),
 
   // Sipariş Bilgileri
@@ -27,30 +32,22 @@ export const createOrderSchema = z.object({
     .refine(value => value > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
 
   // Adres Bilgileri
-  city: z
-    .object({
-      id: z.string().min(1, 'Şehir zorunludur'),
-      name: z.string()
-    })
-    .default({ id: '', name: '' }),
-  county: z
-    .object({
-      id: z.string().min(1, 'İlçe zorunludur'),
-      name: z.string()
-    })
-    .default({ id: '', name: '' }),
-  district: z
-    .object({
-      id: z.string().min(1, 'Mahalle zorunludur'),
-      name: z.string()
-    })
-    .default({ id: '', name: '' }),
-  street: z
-    .object({
-      id: z.string().min(1, 'Sokak zorunludur'),
-      name: z.string()
-    })
-    .default({ id: '', name: '' }),
+  city: z.object({
+    id: z.string().min(1, 'Şehir zorunludur').default(''),
+    name: z.string()
+  }),
+  county: z.object({
+    id: z.string().min(1, 'İlçe zorunludur').default(''),
+    name: z.string()
+  }),
+  district: z.object({
+    id: z.string().min(1, 'Mahalle zorunludur').default(''),
+    name: z.string()
+  }),
+  street: z.object({
+    id: z.string().min(1, 'Sokak zorunludur').default(''),
+    name: z.string()
+  }),
   buildingNumber: z.string().min(1, 'Bina numarası zorunludur').default(''),
   floor: z.string().optional(),
   buildingName: z.string().optional(),
