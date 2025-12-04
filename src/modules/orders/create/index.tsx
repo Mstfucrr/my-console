@@ -203,7 +203,7 @@ export function CreateOrderView() {
                 <FormInputField
                   name='buildingName'
                   control={form.control}
-                  formItemClassName='col-span-2'
+                  formItemClassName='max-sm:col-span-2'
                   label='Bina Adı'
                   placeholder='Plaza Adı'
                 />
