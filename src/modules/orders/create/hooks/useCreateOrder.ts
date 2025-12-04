@@ -15,7 +15,6 @@ export function useCreateOrder() {
 
   const form = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema)
-    // defaultValues: testAutoFillFormData
   })
 
   useEffect(() => {

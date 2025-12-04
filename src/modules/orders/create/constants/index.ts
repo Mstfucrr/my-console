@@ -64,24 +64,3 @@ export const createOrderSchema = z.object({
   contactlessDelivery: z.boolean().default(false),
   ringDoorBell: z.boolean().default(true)
 })
-
-// for test auto fill form data
-export const testAutoFillFormData = {
-  firstName: 'Emre',
-  lastName: 'Yılmaz',
-  customerPhone: '5426658959',
-  extensionPhone: '1001',
-  preparationTime: '30',
-  totalAmount: '150.0',
-  city: { id: '', name: '' },
-  county: { id: '', name: '' },
-  district: { id: '', name: '' },
-  street: { id: '', name: '' },
-  buildingNumber: '22',
-  floor: '12',
-  buildingName: 'Yıldız Apt.',
-  doorNumber: '12',
-  postalCode: '34710',
-  fullAddress: 'Rüstem Paşa, Hasırcılar Cd. 70-72, 34116 Fatih/İstanbul',
-  addressDirection: 'Zili çalmadan arayın'
-}
