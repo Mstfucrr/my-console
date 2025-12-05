@@ -17,7 +17,7 @@ export function BottomNavigationItem({ href, label, icon: Icon, isActive }: Bott
     <Link
       href={href}
       className={cn(
-        'relative flex flex-col items-center justify-center gap-1 rounded-3xl px-2 py-3 text-center transition-colors',
+        'relative flex flex-col items-center justify-center gap-1 rounded-3xl px-2 py-2.5 text-center transition-colors',
         'min-w-[60px] flex-1',
         isActive
           ? 'text-primary bg-background border-primary -mb-1.5 scale-105 border-b-2'

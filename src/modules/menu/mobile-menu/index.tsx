@@ -34,7 +34,7 @@ export function MobileMenu() {
           <LogoutButton />
         </div>
       </div>
-      <div className='fixed right-5 bottom-24 z-50'>
+      <div className='fixed bottom-20 left-5 z-50'>
         <SupportDialog />
       </div>
     </>

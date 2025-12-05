@@ -55,7 +55,7 @@ export function CreateOrderView() {
   const streetOptions = streets?.map(street => ({ value: street.sokak_id.toString(), label: street.sokak_adi }))
 
   return (
-    <div className='flex flex-col gap-6 pt-6 pb-16! max-sm:p-0'>
+    <div className='flex flex-col gap-6 pt-6 max-sm:p-0'>
       <PageHeader title='Yeni Sipariş Oluştur' icon={ShoppingCartIcon} />
 
       <Form {...form}>
@@ -134,7 +134,7 @@ export function CreateOrderView() {
                     disabled={isLoadingPaymentMethods}
                   />
                 ) : null}
-                <div className='max-xs:flex-col flex gap-x-4 gap-y-2 self-center justify-self-center text-nowrap max-sm:col-span-2 md:flex-col'>
+                <div className='max-xs:flex-col flex gap-x-4 gap-y-2 self-center justify-self-center text-nowrap max-sm:col-span-2 sm:flex-col'>
                   <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />
                   <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' />
                 </div>
