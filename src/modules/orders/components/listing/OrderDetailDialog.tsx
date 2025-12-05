@@ -195,7 +195,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
 
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
-                          <div className='pl-6 text-right text-sm leading-relaxed'>
+                          <div className='space-y-1 pl-6 text-right text-sm leading-relaxed'>
                             {displayOrder && displayOrder.deliveryAddress && (
                               <MaskedText
                                 className='items-start justify-end'

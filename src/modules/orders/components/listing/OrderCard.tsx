@@ -52,7 +52,7 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
 
           <div className='flex w-full items-center justify-between gap-2 text-xs'>
             <span className=''>{formatDateTimeTR(order.createdAt)}</span>
-            <div className='flex flex-wrap items-center gap-2'>
+            <div className='flex flex-wrap items-center justify-end gap-2'>
               <OrderStatusBadge status={order.status} />
               <PaymentMethodBadge showIcon paymentMethod={order.paymentType} IsPrepaid={order.isPrepaid} />
             </div>
