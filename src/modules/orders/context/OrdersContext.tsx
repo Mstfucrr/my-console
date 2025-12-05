@@ -1,7 +1,7 @@
 'use client'
 
 import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
-import { QueryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, QueryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service/order.service'
@@ -85,7 +85,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       ordersService.getOrders(
         { status: statusFilters, search: filters.search },
         activeTab === 'active' ? undefined : { page: completedPagination.page, limit: completedPagination.limit }
-      )
+      ),
+    placeholderData: keepPreviousData
   })
 
   // Active orders - direkt backend'den gelen data
