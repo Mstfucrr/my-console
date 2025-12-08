@@ -5,9 +5,13 @@ import Leaflet from 'leaflet'
 import { useEffect, useMemo, useRef } from 'react'
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
+import { Skeleton } from '@/components/ui/skeleton'
 import useIsTabActive from '@/hooks/use-is-tab-active'
 import { useQuery } from '@tanstack/react-query'
 import 'leaflet/dist/leaflet.css'
+import { AlertTriangle, Loader2 } from 'lucide-react'
 import { ordersService } from '../../service/order.service'
 
 const iconUrl = '/images/courier/busy.png'
@@ -45,7 +49,13 @@ export default function CourierMap({
 
   const isTabActive = useIsTabActive(10)
 
-  const { data: courierTrack } = useQuery({
+  const {
+    data: courierTrack,
+    isError,
+    refetch,
+    isLoading,
+    isFetching
+  } = useQuery({
     queryKey: ['courier-track', orderSId],
     queryFn: () => ordersService.courierTrack(orderSId!),
     enabled: Boolean(orderSId) && isTabActive,
@@ -70,6 +80,31 @@ export default function CourierMap({
       mapRef.current.setView(currentCourierPosition, 15)
     }
   }, [currentCourierPosition])
+
+  if (isError) {
+    return (
+      <div className='flex w-full items-start justify-center'>
+        <Alert className='w-auto text-center text-sm' color='destructive' variant='outline'>
+          <AlertTriangle className='mt-2' />
+          <AlertDescription className='flex items-center gap-2'>
+            Kurye takip bilgisi alınamadı. Lütfen daha sonra tekrar deneyin.
+            <RefreshButton onClick={() => refetch()} isLoading={isFetching} isIconButton color='info' variant='ghost' />
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className='flex w-full items-start justify-center'>
+        <Skeleton className='flex size-full items-center justify-center'>
+          <Loader2 className='mr-2 size-12 animate-spin' />
+          <span className='text-md'>Harita yükleniyor...</span>
+        </Skeleton>
+      </div>
+    )
+  }
 
   return (
     <MapContainer
