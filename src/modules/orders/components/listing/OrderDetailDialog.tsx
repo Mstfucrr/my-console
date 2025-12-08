@@ -171,7 +171,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className='space-y-4'>
-                        <div className='flex items-center justify-between'>
+                        <div className='flex items-center justify-between gap-2'>
                           <span className='text-muted-foreground text-sm'>Ad Soyad</span>
                           {displayOrder && (
                             <MaskedText
@@ -179,6 +179,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                               maskFn={maskLastName}
                               defaultMasked={true}
                               textClassName='text-sm'
+                              className='text-right'
                             />
                           )}
                         </div>
@@ -201,7 +202,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
 
                         <Separator />
 
-                        <div className='flex items-center justify-between'>
+                        <div className='flex items-center justify-between gap-2'>
                           <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
                           <div className='space-y-1 pl-6 text-right text-sm leading-relaxed'>
                             {displayOrder && displayOrder.deliveryAddress && (
