@@ -15,7 +15,7 @@ export const createOrderSchema = z.object({
     .default('')
     .refine(value => value.length === 10, { message: 'Telefon numarası 10 haneli olmalıdır' })
     .refine(value => PHONE_REGEX.test(value), { message: 'Telefon numarası 0 ile başlamamalıdır' }),
-  extensionPhone: z.string().optional(),
+  extensionPhone: z.string().max(10, 'Dahili telefon numarası en fazla 10 haneli olabilir').optional(),
 
   // Sipariş Bilgileri
   preparationTime: z
