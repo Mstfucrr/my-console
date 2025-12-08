@@ -9,7 +9,7 @@ export function LoginView() {
   return (
     <div className='mb-3 text-center'>
       <AnimatePresence mode='wait'>
-        {isOtp ? (
+        {!isOtp ? (
           <motion.div
             key='login-form'
             initial={{ opacity: 0, x: -20 }}
