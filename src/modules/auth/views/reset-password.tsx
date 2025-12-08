@@ -154,7 +154,7 @@ export function ResetPasswordView() {
             id='code'
             size='lg'
             disabled={formState.isSubmitting}
-            placeholder='6 haneli kodu giriniz'
+            placeholder='Mail adresinize gönderilen kodu giriniz'
             Icon={Mail}
             maxLength={6}
             inputMode='numeric'
@@ -170,7 +170,7 @@ export function ResetPasswordView() {
               id='password'
               size='lg'
               disabled={formState.isSubmitting}
-              placeholder='Şifrenizi giriniz'
+              placeholder='Yeni şifrenizi giriniz'
               Icon={Lock}
             />
           </div>
@@ -184,7 +184,7 @@ export function ResetPasswordView() {
               id='confirmPassword'
               size='lg'
               disabled={formState.isSubmitting}
-              placeholder='Şifrenizi tekrar girin'
+              placeholder='Yeni şifrenizi tekrar giriniz'
               Icon={Lock}
             />
           </div>
