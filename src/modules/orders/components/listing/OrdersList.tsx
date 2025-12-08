@@ -34,12 +34,14 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'customerName',
     header: 'Müşteri',
+    size: 250,
     cell: ({ row }) => (
       <MaskedText
         value={row.getValue('customerName')}
         maskFn={maskLastName}
         defaultMasked={true}
         textClassName='font-medium'
+        className='flex flex-row-reverse justify-end'
       />
     )
   },

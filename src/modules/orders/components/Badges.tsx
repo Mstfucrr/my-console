@@ -55,16 +55,17 @@ export function PaymentMethodBadge({
 interface ChannelBadgeProps {
   channel: OrderChannel
   className?: string
+  showText?: boolean
 }
 
-export function ChannelBadge({ channel, className }: ChannelBadgeProps) {
+export function ChannelBadge({ channel, showText = false, className }: ChannelBadgeProps) {
   const channelLabel = CHANNEL_LABELS[channel] || channel
   const channelImage = CHANNEL_IMAGES[channel] || 'no-channel.png'
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
+      {showText ? (
+        <div className='flex items-center gap-1'>
           <CustomImage
             src={`/images/order/channels/${channelImage}`}
             alt={channelLabel}
@@ -72,9 +73,22 @@ export function ChannelBadge({ channel, className }: ChannelBadgeProps) {
             width={channel === 'fiyuu' ? 30 : 22}
             className={className}
           />
-        </TooltipTrigger>
-        <TooltipContent>{channelLabel}</TooltipContent>
-      </Tooltip>
+          <span className='text-sm'>{channelLabel}</span>
+        </div>
+      ) : (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <CustomImage
+              src={`/images/order/channels/${channelImage}`}
+              alt={channelLabel}
+              height={22}
+              width={channel === 'fiyuu' ? 30 : 22}
+              className={className}
+            />
+          </TooltipTrigger>
+          <TooltipContent>{channelLabel}</TooltipContent>
+        </Tooltip>
+      )}
     </TooltipProvider>
   )
 }

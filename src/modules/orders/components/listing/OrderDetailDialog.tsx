@@ -139,7 +139,9 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                         </div>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Kanal</span>
-                          {displayOrder && <ChannelBadge className='max-sm:ml-2' channel={displayOrder.channel} />}
+                          {displayOrder && (
+                            <ChannelBadge className='max-sm:ml-2' showText channel={displayOrder.channel} />
+                          )}
                         </div>
                         <Separator />
                         <div className='flex items-center justify-between'>

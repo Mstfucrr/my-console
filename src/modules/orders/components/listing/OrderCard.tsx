@@ -39,6 +39,7 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
                 maskFn={maskLastName}
                 defaultMasked={true}
                 textClassName='text-sm font-semibold'
+                className='flex flex-row-reverse justify-end'
               />
               {order.courierInfo && (
                 <TooltippedElement tooltipContent={order.courierInfo.name}>
