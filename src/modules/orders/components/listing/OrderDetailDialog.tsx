@@ -196,6 +196,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                               asLink={true}
                               href={`tel:${displayOrder.customerPhone}`}
                               textClassName='text-sm'
+                              className='text-right'
                             />
                           )}
                         </div>
@@ -207,7 +208,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                           <div className='space-y-1 pl-6 text-right text-sm leading-relaxed'>
                             {displayOrder && displayOrder.deliveryAddress && (
                               <MaskedText
-                                className='items-start justify-end'
+                                className='items-start justify-end text-right'
                                 maskFn={maskAddress}
                                 value={displayOrder.deliveryAddress}
                               />
