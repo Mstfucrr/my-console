@@ -5,7 +5,9 @@ import Leaflet from 'leaflet'
 import { useEffect, useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 
+import { useQuery } from '@tanstack/react-query'
 import 'leaflet/dist/leaflet.css' // Buraya taşı
+import { ordersService } from '../../service/order.service'
 
 // Fix Leaflet icons
 Leaflet.Icon.Default.mergeOptions({
@@ -15,13 +17,24 @@ Leaflet.Icon.Default.mergeOptions({
 })
 
 interface CourierMapProps {
+  orderSId?: string
   courierInfo: CourierInfo
   courierPosition: [number, number]
   customerPosition?: [number, number]
 }
 
-export default function CourierMap({ courierInfo, courierPosition, customerPosition }: CourierMapProps) {
+export default function CourierMap({ orderSId, courierInfo, courierPosition, customerPosition }: CourierMapProps) {
   const mapRef = useRef<Leaflet.Map | null>(null)
+
+  const { data: courierTrack } = useQuery({
+    queryKey: ['courier-track', orderSId],
+    queryFn: () => ordersService.courierTrack(orderSId!),
+    enabled: Boolean(orderSId)
+  })
+
+  useEffect(() => {
+    if (courierTrack) console.log(courierTrack)
+  }, [courierTrack])
 
   useEffect(() => {
     if (mapRef.current) {

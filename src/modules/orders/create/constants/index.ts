@@ -4,7 +4,7 @@ const transformPriceToNumber = (price: string) => {
   return Number(price)
 }
 
-const PHONE_REGEX = /^(05|5|905|)[0-9][0-9][1-9]([0-9]){6}$/
+const PHONE_REGEX = /^[1-9][0-9]{9}$/
 
 export const createOrderSchema = z.object({
   // Müşteri Bilgileri
@@ -13,7 +13,8 @@ export const createOrderSchema = z.object({
   customerPhone: z
     .string()
     .default('')
-    .refine(value => PHONE_REGEX.test(value), { message: 'Geçersiz telefon numarası' }),
+    .refine(value => value.length === 10, { message: 'Telefon numarası 10 haneli olmalıdır' })
+    .refine(value => PHONE_REGEX.test(value), { message: 'Telefon numarası 0 ile başlamamalıdır' }),
   extensionPhone: z.string().optional(),
 
   // Sipariş Bilgileri
@@ -44,10 +45,7 @@ export const createOrderSchema = z.object({
     id: z.string().min(1, 'Mahalle zorunludur').default(''),
     name: z.string()
   }),
-  street: z.object({
-    id: z.string().min(1, 'Sokak zorunludur').default(''),
-    name: z.string()
-  }),
+  street: z.string().min(1, 'Sokak zorunludur').default(''),
   buildingNumber: z.string().min(1, 'Bina numarası zorunludur').default(''),
   floor: z.string().optional(),
   buildingName: z.string().optional(),

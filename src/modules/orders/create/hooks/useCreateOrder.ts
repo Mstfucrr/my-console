@@ -1,7 +1,6 @@
-import type { County, District, Province, Street } from '@/service/location.service'
+import type { County, District, Province } from '@/service/location.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { ordersService } from '../../service/order.service'
@@ -17,19 +16,12 @@ export function useCreateOrder() {
     resolver: zodResolver(createOrderSchema)
   })
 
-  useEffect(() => {
-    console.log(form.formState.errors)
-  }, [form.formState.errors])
-
   // Form değerlerini watch ile takip et
   // Şehir
   const cityId = useWatch({ control: form.control, name: 'city.id' })
   // İlçe
   const countyId = useWatch({ control: form.control, name: 'county.id' })
   // Mahalle
-  const districtId = useWatch({ control: form.control, name: 'district.id' })
-  // Sokak
-  const streetId = useWatch({ control: form.control, name: 'street.id' })
 
   // Şehir değiştiğinde ilçe ve mahalleyi temizle
   const handleCityChange = (cityId: string, provinces?: Province[]) => {
@@ -38,8 +30,10 @@ export function useCreateOrder() {
       form.setValue('city', { id: cityId, name: selectedProvince.il_adi })
       form.setValue('county', { id: '', name: '' })
       form.setValue('district', { id: '', name: '' })
-      form.setValue('street', { id: '', name: '' })
     }
+
+    // focus
+    form.setFocus('county.id')
   }
 
   // İlçe değiştiğinde mahalleyi temizle
@@ -48,8 +42,10 @@ export function useCreateOrder() {
     if (selectedCounty) {
       form.setValue('county', { id: countyId, name: selectedCounty.ilce_adi })
       form.setValue('district', { id: '', name: '' })
-      form.setValue('street', { id: '', name: '' })
     }
+
+    // focus
+    form.setFocus('district.id')
   }
 
   // Mahalle değiştiğinde sokağı temizle
@@ -57,15 +53,6 @@ export function useCreateOrder() {
     const selectedDistrict = districts?.find(d => d.mahalle_id.toString() === districtId)
     if (selectedDistrict) {
       form.setValue('district', { id: districtId, name: selectedDistrict.mahalle_adi })
-      form.setValue('street', { id: '', name: '' })
-    }
-  }
-
-  // Sokak değiştiğinde adresi temizle
-  const handleStreetChange = (streetId: string, streets?: Street[]) => {
-    const selectedStreet = streets?.find(s => s.sokak_id.toString() === streetId)
-    if (selectedStreet) {
-      form.setValue('street', { id: streetId, name: selectedStreet.sokak_adi })
     }
   }
 
@@ -82,12 +69,9 @@ export function useCreateOrder() {
     isSubmitting,
     cityId,
     countyId,
-    districtId,
-    streetId,
     handleCityChange,
     handleCountyChange,
     handleDistrictChange,
-    handleStreetChange,
     onSubmit
   }
 }

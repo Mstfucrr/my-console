@@ -8,6 +8,7 @@ import { MapPinned } from 'lucide-react'
 type Props = {
   courierInfo: CourierInfo
   handleToggleMap: () => void
+  isShipped: boolean
 }
 
 /**
@@ -16,7 +17,7 @@ type Props = {
  * - Alt satırda (varsa) küçük meta: araç tipi / kısa açıklama
  * - Bilgiler tekrar etmiyor; etiketler opsiyonel.
  */
-export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props) {
+export default function CourierCardPeek({ courierInfo, handleToggleMap, isShipped }: Props) {
   const hasPlate = Boolean(courierInfo?.licensePlate)
 
   return (
@@ -44,10 +45,12 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props)
         </div>
 
         {/* Tek aksiyon: haritada gör */}
-        <Button size='sm' variant='outline' onClick={handleToggleMap} className='gap-1'>
-          <MapPinned className='h-4 w-4' />
-          <span className='max-sm:sr-only'>Haritada Gör</span>
-        </Button>
+        {isShipped && (
+          <Button size='sm' variant='outline' onClick={handleToggleMap} className='gap-1'>
+            <MapPinned className='h-4 w-4' />
+            <span className='max-sm:sr-only'>Haritada Gör</span>
+          </Button>
+        )}
       </div>
     </Card>
   )

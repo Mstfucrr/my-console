@@ -9,24 +9,14 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
-import { useQueryCounties, useQueryDistricts, useQueryProvinces, useQueryStreets } from '@/service/location.service'
+import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
 import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
 export function CreateOrderView() {
-  const {
-    form,
-    isSubmitting,
-    cityId,
-    countyId,
-    districtId,
-    handleCityChange,
-    handleCountyChange,
-    handleDistrictChange,
-    handleStreetChange,
-    onSubmit
-  } = useCreateOrder()
+  const { form, isSubmitting, cityId, countyId, handleCityChange, handleCountyChange, handleDistrictChange, onSubmit } =
+    useCreateOrder()
 
   // Ödeme Tipi
   const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
@@ -49,10 +39,6 @@ export function CreateOrderView() {
     value: district.mahalle_id.toString(),
     label: district.mahalle_adi
   }))
-
-  // Sokak
-  const { data: streets, isLoading: isLoadingStreets } = useQueryStreets(Number(districtId), !!districtId)
-  const streetOptions = streets?.map(street => ({ value: street.sokak_id.toString(), label: street.sokak_adi }))
 
   return (
     <div className='flex flex-col gap-6 pt-6 max-sm:p-0'>
@@ -85,6 +71,9 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Telefon'
                   placeholder='555 123 45 67'
+                  inputMode='numeric'
+                  pattern='[0-9]*'
+                  type='number'
                 />
                 <FormInputField
                   name='extensionPhone'
@@ -187,17 +176,13 @@ export function CreateOrderView() {
                   onValueChange={districtId => handleDistrictChange(districtId, districts)}
                 />
 
-                <FormCommandSelectField
-                  name='street.id'
+                <FormInputField
+                  name='street'
                   required
                   control={form.control}
                   label='Sokak'
                   formItemClassName='max-sm:col-span-2'
-                  placeholder='Sokak seçin'
-                  options={streetOptions || []}
-                  isLoading={isLoadingStreets}
-                  disabled={!districtId}
-                  onValueChange={streetId => handleStreetChange(streetId, streets)}
+                  placeholder='4. Sokak'
                 />
 
                 <FormInputField

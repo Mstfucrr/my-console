@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskAddress, maskLastName, maskPhone } from '@/lib/utils/mask'
-import type { Order } from '@/types'
+import { OrderStatusesGroups, type Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -86,6 +86,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
               {openMap && displayOrder?.courierInfo ? (
                 <div className='flex h-104 w-full p-4 pt-0'>
                   <CourierMap
+                    orderSId={displayOrder.sId}
                     courierInfo={displayOrder.courierInfo}
                     courierPosition={displayOrder.courierInfo.position}
                     customerPosition={displayOrder.customerPosition}
@@ -96,7 +97,11 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                 <div className='overflow-y-auto'>
                   {/* Kurye Bilgileri */}
                   {displayOrder?.courierInfo && (
-                    <CourierCard courierInfo={displayOrder.courierInfo} handleToggleMap={handleToggleMap} />
+                    <CourierCard
+                      courierInfo={displayOrder.courierInfo}
+                      handleToggleMap={handleToggleMap}
+                      isShipped={displayOrder.status === OrderStatusesGroups.SHIPPED}
+                    />
                   )}
 
                   <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
