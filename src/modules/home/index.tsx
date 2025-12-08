@@ -1,13 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import PageError from '@/components/page-error'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LucideIcon, Package } from 'lucide-react'
-import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 
@@ -21,16 +20,6 @@ import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
-
-const defaultDateRange = {
-  from: new Date(getOperationDateRange().startDate),
-  to: new Date(getOperationDateRange().endDate)
-}
-
-const MIN_MAX_DATE_RANGE = {
-  rangeStart: new Date(new Date().setHours(5, 0, 0, 0) - 30 * 24 * 60 * 60 * 1000),
-  rangeEnd: new Date(getOperationDateRange().endDate)
-} as const
 
 type StatsList = {
   title: string
@@ -67,8 +56,12 @@ const statsList: Array<StatsList> = [
   }
 ]
 
+const dateRange = {
+  from: new Date(getOperationDateRange().startDate),
+  to: new Date(getOperationDateRange().endDate)
+}
+
 export default function DashboardView() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const { data: stats, isLoading, isFetching, error, refetch } = useGetStats(dateRange)
 
   const {
@@ -107,8 +100,6 @@ export default function DashboardView() {
       }
     ]
   }, [isEmptyStats, stats])
-
-  const isDefaultDateRange = useMemo(() => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange), [dateRange])
 
   if (error || latestOrdersError) {
     return (
