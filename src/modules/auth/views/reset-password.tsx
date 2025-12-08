@@ -140,6 +140,7 @@ export function ResetPasswordView() {
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
           <FormInputField
             name='code'
+            autoComplete='off'
             control={control}
             type='text'
             id='code'
@@ -155,6 +156,7 @@ export function ResetPasswordView() {
           <div className='relative'>
             <FormInputField
               name='password'
+              autoComplete='off'
               control={control}
               type='password'
               id='password'
@@ -168,6 +170,7 @@ export function ResetPasswordView() {
           <div className='relative'>
             <FormInputField
               name='confirmPassword'
+              autoComplete='off'
               control={control}
               type='password'
               id='confirmPassword'

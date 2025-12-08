@@ -11,8 +11,16 @@ const TOTAL_OTP_FIELD = 6
 const OTP_TIMEOUT = 60
 
 export function VerifyForm() {
-  const { otpState, loadingState, handleOtpChange, handleOtpKeyDown, handleVerifyOtp, handleResendOtp, otpInputRefs } =
-    useAuth()
+  const {
+    otpState,
+    loadingState,
+    handleOtpChange,
+    handleOtpKeyDown,
+    handleOtpPaste,
+    handleVerifyOtp,
+    handleResendOtp,
+    otpInputRefs
+  } = useAuth()
 
   const isTimerComplete = otpState.timer === 0
 
@@ -35,6 +43,7 @@ export function VerifyForm() {
               name={`otp${index}`}
               value={otpState.values[index]}
               onChange={e => handleOtpChange(index, e.target.value)}
+              onPaste={e => handleOtpPaste(index, e.clipboardData.getData('text'))}
               onKeyDown={event => handleOtpKeyDown(index, event)}
               disabled={isTimerComplete || loadingState.verify || loadingState.resend}
               autoFocus={index === 0}
@@ -45,6 +54,7 @@ export function VerifyForm() {
               }}
               inputMode='numeric'
               pattern='[0-9]*'
+              autoComplete={index === 0 ? 'one-time-code' : 'off'}
             />
           ))}
         </div>
