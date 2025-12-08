@@ -23,10 +23,9 @@ const getNotificationIcon = (type: string) => {
 export function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
   return (
     <div
-      className={cn(
-        'hover:bg-muted flex cursor-pointer items-start gap-2 rounded-lg p-2 transition-colors',
-        { 'bg-muted/30': !notification.read }
-      )}
+      className={cn('hover:bg-muted flex cursor-pointer items-start gap-2 rounded-lg p-2 transition-colors', {
+        'bg-muted/30': !notification.read
+      })}
       onClick={() => onMarkAsRead(notification.id)}
     >
       <div className='mt-0.5 shrink-0'>{getNotificationIcon(notification.type)}</div>
@@ -39,4 +38,3 @@ export function NotificationItem({ notification, onMarkAsRead }: NotificationIte
     </div>
   )
 }
-

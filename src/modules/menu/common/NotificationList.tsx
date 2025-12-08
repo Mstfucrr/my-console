@@ -32,4 +32,3 @@ export function NotificationList({ maxHeight = 'max-h-80', compact = false }: No
     </ScrollArea>
   )
 }
-
