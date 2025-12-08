@@ -84,10 +84,13 @@ export function MaskedText({
           className='size-6! min-h-6 min-w-6 p-0'
           aria-label={isMasked ? 'Göster' : 'Gizle'}
           type='button'
-          onClick={() => setIsMasked(masked => !masked)}
+          onClick={e => {
+            e.stopPropagation()
+            setIsMasked(masked => !masked)
+          }}
           tabIndex={0}
         >
-          {isMasked ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
+          {isMasked ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
         </Button>
       ) : (
         <Button
@@ -96,14 +99,30 @@ export function MaskedText({
           className='size-6! min-h-6 min-w-6 p-0'
           aria-label={isMasked ? 'Göster' : 'Gizle'}
           type='button'
-          onMouseDown={showUnmasked}
-          onMouseUp={hideMasked}
-          onMouseLeave={hideMasked}
-          onTouchStart={showUnmasked}
-          onTouchEnd={hideMasked}
+          onMouseDown={e => {
+            e.stopPropagation()
+            showUnmasked()
+          }}
+          onMouseUp={e => {
+            e.stopPropagation()
+            hideMasked()
+          }}
+          onMouseLeave={e => {
+            e.stopPropagation()
+            hideMasked()
+          }}
+          onTouchStart={e => {
+            e.stopPropagation()
+            showUnmasked()
+          }}
+          onTouchEnd={e => {
+            e.stopPropagation()
+            hideMasked()
+          }}
+          onClick={e => e.stopPropagation()}
           tabIndex={0}
         >
-          {isMasked ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
+          {isMasked ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
         </Button>
       )}
     </div>
