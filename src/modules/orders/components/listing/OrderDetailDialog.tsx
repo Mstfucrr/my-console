@@ -91,6 +91,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                     courierPosition={displayOrder.courierInfo.position}
                     customerPosition={displayOrder.customerPosition}
                     key={displayOrder.courierInfo.id}
+                    customerName={displayOrder.customerName}
                   />
                 </div>
               ) : (

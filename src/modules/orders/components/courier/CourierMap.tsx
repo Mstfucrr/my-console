@@ -2,12 +2,22 @@
 
 import type { CourierInfo } from '@/types'
 import Leaflet from 'leaflet'
-import { useEffect, useRef } from 'react'
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import { useEffect, useMemo, useRef } from 'react'
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 
+import useIsTabActive from '@/hooks/use-is-tab-active'
 import { useQuery } from '@tanstack/react-query'
-import 'leaflet/dist/leaflet.css' // Buraya taşı
+import 'leaflet/dist/leaflet.css'
 import { ordersService } from '../../service/order.service'
+
+const iconUrl = '/images/courier/busy.png'
+
+const courierIcon = new Leaflet.Icon({
+  iconUrl: iconUrl,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+})
 
 // Fix Leaflet icons
 Leaflet.Icon.Default.mergeOptions({
@@ -21,30 +31,49 @@ interface CourierMapProps {
   courierInfo: CourierInfo
   courierPosition: [number, number]
   customerPosition?: [number, number]
+  customerName?: string
 }
 
-export default function CourierMap({ orderSId, courierInfo, courierPosition, customerPosition }: CourierMapProps) {
+export default function CourierMap({
+  orderSId,
+  courierInfo,
+  courierPosition,
+  customerPosition,
+  customerName
+}: CourierMapProps) {
   const mapRef = useRef<Leaflet.Map | null>(null)
+
+  const isTabActive = useIsTabActive(10)
 
   const { data: courierTrack } = useQuery({
     queryKey: ['courier-track', orderSId],
     queryFn: () => ordersService.courierTrack(orderSId!),
-    enabled: Boolean(orderSId)
+    enabled: Boolean(orderSId) && isTabActive,
+    refetchIntervalInBackground: false,
+    refetchInterval: 60 * 1000
   })
 
-  useEffect(() => {
-    if (courierTrack) console.log(courierTrack)
+  const currentCourierPosition = useMemo(() => {
+    if (courierTrack?.log?.[0]) {
+      return [courierTrack.log[0].lat, courierTrack.log[0].lng] as [number, number]
+    }
+    return courierPosition
+  }, [courierTrack, courierPosition])
+
+  const pathPositions = useMemo(() => {
+    if (!courierTrack?.log) return []
+    return courierTrack.log.map(point => [point.lat, point.lng] as [number, number])
   }, [courierTrack])
 
   useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.setView(courierPosition, 15)
+    if (mapRef.current && currentCourierPosition) {
+      mapRef.current.setView(currentCourierPosition, 15)
     }
-  }, [courierPosition])
+  }, [currentCourierPosition])
 
   return (
     <MapContainer
-      center={courierPosition}
+      center={currentCourierPosition}
       zoom={15}
       style={{ height: '100%', width: '100%' }}
       className='rounded-b-lg'
@@ -59,12 +88,12 @@ export default function CourierMap({ orderSId, courierInfo, courierPosition, cus
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
 
-      {/* Courier Marker */}
-      <Marker position={courierPosition}>
+      {pathPositions.length > 0 && <Polyline positions={pathPositions} pathOptions={{ color: '#3b82f6', weight: 4 }} />}
+
+      <Marker position={currentCourierPosition} icon={courierIcon}>
         <Popup>
           <div className='text-center'>
-            <div className='font-semibold text-blue-600'>🚚 Kurye</div>
-            <div className='text-sm'>{courierInfo.name}</div>
+            <span className='text-xs'>{courierInfo.name}</span>
             {courierInfo.licensePlate && (
               <div className='text-muted-foreground text-xs'>{courierInfo.licensePlate}</div>
             )}
@@ -76,10 +105,7 @@ export default function CourierMap({ orderSId, courierInfo, courierPosition, cus
       {customerPosition && (
         <Marker position={customerPosition}>
           <Popup>
-            <div className='text-center'>
-              <div className='font-semibold text-green-600'>🏠 Teslimat Adresi</div>
-              <div className='text-sm'>Müşteri Konumu</div>
-            </div>
+            <span className='text-center text-sm'>{customerName}</span>
           </Popup>
         </Marker>
       )}

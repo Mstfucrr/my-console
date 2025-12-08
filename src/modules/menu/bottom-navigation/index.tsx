@@ -36,7 +36,7 @@ export function BottomNavigation() {
               className={cn(
                 'relative z-10',
                 'flex size-14 items-center justify-center rounded-full',
-                'bg-primary text-primary-foreground shadow-lg',
+                'bg-success text-primary-foreground shadow-lg',
                 'transition-all hover:scale-105 hover:shadow-xl active:scale-95',
                 'ring-background -mt-6 ring-4'
               )}
