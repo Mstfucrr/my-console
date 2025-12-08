@@ -120,6 +120,9 @@ importers:
       react-toastify:
         specifier: ^11.0.5
         version: 11.0.5(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.1
       zod:
         specifier: ^3.24.2
         version: 3.24.2
