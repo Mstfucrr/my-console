@@ -4,16 +4,13 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
 import PageError from '@/components/page-error'
-import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { BarChart2, LucideIcon, Package } from 'lucide-react'
+import { LucideIcon, Package } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
@@ -127,37 +124,6 @@ export default function DashboardView() {
 
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
-      {/* Header */}
-      <PageHeader
-        title='Özet bilgiler'
-        description='İşletmenizin güncel durumunu takip edin'
-        icon={BarChart2}
-        actions={
-          <div className='flex flex-col justify-center gap-2 sm:items-end'>
-            <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
-            <DateRangePicker
-              dateRange={dateRange}
-              defaultDateRange={defaultDateRange}
-              defaultText='Bugün'
-              calendarProps={{
-                disabled: {
-                  before: MIN_MAX_DATE_RANGE.rangeStart,
-                  after: MIN_MAX_DATE_RANGE.rangeEnd
-                },
-                startMonth: MIN_MAX_DATE_RANGE.rangeStart,
-                endMonth: MIN_MAX_DATE_RANGE.rangeEnd
-              }}
-              onDateRangeChange={setDateRange}
-              placeholder='Dönem seçin'
-              enableTimeSelection
-              quickClearable
-              variant={isDefaultDateRange ? 'outline' : 'soft'}
-              color={isDefaultDateRange ? undefined : 'info'}
-            />
-          </div>
-        }
-      />
-
       {/* Stats */}
       <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
         {statsList.map(stat => (
