@@ -80,6 +80,7 @@ class OrdersService {
       city: order.city.name,
       county: order.county.name,
       neighborhood: order.district.name,
+      totalAmount: Number(order.totalAmount) * 100,
       street: order.street
     }
     const response = await privateAxiosInstance.post<Order>('/orders/create', payload)
