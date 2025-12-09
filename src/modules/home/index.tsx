@@ -76,12 +76,13 @@ export default function DashboardView() {
     latestOrdersRefetch()
   }
 
-  const isEmptyStats = useMemo(
-    () => !stats || (stats?.delivered === 0 && stats?.shipped === 0 && stats?.cancelled === 0),
-    [stats]
-  )
+  const isEmptyStats = useMemo(() => !stats || stats?.total === 0, [stats])
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
     if (isEmptyStats) return []
+
+    const created = stats?.total
+      ? stats?.total - (stats?.shipped ?? 0) - (stats?.delivered ?? 0) - (stats?.cancelled ?? 0)
+      : 0
     return [
       {
         label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
@@ -97,6 +98,11 @@ export default function DashboardView() {
         label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
         value: stats?.cancelled ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.CANCELLED].color
+      },
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+        value: created ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.CREATED].color
       }
     ]
   }, [isEmptyStats, stats])
