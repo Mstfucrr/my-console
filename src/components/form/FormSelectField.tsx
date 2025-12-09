@@ -16,6 +16,7 @@ interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 
   options: SelectOption[]
   formItemClassName?: string
   onValueChange?: (value: string) => void
+  tabIndex?: number
 }
 
 export function FormSelectField<T extends FieldValues>({
@@ -26,6 +27,7 @@ export function FormSelectField<T extends FieldValues>({
   options,
   formItemClassName,
   onValueChange,
+  tabIndex,
   ...props
 }: FormSelectFieldProps<T>) {
   const {
@@ -47,7 +49,7 @@ export function FormSelectField<T extends FieldValues>({
       )}
       <FormControl>
         <Select value={value} onValueChange={handleValueChange} {...props}>
-          <SelectTrigger className={cn('w-full', error && 'border-red-500')}>
+          <SelectTrigger className={cn('w-full', error && 'border-red-500')} tabIndex={tabIndex}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>

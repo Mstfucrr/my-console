@@ -33,6 +33,7 @@ interface FormCommandSelectFieldProps<T extends FieldValues> {
   disabled?: boolean
   isLoading?: boolean
   onValueChange?: (value: string) => void
+  tabIndex?: number
 }
 
 export function FormCommandSelectField<T extends FieldValues>({
@@ -47,7 +48,8 @@ export function FormCommandSelectField<T extends FieldValues>({
   required,
   disabled,
   isLoading,
-  onValueChange
+  onValueChange,
+  tabIndex
 }: FormCommandSelectFieldProps<T>) {
   const [open, setOpen] = useState(false)
 
@@ -73,6 +75,7 @@ export function FormCommandSelectField<T extends FieldValues>({
               aria-expanded={open}
               className={cn(error && 'border-red-500', disabled && 'cursor-not-allowed opacity-50')}
               disabled={disabled}
+              tabIndex={tabIndex}
             >
               <span className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
                 {selectedOption ? selectedOption.label : placeholder}

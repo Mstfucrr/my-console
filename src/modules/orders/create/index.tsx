@@ -63,8 +63,16 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Ad'
                   placeholder='Ahmet'
+                  tabIndex={1}
                 />
-                <FormInputField name='lastName' required control={form.control} label='Soyad' placeholder='Yılmaz' />
+                <FormInputField
+                  name='lastName'
+                  required
+                  control={form.control}
+                  label='Soyad'
+                  placeholder='Yılmaz'
+                  tabIndex={2}
+                />
                 <FormInputField
                   name='customerPhone'
                   required
@@ -74,12 +82,14 @@ export function CreateOrderView() {
                   inputMode='numeric'
                   pattern='[0-9]*'
                   type='number'
+                  tabIndex={3}
                 />
                 <FormInputField
                   name='extensionPhone'
                   control={form.control}
                   label='Dahili Telefon'
                   placeholder='1234'
+                  tabIndex={4}
                 />
               </CardContent>
             </Card>
@@ -99,6 +109,7 @@ export function CreateOrderView() {
                   label='Hazırlık Süresi (dk)'
                   type='number'
                   placeholder='30'
+                  tabIndex={5}
                 />
                 <FormInputField
                   name='totalAmount'
@@ -107,6 +118,7 @@ export function CreateOrderView() {
                   label='Toplam Tutar (₺)'
                   type='number'
                   placeholder='0.00'
+                  tabIndex={6}
                 />
                 {isLoadingPaymentMethods ? (
                   <div className='flex items-center justify-center'>
@@ -121,11 +133,17 @@ export function CreateOrderView() {
                     placeholder='Ödeme tipi seçiniz'
                     options={paymentMethodOptions}
                     disabled={isLoadingPaymentMethods}
+                    tabIndex={7}
                   />
                 ) : null}
                 <div className='max-xs:flex-col flex gap-x-4 gap-y-2 self-center justify-self-center text-nowrap max-sm:col-span-2 sm:flex-col'>
-                  <FormSwitchField name='contactlessDelivery' control={form.control} label='Temassız teslimat' />
-                  <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' />
+                  <FormSwitchField
+                    name='contactlessDelivery'
+                    control={form.control}
+                    label='Temassız teslimat'
+                    tabIndex={8}
+                  />
+                  <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' tabIndex={9} />
                 </div>
               </CardContent>
             </Card>
@@ -150,6 +168,7 @@ export function CreateOrderView() {
                   options={provinceOptions || []}
                   isLoading={isLoadingProvinces}
                   onValueChange={cityId => handleCityChange(cityId, provinces)}
+                  tabIndex={10}
                 />
                 <FormCommandSelectField
                   name='county.id'
@@ -162,6 +181,7 @@ export function CreateOrderView() {
                   isLoading={isLoadingCounties}
                   disabled={!cityId}
                   onValueChange={countyId => handleCountyChange(countyId, counties)}
+                  tabIndex={11}
                 />
                 <FormCommandSelectField
                   name='district.id'
@@ -174,6 +194,7 @@ export function CreateOrderView() {
                   isLoading={isLoadingDistricts}
                   disabled={!countyId}
                   onValueChange={districtId => handleDistrictChange(districtId, districts)}
+                  tabIndex={12}
                 />
 
                 <FormInputField
@@ -183,6 +204,7 @@ export function CreateOrderView() {
                   label='Sokak'
                   formItemClassName='max-sm:col-span-2'
                   placeholder='4. Sokak'
+                  tabIndex={13}
                 />
 
                 <FormInputField
@@ -191,6 +213,7 @@ export function CreateOrderView() {
                   formItemClassName='max-sm:col-span-2'
                   label='Bina Adı'
                   placeholder='Plaza Adı'
+                  tabIndex={14}
                 />
                 <FormInputField
                   name='buildingNumber'
@@ -198,11 +221,25 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Bina No'
                   placeholder='123'
+                  tabIndex={15}
                 />
-                <FormInputField name='floor' control={form.control} label='Kat' placeholder='3' />
+                <FormInputField name='floor' control={form.control} label='Kat' placeholder='3' tabIndex={16} />
 
-                <FormInputField name='doorNumber' required control={form.control} label='Daire No' placeholder='12' />
-                <FormInputField name='postalCode' control={form.control} label='Posta Kodu' placeholder='34710' />
+                <FormInputField
+                  name='doorNumber'
+                  required
+                  control={form.control}
+                  label='Daire No'
+                  placeholder='12'
+                  tabIndex={17}
+                />
+                <FormInputField
+                  name='postalCode'
+                  control={form.control}
+                  label='Posta Kodu'
+                  placeholder='34710'
+                  tabIndex={18}
+                />
               </div>
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -213,6 +250,7 @@ export function CreateOrderView() {
                   label='Tam Adres'
                   placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'
                   rows={3}
+                  tabIndex={19}
                 />
 
                 <FormTextareaField
@@ -221,6 +259,7 @@ export function CreateOrderView() {
                   label='Adres Tarifi'
                   placeholder='Apartman kapısı mavi renkte, zil 3. katta...'
                   rows={2}
+                  tabIndex={20}
                 />
               </div>
             </CardContent>
