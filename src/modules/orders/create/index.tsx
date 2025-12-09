@@ -89,6 +89,9 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Dahili Telefon'
                   placeholder='1234'
+                  type='number'
+                  inputMode='numeric'
+                  pattern='[0-9]*'
                   tabIndex={4}
                 />
               </CardContent>

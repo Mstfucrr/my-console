@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/command'
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useIsMobile } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Check, Loader2 } from 'lucide-react'
 import { useState } from 'react'
@@ -52,6 +53,7 @@ export function FormCommandSelectField<T extends FieldValues>({
   tabIndex
 }: FormCommandSelectFieldProps<T>) {
   const [open, setOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   const {
     field: { value, onChange },
@@ -69,7 +71,7 @@ export function FormCommandSelectField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        <Popover open={open} modal onOpenChange={setOpen}>
+        <Popover open={open} modal={!isMobile} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <CommandTrigger
               aria-expanded={open}
@@ -82,14 +84,21 @@ export function FormCommandSelectField<T extends FieldValues>({
               </span>
             </CommandTrigger>
           </PopoverTrigger>
-          <PopoverContent className='w-full p-0' align='start'>
+          <PopoverContent
+            className='w-full p-0'
+            align='start'
+            onOpenAutoFocus={e => {
+              if (!isMobile) return
+              e.preventDefault()
+            }}
+          >
             {isLoading ? (
               <div className='flex items-center justify-center p-2'>
                 <Loader2 className='size-4 animate-spin' />
               </div>
             ) : (
               <Command>
-                <CommandInput placeholder={searchPlaceholder} autoFocus />
+                <CommandInput placeholder={searchPlaceholder} autoFocus={!isMobile} />
                 <CommandList>
                   <CommandEmpty className='p-2 text-xs'>{emptyMessage}</CommandEmpty>
                   <CommandGroup className='max-h-[200px] overflow-y-auto'>
