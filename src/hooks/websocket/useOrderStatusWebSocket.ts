@@ -49,6 +49,12 @@ export function useOrderStatusWebSocket(): UseWebSocketReturn {
 
         if (!typed) return old
 
+        const hasOrder = typed.data.find(order => order.orderId === orderId)
+        if (!hasOrder) {
+          // eğer event gelmişse ve order yoksa tekrar query'yi çek
+          queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+        }
+
         const updatedData = typed.data.map(order => {
           if (order.orderId === orderId) {
             previousStatus = order.status
