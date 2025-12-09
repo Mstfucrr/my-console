@@ -10,6 +10,7 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
+import { ONLY_LETTERS_REGEX } from '@/lib/regex'
 import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
 import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
@@ -63,6 +64,7 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Ad'
+                  regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Ahmet'
                   tabIndex={1}
                 />
@@ -71,6 +73,7 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Soyad'
+                  regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Yılmaz'
                   tabIndex={2}
                 />

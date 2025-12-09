@@ -15,7 +15,7 @@ import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
-import { formatDateTR } from '@/lib/utils/date'
+import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
@@ -166,7 +166,7 @@ export default function DashboardView() {
                       >
                         <div className='flex-1'>
                           <div className='text-sm font-medium'>{order.customerName}</div>
-                          <div className='text-xs'>{formatDateTR(order.date)}</div>
+                          <div className='mt-1 text-xs'>{formatDateTimeTR(order.date)}</div>
                           <span className='text-xs font-light'>{order.orderId}</span>
                         </div>
                         <div className='flex flex-col gap-y-2 text-right'>

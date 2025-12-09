@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { CreateOrderFormData } from '../types'
 
 const transformPriceToNumber = (price: string) => {
   return Number(price)
@@ -20,16 +21,15 @@ export const createOrderSchema = z.object({
   // Sipariş Bilgileri
   preparationTime: z
     .string()
-    .min(1, 'Hazırlık süresi zorunludur')
-    .default('')
     .transform(transformPriceToNumber)
+    .default('')
     .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
     .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
   totalAmount: z
     .string()
     .min(1, 'Toplam tutar zorunludur')
-    .default('')
     .transform(transformPriceToNumber)
+    .default('')
     .refine(value => value > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
 
   // Adres Bilgileri
@@ -57,5 +57,30 @@ export const createOrderSchema = z.object({
   // Ödeme ve Teslimat
   paymentTypeSId: z.string().min(1, 'Ödeme tipi seçimi zorunludur').default(''),
   contactlessDelivery: z.boolean().default(false),
-  ringDoorBell: z.boolean().default(true)
+  ringDoorBell: z.boolean().default(false)
 })
+
+export const defaultCreateOrderValues: CreateOrderFormData = {
+  firstName: '',
+  lastName: '',
+  customerPhone: '',
+  extensionPhone: '',
+  // @ts-expect-error - zod defaultValues için
+  preparationTime: '',
+  // @ts-expect-error - zod defaultValues için
+  totalAmount: '',
+  city: { id: '', name: '' },
+  county: { id: '', name: '' },
+  district: { id: '', name: '' },
+  street: '',
+  buildingNumber: '',
+  floor: '',
+  buildingName: '',
+  doorNumber: '',
+  postalCode: '',
+  fullAddress: '',
+  addressDirection: '',
+  paymentTypeSId: '',
+  contactlessDelivery: false,
+  ringDoorBell: false
+}
