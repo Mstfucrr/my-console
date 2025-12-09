@@ -8,6 +8,7 @@ import { MapPinned } from 'lucide-react'
 type Props = {
   courierInfo: CourierInfo
   handleToggleMap: () => void
+  isShipped: boolean
 }
 
 /**
@@ -16,7 +17,7 @@ type Props = {
  * - Alt satırda (varsa) küçük meta: araç tipi / kısa açıklama
  * - Bilgiler tekrar etmiyor; etiketler opsiyonel.
  */
-export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props) {
+export default function CourierCardPeek({ courierInfo, handleToggleMap, isShipped }: Props) {
   const hasPlate = Boolean(courierInfo?.licensePlate)
 
   return (
@@ -31,11 +32,11 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props)
 
           {/* İsim + pill'ler */}
           <div className='min-w-0 flex-1'>
-            <div className='flex flex-col items-start'>
+            <div className='flex flex-col items-start gap-y-1'>
               <h3 className='truncate text-base font-semibold tracking-tight'>{courierInfo?.name || 'Kurye'}</h3>
 
               {hasPlate && (
-                <Badge variant='outline' className='rounded-full px-2 py-0.5 text-[11px]'>
+                <Badge variant='outline' color='secondary' className='rounded-full px-2 py-0.5'>
                   {courierInfo.licensePlate}
                 </Badge>
               )}
@@ -44,10 +45,12 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap }: Props)
         </div>
 
         {/* Tek aksiyon: haritada gör */}
-        <Button size='sm' variant='outline' onClick={handleToggleMap} className='gap-1'>
-          <MapPinned className='h-4 w-4' />
-          <span className='max-sm:sr-only'>Haritada Gör</span>
-        </Button>
+        {isShipped && (
+          <Button size='sm' variant='outline' onClick={handleToggleMap} className='gap-1'>
+            <MapPinned className='h-4 w-4' />
+            <span className='max-sm:sr-only'>Haritada Gör</span>
+          </Button>
+        )}
       </div>
     </Card>
   )

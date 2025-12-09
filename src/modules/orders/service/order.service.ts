@@ -1,6 +1,14 @@
 import { getOperationDateRange } from '@/constants'
 import { privateAxiosInstance } from '@/lib/axios/instances'
-import type { Order, OrderStatusStats, OrderStatusesGroups, PaginatedResponse, PaginationOptions } from '@/types'
+import type {
+  CourierTrackResponse,
+  Order,
+  OrderStatusStats,
+  OrderStatusesGroups,
+  PaginatedResponse,
+  PaginationOptions
+} from '@/types'
+import { CreateOrderFormData } from '../create/types'
 import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
 
 // Filtreleme ve Sayfalama
@@ -62,6 +70,25 @@ class OrdersService {
 
     const { data } = await privateAxiosInstance.get<OrderStatsResponse>('/dashboard/order-stats', { params })
     return data
+  }
+
+  async createOrder(order: CreateOrderFormData): Promise<Order> {
+    // Form'daki obje yapısını backend'in beklediği string formatına çevir
+    const payload = {
+      ...order,
+      district: undefined,
+      city: order.city.name,
+      county: order.county.name,
+      neighborhood: order.district.name,
+      totalAmount: Number(order.totalAmount) * 100,
+      street: order.street
+    }
+    const response = await privateAxiosInstance.post<Order>('/orders/create', payload)
+    return response.data
+  }
+
+  async courierTrack(orderSId: string): Promise<CourierTrackResponse> {
+    return await privateAxiosInstance.get<CourierTrackResponse>(`/location/carrier/${orderSId}`).then(res => res.data)
   }
 }
 

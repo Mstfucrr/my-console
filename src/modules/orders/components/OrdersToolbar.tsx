@@ -38,8 +38,8 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
       {/* Mobile Dropdown Menu (lg: altında) */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='soft' color='secondary' size='icon' className='lg:hidden'>
-            <Menu className='size-4' />
+          <Button variant='soft' color='secondary' size='icon-sm' className='lg:hidden'>
+            <Menu className='size-4.5' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>

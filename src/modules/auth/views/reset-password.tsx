@@ -51,7 +51,7 @@ export function ResetPasswordView() {
 
   const form = useForm<ResetPasswordFormType>({
     resolver: zodResolver(schema),
-    mode: 'all',
+    mode: 'onSubmit',
     defaultValues: {
       code: '',
       password: '',
@@ -59,16 +59,24 @@ export function ResetPasswordView() {
     }
   })
 
-  const { handleSubmit, control, formState } = form
+  const { handleSubmit, control, formState, trigger } = form
 
-  // Centralized password checks for reusability
   const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
+  const confirmPasswordValue = useWatch({ control, name: 'confirmPassword', defaultValue: '' })
+
   const isLengthValid = passwordValue.length >= 8
   const hasUppercase = PASSWORD_REGEXES.uppercase.regex.test(passwordValue)
   const hasLowercase = PASSWORD_REGEXES.lowercase.regex.test(passwordValue)
   const hasNumber = PASSWORD_REGEXES.number.regex.test(passwordValue)
 
   const isValid = isLengthValid && hasUppercase && hasLowercase && hasNumber
+
+  useEffect(() => {
+    // İkisi de boşken gereksiz trigger etme
+    if (!passwordValue || !confirmPasswordValue) return
+
+    void trigger('confirmPassword')
+  }, [passwordValue, confirmPasswordValue, trigger])
 
   useEffect(() => {
     if (!recoverySessionId) {
@@ -140,12 +148,13 @@ export function ResetPasswordView() {
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
           <FormInputField
             name='code'
+            autoComplete='off'
             control={control}
             type='text'
             id='code'
             size='lg'
             disabled={formState.isSubmitting}
-            placeholder='6 haneli kodu giriniz'
+            placeholder='Mail adresinize gönderilen kodu giriniz'
             Icon={Mail}
             maxLength={6}
             inputMode='numeric'
@@ -155,12 +164,13 @@ export function ResetPasswordView() {
           <div className='relative'>
             <FormInputField
               name='password'
+              autoComplete='off'
               control={control}
               type='password'
               id='password'
               size='lg'
               disabled={formState.isSubmitting}
-              placeholder='Şifrenizi giriniz'
+              placeholder='Yeni şifrenizi giriniz'
               Icon={Lock}
             />
           </div>
@@ -168,12 +178,13 @@ export function ResetPasswordView() {
           <div className='relative'>
             <FormInputField
               name='confirmPassword'
+              autoComplete='off'
               control={control}
               type='password'
               id='confirmPassword'
               size='lg'
               disabled={formState.isSubmitting}
-              placeholder='Şifrenizi tekrar girin'
+              placeholder='Yeni şifrenizi tekrar giriniz'
               Icon={Lock}
             />
           </div>
@@ -196,7 +207,10 @@ export function ResetPasswordView() {
       </FormProvider>
 
       <div className='text-center'>
-        <Link href='/login' className='text-primary flex items-center justify-center gap-1 text-sm hover:underline'>
+        <Link
+          href='/login'
+          className='text-primary flex w-fit items-center justify-center gap-1 justify-self-center text-sm hover:underline'
+        >
           <ArrowLeft className='h-4 w-4' />
           Giriş sayfasına dön
         </Link>

@@ -39,6 +39,7 @@ type AuthContextType = {
   // OTP actions
   handleOtpChange: (index: number, value: string) => void
   handleOtpKeyDown: (index: number, event: React.KeyboardEvent<HTMLInputElement>) => void
+  handleOtpPaste: (index: number, value: string) => void
   handleVerifyOtp: () => Promise<void>
   handleResendOtp: () => Promise<void>
   resetOtp: () => void
@@ -224,6 +225,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     [otpState.values, handleVerifyOtp, otpInputRefs]
   )
 
+  // OTP paste handler
+  const handleOtpPaste = useCallback(
+    (index: number, value: string) => {
+      const cleanedValue = value.replace(/\D/g, '')
+      for (let i = 0; i < cleanedValue.length; i++) {
+        handleOtpChange(index + i, cleanedValue[i])
+      }
+    },
+    [handleOtpChange]
+  )
+
   // Resend OTP handler
   const handleResendOtp = async () => {
     if (!loginRequest) return
@@ -257,6 +269,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         handleLogin,
         handleOtpChange,
         handleOtpKeyDown,
+        handleOtpPaste,
         handleVerifyOtp,
         handleResendOtp,
         resetOtp,

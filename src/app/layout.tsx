@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import { Open_Sans } from 'next/font/google'
 
 import { cn } from '@/lib/utils'
-import QueryProvider from '@/provider/QueryProvider'
+import { QueryProvider } from '@/provider/QueryProvider'
 import type { Metadata } from 'next'
 import { ToastContainer } from 'react-toastify'
 

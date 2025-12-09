@@ -1,12 +1,16 @@
 'use client'
 
 import PageError from '@/components/page-error'
+import { useOrderStatusWebSocket } from '@/hooks/websocket/useOrderStatusWebSocket'
 import { OrdersTabs } from './components/OrdersTabs'
 import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
   const { error, refreshAllData, isFetching } = useOrders()
+
+  // WebSocket bağlantısını sadece orders sayfasında aktif et
+  useOrderStatusWebSocket()
 
   if (error)
     return (
@@ -20,7 +24,7 @@ function OrdersViewContent() {
     )
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
+    <div className='flex flex-col gap-4 py-6 max-sm:p-0'>
       <OrdersStats />
 
       <OrdersTabs />

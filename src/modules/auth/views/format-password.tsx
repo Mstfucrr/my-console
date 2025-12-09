@@ -104,7 +104,10 @@ export function ForgotPasswordView() {
       </FormProvider>
 
       <div className='text-center'>
-        <Link href='/login' className='text-primary flex items-center justify-center gap-1 text-sm hover:underline'>
+        <Link
+          href='/login'
+          className='text-primary flex w-fit items-center justify-center gap-1 justify-self-center text-sm hover:underline'
+        >
           <ArrowLeft className='h-4 w-4' />
           Giriş sayfasına dön
         </Link>

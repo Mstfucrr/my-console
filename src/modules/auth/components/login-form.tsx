@@ -46,6 +46,7 @@ export function LoginForm() {
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 text-left'>
           <FormInputField
+            autoFocus
             name='accountId'
             control={control}
             type='text'
