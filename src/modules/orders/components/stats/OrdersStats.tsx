@@ -66,7 +66,7 @@ export const OrdersStats = memo(function OrdersStats() {
 
   const getStatClassName = useCallback(
     (statId: string) =>
-      cn('size-full first:col-span-2 first:w-1/2 first:justify-self-center', {
+      cn('size-full max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center', {
         'opacity-50':
           statId !== 'total' &&
           ((activeTab === 'completed' && ACTIVE_STATUS_GROUPS.includes(statId as OrderStatusesGroups)) ||

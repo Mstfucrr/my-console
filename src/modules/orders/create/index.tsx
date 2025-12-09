@@ -112,6 +112,8 @@ export function CreateOrderView() {
                   label='Hazırlık Süresi (dk)'
                   type='number'
                   placeholder='30'
+                  inputMode='numeric'
+                  pattern='[0-9]*'
                   tabIndex={5}
                 />
                 <FormInputField
@@ -121,6 +123,8 @@ export function CreateOrderView() {
                   label='Toplam Tutar (₺)'
                   type='number'
                   placeholder='0.00'
+                  inputMode='decimal'
+                  pattern='[0-9.]*'
                   tabIndex={6}
                 />
                 {isLoadingPaymentMethods ? (
@@ -226,7 +230,16 @@ export function CreateOrderView() {
                   placeholder='123'
                   tabIndex={15}
                 />
-                <FormInputField name='floor' control={form.control} label='Kat' placeholder='3' tabIndex={16} />
+                <FormInputField
+                  name='floor'
+                  control={form.control}
+                  label='Kat'
+                  placeholder='3'
+                  type='number'
+                  inputMode='numeric'
+                  pattern='[0-9]*'
+                  tabIndex={16}
+                />
 
                 <FormInputField
                   name='doorNumber'
@@ -240,6 +253,9 @@ export function CreateOrderView() {
                   name='postalCode'
                   control={form.control}
                   label='Posta Kodu'
+                  type='number'
+                  inputMode='numeric'
+                  pattern='[0-9]*'
                   placeholder='34710'
                   tabIndex={18}
                 />
