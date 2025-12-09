@@ -112,8 +112,9 @@ export function FormMaskedInputField<T extends FieldValues>({
             {...(imaskPropsWithInputMode as IMaskInputElementProps)}
             name={field.name}
             value={field.value ?? ''}
-            onAccept={(val: unknown) => {
-              const normalized = val == null ? '' : String(val)
+            onAccept={(val: unknown, mask?: { unmaskedValue?: string | number }) => {
+              const unmaskedValue = mask?.unmaskedValue ?? val
+              const normalized = unmaskedValue == null ? '' : String(unmaskedValue)
               field.onChange(normalized)
             }}
             onBlur={field.onBlur}

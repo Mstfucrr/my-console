@@ -75,7 +75,7 @@ export function CreateOrderView() {
                   tabIndex={2}
                 />
                 <FormMaskedInputField
-                  mask='(500) 000-0000'
+                  mask='(000) 000-0000'
                   lazy={false}
                   type='number'
                   name='customerPhone'
