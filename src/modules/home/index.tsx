@@ -37,6 +37,12 @@ const statsList: Array<StatsList> = [
     color: 'text-blue-600'
   },
   {
+    title: 'Beklemede',
+    id: 'created',
+    Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED]
+  },
+  {
     title: 'Teslim Edildi',
     id: 'delivered',
     Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
@@ -122,9 +128,15 @@ export default function DashboardView() {
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
       {/* Stats */}
-      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
         {statsList.map(stat => (
-          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id]} {...stat} />
+          <StatCard
+            key={stat.id}
+            className='max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center'
+            isLoading={isLoading}
+            value={stats?.[stat.id]}
+            {...stat}
+          />
         ))}
       </div>
 
