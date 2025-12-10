@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { CreateOrderButton } from '../common/create-order-button'
 import { LogoutButton } from '../common/logout-button'
 import { MenuItem } from '../common/menu-item'
-import { NotificationsPopover } from '../common/notifications-popover'
 import { SupportDialog } from '../common/support-dialog'
 
 export function Topbar() {
@@ -30,7 +29,7 @@ export function Topbar() {
 
           <div className='ml-auto flex items-center gap-2'>
             <CreateOrderButton />
-            <NotificationsPopover />
+            {/* <NotificationsPopover /> */}
             <LogoutButton />
           </div>
         </div>

@@ -7,7 +7,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { ReconciliationStatus, type ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
-import ReconciliationStatusBadge from './reconciliation-status-badge'
 
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
@@ -51,11 +50,6 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
     cell: ({ row }) => formatCurrency(row.original.restaurantPaymentAmount, false)
   },
   {
-    accessorKey: 'status',
-    header: 'Durum',
-    cell: ({ row }) => <ReconciliationStatusBadge status={row.original.status} />
-  },
-  {
     accessorKey: 'ConfirmDate',
     header: 'Onay Tarihi',
     cell: ({ row }) => (row.original.ConfirmDate ? formatDateTR(row.original.ConfirmDate) : '-')
@@ -63,6 +57,7 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     id: 'actions',
     header: 'İşlemler',
+    size: 200,
     meta: { align: 'right' },
     cell: ({ row, table }) => {
       const handleOpenModal = table.options.meta?.handleOpenModal as
@@ -77,6 +72,7 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
 
       return (
         <div className='flex flex-row items-center justify-end gap-2'>
+          {status === ReconciliationStatus.FAILED && <span className='text-destructive'>Mutabık değiliz</span>}
           <Button
             size='xs'
             variant='outline'
