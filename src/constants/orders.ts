@@ -11,7 +11,7 @@ const ORDER_STATUS_BADGE_CLASSES: Record<OrderStatusesGroups, string> = {
 
 const ORDER_STATUS_TEXT_COLORS: Record<OrderStatusesGroups, string> = {
   [OrderStatusesGroups.CREATED]: 'text-orange-600',
-  [OrderStatusesGroups.SHIPPED]: 'text-amber-600',
+  [OrderStatusesGroups.SHIPPED]: 'text-purple-600',
   [OrderStatusesGroups.DELIVERED]: 'text-green-600',
   [OrderStatusesGroups.CANCELLED]: 'text-red-600'
 } as const
