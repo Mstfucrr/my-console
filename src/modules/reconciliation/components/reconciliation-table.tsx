@@ -2,7 +2,6 @@ import { BasicDataTable } from '@/components/basic-data-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { formatDateTR } from '@/lib/utils/date'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import { ReconciliationStatus, type ReconciliationRecord } from '../types'
@@ -39,20 +38,39 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   },
   {
     accessorKey: 'totalDeliveryAmount',
-    header: 'Toplam Teslimat Tutarı (₺)',
+    header: 'Ata Express Dağıtım Fatura Tutarı (₺)',
     meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.original.totalDeliveryAmount, false)
+  },
+  {
+    accessorKey: 'totalBillAmount',
+    header: 'Düzenleyeceğiniz Fatura Tutarı (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => formatCurrency(row.original.totalBillAmount, false)
+  },
+  {
+    accessorKey: 'totalFoodCouponAmount',
+    header: "Yemek Kartı (Tahsilatı Ata'da) (₺)",
+    meta: { align: 'right' },
+    cell: ({ row }) => formatCurrency(row.original.totalFoodCouponAmount, false)
+  },
+  {
+    accessorKey: 'totalPrePaidFoodCouponAmount',
+    header: 'Yemek Kartı (Tahsilatı Firmanızda) (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => formatCurrency(row.original.totalPrePaidFoodCouponAmount, false)
+  },
+  {
+    accessorKey: 'totalPrePaidAmount',
+    header: 'Online Ödeme Tutarı (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => formatCurrency(row.original.totalPrePaidAmount, false)
   },
   {
     accessorKey: 'restaurantPaymentAmount',
     header: 'Restoran Ödeme Tutarı (₺)',
     meta: { align: 'right' },
     cell: ({ row }) => formatCurrency(row.original.restaurantPaymentAmount, false)
-  },
-  {
-    accessorKey: 'ConfirmDate',
-    header: 'Onay Tarihi',
-    cell: ({ row }) => (row.original.ConfirmDate ? formatDateTR(row.original.ConfirmDate) : '-')
   },
   {
     id: 'actions',
