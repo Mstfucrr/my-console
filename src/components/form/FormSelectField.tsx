@@ -49,7 +49,7 @@ export function FormSelectField<T extends FieldValues>({
       )}
       <FormControl>
         <Select value={value} onValueChange={handleValueChange} {...props}>
-          <SelectTrigger className={cn('w-full', error && 'border-red-500')} tabIndex={tabIndex}>
+          <SelectTrigger id={name} className={cn('w-full', error && 'border-red-500')} tabIndex={tabIndex}>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>

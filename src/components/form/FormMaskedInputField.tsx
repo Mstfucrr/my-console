@@ -110,6 +110,7 @@ export function FormMaskedInputField<T extends FieldValues>({
 
           <IMaskInput
             {...(imaskPropsWithInputMode as IMaskInputElementProps)}
+            id={name}
             name={field.name}
             value={field.value ?? ''}
             onAccept={(val: unknown, mask?: { unmaskedValue?: string | number }) => {
