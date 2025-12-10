@@ -176,12 +176,14 @@ touch .env.test
 `.env.test` dosyasına aşağıdaki değişkenlerden birini ekleyin:
 
 **Seçenek 1: Token ile direkt giriş (Önerilen - Daha hızlı)**
+
 ```bash
 # Eğer TEST_ACCESS_TOKEN set edilirse, login adımı atlanır ve direkt token kullanılır
 TEST_ACCESS_TOKEN=your-access-token-here
 ```
 
 **Seçenek 2: Login bilgileri ile giriş**
+
 ```bash
 # TEST_ACCESS_TOKEN yoksa bu bilgiler kullanılır
 TEST_ACCOUNT_ID=your-account-id

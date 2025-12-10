@@ -71,7 +71,7 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
         if (!typed) return old
 
         const hasOrder = typed.data.find(order => order.orderId === orderId)
-        if (!hasOrder) {
+        if (!hasOrder || newStatus === OrderStatusesGroups.CREATED) {
           queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
         }
 
