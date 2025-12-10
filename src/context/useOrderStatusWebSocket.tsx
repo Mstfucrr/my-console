@@ -57,10 +57,17 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
 
       if (!isOrdersPage) {
         const statusLabel = OrderStatusGroup[newStatus]?.label ?? newStatus
-        toast.info(`Sipariş #${orderId.slice(-6)} durumu güncellendi: ${statusLabel}`, {
-          position: 'top-right',
-          autoClose: 3000
-        })
+        if (newStatus === OrderStatusesGroups.CREATED) {
+          toast.info(`Yeni sipariş eklendi`, {
+            position: 'top-right',
+            autoClose: 3000
+          })
+        } else {
+          toast.info(`Sipariş #${orderId.slice(-6)} durumu güncellendi: ${statusLabel}`, {
+            position: 'top-right',
+            autoClose: 3000
+          })
+        }
       }
 
       // Orders cache’ini güncelle
