@@ -84,13 +84,13 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
 
       const status = row.original.status
 
-      if (status === ReconciliationStatus.APPROVED) return 'Mutabıkız'
+      if (status === ReconciliationStatus.APPROVED) return <span className='text-success'>Onaylandı</span>
 
       const isReportable = status === ReconciliationStatus.PENDING
 
       return (
         <div className='flex flex-row items-center justify-end gap-2'>
-          {status === ReconciliationStatus.FAILED && <span className='text-destructive'>Mutabık değiliz</span>}
+          {status === ReconciliationStatus.FAILED && <span className='text-destructive'>Onaylanmadı</span>}
           <Button
             size='xs'
             variant='outline'
