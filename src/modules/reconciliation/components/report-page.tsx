@@ -10,7 +10,7 @@ import { z } from 'zod'
 const reportSchema = z.object({
   description: z.string().min(1, 'Açıklama girilmesi zorunludur'),
   statementFile: z
-    .instanceof(File, { message: 'Cari ekstre dosyası yüklenmesi zorunludur' })
+    .instanceof(File, { message: 'Dosyanızı yükleyiniz' })
     .refine(file => file.size > 0, { message: 'Dosya seçilmelidir' })
 })
 
@@ -60,8 +60,7 @@ export function ReportPage({ onSubmit, isSubmitting }: ReportPageProps) {
               maxSize={10 * 1024 * 1024}
             />
             <FormDescription className='text-muted-foreground text-xs'>
-              Dosya boyutu 10MB&apos;den büyük olamaz ve sadece jpeg, doc, docx, xls, xlsx ve pdf dosya türleri
-              yükleyebilirsiniz.
+              Dosya boyutu 10MB&apos;den büyük olamaz.
             </FormDescription>
           </div>
         </div>
