@@ -70,7 +70,7 @@ export function ChannelBadge({ channel, showText = false, className }: ChannelBa
             src={`/images/order/channels/${channelImage}`}
             alt={channelLabel}
             height={22}
-            width={channel === 'fiyuu' ? 30 : 22}
+            width={channelImage === 'fiyuu.png' ? 30 : 22}
             className={className}
           />
           <span className='text-sm'>{channelLabel}</span>
@@ -81,8 +81,8 @@ export function ChannelBadge({ channel, showText = false, className }: ChannelBa
             <CustomImage
               src={`/images/order/channels/${channelImage}`}
               alt={channelLabel}
-              height={22}
-              width={channel === 'fiyuu' ? 30 : 22}
+              height={20}
+              width={channelImage === 'fiyuu.png' ? 30 : 22}
               className={className}
             />
           </TooltipTrigger>

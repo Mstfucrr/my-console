@@ -47,7 +47,7 @@ const CHANNEL_IMAGES: Record<OrderChannel, string> = {
   araGelsin: 'aragelsin.png',
   fiyuu: 'fiyuu.png',
   manuel: 'no-channel.png',
-  Console: 'no-channel.png'
+  Console: 'fiyuu.png'
 } as const
 
 export {
