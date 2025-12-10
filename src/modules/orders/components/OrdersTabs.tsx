@@ -15,10 +15,6 @@ import { OrderFilters } from './filters/OrderFilters'
 import { OrdersList } from './listing/OrdersList'
 import { OrdersToolbar } from './OrdersToolbar'
 
-export type OrdersViewMode = 'card' | 'table'
-
-const DEFAULT_VIEW_MODE: OrdersViewMode = 'card'
-
 const OrderDetailDialog = dynamic(
   () => import('./listing/OrderDetailDialog').then(mod => ({ default: mod.OrderDetailDialog })),
   { ssr: false }
@@ -38,7 +34,6 @@ export function OrdersTabs() {
     setCompletedPagination
   } = useOrders()
   const { stats } = useOrdersStats()
-  const [viewMode, setViewMode] = useState<OrdersViewMode>(DEFAULT_VIEW_MODE)
   const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
@@ -108,12 +103,7 @@ export function OrdersTabs() {
           <div className='flex flex-wrap items-center justify-between gap-2'>
             <TabsWithList activeTab={activeTab} onValueChange={setActiveTab} items={tabItems} />
 
-            <OrdersToolbar
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-              showFilters={showFilters}
-              onToggleFilters={() => setShowFilters(!showFilters)}
-            />
+            <OrdersToolbar showFilters={showFilters} onToggleFilters={() => setShowFilters(!showFilters)} />
           </div>
         </div>
       </CardHeader>
@@ -126,7 +116,6 @@ export function OrdersTabs() {
             orders={orderListProps.orders}
             isLoading={isLoading}
             isFetching={isFetching}
-            viewMode={viewMode}
             emptyMessage={orderListProps.emptyMessage}
             filteredEmptyMessage={orderListProps.filteredEmptyMessage}
             onViewDetails={handleViewDetails}
