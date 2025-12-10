@@ -62,7 +62,11 @@ export function useCreateOrder() {
       await toast.promise(async () => await createOrder(data), {
         pending: 'Sipariş oluşturuluyor...',
         success: 'Sipariş başarıyla oluşturuldu',
-        error: 'Sipariş oluşturulurken bir hata oluştu'
+        error: {
+          render({ data }: { data: AxiosError<{ message: string }> }) {
+            return data?.response?.data?.message || 'Sipariş oluşturulurken bir hata oluştu'
+          }
+        }
       })
       // Reset'i bir sonraki tick'te yap (validation'ın tamamlanmasını bekle)
       setTimeout(() => {
