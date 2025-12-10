@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { ordersService } from '../../service/order.service'
-import { createOrderSchema } from '../constants'
+import { createOrderSchema, defaultCreateOrderValues } from '../constants'
 import type { CreateOrderFormData } from '../types'
 
 export function useCreateOrder() {
@@ -13,7 +13,8 @@ export function useCreateOrder() {
   })
 
   const form = useForm<CreateOrderFormData>({
-    resolver: zodResolver(createOrderSchema)
+    resolver: zodResolver(createOrderSchema),
+    defaultValues: defaultCreateOrderValues
   })
 
   // Form değerlerini watch ile takip et
@@ -57,11 +58,21 @@ export function useCreateOrder() {
   }
 
   const onSubmit = async (data: CreateOrderFormData) => {
-    toast.promise(async () => await createOrder(data), {
-      pending: 'Sipariş oluşturuluyor...',
-      success: 'Sipariş başarıyla oluşturuldu',
-      error: 'Sipariş oluşturulurken bir hata oluştu'
-    })
+    try {
+      await toast.promise(async () => await createOrder(data), {
+        pending: 'Sipariş oluşturuluyor...',
+        success: 'Sipariş başarıyla oluşturuldu',
+        error: 'Sipariş oluşturulurken bir hata oluştu'
+      })
+      // Reset'i bir sonraki tick'te yap (validation'ın tamamlanmasını bekle)
+      setTimeout(() => {
+        form.reset(defaultCreateOrderValues, { keepErrors: false })
+        form.setFocus('firstName')
+      }, 0)
+      return true
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return {

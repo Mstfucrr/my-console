@@ -5,7 +5,7 @@ import { Motorcycle } from '@/components/svg'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { formatDateTR } from '@/lib/utils/date'
+import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -29,7 +29,11 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Oluşturulma Tarihi',
-    cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+    cell: ({ row }) => (
+      <div className='text-muted-foreground text-sm'>
+        <span className='block'>{formatDateTimeTR(row.getValue('createdAt'))}</span>
+      </div>
+    )
   },
   {
     accessorKey: 'customerName',

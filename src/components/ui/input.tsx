@@ -122,36 +122,67 @@ export interface InputProps
   shadow?: Shadow
   size?: 'sm' | 'md' | 'lg' | 'xl' | null
   Icon?: LucideIcon
+  regexPattern?: string | RegExp
+  allowRegexMatch?: boolean
 }
 
-const Input = ({
-  className,
-  type,
-  size,
-  color,
-  radius,
-  variant,
-  shadow,
-  Icon,
-  ref,
-  ...props
-}: InputProps & { ref?: React.Ref<HTMLInputElement> }) => {
-  return (
-    <div className='relative w-full flex-1'>
-      {Icon && (
-        <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
-          <Icon className='size-4' />
-        </div>
-      )}
-      <input
-        type={type}
-        className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
-        ref={ref}
-        {...props}
-      />
-    </div>
-  )
-}
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      className,
+      type,
+      size,
+      color,
+      radius,
+      variant,
+      shadow,
+      Icon,
+      regexPattern,
+      allowRegexMatch = true,
+      onChange,
+      ...props
+    },
+    ref
+  ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!regexPattern || !allowRegexMatch) {
+        onChange?.(e)
+        return
+      }
+
+      const regex = typeof regexPattern === 'string' ? new RegExp(regexPattern) : regexPattern
+      const value = e.target.value
+
+      if (value === '' || regex.test(value)) {
+        onChange?.(e)
+      }
+    }
+
+    const patternValue = regexPattern
+      ? typeof regexPattern === 'string'
+        ? regexPattern
+        : regexPattern.source
+      : undefined
+
+    return (
+      <div className='relative w-full flex-1'>
+        {Icon && (
+          <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
+            <Icon className='size-4' />
+          </div>
+        )}
+        <input
+          {...props}
+          type={type}
+          className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
+          ref={ref}
+          onChange={handleChange}
+          pattern={patternValue}
+        />
+      </div>
+    )
+  }
+)
 Input.displayName = 'Input'
 
 export { Input }

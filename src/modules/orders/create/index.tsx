@@ -2,6 +2,7 @@
 
 import { FormCommandSelectField } from '@/components/form/FormCommandSelectField'
 import { FormInputField } from '@/components/form/FormInputField'
+import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { FormSwitchField } from '@/components/form/FormSwitchField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
@@ -9,6 +10,7 @@ import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
+import { ONLY_LETTERS_REGEX } from '@/lib/regex'
 import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
 import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
@@ -62,6 +64,7 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Ad'
+                  regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Ahmet'
                   tabIndex={1}
                 />
@@ -70,18 +73,19 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Soyad'
+                  regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Yılmaz'
                   tabIndex={2}
                 />
-                <FormInputField
+                <FormMaskedInputField
+                  mask='(000) 000-0000'
+                  lazy={false}
+                  type='number'
                   name='customerPhone'
                   required
                   control={form.control}
                   label='Telefon'
-                  placeholder='555 123 45 67'
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                  type='number'
+                  placeholder='(555) 123-4567'
                   tabIndex={3}
                 />
                 <FormInputField
@@ -124,7 +128,7 @@ export function CreateOrderView() {
                   type='number'
                   placeholder='0.00'
                   inputMode='decimal'
-                  pattern='[0-9.]*'
+                  regexPattern='^[0-9]*(\.[0-9]{0,2})?$'
                   tabIndex={6}
                 />
                 {isLoadingPaymentMethods ? (
@@ -255,7 +259,7 @@ export function CreateOrderView() {
                   label='Posta Kodu'
                   type='number'
                   inputMode='numeric'
-                  pattern='[0-9]*'
+                  regexPattern='^[0-9]{0,5}$'
                   placeholder='34710'
                   tabIndex={18}
                 />

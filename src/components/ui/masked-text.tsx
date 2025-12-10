@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { useIsMobile } from '@/hooks/use-media-query'
+import { Button, ButtonProps } from '@/components/ui/button'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
 import { Route } from 'next'
@@ -41,7 +41,7 @@ interface MaskedTextProps {
   /**
    * Size of the toggle button
    */
-  buttonSize?: 'xs' | 'sm' | 'default'
+  buttonSize?: ButtonProps['size']
 }
 
 /**
@@ -55,9 +55,9 @@ export function MaskedText({
   asLink = false,
   href,
   textClassName,
-  buttonSize = 'xs'
+  buttonSize = 'icon-xs'
 }: MaskedTextProps) {
-  const isMobile = useIsMobile()
+  const isSmallerThanTablet = useIsSmallerThanTablet()
   const [isMasked, setIsMasked] = useState(defaultMasked)
 
   // Hold-to-show handlers
@@ -77,7 +77,7 @@ export function MaskedText({
       ) : (
         <span className={textClassName}>{displayValue}</span>
       )}
-      {isMobile ? (
+      {isSmallerThanTablet ? (
         <Button
           size={buttonSize}
           variant='ghost'
@@ -90,13 +90,12 @@ export function MaskedText({
           }}
           tabIndex={0}
         >
-          {isMasked ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
+          {isMasked ? <EyeOff className='size-4.5' /> : <Eye className='size-4.5' />}
         </Button>
       ) : (
         <Button
           size={buttonSize}
           variant='ghost'
-          className='size-6! min-h-6 min-w-6 p-0'
           aria-label={isMasked ? 'Göster' : 'Gizle'}
           type='button'
           onMouseDown={e => {
@@ -122,7 +121,7 @@ export function MaskedText({
           onClick={e => e.stopPropagation()}
           tabIndex={0}
         >
-          {isMasked ? <EyeOff className='size-5' /> : <Eye className='size-5' />}
+          {isMasked ? <EyeOff className='size-4' /> : <Eye className='size-4' />}
         </Button>
       )}
     </div>

@@ -68,9 +68,9 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   const queryKey: QueryOptions['queryKey'] = useMemo(() => {
     if (activeTab === 'active') {
-      return ['orders', statusFilters, filters.search, activeTab]
+      return ['orders', activeTab, statusFilters, filters.search]
     }
-    return ['orders', statusFilters, filters.search, activeTab, completedPagination]
+    return ['orders', activeTab, statusFilters, filters.search, completedPagination]
   }, [statusFilters, filters.search, activeTab, completedPagination])
 
   const {

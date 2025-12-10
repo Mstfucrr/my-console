@@ -15,7 +15,7 @@ import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
-import { formatDateTR } from '@/lib/utils/date'
+import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
@@ -76,12 +76,13 @@ export default function DashboardView() {
     latestOrdersRefetch()
   }
 
-  const isEmptyStats = useMemo(
-    () => !stats || (stats?.delivered === 0 && stats?.shipped === 0 && stats?.cancelled === 0),
-    [stats]
-  )
+  const isEmptyStats = useMemo(() => !stats || stats?.total === 0, [stats])
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
     if (isEmptyStats) return []
+
+    const created = stats?.total
+      ? stats?.total - (stats?.shipped ?? 0) - (stats?.delivered ?? 0) - (stats?.cancelled ?? 0)
+      : 0
     return [
       {
         label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
@@ -97,6 +98,11 @@ export default function DashboardView() {
         label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
         value: stats?.cancelled ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.CANCELLED].color
+      },
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+        value: created ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.CREATED].color
       }
     ]
   }, [isEmptyStats, stats])
@@ -166,7 +172,7 @@ export default function DashboardView() {
                       >
                         <div className='flex-1'>
                           <div className='text-sm font-medium'>{order.customerName}</div>
-                          <div className='text-xs'>{formatDateTR(order.date)}</div>
+                          <div className='mt-1 text-xs'>{formatDateTimeTR(order.date)}</div>
                           <span className='text-xs font-light'>{order.orderId}</span>
                         </div>
                         <div className='flex flex-col gap-y-2 text-right'>
