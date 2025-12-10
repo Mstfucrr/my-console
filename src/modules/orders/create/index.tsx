@@ -11,36 +11,28 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ONLY_LETTERS_REGEX } from '@/lib/regex'
-import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
-import { usePaymentMethods } from '@/service/payment-methods.service'
 import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
 export function CreateOrderView() {
-  const { form, isSubmitting, cityId, countyId, handleCityChange, handleCountyChange, handleDistrictChange, onSubmit } =
-    useCreateOrder()
-
-  // Ödeme Tipi
-  const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
-  const paymentMethodOptions = paymentMethods?.map(paymentMethod => ({
-    value: paymentMethod.key,
-    label: paymentMethod.name
-  }))
-
-  // Şehir
-  const { data: provinces, isLoading: isLoadingProvinces } = useQueryProvinces()
-  const provinceOptions = provinces?.map(province => ({ value: province.il_id.toString(), label: province.il_adi }))
-
-  // İlçe
-  const { data: counties, isLoading: isLoadingCounties } = useQueryCounties(Number(cityId), !!cityId)
-  const countyOptions = counties?.map(county => ({ value: county.ilce_id.toString(), label: county.ilce_adi }))
-
-  // Mahalle
-  const { data: districts, isLoading: isLoadingDistricts } = useQueryDistricts(Number(countyId), !!countyId)
-  const districtOptions = districts?.map(district => ({
-    value: district.mahalle_id.toString(),
-    label: district.mahalle_adi
-  }))
+  const {
+    form,
+    isSubmitting,
+    cityId,
+    countyId,
+    handleCityChange,
+    handleCountyChange,
+    handleDistrictChange,
+    onSubmit,
+    paymentMethodOptions,
+    provinceOptions,
+    countyOptions,
+    districtOptions,
+    isLoadingPaymentMethods,
+    isLoadingProvinces,
+    isLoadingCounties,
+    isLoadingDistricts
+  } = useCreateOrder()
 
   return (
     <div className='flex flex-col gap-6 pt-6 max-sm:p-0'>
@@ -178,7 +170,7 @@ export function CreateOrderView() {
                   placeholder='Şehir seçin'
                   options={provinceOptions || []}
                   isLoading={isLoadingProvinces}
-                  onValueChange={cityId => handleCityChange(cityId, provinces)}
+                  onValueChange={cityId => handleCityChange(cityId)}
                   tabIndex={10}
                 />
                 <FormCommandSelectField
@@ -191,7 +183,7 @@ export function CreateOrderView() {
                   options={countyOptions || []}
                   isLoading={isLoadingCounties}
                   disabled={!cityId}
-                  onValueChange={countyId => handleCountyChange(countyId, counties)}
+                  onValueChange={countyId => handleCountyChange(countyId)}
                   tabIndex={11}
                 />
                 <FormCommandSelectField
@@ -204,7 +196,7 @@ export function CreateOrderView() {
                   options={districtOptions || []}
                   isLoading={isLoadingDistricts}
                   disabled={!countyId}
-                  onValueChange={districtId => handleDistrictChange(districtId, districts)}
+                  onValueChange={districtId => handleDistrictChange(districtId)}
                   tabIndex={12}
                 />
 

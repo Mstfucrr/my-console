@@ -23,7 +23,7 @@ const CHANNEL_LABELS: Record<OrderChannel, string> = {
   araGelsin: 'Ara Gelsin',
   fiyuu: 'Fiyuu',
   manuel: 'Manuel',
-  Console: 'Console'
+  Console: 'Fiyuu Channel'
 } as const
 
 const CHANNEL_COLORS: Record<OrderChannel, string> = {

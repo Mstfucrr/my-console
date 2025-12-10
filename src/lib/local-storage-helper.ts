@@ -36,11 +36,8 @@ export function removeToken() {
 
 export function getItemJson(key: string) {
   const item = localStorage.getItem(key)
-  if (item) {
-    return JSON.parse(item)
-  }
-
-  return null
+  if (!item) return null
+  return JSON.parse(item)
 }
 
 export function getOrDefault<T>(key: string, defaultObject: T) {
@@ -49,8 +46,8 @@ export function getOrDefault<T>(key: string, defaultObject: T) {
   return JSON.parse(item) as T
 }
 
-export function setItem(key: string, value: string) {
-  localStorage.setItem(key, value)
+export function setItem(key: string, value: string | object) {
+  localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : value)
 }
 
 export function removeItem(key: string) {
