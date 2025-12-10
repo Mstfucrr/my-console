@@ -30,15 +30,15 @@ export function OrdersTabs() {
     isLoading,
     isFetching,
     filters,
-    completedPagination,
-    setCompletedPagination
+    pagination,
+    setPagination
   } = useOrders()
   const { stats } = useOrdersStats()
   const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
-  const handleCompletedPageChange = (page: number) => {
-    setCompletedPagination({ ...completedPagination, page: page })
+  const handlePageChange = (page: number) => {
+    setPagination({ ...pagination, page })
   }
 
   const handleViewDetails = (order: Order) => {
@@ -121,12 +121,12 @@ export function OrdersTabs() {
             onViewDetails={handleViewDetails}
           />
 
-          {total > completedPagination.limit && (
+          {total > pagination.limit && !isLoading && (
             <Pagination
-              page={completedPagination.page}
-              pageSize={completedPagination.limit}
+              page={pagination.page}
+              pageSize={pagination.limit}
               total={total}
-              onPageChange={handleCompletedPageChange}
+              onPageChange={handlePageChange}
             />
           )}
         </div>
