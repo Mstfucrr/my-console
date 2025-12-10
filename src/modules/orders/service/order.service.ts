@@ -77,6 +77,7 @@ class OrdersService {
     const payload = {
       ...order,
       district: undefined,
+      dontRingDoorBell: undefined,
       city: order.city.name,
       county: order.county.name,
       neighborhood: order.district.name,
