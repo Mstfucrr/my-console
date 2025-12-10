@@ -4,7 +4,7 @@ import { usePaymentMethods } from '@/service/payment-methods.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { ordersService } from '../../service/order.service'
@@ -46,6 +46,52 @@ export function useCreateOrder() {
     value: district.mahalle_id.toString(),
     label: district.mahalle_adi
   }))
+
+  // 🔹 Adres alanlarını tek seferde watch et (tek subscription)
+  const [city, county, district, street, buildingNumber, floor, buildingName, doorNumber] = useWatch({
+    control: form.control,
+    name: ['city', 'county', 'district', 'street', 'buildingNumber', 'floor', 'buildingName', 'doorNumber'] as const
+  })
+
+  // 🔹 Tam adresi useMemo ile hesapla (sadece depend'ler değişince)
+  const computedFullAddress = useMemo(() => {
+    const parts: string[] = []
+
+    if (district?.name) parts.push(district.name)
+
+    if (buildingName) parts.push(buildingName)
+
+    if (street) {
+      const streetPart = buildingNumber ? `${street} No:${buildingNumber}` : street
+      parts.push(streetPart)
+    } else if (buildingNumber) {
+      parts.push(`No:${buildingNumber}`)
+    }
+
+    if (floor) parts.push(`Kat:${floor}`)
+
+    if (doorNumber) parts.push(`Daire:${doorNumber}`)
+
+    if (county?.name || city?.name) {
+      const locationPart = [county?.name, city?.name].filter(value => value && value.length > 0).join('/')
+      if (locationPart.length > 0) {
+        parts.push(locationPart)
+      }
+    }
+
+    return parts.length > 0 ? parts.join(', ') : ''
+  }, [city, county, district, street, buildingNumber, floor, buildingName, doorNumber])
+
+  // 🔹 Tam adresi form state'e sadece gerekirse yaz
+  useEffect(() => {
+    const current = form.getValues('fullAddress')
+    if (current !== computedFullAddress) {
+      form.setValue('fullAddress', computedFullAddress, {
+        shouldValidate: false, // submit'te validate ederiz
+        shouldDirty: true // istersen false da verebilirsin
+      })
+    }
+  }, [computedFullAddress, form])
 
   // Şehir değiştiğinde ilçe ve mahalleyi temizle
   const handleCityChange = useCallback(
