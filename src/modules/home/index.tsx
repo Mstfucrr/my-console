@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
+import { useProfile } from '@/context/ProfileProvider'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
@@ -43,16 +44,16 @@ const statsList: Array<StatsList> = [
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED]
   },
   {
-    title: 'Teslim Edildi',
-    id: 'delivered',
-    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
-    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
-  },
-  {
     title: 'Yola Çıktı',
     id: 'shipped',
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
+  },
+  {
+    title: 'Teslim Edildi',
+    id: 'delivered',
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
   },
   {
     title: 'İptal Edildi',
@@ -69,6 +70,8 @@ const dateRange = {
 
 export default function DashboardView() {
   const { data: stats, isLoading, isFetching, error, refetch } = useGetStats(dateRange)
+
+  const { profile } = useProfile()
 
   const {
     data: latestOrders,
@@ -124,6 +127,17 @@ export default function DashboardView() {
 
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
+      {profile?.info.name && (
+        <div className='flex w-full items-center justify-center gap-2 text-center'>
+          <div className='from-primary/10 to-primary h-0.5 w-10 rounded-full bg-linear-to-r sm:w-20' />
+          <h1 className='text-primary flex gap-x-1 text-base font-bold max-sm:flex-col max-sm:text-sm'>
+            <span>Hoşgeldiniz,</span>
+            <span>{profile?.info.name.charAt(0).toUpperCase() + profile?.info.name.slice(1)}</span>
+          </h1>
+          <div className='from-primary/10 to-primary h-0.5 w-10 rounded-full bg-linear-to-l sm:w-20' />
+        </div>
+      )}
+
       {/* Stats */}
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
         {statsList.map(stat => (

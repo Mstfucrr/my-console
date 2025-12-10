@@ -1,6 +1,7 @@
 'use client'
 import LayoutLoader from '@/components/layout-loader'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
+import { ProfileProvider } from '@/context/ProfileProvider'
 import { OrderStatusWebSocketProvider } from '@/context/useOrderStatusWebSocket'
 import { useMounted } from '@/hooks/use-mounted'
 import { TopbarAndMobileMenu } from '@/modules/menu'
@@ -18,18 +19,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <AuthGuard>
-        <WebSocketProvider>
-          <TopbarAndMobileMenu />
-          <div className='pt-12 pb-24 transition-all duration-150 lg:pt-16 lg:pb-16'>
-            <div className='flex flex-col gap-4 pb-0'>
-              <LayoutWrapper>
-                <NuqsAdapter>
-                  <div className='container mx-auto'>{children}</div>
-                </NuqsAdapter>
-              </LayoutWrapper>
+        <ProfileProvider>
+          <WebSocketProvider>
+            <TopbarAndMobileMenu />
+            <div className='pt-12 pb-24 transition-all duration-150 lg:pt-16 lg:pb-16'>
+              <div className='flex flex-col gap-4 pb-0'>
+                <LayoutWrapper>
+                  <NuqsAdapter>
+                    <div className='container mx-auto'>{children}</div>
+                  </NuqsAdapter>
+                </LayoutWrapper>
+              </div>
             </div>
-          </div>
-        </WebSocketProvider>
+          </WebSocketProvider>
+        </ProfileProvider>
       </AuthGuard>
     </AuthProvider>
   )
