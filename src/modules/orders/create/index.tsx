@@ -146,7 +146,7 @@ export function CreateOrderView() {
                     label='Temassız teslimat'
                     tabIndex={8}
                   />
-                  <FormSwitchField name='ringDoorBell' control={form.control} label='Kapı zilini çal' tabIndex={9} />
+                  <FormSwitchField name='dontRingDoorBell' control={form.control} label='Zili çalma' tabIndex={9} />
                 </div>
               </CardContent>
             </Card>

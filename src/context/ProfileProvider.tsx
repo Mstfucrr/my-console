@@ -1,7 +1,7 @@
 import { profileService } from '@/service/profile.service'
 import { IProfileResponse } from '@/types/profile'
 import { useQuery } from '@tanstack/react-query'
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext } from 'react'
 
 type ProfileContextValue = {
   profile: IProfileResponse | undefined
@@ -18,10 +18,6 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     queryKey: ['profile'],
     queryFn: () => profileService.getProfile()
   })
-
-  useEffect(() => {
-    console.log('profile', profileData)
-  }, [profileData])
 
   return <ProfileContext.Provider value={{ profile: profileData }}>{children}</ProfileContext.Provider>
 }
