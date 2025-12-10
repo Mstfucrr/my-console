@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react'
 
 type ProfileContextValue = {
   profile: IProfileResponse | undefined
+  isLoading: boolean
 }
 
 type ProfileProviderProps = {
@@ -14,12 +15,12 @@ type ProfileProviderProps = {
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined)
 
 export const ProfileProvider = ({ children }: ProfileProviderProps) => {
-  const { data: profileData } = useQuery({
+  const { data: profileData, isLoading } = useQuery({
     queryKey: ['profile'],
     queryFn: () => profileService.getProfile()
   })
 
-  return <ProfileContext.Provider value={{ profile: profileData }}>{children}</ProfileContext.Provider>
+  return <ProfileContext.Provider value={{ profile: profileData, isLoading }}>{children}</ProfileContext.Provider>
 }
 
 export const useProfile = () => {
