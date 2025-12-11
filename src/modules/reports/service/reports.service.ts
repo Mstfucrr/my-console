@@ -24,7 +24,7 @@ class ReportsService {
     }
 
     if (filters?.paymentMethod && filters?.paymentMethod !== 'all') {
-      params.paymentType = filters?.paymentMethod
+      params.paymentTypeId = [filters?.paymentMethod]
     }
 
     const { data } = await privateAxiosInstance.get('/reconciliation/report-orders-by-restaurant', {

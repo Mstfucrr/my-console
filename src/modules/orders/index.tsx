@@ -20,9 +20,8 @@ function OrdersViewContent() {
     )
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-sm:p-0'>
+    <div className='flex flex-col gap-4 py-6 max-sm:p-0'>
       <OrdersStats />
-
       <OrdersTabs />
     </div>
   )

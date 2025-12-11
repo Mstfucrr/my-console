@@ -5,6 +5,8 @@ import { useTurnstile } from '../hooks/useTurnstile'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
+const isTurnstileActive = process.env.NEXT_PUBLIC_TURNSTILE_ACTIVE === 'true'
+
 export interface AuthTurnstileProps {
   turnstileState: ReturnType<typeof useTurnstile>
 }
@@ -12,7 +14,7 @@ export interface AuthTurnstileProps {
 export function AuthTurnstile({ turnstileState }: AuthTurnstileProps) {
   const { handlers, errorMessage } = turnstileState
 
-  if (isDevelopment) return null
+  if (isDevelopment || !isTurnstileActive) return null
 
   return (
     <div className='flex flex-col'>

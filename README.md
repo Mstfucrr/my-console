@@ -167,11 +167,31 @@ Bu proje E2E testler için [Playwright](https://playwright.dev/) kullanmaktadır
 npx playwright install
 ```
 
-2. Test ortamı için `.env.test` dosyasını oluşturun (gerekirse):
+2. Test ortamı için `.env.test` dosyasını oluşturun ve gerekli environment variable'ları ekleyin:
 
 ```bash
 touch .env.test
 ```
+
+`.env.test` dosyasına aşağıdaki değişkenlerden birini ekleyin:
+
+**Seçenek 1: Token ile direkt giriş (Önerilen - Daha hızlı)**
+
+```bash
+# Eğer TEST_ACCESS_TOKEN set edilirse, login adımı atlanır ve direkt token kullanılır
+TEST_ACCESS_TOKEN=your-access-token-here
+```
+
+**Seçenek 2: Login bilgileri ile giriş**
+
+```bash
+# TEST_ACCESS_TOKEN yoksa bu bilgiler kullanılır
+TEST_ACCOUNT_ID=your-account-id
+TEST_IDENTIFIER=your-email-or-username
+TEST_PASSWORD=your-password
+```
+
+> **Not:** `TEST_ACCESS_TOKEN` varsa login adımı atlanır ve testler daha hızlı çalışır. Token yoksa login akışı kullanılır.
 
 ### Test Çalıştırma
 

@@ -43,28 +43,31 @@ export function FilterCard<T>({
   className
 }: FilterCardProps<T>) {
   return (
-    <div className={cn('flex w-full justify-end gap-2 pt-2 max-lg:flex-wrap', className)}>
-      <div className='flex w-full flex-wrap justify-end gap-2'>{children}</div>
-      {(hasPendingChanges || hasActiveFilters) && (
-        <div className='flex items-center gap-2'>
-          {hasPendingChanges && onApply && (
-            <TooltippedElement tooltipContent='Filtreleri Uygula'>
-              <Button size='icon-sm' onClick={onApply}>
-                <Check className='size-4.5' />
-                <span className='sr-only'>Uygula</span>
-              </Button>
-            </TooltippedElement>
-          )}
-          {hasActiveFilters && (
-            <TooltippedElement tooltipContent='Filtreleri Temizle'>
-              <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
-                <XCircle className='size-4.5' />
-                <span className='sr-only'>Temizle</span>
-              </Button>
-            </TooltippedElement>
-          )}
-        </div>
-      )}
+    <div className={cn('flex w-full justify-end gap-2 pt-2 max-lg:flex-wrap-reverse', className)}>
+      <div className='flex w-full flex-wrap justify-end gap-2'>
+        {children}
+
+        {(hasPendingChanges || hasActiveFilters) && (
+          <div className='flex items-center gap-2'>
+            {hasPendingChanges && onApply && (
+              <TooltippedElement tooltipContent='Filtreleri Uygula'>
+                <Button size='icon-sm' onClick={onApply}>
+                  <Check className='size-4.5' />
+                  <span className='sr-only'>Uygula</span>
+                </Button>
+              </TooltippedElement>
+            )}
+            {hasActiveFilters && (
+              <TooltippedElement tooltipContent='Filtreleri Temizle'>
+                <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
+                  <XCircle className='size-4.5' />
+                  <span className='sr-only'>Temizle</span>
+                </Button>
+              </TooltippedElement>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

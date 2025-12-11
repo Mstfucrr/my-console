@@ -35,7 +35,13 @@ export function FormTextareaField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        <Textarea {...field} {...props} placeholder={placeholder} className={cn('w-full', error && 'border-red-500')} />
+        <Textarea
+          {...field}
+          {...props}
+          id={name}
+          placeholder={placeholder}
+          className={cn('w-full', error && 'border-red-500')}
+        />
       </FormControl>
       {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
     </FormItem>

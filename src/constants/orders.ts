@@ -4,28 +4,28 @@ import { CheckCircle, ClockIcon, XCircle } from 'lucide-react'
 
 const ORDER_STATUS_BADGE_CLASSES: Record<OrderStatusesGroups, string> = {
   [OrderStatusesGroups.CREATED]: 'bg-orange-100 text-orange-800',
-  [OrderStatusesGroups.SHIPPED]: 'bg-amber-100 text-amber-800',
+  [OrderStatusesGroups.SHIPPED]: 'bg-purple-100 text-purple-800',
   [OrderStatusesGroups.DELIVERED]: 'bg-green-100 text-green-800',
   [OrderStatusesGroups.CANCELLED]: 'bg-red-100 text-red-800'
 } as const
 
 const ORDER_STATUS_TEXT_COLORS: Record<OrderStatusesGroups, string> = {
   [OrderStatusesGroups.CREATED]: 'text-orange-600',
-  [OrderStatusesGroups.SHIPPED]: 'text-amber-600',
+  [OrderStatusesGroups.SHIPPED]: 'text-purple-600',
   [OrderStatusesGroups.DELIVERED]: 'text-green-600',
   [OrderStatusesGroups.CANCELLED]: 'text-red-600'
 } as const
 
 export const OrderStatusGroup = {
   [OrderStatusesGroups.CREATED]: {
-    label: 'Beklemede',
-    color: '#fb923c',
+    label: 'Hazırlanıyor',
+    color: '#ffb855',
     icon: ClockIcon,
     value: 0
   },
   [OrderStatusesGroups.SHIPPED]: {
     label: 'Yola Çıktı',
-    color: '#f59e0b',
+    color: '#d555ff',
     icon: Motorcycle,
     value: 3
   },
