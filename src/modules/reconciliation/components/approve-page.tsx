@@ -41,7 +41,7 @@ export function ApprovePage({ onSubmit, isSubmitting }: ApprovePageProps) {
             <FormFileField
               name='invoiceFile'
               control={form.control}
-              label='Yüklenecek Dosyayı seçiniz:'
+              label='Dosya Seçiniz'
               accept='.jpeg,.doc,.docx,.xls,.xlsx,.pdf,.jpg,.png'
               required
               maxSize={10 * 1024 * 1024}
