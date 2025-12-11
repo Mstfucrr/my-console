@@ -119,14 +119,9 @@ export function ResetPasswordView() {
         </div>
         <h2 className='text-xl font-semibold text-gray-900'>Şifre Güncellendi</h2>
         <p className='text-gray-600'>Şifreniz başarıyla güncellendi. Artık yeni şifrenizle giriş yapabilirsiniz.</p>
-        <Link
-          href='/login'
-          className='inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium'
-        >
-          <Button color='primary'>
-            <ArrowRight className='mr-2 h-4 w-4' /> Giriş Yap
-          </Button>
-        </Link>
+        <Button color='primary' onClick={() => router.replace('/login')}>
+          <ArrowRight className='mr-2 h-4 w-4' /> Giriş Yap
+        </Button>
       </div>
     )
   }
