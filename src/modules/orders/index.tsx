@@ -1,16 +1,12 @@
 'use client'
 
 import PageError from '@/components/page-error'
-import { useOrderStatusWebSocket } from '@/hooks/websocket/useOrderStatusWebSocket'
 import { OrdersTabs } from './components/OrdersTabs'
 import { OrdersStats } from './components/stats/OrdersStats'
 import { OrdersProvider, useOrders } from './context/OrdersContext'
 
 function OrdersViewContent() {
   const { error, refreshAllData, isFetching } = useOrders()
-
-  // WebSocket bağlantısını sadece orders sayfasında aktif et
-  useOrderStatusWebSocket()
 
   if (error)
     return (

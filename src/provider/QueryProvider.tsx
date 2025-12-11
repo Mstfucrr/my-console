@@ -8,13 +8,6 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       defaultOptions: {
         queries: {
           retry: 1,
-          refetchOnWindowFocus: false,
-          // WebSocket ile real-time update olduğu için staleTime'i artır
-          // Sadece WebSocket event'leri ile invalidate edilecek
-          staleTime: Infinity
-        }
-        queries: {
-          retry: 1,
           refetchOnWindowFocus: false
         }
       }
