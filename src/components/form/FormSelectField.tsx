@@ -1,11 +1,25 @@
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, type SelectProps } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+  type SelectProps
+} from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
 
-interface SelectOption {
+export interface SelectOption {
   value: string | number
   label: string | number
+}
+
+export interface GroupedSelectOption {
+  groupLabel: string
+  items: SelectOption[]
 }
 
 interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 'value' | 'onValueChange'> {
@@ -13,7 +27,8 @@ interface FormSelectFieldProps<T extends FieldValues> extends Omit<SelectProps, 
   control: Control<T>
   label?: string
   placeholder?: string
-  options: SelectOption[]
+  options?: SelectOption[]
+  groupedOptions?: GroupedSelectOption[]
   formItemClassName?: string
   onValueChange?: (value: string) => void
   tabIndex?: number
@@ -26,6 +41,7 @@ export function FormSelectField<T extends FieldValues>({
   label,
   placeholder,
   options,
+  groupedOptions,
   formItemClassName,
   onValueChange,
   tabIndex,
@@ -42,6 +58,8 @@ export function FormSelectField<T extends FieldValues>({
     onChange(value)
   }
 
+  const hasOptions = groupedOptions ? groupedOptions.some(g => g.items.length > 0) : (options?.length ?? 0) > 0
+
   return (
     <FormItem className={formItemClassName}>
       {label && (
@@ -56,13 +74,24 @@ export function FormSelectField<T extends FieldValues>({
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
-            {options.length > 0 ? (
+            {hasOptions ? (
               <div className='max-h-48 overflow-y-auto'>
-                {options.map(option => (
-                  <SelectItem key={option.value} value={option.value.toString()}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                {groupedOptions
+                  ? groupedOptions.map(group => (
+                      <SelectGroup key={group.groupLabel}>
+                        <SelectLabel>{group.groupLabel}</SelectLabel>
+                        {group.items.map(option => (
+                          <SelectItem key={option.value} value={option.value.toString()}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))
+                  : options?.map(option => (
+                      <SelectItem key={option.value} value={option.value.toString()}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
               </div>
             ) : (
               <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
