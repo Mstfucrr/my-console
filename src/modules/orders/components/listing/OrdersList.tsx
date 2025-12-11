@@ -5,13 +5,13 @@ import { Motorcycle } from '@/components/svg'
 import { MaskedText } from '@/components/ui/masked-text'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { formatDateTR } from '@/lib/utils/date'
+import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
+import { useViewModeStore } from '@/store/view-mode'
 import type { Order } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
-import type { OrdersViewMode } from '../OrdersTabs'
 import { OrderCard } from './OrderCard'
 import { OrderCardSkeleton } from './OrderCardSkeleton'
 
@@ -19,7 +19,6 @@ interface OrdersListProps {
   orders: Array<Order> | undefined
   isLoading: boolean
   isFetching: boolean
-  viewMode: OrdersViewMode
   emptyMessage: string
   filteredEmptyMessage: string
   onViewDetails: (order: Order) => void
@@ -29,17 +28,23 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Oluşturulma Tarihi',
-    cell: ({ row }) => <div className='text-muted-foreground text-sm'>{formatDateTR(row.getValue('createdAt'))}</div>
+    cell: ({ row }) => (
+      <div className='text-muted-foreground text-sm'>
+        <span className='block'>{formatDateTimeTR(row.getValue('createdAt'))}</span>
+      </div>
+    )
   },
   {
     accessorKey: 'customerName',
     header: 'Müşteri',
+    size: 250,
     cell: ({ row }) => (
       <MaskedText
         value={row.getValue('customerName')}
         maskFn={maskLastName}
         defaultMasked={true}
         textClassName='font-medium'
+        className='flex flex-row-reverse justify-end'
       />
     )
   },
@@ -90,13 +95,14 @@ export function OrdersList({
   orders,
   isLoading,
   isFetching,
-  viewMode,
   emptyMessage,
   filteredEmptyMessage,
   onViewDetails
 }: OrdersListProps) {
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
+
+  const viewMode = useViewModeStore(state => state.viewMode)
 
   if (viewMode === 'table')
     return (

@@ -6,9 +6,9 @@ import { ButtonGroup } from '@/components/ui/button-group'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { FilterToggleButton } from '@/components/ui/filter-card'
+import { useViewModeStore } from '@/store/view-mode'
 import { Filter, FilterX, LayoutGrid, Loader2, Menu, RefreshCw, Table } from 'lucide-react'
 import { useOrders } from '../context/OrdersContext'
-import type { OrdersViewMode } from './OrdersTabs'
 
 const viewModeButtons = [
   {
@@ -24,22 +24,21 @@ const viewModeButtons = [
 ]
 
 interface OrdersToolbarProps {
-  viewMode: OrdersViewMode
-  onViewModeChange: (mode: OrdersViewMode) => void
   showFilters: boolean
   onToggleFilters: () => void
 }
 
-export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggleFilters }: OrdersToolbarProps) {
+export function OrdersToolbar({ showFilters, onToggleFilters }: OrdersToolbarProps) {
   const { refreshAllData, isFetching } = useOrders()
+  const { viewMode, setViewMode } = useViewModeStore()
 
   return (
     <div className='flex flex-row-reverse flex-wrap items-center gap-2'>
       {/* Mobile Dropdown Menu (lg: altında) */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='soft' color='secondary' size='icon' className='lg:hidden'>
-            <Menu className='size-4' />
+          <Button variant='soft' color='secondary' size='icon-sm' className='lg:hidden'>
+            <Menu className='size-4.5' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
@@ -48,7 +47,7 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
             <span className='ml-2'>Yenile</span>
           </DropdownMenuItem>
           {viewModeButtons.map(({ label, Icon, value }) => (
-            <DropdownMenuItem key={value} onClick={() => onViewModeChange(value)}>
+            <DropdownMenuItem key={value} onClick={() => setViewMode(value)}>
               <Icon className='size-4' />
               <span className='ml-2'>{label}</span>
             </DropdownMenuItem>
@@ -70,7 +69,7 @@ export function OrdersToolbar({ viewMode, onViewModeChange, showFilters, onToggl
                 key={value}
                 variant={viewMode === value ? null : 'soft'}
                 size='icon-sm'
-                onClick={() => onViewModeChange(value)}
+                onClick={() => setViewMode(value)}
               >
                 <Icon className='size-4.5' />
                 <span className='sr-only'>{label}</span>

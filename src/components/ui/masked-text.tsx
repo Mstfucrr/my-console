@@ -1,11 +1,13 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
 import { Route } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
+import { TooltippedElement } from '../tooltipped-element'
 
 interface MaskedTextProps {
   /**
@@ -40,7 +42,7 @@ interface MaskedTextProps {
   /**
    * Size of the toggle button
    */
-  buttonSize?: 'xs' | 'sm' | 'default'
+  buttonSize?: ButtonProps['size']
 }
 
 /**
@@ -54,8 +56,9 @@ export function MaskedText({
   asLink = false,
   href,
   textClassName,
-  buttonSize = 'xs'
+  buttonSize = 'icon-xs'
 }: MaskedTextProps) {
+  const isSmallerThanTablet = useIsSmallerThanTablet()
   const [isMasked, setIsMasked] = useState(defaultMasked)
 
   // Hold-to-show handlers
@@ -75,20 +78,55 @@ export function MaskedText({
       ) : (
         <span className={textClassName}>{displayValue}</span>
       )}
-      <Button
-        size={buttonSize}
-        variant='ghost'
-        className='size-6! min-h-6 min-w-6 p-0'
-        aria-label={isMasked ? 'Göster' : 'Gizle'}
-        type='button'
-        onMouseDown={showUnmasked}
-        onTouchStart={showUnmasked}
-        onMouseUp={hideMasked}
-        onTouchEnd={hideMasked}
-        tabIndex={0}
-      >
-        {isMasked ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
-      </Button>
+      {isSmallerThanTablet ? (
+        <Button
+          size={buttonSize}
+          variant='ghost'
+          className='size-6! min-h-6 min-w-6 p-0'
+          aria-label={isMasked ? 'Göster' : 'Gizle'}
+          type='button'
+          onClick={e => {
+            e.stopPropagation()
+            setIsMasked(masked => !masked)
+          }}
+          tabIndex={0}
+        >
+          {isMasked ? <EyeOff className='size-4.5' /> : <Eye className='size-4.5' />}
+        </Button>
+      ) : (
+        <TooltippedElement tooltipContent='Basılı tutunuz' className='text-xs'>
+          <Button
+            size={buttonSize}
+            variant='ghost'
+            aria-label={isMasked ? 'Göster' : 'Gizle'}
+            type='button'
+            onMouseDown={e => {
+              e.stopPropagation()
+              showUnmasked()
+            }}
+            onMouseUp={e => {
+              e.stopPropagation()
+              hideMasked()
+            }}
+            onMouseLeave={e => {
+              e.stopPropagation()
+              hideMasked()
+            }}
+            onTouchStart={e => {
+              e.stopPropagation()
+              showUnmasked()
+            }}
+            onTouchEnd={e => {
+              e.stopPropagation()
+              hideMasked()
+            }}
+            onClick={e => e.stopPropagation()}
+            tabIndex={0}
+          >
+            {isMasked ? <EyeOff className='size-4' /> : <Eye className='size-4' />}
+          </Button>
+        </TooltippedElement>
+      )}
     </div>
   )
 }

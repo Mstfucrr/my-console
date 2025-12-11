@@ -8,6 +8,7 @@ export interface LatestOrder {
 // Sipariş Yönetimi
 export interface Order {
   orderId: string
+  sId?: string
   customerName: string
   customerPhone: string
   deliveryAddress: string
@@ -71,4 +72,16 @@ export interface PaymentMethod {
   id: string
   key: string
   name: string
+}
+
+// -- Courier Track --
+
+export interface CourierTrackResponse {
+  carrierId: string
+  carrierName: string
+  log: Array<{
+    lat: number
+    lng: number
+    ts: string
+  }>
 }

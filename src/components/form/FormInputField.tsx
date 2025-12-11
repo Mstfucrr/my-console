@@ -12,6 +12,7 @@ interface FormInputFieldProps<T extends FieldValues> extends InputProps {
   placeholder?: string
   formItemClassName?: string
   required?: boolean
+  hideSpinButtons?: boolean
 }
 
 export function FormInputField<T extends FieldValues>({
@@ -22,6 +23,7 @@ export function FormInputField<T extends FieldValues>({
   placeholder,
   formItemClassName,
   required,
+  hideSpinButtons = true,
   ...props
 }: FormInputFieldProps<T>) {
   const {
@@ -51,7 +53,7 @@ export function FormInputField<T extends FieldValues>({
             {...props}
             type={type}
             placeholder={placeholder}
-            className={cn('w-full', error && 'border-red-500')}
+            className={cn('w-full', error && 'border-red-500', hideSpinButtons && 'no-spin')}
           />
         )}
       </FormControl>

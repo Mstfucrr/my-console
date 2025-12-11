@@ -1,7 +1,7 @@
 'use client'
 
 import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
-import { QueryOptions, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, QueryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service/order.service'
@@ -20,8 +20,8 @@ export interface OrdersContextType {
   error: string
   setActiveTab: (tab: 'active' | 'completed') => void
   refreshAllData: () => void
-  completedPagination: PaginationOptions
-  setCompletedPagination: (pagination: PaginationOptions) => void
+  pagination: PaginationOptions
+  setPagination: (pagination: PaginationOptions) => void
 }
 
 export const defaultOrderFilters: OrderFilterProperties = {
@@ -29,31 +29,43 @@ export const defaultOrderFilters: OrderFilterProperties = {
   search: ''
 }
 
+export const defaultPagination: PaginationOptions = {
+  page: 1,
+  limit: 20
+}
+
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
 
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active')
   const [filters, setFilters] = useState<OrderFilterProperties>(defaultOrderFilters)
+  const queryClient = useQueryClient()
 
-  const [completedPagination, setCompletedPagination] = useState<PaginationOptions>({
-    page: 1,
-    limit: 20
-  })
+  const [pagination, setPagination] = useState<PaginationOptions>(defaultPagination)
 
-  const handleFiltersChange = useCallback((newFilters: OrderFilterProperties) => {
-    setFilters(newFilters)
-    // Auto-switch tab based on status
-    if (newFilters.status !== 'all') {
-      const statusValue = Array.isArray(newFilters.status) ? newFilters.status[0] : newFilters.status
-      const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
-      const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
-      if (isActiveStatus && !isCompletedStatus) {
-        setActiveTab('active')
-      } else if (isCompletedStatus && !isActiveStatus) {
-        setActiveTab('completed')
-      }
-    }
+  const handleSetActiveTab = useCallback((tab: 'active' | 'completed') => {
+    setActiveTab(tab)
+    setPagination(defaultPagination)
   }, [])
+
+  const handleFiltersChange = useCallback(
+    (newFilters: OrderFilterProperties) => {
+      setFilters(newFilters)
+      // Auto-switch tab based on status
+      if (newFilters.status !== 'all') {
+        const statusValue = Array.isArray(newFilters.status) ? newFilters.status[0] : newFilters.status
+        const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
+        const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
+        if (isActiveStatus && !isCompletedStatus) {
+          setActiveTab('active')
+        } else if (isCompletedStatus && !isActiveStatus) {
+          setActiveTab('completed')
+        }
+      }
+      if (pagination.page !== defaultPagination.page) setPagination(defaultPagination)
+    },
+    [pagination.page]
+  )
 
   const clearFilters = useCallback(() => {
     setFilters(defaultOrderFilters)
@@ -66,11 +78,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   }, [filters, activeTab])
 
   const queryKey: QueryOptions['queryKey'] = useMemo(() => {
-    if (activeTab === 'active') {
-      return ['orders', statusFilters, filters.search, activeTab]
-    }
-    return ['orders', statusFilters, filters.search, activeTab, completedPagination]
-  }, [statusFilters, filters.search, activeTab, completedPagination])
+    return ['orders', activeTab, statusFilters, filters.search, pagination]
+  }, [activeTab, statusFilters, filters.search, pagination])
 
   const {
     data: ordersData,
@@ -80,11 +89,9 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     refetch: refetchOrders
   } = useQuery({
     queryKey,
-    queryFn: () =>
-      ordersService.getOrders(
-        { status: statusFilters, search: filters.search },
-        activeTab === 'active' ? undefined : { page: completedPagination.page, limit: completedPagination.limit }
-      )
+    queryFn: () => ordersService.getOrders({ status: statusFilters, search: filters.search }, pagination),
+    staleTime: Infinity,
+    placeholderData: keepPreviousData
   })
 
   // Active orders - direkt backend'den gelen data
@@ -101,7 +108,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   const refreshAllData = useCallback(() => {
     refetchOrders()
-  }, [refetchOrders])
+    queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
+  }, [refetchOrders, queryClient])
 
   const value: OrdersContextType = useMemo(
     () => ({
@@ -115,11 +123,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       isLoading: isLoadingOrders,
       isFetching: isFetchingOrders,
       error: ordersError?.message || '',
-      setActiveTab,
+      setActiveTab: handleSetActiveTab,
       refreshAllData,
-
-      completedPagination,
-      setCompletedPagination
+      pagination,
+      setPagination
     }),
     [
       activeTab,
@@ -132,10 +139,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       isLoadingOrders,
       isFetchingOrders,
       ordersError,
-      setActiveTab,
+      handleSetActiveTab,
       refreshAllData,
-      completedPagination,
-      setCompletedPagination
+      pagination,
+      setPagination
     ]
   )
 

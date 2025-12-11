@@ -31,7 +31,7 @@ const columns: ColumnDef<ReportRecord>[] = [
   {
     accessorKey: 'CreatedOn',
     header: 'Oluşturulma Tarihi',
-    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'))
+    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'), true)
   },
   {
     accessorKey: 'customer_name',

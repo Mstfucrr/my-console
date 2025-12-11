@@ -50,7 +50,7 @@ const AlertDialogContent = ({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          'bg-background data-[state=open]:animate-dialog-open data-[state=closed]:animate-dialog-close data-[state=open]:slide-in-from-left-1/2 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg md:w-full',
+          'bg-background data-[state=open]:animate-dialog-open data-[state=closed]:animate-dialog-close data-[state=open]:slide-in-from-left-1/2 data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-2 border p-0! shadow-lg duration-200 sm:rounded-lg md:w-full',
           sizeClasses[size],
           className
         )}
@@ -68,12 +68,15 @@ const AlertDialogContent = ({
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col space-y-2 text-center sm:text-left', className)} {...props} />
+  <div className={cn('flex flex-col space-y-2 p-2 text-center sm:p-4 sm:text-left', className)} {...props} />
 )
 AlertDialogHeader.displayName = 'AlertDialogHeader'
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />
+  <div
+    className={cn('flex flex-col-reverse p-2 sm:flex-row sm:justify-end sm:space-x-2 sm:p-4', className)}
+    {...props}
+  />
 )
 AlertDialogFooter.displayName = 'AlertDialogFooter'
 

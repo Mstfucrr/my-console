@@ -51,8 +51,10 @@
     "react-day-picker": "^9.8.1",
     "react-dom": "19.2.1",
     "react-hook-form": "^7.54.2",
+    "react-imask": "^7.6.1",
     "react-leaflet": "5.0.0",
     "react-toastify": "^11.0.5",
+    "socket.io-client": "^4.8.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -80,7 +82,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.8.2",
     "typescript-eslint": "^8.46.3",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.9"
   },
   "pnpm": {
     "overrides": {

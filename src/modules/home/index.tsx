@@ -1,39 +1,26 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import PageError from '@/components/page-error'
-import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { BarChart2, LucideIcon, Package } from 'lucide-react'
-import type { DateRange } from 'react-day-picker'
+import { LucideIcon, Package } from 'lucide-react'
 import StatCard from '../../components/StatCard'
 import { DashboardDonut } from './components/DonutChart'
 
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOperationDateRange } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
 import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
-import { formatDateTR } from '@/lib/utils/date'
+import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
+import { RestaurantHeader } from './components/RestaurantHeader'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
-
-const defaultDateRange = {
-  from: new Date(getOperationDateRange().startDate),
-  to: new Date(getOperationDateRange().endDate)
-}
-
-const MIN_MAX_DATE_RANGE = {
-  rangeStart: new Date(new Date().setHours(5, 0, 0, 0) - 30 * 24 * 60 * 60 * 1000),
-  rangeEnd: new Date(getOperationDateRange().endDate)
-} as const
 
 type StatsList = {
   title: string
@@ -51,27 +38,37 @@ const statsList: Array<StatsList> = [
     color: 'text-blue-600'
   },
   {
-    title: 'Teslim Edildi',
-    id: 'delivered',
-    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
-    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
+    title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+    id: 'created',
+    Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED]
   },
   {
-    title: 'Yola Çıktı',
+    title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
     id: 'shipped',
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
   },
   {
-    title: 'İptal Edildi',
+    title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
+    id: 'delivered',
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
+  },
+  {
+    title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
     id: 'cancelled',
     Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED]
   }
 ]
 
+const dateRange = {
+  from: new Date(getOperationDateRange().startDate),
+  to: new Date(getOperationDateRange().endDate)
+}
+
 export default function DashboardView() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const { data: stats, isLoading, isFetching, error, refetch } = useGetStats(dateRange)
 
   const {
@@ -86,12 +83,10 @@ export default function DashboardView() {
     latestOrdersRefetch()
   }
 
-  const isEmptyStats = useMemo(
-    () => !stats || (stats?.delivered === 0 && stats?.shipped === 0 && stats?.cancelled === 0),
-    [stats]
-  )
+  const isEmptyStats = useMemo(() => !stats || stats?.total === 0, [stats])
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
     if (isEmptyStats) return []
+
     return [
       {
         label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
@@ -107,11 +102,14 @@ export default function DashboardView() {
         label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
         value: stats?.cancelled ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.CANCELLED].color
+      },
+      {
+        label: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+        value: stats?.created ?? 0,
+        color: OrderStatusGroup[OrderStatusesGroups.CREATED].color
       }
     ]
   }, [isEmptyStats, stats])
-
-  const isDefaultDateRange = useMemo(() => JSON.stringify(dateRange) === JSON.stringify(defaultDateRange), [dateRange])
 
   if (error || latestOrdersError) {
     return (
@@ -127,41 +125,17 @@ export default function DashboardView() {
 
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
-      {/* Header */}
-      <PageHeader
-        title='Özet bilgiler'
-        description='İşletmenizin güncel durumunu takip edin'
-        icon={BarChart2}
-        actions={
-          <div className='flex flex-col justify-center gap-2 sm:items-end'>
-            <Label className='text-muted-foreground text-xs'>Tarih Aralığı</Label>
-            <DateRangePicker
-              dateRange={dateRange}
-              defaultDateRange={defaultDateRange}
-              defaultText='Bugün'
-              calendarProps={{
-                disabled: {
-                  before: MIN_MAX_DATE_RANGE.rangeStart,
-                  after: MIN_MAX_DATE_RANGE.rangeEnd
-                },
-                startMonth: MIN_MAX_DATE_RANGE.rangeStart,
-                endMonth: MIN_MAX_DATE_RANGE.rangeEnd
-              }}
-              onDateRangeChange={setDateRange}
-              placeholder='Dönem seçin'
-              enableTimeSelection
-              quickClearable
-              variant={isDefaultDateRange ? 'outline' : 'soft'}
-              color={isDefaultDateRange ? undefined : 'info'}
-            />
-          </div>
-        }
-      />
-
+      <RestaurantHeader />
       {/* Stats */}
-      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-4 transition-all duration-300 sm:grid-cols-3 lg:grid-cols-5'>
         {statsList.map(stat => (
-          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id]} {...stat} />
+          <StatCard
+            key={stat.id}
+            className='max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center'
+            isLoading={isLoading}
+            value={stats?.[stat.id]}
+            {...stat}
+          />
         ))}
       </div>
 
@@ -209,7 +183,7 @@ export default function DashboardView() {
                       >
                         <div className='flex-1'>
                           <div className='text-sm font-medium'>{order.customerName}</div>
-                          <div className='text-xs'>{formatDateTR(order.date)}</div>
+                          <div className='mt-1 text-xs'>{formatDateTimeTR(order.date)}</div>
                           <span className='text-xs font-light'>{order.orderId}</span>
                         </div>
                         <div className='flex flex-col gap-y-2 text-right'>
@@ -219,7 +193,7 @@ export default function DashboardView() {
                       </div>
                     ))}
                   </div>
-                  <Link href='/reports' className='w-full'>
+                  <Link href='/orders' className='w-full'>
                     <Button variant='outline' className='w-full bg-transparent'>
                       Tüm Siparişleri Görüntüle
                     </Button>

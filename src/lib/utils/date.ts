@@ -3,14 +3,19 @@ import type { DateRange } from 'react-day-picker'
 
 export function formatDateTR(dateString: string | undefined, includeTime = false) {
   if (!dateString) return ''
-  if (!includeTime)
-    return new Date(dateString).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  return new Date(dateString).toLocaleString('tr-TR')
+  return new Date(dateString).toLocaleString('tr-TR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: includeTime ? '2-digit' : undefined,
+    minute: includeTime ? '2-digit' : undefined,
+    timeZone: 'UTC'
+  })
 }
 
 export function formatDateTimeTR(dateString: string | undefined) {
   if (!dateString) return ''
-  return new Date(dateString).toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(dateString).toLocaleString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })
 }
 
 export function formatDateForApi(date?: Date | string) {

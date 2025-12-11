@@ -1,6 +1,7 @@
 'use client'
 
-import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { DialogContentInner } from '@/components/ui/dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { toast } from 'react-toastify'
@@ -163,18 +164,18 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
         onChange={handleInvoiceFileChange}
         className='hidden'
       />
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent size='lg' className='p-2 sm:p-4'>
-          <DialogHeader>
-            <DialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</DialogTitle>
-          </DialogHeader>
+      <AlertDialog open={isOpen} onOpenChange={handleClose}>
+        <AlertDialogContent size='lg' className='p-2 sm:p-4'>
+          <AlertDialogHeader>
+            <AlertDialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</AlertDialogTitle>
+          </AlertDialogHeader>
 
           <DialogContentInner>
             {page === 'approve' && <ApprovePage onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />}
             {page === 'report' && <ReportPage onSubmit={handleReportIssue} isSubmitting={isReporting} />}
           </DialogContentInner>
-        </DialogContent>
-      </Dialog>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
