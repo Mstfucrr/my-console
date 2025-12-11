@@ -27,8 +27,9 @@ export function RestaurantHeader() {
           transition={{
             duration: 0.7,
             delay: 0.5,
-            scale: { delay: 1.5, duration: 0.7 },
-            ease: 'easeInOut'
+            scale: { delay: 1.5, duration: 1, type: 'spring' },
+            type: 'spring',
+            stiffness: 300
           }}
           className='text-primary flex gap-x-1 text-base font-bold max-sm:flex-col max-sm:text-sm'
         >

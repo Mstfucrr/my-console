@@ -134,6 +134,7 @@ export function CreateOrderView() {
                     label='Ödeme Tipi'
                     formItemClassName='max-sm:col-span-2'
                     placeholder='Ödeme tipi seçiniz'
+                    required
                     options={paymentMethodOptions}
                     disabled={isLoadingPaymentMethods}
                     tabIndex={7}
