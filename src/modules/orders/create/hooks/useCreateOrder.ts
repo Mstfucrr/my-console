@@ -1,6 +1,8 @@
+import { SelectOption } from '@/components/form/FormSelectField'
 import { getItemJson, setItem } from '@/lib/local-storage-helper'
 import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
+import { PAYMENT_METHOD_TYPE_LABELS, type PaymentMethodType } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
@@ -27,10 +29,25 @@ export function useCreateOrder() {
   // Mahalle
   // Ödeme Tipi
   const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
-  const paymentMethodOptions = paymentMethods?.map(paymentMethod => ({
-    value: paymentMethod.key,
-    label: paymentMethod.name
-  }))
+
+  const paymentMethodOptionsGrouped = useMemo(() => {
+    if (!paymentMethods || paymentMethods.length === 0) return undefined
+
+    const sorted = [...paymentMethods].sort((a, b) => a.order - b.order)
+    const grouped = sorted.reduce(
+      (acc, pm) => {
+        if (!acc[pm.type]) acc[pm.type] = []
+        acc[pm.type].push({ value: pm.key, label: pm.name })
+        return acc
+      },
+      {} as Record<PaymentMethodType, SelectOption[]>
+    )
+
+    return Object.entries(grouped).map(([type, items]) => ({
+      groupLabel: PAYMENT_METHOD_TYPE_LABELS[type as PaymentMethodType],
+      items
+    }))
+  }, [paymentMethods])
 
   // Şehir
   const { data: provinces, isLoading: isLoadingProvinces } = useQueryProvinces()
@@ -173,7 +190,7 @@ export function useCreateOrder() {
     handleCountyChange,
     handleDistrictChange,
     onSubmit,
-    paymentMethodOptions,
+    paymentMethodOptionsGrouped,
     provinceOptions,
     countyOptions,
     districtOptions,

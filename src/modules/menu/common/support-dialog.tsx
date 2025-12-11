@@ -23,10 +23,10 @@ export function SupportDialog() {
           </div>
           <span className='text-primary text-lg font-bold'>Destek Mail Adresi</span>
           <a
-            href='mailto:support@example.com'
+            href='mailto:systemsupport@fiyuu.com.tr'
             className='text-primary hover:text-primary-700 font-medium break-all underline underline-offset-2 transition'
           >
-            support@example.com
+            systemsupport@fiyuu.com.tr
           </a>
           <span className='text-muted-foreground mt-2 text-center text-xs'>
             Destek ekibimize e-posta göndererek ulaşabilirsiniz.

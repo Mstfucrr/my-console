@@ -30,12 +30,12 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
 
-  // Eğer order'da customerPhone veya customerAddress yoksa, detay sayfasından çek
   const needsDetailFetch = order && (!order.customerPhone || !order.deliveryAddress)
 
   const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
     queryKey: ['orderDetail', order?.orderId],
     queryFn: () => ordersService.getOrderById(order!.orderId),
+    staleTime: 0,
     enabled: Boolean(needsDetailFetch && order?.orderId)
   })
 
@@ -86,6 +86,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
               {openMap && displayOrder?.courierInfo ? (
                 <div className='flex h-104 w-full p-4 pt-0'>
                   <CourierMap
+                    orderId={displayOrder.orderId}
                     orderSId={displayOrder.sId}
                     courierInfo={displayOrder.courierInfo}
                     courierPosition={displayOrder.courierInfo.position}

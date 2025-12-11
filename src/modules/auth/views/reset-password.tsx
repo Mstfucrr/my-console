@@ -4,7 +4,7 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { authService } from '@/modules/auth/service/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight, CheckCircle, Lock, Mail } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Key, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -21,22 +21,25 @@ const PASSWORD_REGEXES = {
 
 const schema = z
   .object({
-    code: z.string().min(6, { message: 'Kod 6 haneli olmalıdır.' }).max(6, { message: 'Kod 6 haneli olmalıdır.' }),
-    password: z
+    codeFromEmail: z
+      .string()
+      .min(6, { message: 'Kod 6 haneli olmalıdır.' })
+      .max(6, { message: 'Kod 6 haneli olmalıdır.' }),
+    newPassword: z
       .string()
       .min(8, { message: 'Şifre en az 8 karakter olmalıdır.' })
       .regex(PASSWORD_REGEXES.lowercase.regex, { message: PASSWORD_REGEXES.lowercase.message })
       .regex(PASSWORD_REGEXES.uppercase.regex, { message: PASSWORD_REGEXES.uppercase.message })
       .regex(PASSWORD_REGEXES.number.regex, { message: PASSWORD_REGEXES.number.message }),
-    confirmPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
+    confirmNewPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
   })
   .superRefine((data, ctx) => {
-    if (data.confirmPassword === '' || data.password === '') return
-    if (data.confirmPassword !== data.password) {
+    if (data.confirmNewPassword === '' || data.newPassword === '') return
+    if (data.confirmNewPassword !== data.newPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Şifreler eşleşmiyor.',
-        path: ['confirmPassword']
+        path: ['confirmNewPassword']
       })
     }
   })
@@ -53,30 +56,30 @@ export function ResetPasswordView() {
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
-      code: '',
-      password: '',
-      confirmPassword: ''
+      codeFromEmail: '',
+      newPassword: '',
+      confirmNewPassword: ''
     }
   })
 
   const { handleSubmit, control, formState, trigger } = form
 
-  const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
-  const confirmPasswordValue = useWatch({ control, name: 'confirmPassword', defaultValue: '' })
+  const newPasswordValue = useWatch({ control, name: 'newPassword', defaultValue: '' })
+  const confirmNewPasswordValue = useWatch({ control, name: 'confirmNewPassword', defaultValue: '' })
 
-  const isLengthValid = passwordValue.length >= 8
-  const hasUppercase = PASSWORD_REGEXES.uppercase.regex.test(passwordValue)
-  const hasLowercase = PASSWORD_REGEXES.lowercase.regex.test(passwordValue)
-  const hasNumber = PASSWORD_REGEXES.number.regex.test(passwordValue)
+  const isLengthValid = newPasswordValue.length >= 8
+  const hasUppercase = PASSWORD_REGEXES.uppercase.regex.test(newPasswordValue)
+  const hasLowercase = PASSWORD_REGEXES.lowercase.regex.test(newPasswordValue)
+  const hasNumber = PASSWORD_REGEXES.number.regex.test(newPasswordValue)
 
   const isValid = isLengthValid && hasUppercase && hasLowercase && hasNumber
 
   useEffect(() => {
     // İkisi de boşken gereksiz trigger etme
-    if (!passwordValue || !confirmPasswordValue) return
+    if (!newPasswordValue || !confirmNewPasswordValue) return
 
-    void trigger('confirmPassword')
-  }, [passwordValue, confirmPasswordValue, trigger])
+    void trigger('confirmNewPassword')
+  }, [newPasswordValue, confirmNewPasswordValue, trigger])
 
   useEffect(() => {
     if (!recoverySessionId) {
@@ -96,8 +99,8 @@ export function ResetPasswordView() {
       // Backend'e confirm code isteği gönder
       const response = await authService.confirmCode({
         recoverySessionId,
-        code: data.code,
-        newPassword: data.password
+        code: data.codeFromEmail,
+        newPassword: data.newPassword
       })
 
       setIsSuccess(true)
@@ -116,14 +119,9 @@ export function ResetPasswordView() {
         </div>
         <h2 className='text-xl font-semibold text-gray-900'>Şifre Güncellendi</h2>
         <p className='text-gray-600'>Şifreniz başarıyla güncellendi. Artık yeni şifrenizle giriş yapabilirsiniz.</p>
-        <Link
-          href='/login'
-          className='inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium'
-        >
-          <Button color='primary'>
-            <ArrowRight className='mr-2 h-4 w-4' /> Giriş Yap
-          </Button>
-        </Link>
+        <Button color='primary' onClick={() => router.replace('/login')}>
+          <ArrowRight className='mr-2 h-4 w-4' /> Giriş Yap
+        </Button>
       </div>
     )
   }
@@ -147,15 +145,15 @@ export function ResetPasswordView() {
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
           <FormInputField
-            name='code'
+            name='codeFromEmail'
             autoComplete='off'
             control={control}
             type='text'
-            id='code'
+            id='codeFromEmail'
             size='lg'
             disabled={formState.isSubmitting}
             placeholder='Mail adresinize gönderilen kodu giriniz'
-            Icon={Mail}
+            Icon={Key}
             maxLength={6}
             inputMode='numeric'
             pattern='[0-9]*'
@@ -163,11 +161,11 @@ export function ResetPasswordView() {
 
           <div className='relative'>
             <FormInputField
-              name='password'
+              name='newPassword'
               autoComplete='off'
               control={control}
               type='password'
-              id='password'
+              id='newPassword'
               size='lg'
               disabled={formState.isSubmitting}
               placeholder='Yeni şifrenizi giriniz'
@@ -177,11 +175,11 @@ export function ResetPasswordView() {
 
           <div className='relative'>
             <FormInputField
-              name='confirmPassword'
+              name='confirmNewPassword'
               autoComplete='off'
               control={control}
               type='password'
-              id='confirmPassword'
+              id='confirmNewPassword'
               size='lg'
               disabled={formState.isSubmitting}
               placeholder='Yeni şifrenizi tekrar giriniz'

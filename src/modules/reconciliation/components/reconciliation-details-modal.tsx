@@ -103,28 +103,24 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
   const handleApprove = async (data: { invoiceFile: File }) => {
     if (!record) return
 
-    try {
-      await toast.promise(
-        async () => {
-          // First upload the file to S3
-          await uploadFile(data.invoiceFile)
-          // Then approve with the file name
-          await approveReconciliation({
-            recordId: record.RecordID,
-            confirmRecordId: record.ConfirmID,
-            fileName: data.invoiceFile.name
-          })
-        },
-        {
-          pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
-          success: 'Fatura yüklendi ve mutabakat başarıyla onaylandı',
-          error: 'İşlem sırasında bir hata oluştu'
-        }
-      )
-      handleClose()
-    } catch {
-      // Error is handled by toast
-    }
+    await toast.promise(
+      async () => {
+        // First upload the file to S3
+        await uploadFile(data.invoiceFile)
+        // Then approve with the file name
+        await approveReconciliation({
+          recordId: record.RecordID,
+          confirmRecordId: record.ConfirmID,
+          fileName: data.invoiceFile.name
+        })
+      },
+      {
+        pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
+        success: 'Fatura yüklendi ve mutabakat başarıyla onaylandı',
+        error: 'İşlem sırasında bir hata oluştu'
+      }
+    )
+    handleClose()
   }
 
   const handleReportIssue = async (data: { description: string; statementFile: File }) => {
