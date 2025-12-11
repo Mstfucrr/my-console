@@ -15,7 +15,7 @@ export function BottomNavigation() {
     <nav className='border-border bg-muted/40 ring-accent fixed bottom-1 left-1/2 z-50 w-[95%] max-w-[450] -translate-x-1/2 rounded-3xl border-t ring-2 backdrop-blur-2xl'>
       {/* iOS home indicator için padding */}
       <div className='safe-area-inset-bottom'>
-        <div className='xs:gap-x-5 relative flex items-center justify-between gap-x-2'>
+        <div className='xs:gap-x-3 relative flex items-center justify-between gap-x-2'>
           {/* Sol taraf - İlk 2 item */}
           <div className='xs:gap-x-3 flex flex-1 items-center justify-around gap-x-2'>
             {menusConfig.slice(0, 2).map(item => (

@@ -13,6 +13,10 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
           // Sadece WebSocket event'leri ile invalidate edilecek
           staleTime: Infinity
         }
+        queries: {
+          retry: 1,
+          refetchOnWindowFocus: false
+        }
       }
     })
   )

@@ -77,11 +77,13 @@ class OrdersService {
     const payload = {
       ...order,
       district: undefined,
+      dontRingDoorBell: undefined,
       city: order.city.name,
       county: order.county.name,
       neighborhood: order.district.name,
       totalAmount: Number(order.totalAmount) * 100,
-      street: order.street
+      street: order.street,
+      ringDoorBell: !order.dontRingDoorBell
     }
     const response = await privateAxiosInstance.post<Order>('/orders/create', payload)
     return response.data

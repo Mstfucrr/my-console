@@ -57,7 +57,7 @@ export const createOrderSchema = z.object({
   // Ödeme ve Teslimat
   paymentTypeSId: z.string().min(1, 'Ödeme tipi seçimi zorunludur').default(''),
   contactlessDelivery: z.boolean().default(false),
-  ringDoorBell: z.boolean().default(false)
+  dontRingDoorBell: z.boolean().default(true)
 })
 
 export const defaultCreateOrderValues: CreateOrderFormData = {
@@ -82,5 +82,5 @@ export const defaultCreateOrderValues: CreateOrderFormData = {
   addressDirection: '',
   paymentTypeSId: '',
   contactlessDelivery: false,
-  ringDoorBell: false
+  dontRingDoorBell: true
 }

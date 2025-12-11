@@ -19,6 +19,7 @@ import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
+import { RestaurantHeader } from './components/RestaurantHeader'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 
 type StatsList = {
@@ -37,19 +38,25 @@ const statsList: Array<StatsList> = [
     color: 'text-blue-600'
   },
   {
-    title: 'Teslim Edildi',
-    id: 'delivered',
-    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
-    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
+    title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+    id: 'created',
+    Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED]
   },
   {
-    title: 'Yola Çıktı',
+    title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
     id: 'shipped',
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
   },
   {
-    title: 'İptal Edildi',
+    title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
+    id: 'delivered',
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
+  },
+  {
+    title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
     id: 'cancelled',
     Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED]
@@ -80,9 +87,6 @@ export default function DashboardView() {
   const chartData: { label: string; value: number; color: string }[] = useMemo(() => {
     if (isEmptyStats) return []
 
-    const created = stats?.total
-      ? stats?.total - (stats?.shipped ?? 0) - (stats?.delivered ?? 0) - (stats?.cancelled ?? 0)
-      : 0
     return [
       {
         label: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
@@ -101,7 +105,7 @@ export default function DashboardView() {
       },
       {
         label: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
-        value: created ?? 0,
+        value: stats?.created ?? 0,
         color: OrderStatusGroup[OrderStatusesGroups.CREATED].color
       }
     ]
@@ -121,10 +125,17 @@ export default function DashboardView() {
 
   return (
     <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
+      <RestaurantHeader />
       {/* Stats */}
-      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+      <div className='grid grid-cols-2 gap-4 transition-all duration-300 sm:grid-cols-3 lg:grid-cols-5'>
         {statsList.map(stat => (
-          <StatCard key={stat.id} isLoading={isLoading} value={stats?.[stat.id]} {...stat} />
+          <StatCard
+            key={stat.id}
+            className='max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center'
+            isLoading={isLoading}
+            value={stats?.[stat.id]}
+            {...stat}
+          />
         ))}
       </div>
 

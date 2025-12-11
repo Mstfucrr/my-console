@@ -74,6 +74,7 @@ export function FormCommandSelectField<T extends FieldValues>({
         <Popover open={open} modal={!isMobile} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <CommandTrigger
+              id={name}
               aria-expanded={open}
               className={cn(error && 'border-red-500', disabled && 'cursor-not-allowed opacity-50')}
               disabled={disabled}

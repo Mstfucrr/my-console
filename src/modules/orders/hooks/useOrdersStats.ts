@@ -12,6 +12,7 @@ export function useOrdersStats() {
     isLoading: isStatsLoading
   } = useQuery<OrderStatusStats, Error>({
     queryKey: ['ordersStats'],
+    staleTime: Infinity,
     queryFn: () => ordersService.getOrdersStats()
   })
 

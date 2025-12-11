@@ -7,11 +7,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
+import { useViewModeStore } from '@/store/view-mode'
 import type { Order } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useOrders } from '../../context/OrdersContext'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
-import type { OrdersViewMode } from '../OrdersTabs'
 import { OrderCard } from './OrderCard'
 import { OrderCardSkeleton } from './OrderCardSkeleton'
 
@@ -19,7 +19,6 @@ interface OrdersListProps {
   orders: Array<Order> | undefined
   isLoading: boolean
   isFetching: boolean
-  viewMode: OrdersViewMode
   emptyMessage: string
   filteredEmptyMessage: string
   onViewDetails: (order: Order) => void
@@ -96,13 +95,14 @@ export function OrdersList({
   orders,
   isLoading,
   isFetching,
-  viewMode,
   emptyMessage,
   filteredEmptyMessage,
   onViewDetails
 }: OrdersListProps) {
   const { filters } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
+
+  const viewMode = useViewModeStore(state => state.viewMode)
 
   if (viewMode === 'table')
     return (

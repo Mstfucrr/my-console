@@ -5,6 +5,10 @@ export interface ReconciliationRecord {
   distributionCount: number
   totalDeliveryAmount: number
   restaurantPaymentAmount: number
+  totalBillAmount: number
+  totalFoodCouponAmount: number
+  totalPrePaidAmount: number
+  totalPrePaidFoodCouponAmount: number
   status: ReconciliationStatusType
   RestaurantTaxNumber: string
   RecordYear: number

@@ -81,7 +81,7 @@ export function VerifyForm() {
               >
                 <Badge className='text-lg'>
                   <span className={cn('flex items-center gap-2', { 'text-gray-100': !otpState.isComplete })}>
-                    Gönder <small className='text-xs'>({otpState.timer})</small>
+                    Doğrula <small className='text-xs'>({otpState.timer})</small>
                   </span>
                 </Badge>
               </LoadingButton>
