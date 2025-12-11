@@ -38,25 +38,25 @@ const statsList: Array<StatsList> = [
     color: 'text-blue-600'
   },
   {
-    title: 'Beklemede',
+    title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
     id: 'created',
     Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED]
   },
   {
-    title: 'Yola Çıktı',
+    title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
     id: 'shipped',
     Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED]
   },
   {
-    title: 'Teslim Edildi',
+    title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
     id: 'delivered',
     Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED]
   },
   {
-    title: 'İptal Edildi',
+    title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
     id: 'cancelled',
     Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
     color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED]

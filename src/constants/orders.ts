@@ -18,7 +18,7 @@ const ORDER_STATUS_TEXT_COLORS: Record<OrderStatusesGroups, string> = {
 
 export const OrderStatusGroup = {
   [OrderStatusesGroups.CREATED]: {
-    label: 'Beklemede',
+    label: 'Hazırlanıyor',
     color: '#ffb855',
     icon: ClockIcon,
     value: 0
