@@ -63,7 +63,7 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
             autoClose: 3000
           })
         } else {
-          toast.info(`Sipariş #${orderId.slice(-6)} durumu güncellendi: ${statusLabel}`, {
+          toast.info(`#${orderId.slice(-6)} sipariş durumu ${statusLabel} olarak güncellendi `, {
             position: 'top-right',
             autoClose: 3000
           })

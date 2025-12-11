@@ -130,10 +130,13 @@ export function useWebSocket<TEventMap = Record<string, never>>(
     if (callbacksRef.current.eventHandlers) {
       const handlers = callbacksRef.current.eventHandlers
       ;(Object.keys(handlers) as Array<keyof TEventMap>).forEach(eventName => {
-        const handler = handlers[eventName]
-        if (handler) {
-          instance.on(String(eventName), handler)
-        }
+        // Wrapper fonksiyon: Her çağrıldığında güncel handler'ı ref'ten alır
+        instance.on(String(eventName), (data: TEventMap[typeof eventName]) => {
+          const currentHandler = callbacksRef.current.eventHandlers?.[eventName]
+          if (currentHandler) {
+            currentHandler(data)
+          }
+        })
       })
     }
 
