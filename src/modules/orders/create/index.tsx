@@ -24,7 +24,7 @@ export function CreateOrderView() {
     handleCountyChange,
     handleDistrictChange,
     onSubmit,
-    paymentMethodOptions,
+    paymentMethodOptionsGrouped,
     provinceOptions,
     countyOptions,
     districtOptions,
@@ -127,7 +127,7 @@ export function CreateOrderView() {
                   <div className='flex items-center justify-center'>
                     <Loader2 className='size-4 animate-spin' />
                   </div>
-                ) : paymentMethodOptions ? (
+                ) : paymentMethodOptionsGrouped ? (
                   <FormSelectField
                     name='paymentTypeSId'
                     control={form.control}
@@ -135,7 +135,7 @@ export function CreateOrderView() {
                     formItemClassName='max-sm:col-span-2'
                     placeholder='Ödeme tipi seçiniz'
                     required
-                    options={paymentMethodOptions}
+                    groupedOptions={paymentMethodOptionsGrouped}
                     disabled={isLoadingPaymentMethods}
                     tabIndex={7}
                   />

@@ -4,7 +4,7 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { authService } from '@/modules/auth/service/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight, CheckCircle, Lock, Mail } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, Key, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -155,7 +155,7 @@ export function ResetPasswordView() {
             size='lg'
             disabled={formState.isSubmitting}
             placeholder='Mail adresinize gönderilen kodu giriniz'
-            Icon={Mail}
+            Icon={Key}
             maxLength={6}
             inputMode='numeric'
             pattern='[0-9]*'

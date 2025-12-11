@@ -68,10 +68,19 @@ export enum OrderStatusesGroups {
   CANCELLED = 'cancelled'
 }
 
+export type PaymentMethodType = 'online' | 'offline'
+
+export const PAYMENT_METHOD_TYPE_LABELS: Record<PaymentMethodType, string> = {
+  online: 'Online',
+  offline: 'Kapıda Ödeme'
+} as const
+
 export interface PaymentMethod {
   id: string
   key: string
   name: string
+  order: number
+  type: PaymentMethodType
 }
 
 // -- Courier Track --
