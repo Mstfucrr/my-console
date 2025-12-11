@@ -19,6 +19,7 @@ interface ReportsTableProps {
   onFiltersChange: (f: ReportsFilterProperties) => void
   onClearFilters: () => void
   onRefresh: () => void
+  total: number | undefined
 }
 
 const columns: ColumnDef<ReportRecord>[] = [
@@ -71,6 +72,7 @@ export default function ReportsTable({
   onFiltersChange,
   onClearFilters,
   onRefresh,
+  total,
   ...props
 }: ReportsTableProps & Omit<BasicDataTableProps<ReportRecord>, 'columns' | 'data'>) {
   const [showFilters, setShowFilters] = useState(true)
@@ -78,7 +80,7 @@ export default function ReportsTable({
   return (
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Tamamlanan Siparişler ({data.length})</CardTitle>
+        <CardTitle>Tamamlanan Siparişler ({total})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
           <FilterToggleButton showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} color='primary' />
@@ -94,6 +96,7 @@ export default function ReportsTable({
           isLoading={isLoading}
           emptyLabel='Rapor kaydı bulunamadı'
           loadingLabel='Rapor kayıtları yükleniyor...'
+          total={total}
           {...props}
         />
       </CardContent>
