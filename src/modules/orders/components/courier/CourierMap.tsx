@@ -31,6 +31,7 @@ Leaflet.Icon.Default.mergeOptions({
 })
 
 interface CourierMapProps {
+  orderId?: string
   orderSId?: string
   courierInfo: CourierInfo
   courierPosition: [number, number]
@@ -39,6 +40,7 @@ interface CourierMapProps {
 }
 
 export default function CourierMap({
+  orderId,
   orderSId,
   courierInfo,
   courierPosition,
@@ -49,6 +51,12 @@ export default function CourierMap({
 
   const isTabActive = useIsTabActive(10)
 
+  const courierTrackId = useMemo(() => {
+    if (orderSId) return orderSId
+    if (orderId) return orderId
+    return undefined
+  }, [orderSId, orderId])
+
   const {
     data: courierTrack,
     isError,
@@ -56,11 +64,12 @@ export default function CourierMap({
     isLoading,
     isFetching
   } = useQuery({
-    queryKey: ['courier-track', orderSId],
-    queryFn: () => ordersService.courierTrack(orderSId!),
-    enabled: Boolean(orderSId) && isTabActive,
+    queryKey: ['courier-track', courierTrackId],
+    queryFn: () => ordersService.courierTrack(courierTrackId!),
+    enabled: Boolean(courierTrackId) && isTabActive,
     refetchIntervalInBackground: false,
-    refetchInterval: 60 * 1000
+    refetchInterval: 60 * 1000,
+    staleTime: 0
   })
 
   const currentCourierPosition = useMemo(() => {
