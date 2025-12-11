@@ -80,7 +80,17 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'paymentType',
     header: 'Ödeme Yöntemi',
     size: 100,
-    cell: ({ row }) => <PaymentMethodBadge className='text-nowrap' paymentMethod={row.getValue('paymentType')} />
+    cell: ({ row }) => {
+      const isPrepaid = row.original.isPrepaid
+      return (
+        <PaymentMethodBadge
+          showIcon
+          IsPrepaid={isPrepaid}
+          className='text-nowrap'
+          paymentMethod={row.original.paymentType}
+        />
+      )
+    }
   },
   {
     accessorKey: 'totalAmount',
