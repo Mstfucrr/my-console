@@ -3,7 +3,7 @@ import { Open_Sans } from 'next/font/google'
 
 import { cn } from '@/lib/utils'
 import { QueryProvider } from '@/provider/QueryProvider'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { ToastContainer } from 'react-toastify'
 
 // Initialize Poppins font
@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   title: 'Partner',
   description:
     'Partner yönetim platformu. Sipariş takibi, mutabakat, raporlama ve daha fazlası için modern ve kullanıcı dostu arayüz.'
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false
 }
 
 export default function RootLayout({
