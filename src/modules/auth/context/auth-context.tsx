@@ -241,7 +241,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!loginRequest) return
 
     try {
-      const loginResponse = await login(loginRequest)
+      const loginResponse = await login({ ...loginRequest, turnstileToken: undefined })
 
       if (loginResponse.requiresOtp && loginResponse.otpSessionId) {
         hasResetOnTimerComplete.current = false
