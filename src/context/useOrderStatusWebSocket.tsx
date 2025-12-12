@@ -2,7 +2,7 @@
 
 import { OrderStatusGroup } from '@/constants'
 import { LatestOrder, Order, OrderStatusesGroups, OrderStatusStats } from '@/types'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { usePathname } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'react-toastify'
@@ -28,6 +28,41 @@ const {
   useWebSocketFromContext: useOrderStatusWebSocketFromContext
 } = createWebSocketNamespace<OrderEvents>()
 
+type OrdersResponse = { data: Order[]; total: number }
+
+// Toast için bize lazım olan minimal shape
+type OrderLikeForToast = Pick<Order, 'orderId' | 'customerName'> | Pick<LatestOrder, 'orderId' | 'customerName'>
+
+/**
+ * Hem ['orders'] hem ['latest-orders'] cache'lerinde arayıp
+ * ilgili siparişi bulur; müşteri adını vs. toast için buradan alırız.
+ */
+function findOrderForToast(queryClient: QueryClient, orderId: string): OrderLikeForToast | undefined {
+  // 1) Tüm 'orders' query'lerini tara (['orders', ...] ile başlayanlar)
+  const ordersQueries = queryClient.getQueriesData<OrdersResponse>({
+    queryKey: ['orders']
+  })
+
+  for (const [, data] of ordersQueries) {
+    if (!data) continue
+    const found = data.data.find(order => order.orderId === orderId)
+    if (found) return found
+  }
+
+  // 2) Tüm 'latest-orders' query'lerini tara (['latest-orders', ...])
+  const latestOrdersQueries = queryClient.getQueriesData<LatestOrder[]>({
+    queryKey: ['latest-orders']
+  })
+
+  for (const [, data] of latestOrdersQueries) {
+    if (!data) continue
+    const found = data.find(order => order.orderId === orderId)
+    if (found) return found
+  }
+
+  return undefined
+}
+
 function updateStatsCount(
   stats: OrderStatusStats,
   from?: OrderStatusesGroups,
@@ -47,44 +82,49 @@ function updateStatsCount(
 export function OrderStatusWebSocketProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
   const pathname = usePathname()
-  const isOrdersPage = pathname?.startsWith('/orders')
+  const isOrdersPage = useMemo(() => pathname?.startsWith('/orders'), [pathname])
 
   const handleOrderStatusUpdate = useCallback(
     (update: OrderStatusUpdate) => {
       const { orderId, status: newStatus, data } = update
-
       let previousStatus: OrderStatusesGroups | undefined
 
-      // Orders cache’ini güncelle
-      queryClient.setQueriesData({ queryKey: ['orders'] }, old => {
-        type OrdersResponse = { data: Order[]; total: number }
+      // 1) Önce toast mesajını hazırlayalım (cache olup olmamasından bağımsız)
+      if (!isOrdersPage) {
+        if (newStatus === OrderStatusesGroups.CREATED) {
+          // Yeni sipariş - isim olmasa da generic mesaj
+          toast.info('Yeni sipariş eklendi', {
+            position: 'top-right',
+            autoClose: 3000
+          })
+        } else {
+          const orderForToast = findOrderForToast(queryClient, orderId)
+          console.log('orderForToast', orderForToast)
+          const customerName = orderForToast?.customerName ?? `#${orderId.slice(-6)}`
+          const statusLabel = OrderStatusGroup[newStatus]?.label ?? newStatus
 
+          toast.info(`${customerName} siparişi ${statusLabel} olarak güncellendi`, {
+            position: 'top-right',
+            autoClose: 3000
+          })
+        }
+      }
+
+      // 2) Orders cache’ini güncelle
+      queryClient.setQueriesData({ queryKey: ['orders'] }, old => {
         const typed = old as OrdersResponse | undefined
         if (!typed) return old
 
         const hasOrder = typed.data.find(order => order.orderId === orderId)
+
+        // Yeni sipariş veya listede olmayan bir sipariş: aktif listeyi invalidate et
         if (!hasOrder || newStatus === OrderStatusesGroups.CREATED) {
           queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
-          if (!isOrdersPage) {
-            toast.info(`Yeni sipariş eklendi`, {
-              position: 'top-right',
-              autoClose: 3000
-            })
-          }
         }
 
         const updatedData = typed.data.map(order => {
           if (order.orderId === orderId) {
             previousStatus = order.status
-            if (!isOrdersPage) {
-              toast.info(
-                `${order.customerName} siparişi ${OrderStatusGroup[newStatus]?.label ?? newStatus} olarak güncellendi `,
-                {
-                  position: 'top-right',
-                  autoClose: 3000
-                }
-              )
-            }
             return { ...order, status: newStatus, courierInfo: data }
           }
           return order
@@ -93,12 +133,13 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
         return { ...typed, data: updatedData }
       })
 
+      // 3) Orders stats cache’ini güncelle
       queryClient.setQueryData<OrderStatusStats>(['ordersStats'], old => {
         if (!old) return old
         return updateStatsCount(old, previousStatus, newStatus)
       })
 
-      // Dashboard latest-orders cache'ini güncelle
+      // 4) Dashboard latest-orders cache'ini güncelle
       queryClient.setQueriesData({ queryKey: ['latest-orders'] }, old => {
         const typed = old as LatestOrder[] | undefined
         if (!typed) return old
@@ -111,14 +152,16 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
 
         // Status update olduğunda ilgili order'ı güncelle
         const updatedData = typed.map(order => {
-          if (order.orderId === orderId) return { ...order, status: newStatus }
+          if (order.orderId === orderId) {
+            return { ...order, status: newStatus }
+          }
           return order
         })
 
         return updatedData
       })
 
-      // Dashboard stats cache'ini güncelle (tüm dateRange'ler için)
+      // 5) Dashboard stats cache'ini güncelle (tüm dateRange'ler için)
       queryClient.setQueriesData({ queryKey: ['dashboard-stats'] }, old => {
         const typed = old as OrderStatusStats | undefined
         if (!typed) return old
@@ -142,8 +185,6 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
   )
 }
 
-// Component'ler için kullanacağın hook:
-// Artık HİÇBİR component `useWebSocket`’i direkt çağırmıyor!
 export function useOrderStatusWebSocket(): WebSocketContextValue<OrderEvents> {
   return useOrderStatusWebSocketFromContext()
 }
