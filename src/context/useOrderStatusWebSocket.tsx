@@ -1,7 +1,7 @@
 'use client'
 
 import { OrderStatusGroup } from '@/constants'
-import { Order, OrderStatusesGroups, OrderStatusStats } from '@/types'
+import { LatestOrder, Order, OrderStatusesGroups, OrderStatusStats } from '@/types'
 import { useQueryClient } from '@tanstack/react-query'
 import { usePathname } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
@@ -96,6 +96,33 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
       queryClient.setQueryData<OrderStatusStats>(['ordersStats'], old => {
         if (!old) return old
         return updateStatsCount(old, previousStatus, newStatus)
+      })
+
+      // Dashboard latest-orders cache'ini güncelle
+      queryClient.setQueriesData({ queryKey: ['latest-orders'] }, old => {
+        const typed = old as LatestOrder[] | undefined
+        if (!typed) return old
+
+        if (newStatus === OrderStatusesGroups.CREATED) {
+          // Yeni sipariş geldiğinde invalidate et (yeniden fetch eder)
+          queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
+          return old
+        }
+
+        // Status update olduğunda ilgili order'ı güncelle
+        const updatedData = typed.map(order => {
+          if (order.orderId === orderId) return { ...order, status: newStatus }
+          return order
+        })
+
+        return updatedData
+      })
+
+      // Dashboard stats cache'ini güncelle (tüm dateRange'ler için)
+      queryClient.setQueriesData({ queryKey: ['dashboard-stats'] }, old => {
+        const typed = old as OrderStatusStats | undefined
+        if (!typed) return old
+        return updateStatsCount(typed, previousStatus, newStatus)
       })
     },
     [queryClient, isOrdersPage]

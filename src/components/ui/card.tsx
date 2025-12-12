@@ -31,7 +31,7 @@ const CardDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDivEl
 CardDescription.displayName = 'CardDescription'
 
 const CardContent = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('card-content p-4 pt-0', className)} {...props} />
+  <div className={cn('card-content max-xs:p-2 p-4 pt-0', className)} {...props} />
 )
 CardContent.displayName = 'CardContent'
 
