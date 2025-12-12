@@ -55,21 +55,6 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
 
       let previousStatus: OrderStatusesGroups | undefined
 
-      if (!isOrdersPage) {
-        const statusLabel = OrderStatusGroup[newStatus]?.label ?? newStatus
-        if (newStatus === OrderStatusesGroups.CREATED) {
-          toast.info(`Yeni sipariş eklendi`, {
-            position: 'top-right',
-            autoClose: 3000
-          })
-        } else {
-          toast.info(`#${orderId.slice(-6)} sipariş durumu ${statusLabel} olarak güncellendi `, {
-            position: 'top-right',
-            autoClose: 3000
-          })
-        }
-      }
-
       // Orders cache’ini güncelle
       queryClient.setQueriesData({ queryKey: ['orders'] }, old => {
         type OrdersResponse = { data: Order[]; total: number }
@@ -80,11 +65,26 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
         const hasOrder = typed.data.find(order => order.orderId === orderId)
         if (!hasOrder || newStatus === OrderStatusesGroups.CREATED) {
           queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+          if (!isOrdersPage) {
+            toast.info(`Yeni sipariş eklendi`, {
+              position: 'top-right',
+              autoClose: 3000
+            })
+          }
         }
 
         const updatedData = typed.data.map(order => {
           if (order.orderId === orderId) {
             previousStatus = order.status
+            if (!isOrdersPage) {
+              toast.info(
+                `${order.customerName} siparişi ${OrderStatusGroup[newStatus]?.label ?? newStatus} olarak güncellendi `,
+                {
+                  position: 'top-right',
+                  autoClose: 3000
+                }
+              )
+            }
             return { ...order, status: newStatus, courierInfo: data }
           }
           return order
