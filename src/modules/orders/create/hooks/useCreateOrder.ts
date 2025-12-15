@@ -1,10 +1,10 @@
-import { SelectOption } from '@/components/form/FormSelectField'
+import { GroupedSelectOption } from '@/components/form/FormSelectField'
 import { getItemJson, setItem } from '@/lib/local-storage-helper'
-import { useQueryCounties, useQueryDistricts, useQueryProvinces } from '@/service/location.service'
+import { groupPaymentMethods } from '@/lib/payment-methods'
+import { useQueryCounties, useQueryDistricts, useQueryProvinces, useQueryStreets } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
-import { PAYMENT_METHOD_TYPE_LABELS, type PaymentMethodType } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -14,8 +14,14 @@ import { createOrderSchema, defaultCreateOrderValues } from '../constants'
 import type { CreateOrderFormData } from '../types'
 
 export function useCreateOrder() {
+  const queryClient = useQueryClient()
   const { mutateAsync: createOrder, isPending: isSubmitting } = useMutation({
-    mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order)
+    mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
+      queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
+      queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+    }
   })
 
   const form = useForm<CreateOrderFormData>({
@@ -27,27 +33,14 @@ export function useCreateOrder() {
   // İlçe
   const countyId = useWatch({ control: form.control, name: 'county.id' })
   // Mahalle
+  const districtId = useWatch({ control: form.control, name: 'district.id' })
   // Ödeme Tipi
   const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
 
-  const paymentMethodOptionsGrouped = useMemo(() => {
-    if (!paymentMethods || paymentMethods.length === 0) return undefined
-
-    const sorted = [...paymentMethods].sort((a, b) => a.order - b.order)
-    const grouped = sorted.reduce(
-      (acc, pm) => {
-        if (!acc[pm.type]) acc[pm.type] = []
-        acc[pm.type].push({ value: pm.key, label: pm.name })
-        return acc
-      },
-      {} as Record<PaymentMethodType, SelectOption[]>
-    )
-
-    return Object.entries(grouped).map(([type, items]) => ({
-      groupLabel: PAYMENT_METHOD_TYPE_LABELS[type as PaymentMethodType],
-      items
-    }))
-  }, [paymentMethods])
+  const paymentMethodOptionsGrouped = useMemo<GroupedSelectOption[] | undefined>(
+    () => groupPaymentMethods(paymentMethods),
+    [paymentMethods]
+  )
 
   // Şehir
   const { data: provinces, isLoading: isLoadingProvinces } = useQueryProvinces()
@@ -63,6 +56,10 @@ export function useCreateOrder() {
     value: district.mahalle_id.toString(),
     label: district.mahalle_adi
   }))
+
+  // Sokak
+  const { data: streets, isLoading: isLoadingStreets } = useQueryStreets(Number(districtId), !!districtId)
+  const streetOptions = streets?.map(street => ({ value: street.sokak_id.toString(), label: street.sokak_adi }))
 
   // 🔹 Adres alanlarını tek seferde watch et (tek subscription)
   const [city, county, district, street, buildingNumber, floor, buildingName, doorNumber] = useWatch({
@@ -113,6 +110,13 @@ export function useCreateOrder() {
   // Şehir değiştiğinde ilçe ve mahalleyi temizle
   const handleCityChange = useCallback(
     (cityId: string | number) => {
+      if (cityId === '') {
+        form.setValue('city', { id: '', name: '' })
+        form.setValue('county', { id: '', name: '' })
+        form.setValue('district', { id: '', name: '' })
+        form.setValue('street', '')
+        return
+      }
       const cityIdString = cityId.toString()
       if (!provinces) return
       const selectedProvince = provinces?.find(p => p.il_id.toString() === cityIdString)
@@ -130,6 +134,12 @@ export function useCreateOrder() {
   // İlçe değiştiğinde mahalleyi temizle
   const handleCountyChange = useCallback(
     (countyId: string) => {
+      if (countyId === '') {
+        form.setValue('county', { id: '', name: '' })
+        form.setValue('district', { id: '', name: '' })
+        form.setValue('street', '')
+        return
+      }
       const selectedCounty = counties?.find(c => c.ilce_id.toString() === countyId)
       if (selectedCounty) {
         form.setValue('county', { id: countyId, name: selectedCounty.ilce_adi })
@@ -143,12 +153,26 @@ export function useCreateOrder() {
   // Mahalle değiştiğinde sokağı temizle
   const handleDistrictChange = useCallback(
     (districtId: string) => {
+      if (districtId === '') {
+        form.setValue('district', { id: '', name: '' })
+        form.setValue('street', '')
+        return
+      }
       const selectedDistrict = districts?.find(d => d.mahalle_id.toString() === districtId)
       if (selectedDistrict) {
         form.setValue('district', { id: districtId, name: selectedDistrict.mahalle_adi })
+        form.setValue('street', '')
       }
     },
     [form, districts]
+  )
+
+  // Sokak değiştiğinde adresi temizle
+  const handleStreetChange = useCallback(
+    (streetId: string) => {
+      form.setValue('street', streetId)
+    },
+    [form]
   )
 
   const onSubmit = async (data: CreateOrderFormData) => {
@@ -186,17 +210,21 @@ export function useCreateOrder() {
     isSubmitting,
     cityId,
     countyId,
+    districtId,
     handleCityChange,
     handleCountyChange,
     handleDistrictChange,
+    handleStreetChange,
     onSubmit,
     paymentMethodOptionsGrouped,
     provinceOptions,
     countyOptions,
     districtOptions,
+    streetOptions,
     isLoadingPaymentMethods,
     isLoadingProvinces,
     isLoadingCounties,
-    isLoadingDistricts
+    isLoadingDistricts,
+    isLoadingStreets
   }
 }
