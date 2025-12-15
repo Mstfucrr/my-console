@@ -20,18 +20,22 @@ export function CreateOrderView() {
     isSubmitting,
     cityId,
     countyId,
+    districtId,
     handleCityChange,
     handleCountyChange,
     handleDistrictChange,
+    handleStreetChange,
     onSubmit,
     paymentMethodOptionsGrouped,
     provinceOptions,
     countyOptions,
     districtOptions,
+    streetOptions,
     isLoadingPaymentMethods,
     isLoadingProvinces,
     isLoadingCounties,
-    isLoadingDistricts
+    isLoadingDistricts,
+    isLoadingStreets
   } = useCreateOrder()
 
   return (
@@ -201,14 +205,19 @@ export function CreateOrderView() {
                   tabIndex={12}
                 />
 
-                <FormInputField
+                <FormCommandSelectField
                   name='street'
                   required
                   control={form.control}
                   label='Sokak'
                   formItemClassName='max-sm:col-span-2'
                   placeholder='4. Sokak'
+                  allowCustomValue
                   tabIndex={13}
+                  options={streetOptions || []}
+                  isLoading={isLoadingStreets}
+                  disabled={!districtId}
+                  onValueChange={streetId => handleStreetChange(streetId)}
                 />
 
                 <FormInputField

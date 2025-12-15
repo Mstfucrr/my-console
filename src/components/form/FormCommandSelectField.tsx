@@ -1,18 +1,9 @@
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandTrigger
-} from '@/components/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useIsMobile } from '@/hooks/use-media-query'
+import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { Check, Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { Check, ChevronDown, Loader2, X } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
 import { Control, FieldPath, FieldValues, useController } from 'react-hook-form'
 
 interface SelectOption {
@@ -35,6 +26,7 @@ interface FormCommandSelectFieldProps<T extends FieldValues> {
   isLoading?: boolean
   onValueChange?: (value: string) => void
   tabIndex?: number
+  allowCustomValue?: boolean // true: custom yazmaya izin ver, false: sadece select seçimi
 }
 
 export function FormCommandSelectField<T extends FieldValues>({
@@ -50,10 +42,13 @@ export function FormCommandSelectField<T extends FieldValues>({
   disabled,
   isLoading,
   onValueChange,
-  tabIndex
+  tabIndex,
+  allowCustomValue = false
 }: FormCommandSelectFieldProps<T>) {
-  const [open, setOpen] = useState(false)
-  const isMobile = useIsMobile()
+  const [isOpen, setIsOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+  const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const {
     field: { value, onChange },
@@ -61,6 +56,169 @@ export function FormCommandSelectField<T extends FieldValues>({
   } = useController({ name, control })
 
   const selectedOption = options.find(option => option.value === value)
+
+  const handleSelect = (selected: string) => {
+    const option = !allowCustomValue
+      ? options.find(opt => opt.label === selected || opt.value === selected)
+      : { value: selected, label: selected, disabled: false }
+    if (!option || option.disabled) return
+
+    onChange(option.value === value ? '' : option.value)
+    onValueChange?.(option.value)
+    setSearchValue('')
+    setIsOpen(false)
+  }
+
+  const handleInputFocus = () => {
+    setIsOpen(true)
+    if (selectedOption) {
+      setSearchValue(selectedOption.label)
+    } else if (allowCustomValue && value) {
+      setSearchValue(value)
+    }
+
+    // Select first item when opening
+    setTimeout(() => {
+      const commandList = containerRef.current?.querySelector('[cmdk-list]')
+      if (commandList) {
+        const firstItem = commandList.querySelector('[cmdk-item]:not([data-disabled="true"])') as HTMLElement
+        if (firstItem) {
+          const items = Array.from(
+            commandList.querySelectorAll('[cmdk-item]:not([data-disabled="true"])')
+          ) as HTMLElement[]
+          items.forEach(item => item.setAttribute('aria-selected', 'false'))
+          firstItem.setAttribute('aria-selected', 'true')
+        }
+      }
+    }, 0)
+  }
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen || disabled) return
+
+    const commandList = containerRef.current?.querySelector('[cmdk-list]')
+    if (!commandList) return
+
+    const items = Array.from(commandList.querySelectorAll('[cmdk-item]:not([data-disabled="true"])')) as HTMLElement[]
+    if (items.length === 0) return
+
+    const activeItem = commandList.querySelector('[cmdk-item][aria-selected="true"]') as HTMLElement
+    const activeIndex = activeItem ? items.indexOf(activeItem) : -1
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        const nextIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0
+        items.forEach(item => item.setAttribute('aria-selected', 'false'))
+        items[nextIndex]?.setAttribute('aria-selected', 'true')
+        items[nextIndex]?.scrollIntoView({ block: 'nearest' })
+        break
+
+      case 'ArrowUp':
+        e.preventDefault()
+        const prevIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1
+        items.forEach(item => item.setAttribute('aria-selected', 'false'))
+        items[prevIndex]?.setAttribute('aria-selected', 'true')
+        items[prevIndex]?.scrollIntoView({ block: 'nearest' })
+        break
+
+      case 'Enter':
+        e.preventDefault()
+        const itemToSelect = activeItem || items[0]
+        if (itemToSelect) {
+          const optionValue = itemToSelect.getAttribute('data-value')
+          const optionLabel = itemToSelect.textContent?.trim()
+          if (optionValue || optionLabel) {
+            handleSelect(optionValue || optionLabel || '')
+          }
+        }
+        break
+
+      case 'Escape':
+        e.preventDefault()
+        setIsOpen(false)
+        setSearchValue('')
+        inputRef.current?.blur()
+        break
+    }
+  }
+
+  const handleInputBlur = (e: React.FocusEvent) => {
+    setTimeout(() => {
+      if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+        setIsOpen(false)
+
+        if (allowCustomValue && searchValue.trim()) {
+          const matchingOption = options.find(
+            opt =>
+              opt.label.toLowerCase() === searchValue.trim().toLowerCase() ||
+              opt.value.toLowerCase() === searchValue.trim().toLowerCase()
+          )
+          onChange(matchingOption ? matchingOption.value : searchValue.trim())
+          onValueChange?.(matchingOption ? matchingOption.value : searchValue.trim())
+        }
+
+        setSearchValue('')
+      }
+    }, 200)
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setSearchValue(newValue)
+
+    if (!isOpen) setIsOpen(true)
+
+    if (allowCustomValue) {
+      onChange(newValue)
+      onValueChange?.(newValue)
+    } else if (newValue === '') {
+      onChange('')
+      onValueChange?.('')
+    }
+
+    // Select first filtered item
+    setTimeout(() => {
+      const commandList = containerRef.current?.querySelector('[cmdk-list]')
+      if (commandList) {
+        const items = Array.from(
+          commandList.querySelectorAll('[cmdk-item]:not([data-disabled="true"])')
+        ) as HTMLElement[]
+        items.forEach(item => item.setAttribute('aria-selected', 'false'))
+        if (items[0]) {
+          items[0].setAttribute('aria-selected', 'true')
+        }
+      }
+    }, 0)
+  }
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onChange('')
+    onValueChange?.('')
+    setSearchValue('')
+    setIsOpen(false)
+  }
+
+  const getDisplayValue = () => {
+    if (isOpen) return searchValue
+    if (selectedOption) return selectedOption.label
+    if (allowCustomValue && value) return value
+    return ''
+  }
+
+  const filteredOptions = useMemo(
+    () =>
+      options.filter(option => {
+        if (!searchValue) return true
+        const search = searchValue.toLocaleLowerCase('tr-TR')
+        return (
+          option.label.toLocaleLowerCase('tr-TR').includes(search) ||
+          option.value.toLocaleLowerCase('tr-TR').includes(search)
+        )
+      }),
+    [options, searchValue]
+  )
 
   return (
     <FormItem className={formItemClassName}>
@@ -71,61 +229,94 @@ export function FormCommandSelectField<T extends FieldValues>({
         </FormLabel>
       )}
       <FormControl>
-        <Popover open={open} modal={!isMobile} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <CommandTrigger
+        <div ref={containerRef} className='relative w-full'>
+          <div className='relative'>
+            <Input
+              ref={inputRef}
+              inputMode='search'
               id={name}
-              aria-expanded={open}
-              className={cn(error && 'border-red-500', disabled && 'cursor-not-allowed opacity-50')}
+              placeholder={isOpen ? searchPlaceholder : placeholder}
+              value={getDisplayValue()}
+              onChange={handleInputChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              onKeyDown={handleInputKeyDown}
               disabled={disabled}
               tabIndex={tabIndex}
-            >
-              <span className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
-                {selectedOption ? selectedOption.label : placeholder}
-              </span>
-            </CommandTrigger>
-          </PopoverTrigger>
-          <PopoverContent
-            className='w-full p-0'
-            align='start'
-            onOpenAutoFocus={e => {
-              if (!isMobile) return
-              e.preventDefault()
-            }}
-          >
-            {isLoading ? (
-              <div className='flex items-center justify-center p-2'>
-                <Loader2 className='size-4 animate-spin' />
+              className={cn(
+                'h-9',
+                selectedOption || (allowCustomValue && value) ? 'pr-20' : 'pr-10',
+                error && 'border-red-500',
+                disabled && 'cursor-not-allowed opacity-50',
+                !selectedOption && !isOpen && !value && 'text-muted-foreground'
+              )}
+            />
+            <div className='absolute top-1/2 right-3 z-10 flex -translate-y-1/2 items-center gap-1'>
+              {(selectedOption || (allowCustomValue && value)) && !disabled && (
+                <button
+                  type='button'
+                  onClick={handleClear}
+                  className='hover:bg-accent pointer-events-auto rounded-sm p-0.5 transition-colors'
+                  tabIndex={-1}
+                >
+                  <X className='text-muted-foreground hover:text-foreground size-3.5' />
+                </button>
+              )}
+              <div className='pointer-events-none'>
+                <ChevronDown
+                  className={cn('text-muted-foreground size-4 transition-transform', isOpen && 'rotate-180')}
+                />
               </div>
-            ) : (
-              <Command>
-                <CommandInput placeholder={searchPlaceholder} autoFocus={!isMobile} />
-                <CommandList>
-                  <CommandEmpty className='p-2 text-xs'>{emptyMessage}</CommandEmpty>
-                  <CommandGroup className='max-h-[200px] overflow-y-auto'>
-                    {options.map(option => (
-                      <CommandItem
-                        key={option.value}
-                        value={option.value}
-                        keywords={[option.label, option.value]}
-                        onSelect={selected => {
-                          if (option.disabled) return
-                          onChange(selected === value ? '' : selected)
-                          onValueChange?.(selected)
-                          setOpen(false)
-                        }}
-                        disabled={option.disabled}
-                      >
-                        <Check className={cn('mr-2 h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')} />
-                        {option.label}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            )}
-          </PopoverContent>
-        </Popover>
+            </div>
+          </div>
+          {isOpen && !disabled && (
+            <div className='bg-popover absolute z-50 mt-1 w-full rounded-md border shadow-md'>
+              {isLoading ? (
+                <div className='flex items-center justify-center p-4'>
+                  <Loader2 className='size-4 animate-spin' />
+                </div>
+              ) : (
+                <Command shouldFilter={false}>
+                  <div className='hidden'>
+                    <CommandInput value={searchValue} onValueChange={setSearchValue} />
+                  </div>
+                  <CommandList>
+                    {filteredOptions.length === 0 && searchValue && !allowCustomValue && (
+                      <CommandEmpty className='py-6 text-center text-sm'>{emptyMessage}</CommandEmpty>
+                    )}
+                    <CommandGroup className='max-h-[200px] overflow-y-auto'>
+                      {allowCustomValue && filteredOptions.length === 0 && searchValue.trim() !== '' && (
+                        <CommandItem
+                          key='custom'
+                          onSelect={() => handleSelect(searchValue)}
+                          value={searchValue}
+                          data-value={searchValue}
+                          className='cursor-pointer'
+                        >
+                          <Check className='mr-2 size-4' />
+                          {searchValue}
+                        </CommandItem>
+                      )}
+                      {filteredOptions.map(option => (
+                        <CommandItem
+                          key={option.value}
+                          value={option.label}
+                          onSelect={handleSelect}
+                          disabled={option.disabled}
+                          data-value={option.value}
+                          className='cursor-pointer'
+                        >
+                          <Check className={cn('mr-2 h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')} />
+                          {option.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              )}
+            </div>
+          )}
+        </div>
       </FormControl>
       {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
     </FormItem>

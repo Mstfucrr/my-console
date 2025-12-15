@@ -1,10 +1,18 @@
 'use client'
 
-import { DateFilters, FilterCard, SearchInput, StatusSelect } from '@/components/ui/filter-card'
+import {
+  DateFilters,
+  FilterCard,
+  SearchInput,
+  StatusSelect,
+  type GroupedFilterOption
+} from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
+import { groupPaymentMethods } from '@/lib/payment-methods'
 import { usePaymentMethods } from '@/service/payment-methods.service'
 import { OrderStatusesGroups } from '@/types'
 import { Loader2, Search } from 'lucide-react'
+import { useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { defaultReportsFilters } from '..'
 import { STATUS_OPTIONS } from '../constants'
@@ -46,12 +54,12 @@ export function ReportsFilters({
 
   const { data: paymentMethods, isLoading: isLoadingPaymentMethods } = usePaymentMethods()
 
-  const paymentMethodOptions = paymentMethods
-    ?.map(paymentMethod => ({
-      value: paymentMethod.id,
-      label: paymentMethod.name
-    }))
-    .concat({ value: 'all', label: 'Ödeme Yöntemleri' })
+  const paymentMethodOptionsGrouped = useMemo<GroupedFilterOption[] | undefined>(() => {
+    const grouped = groupPaymentMethods(paymentMethods, true)
+    if (!grouped) return undefined
+
+    return [{ items: [{ value: 'all', label: 'Ödeme Yöntemleri' }] }, ...grouped]
+  }, [paymentMethods])
 
   return (
     <FilterCard
@@ -79,9 +87,9 @@ export function ReportsFilters({
         <div className='flex items-center justify-center'>
           <Loader2 className='size-4 animate-spin' />
         </div>
-      ) : paymentMethodOptions ? (
+      ) : paymentMethodOptionsGrouped ? (
         <StatusSelect
-          options={paymentMethodOptions}
+          groupedOptions={paymentMethodOptionsGrouped}
           value={pendingFilters.paymentMethod ?? 'all'}
           onChange={value => updatePendingFilters({ paymentMethod: value })}
           placeholder='Ödeme yöntemi seçin'
