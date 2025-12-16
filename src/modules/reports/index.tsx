@@ -44,6 +44,7 @@ export default function ReportsView() {
   } = useQuery({
     queryKey: ['reports', filters, reportsPagination],
     queryFn: () => reportsService.getReports(filters, reportsPagination),
+    staleTime: 3 * 60 * 1000, // 2 dakika
     placeholderData: keepPreviousData
   })
 
