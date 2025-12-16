@@ -55,13 +55,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isAuthenticated, isLoading, router, pathname])
 
-  if (isLoading) {
-    return <LayoutLoader />
-  }
-
-  if (!isAuthenticated) {
-    return <LayoutLoader />
-  }
+  if (isLoading || !isAuthenticated) return <LayoutLoader />
 
   return <>{children}</>
 }
