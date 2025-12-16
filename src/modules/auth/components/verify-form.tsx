@@ -5,7 +5,6 @@ import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { ArrowLeft, RefreshCcw } from 'lucide-react'
-import Link from 'next/link'
 import { useAuth } from '../context/auth-context'
 
 const TOTAL_OTP_FIELD = 6
@@ -103,14 +102,14 @@ export function VerifyForm() {
           </div>
         </div>
         <div className='text-center'>
-          <Link
-            href='#'
+          <button
+            type='button'
             onClick={backToLoginForm}
             className='text-primary flex w-fit items-center justify-center gap-1 justify-self-center text-sm hover:underline'
           >
             <ArrowLeft className='h-4 w-4' />
             Geri Dön
-          </Link>
+          </button>
         </div>
       </form>
     </div>
