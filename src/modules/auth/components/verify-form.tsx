@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
-import { RefreshCcw } from 'lucide-react'
+import { ArrowLeft, RefreshCcw } from 'lucide-react'
+import Link from 'next/link'
 import { useAuth } from '../context/auth-context'
 
 const TOTAL_OTP_FIELD = 6
@@ -19,7 +20,8 @@ export function VerifyForm() {
     handleOtpPaste,
     handleVerifyOtp,
     handleResendOtp,
-    otpInputRefs
+    otpInputRefs,
+    backToLoginForm
   } = useAuth()
 
   const isTimerComplete = otpState.timer === 0
@@ -33,7 +35,7 @@ export function VerifyForm() {
         <p className='mt-1 text-sm text-gray-600'>Numarasına gelen 6 haneli kodu giriniz.</p>
       </div>
 
-      <form className='space-y-6'>
+      <form className='space-y-4'>
         <div className='flex justify-center gap-2'>
           {otpFields.map(index => (
             <Input
@@ -79,7 +81,7 @@ export function VerifyForm() {
                 isLoading={loadingState.verify}
                 loadingText='Doğrulanıyor...'
               >
-                <Badge className='text-lg'>
+                <Badge className='pr-0 text-lg'>
                   <span className={cn('flex items-center gap-2', { 'text-gray-100': !otpState.isComplete })}>
                     Doğrula <small className='text-xs'>({otpState.timer})</small>
                   </span>
@@ -99,6 +101,16 @@ export function VerifyForm() {
               </LoadingButton>
             )}
           </div>
+        </div>
+        <div className='text-center'>
+          <Link
+            href='#'
+            onClick={backToLoginForm}
+            className='text-primary flex w-fit items-center justify-center gap-1 justify-self-center text-sm hover:underline'
+          >
+            <ArrowLeft className='h-4 w-4' />
+            Geri Dön
+          </Link>
         </div>
       </form>
     </div>

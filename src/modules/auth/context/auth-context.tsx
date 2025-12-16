@@ -10,6 +10,9 @@ import { ILoginRequest, IVerifyOtpRequest } from '../types'
 const OTP_TIMEOUT = 60
 const TOTAL_OTP_FIELD = 6
 
+// Create empty OTP array outside component to avoid recreation on every render
+const createEmptyOtpArray = () => Array.from({ length: TOTAL_OTP_FIELD }, () => '')
+
 type OtpState = {
   values: string[]
   timer: number
@@ -17,6 +20,15 @@ type OtpState = {
   requiresOtp: boolean
   sessionId: string
   maskedPhoneNumber: string
+}
+
+const defaultOtpState: OtpState = {
+  values: createEmptyOtpArray(),
+  timer: OTP_TIMEOUT,
+  isComplete: false,
+  requiresOtp: false,
+  sessionId: '',
+  maskedPhoneNumber: ''
 }
 
 type LoadingState = {
@@ -43,6 +55,7 @@ type AuthContextType = {
   handleVerifyOtp: () => Promise<void>
   handleResendOtp: () => Promise<void>
   resetOtp: () => void
+  backToLoginForm: () => void
 
   // Refs for OTP inputs
   otpInputRefs: React.MutableRefObject<Array<HTMLInputElement | null>>
@@ -50,21 +63,11 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Create empty OTP array outside component to avoid recreation on every render
-const createEmptyOtpArray = () => Array.from({ length: TOTAL_OTP_FIELD }, () => '')
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
 
   // OTP state grouped
-  const [otpState, setOtpState] = useState<OtpState>({
-    values: createEmptyOtpArray(),
-    timer: OTP_TIMEOUT,
-    isComplete: false,
-    sessionId: '',
-    maskedPhoneNumber: '',
-    requiresOtp: false
-  })
+  const [otpState, setOtpState] = useState<OtpState>(defaultOtpState)
 
   // Login request for resend
   const [loginRequest, setLoginRequest] = useState<ILoginRequest | null>(null)
@@ -123,6 +126,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }))
     setTimeout(() => otpInputRefs.current[0]?.focus(), 0)
   }, [])
+
+  const backToLoginForm = useCallback(() => setOtpState(defaultOtpState), [])
 
   useEffect(() => {
     if (otpState.timer !== 0 || !otpState.sessionId || hasResetOnTimerComplete.current) return
@@ -273,6 +278,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         handleVerifyOtp,
         handleResendOtp,
         resetOtp,
+        backToLoginForm,
         otpInputRefs
       }}
     >
