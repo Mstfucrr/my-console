@@ -54,8 +54,12 @@ export const getFirstAllowedRoute = (profileInfo: IProfileInfo | undefined): Rou
 
     if (restriction.include && restriction.include.length > 0) return restriction.include[0]!
 
-    if (restriction.exclude && restriction.exclude.length > 0)
-      return allRoutes.find(route => !restriction.exclude?.includes(route))!
+    if (restriction.exclude && restriction.exclude.length > 0) {
+      const allowedRoute = allRoutes.find(route => !restriction.exclude?.includes(route))
+      if (allowedRoute) return allowedRoute
+      // If all routes are excluded, fallback to home
+      return '/'
+    }
   }
 
   return '/'
