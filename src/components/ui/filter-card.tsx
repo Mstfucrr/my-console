@@ -3,7 +3,15 @@
 import { Button, ButtonProps } from '@/components/ui/button'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { isSameDateRange } from '@/lib/utils/date'
 import { Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
@@ -14,6 +22,11 @@ import { TooltippedElement } from '../tooltipped-element'
 export interface FilterOption {
   value: string | number
   label: string | number
+}
+
+export interface GroupedFilterOption {
+  groupLabel?: string
+  items: FilterOption[]
 }
 
 export interface FilterProperties {
@@ -121,18 +134,21 @@ export function SearchInput({
 
 export function StatusSelect<T extends string | number>({
   options,
+  groupedOptions,
   value,
   onChange,
   placeholder = 'Durum',
   showLabel = false
 }: {
-  options: FilterOption[]
+  options?: FilterOption[]
+  groupedOptions?: GroupedFilterOption[]
   value: T | undefined
   onChange: (value: T) => void
   placeholder?: string
   showLabel?: boolean
 }) {
   const isActive = value && value !== 'all'
+  const hasOptions = groupedOptions ? groupedOptions.some(g => g.items.length > 0) : (options?.length ?? 0) > 0
 
   return (
     <div className='max-sm:w-full'>
@@ -148,13 +164,30 @@ export function StatusSelect<T extends string | number>({
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
           <SelectContent>
-            <div className='max-h-48 overflow-y-auto pr-0.5'>
-              {options.map(option => (
-                <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </div>
+            {hasOptions ? (
+              <div className='max-h-48 overflow-y-auto pr-0.5'>
+                {groupedOptions
+                  ? groupedOptions.map(group => (
+                      <SelectGroup key={group.groupLabel}>
+                        {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
+                        {group.items.map(option => (
+                          <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))
+                  : options?.map(option => (
+                      <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+              </div>
+            ) : (
+              <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
+                Bir sonuç bulunamadı.
+              </div>
+            )}
           </SelectContent>
         </Select>
       </div>
