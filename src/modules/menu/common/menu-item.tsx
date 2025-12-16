@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { usePermission } from '@/hooks/use-permission'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -12,6 +13,9 @@ type MenuItemProps = {
 export function MenuItem({ item }: MenuItemProps) {
   const pathname = usePathname()
   const isActive = isLocationMatch(item.href, pathname)
+  const { checkRoute } = usePermission()
+
+  if (!checkRoute(item.href)) return null
 
   return (
     <li className='w-full'>

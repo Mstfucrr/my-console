@@ -30,6 +30,7 @@ export interface IProfileInfo {
   isActiveForPackageService: boolean
   isOpenForPackageService: boolean
   updatedAt: number
+  tab_fr?: boolean
 }
 
 export interface IProfileWorkingHour {

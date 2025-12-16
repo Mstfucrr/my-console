@@ -26,7 +26,10 @@ export function BottomNavigationItem({ href, label, icon: Icon, isActive }: Bott
     >
       <Icon className={cn('size-5 transition-all', isActive && 'scale-110')} strokeWidth={isActive ? 2.5 : 2} />
       <span
-        className={cn('text-[10px] leading-tight font-medium', isActive ? 'text-primary' : 'text-muted-foreground')}
+        className={cn(
+          'xs:text-nowrap text-[10px] leading-tight font-medium',
+          isActive ? 'text-primary' : 'text-muted-foreground'
+        )}
       >
         {label}
       </span>

@@ -1,10 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { useIsMobile } from '@/hooks/use-media-query'
+import { usePermission } from '@/hooks/use-permission'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 
 export function CreateOrderButton() {
   const isMobile = useIsMobile()
+  const { checkRoute } = usePermission()
+
+  if (!checkRoute('/orders/create')) return null
+
   return (
     <Link href='/orders/create'>
       <Button className='font-extrabold' color='success' size={!isMobile ? 'xs' : 'icon-sm'}>
