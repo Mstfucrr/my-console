@@ -1,19 +1,18 @@
 'use client'
 
-import { BasicDataTable } from '@/components/basic-data-table'
-import { Motorcycle } from '@/components/svg'
-import { MaskedText } from '@/components/ui/masked-text'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { formatCurrency } from '@/lib/formatCurrency'
-import { formatDateTimeTR } from '@/lib/utils/date'
-import { maskLastName } from '@/lib/utils/mask'
+import MapLoading from '@/components/map-loaging'
 import { useViewModeStore } from '@/store/view-mode'
 import type { Order } from '@/types'
-import type { ColumnDef } from '@tanstack/react-table'
+import dynamic from 'next/dynamic'
 import { useOrders } from '../../context/OrdersContext'
-import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import { OrderCard } from './OrderCard'
 import { OrderCardSkeleton } from './OrderCardSkeleton'
+import { TableView } from './TableView'
+
+const MapView = dynamic(() => import('./MapView').then(mod => mod.MapView), {
+  ssr: false,
+  loading: () => <MapLoading className='h-full' skeletonClassName='min-h-[400px] w-full' />
+})
 
 interface OrdersListProps {
   orders: Array<Order> | undefined
@@ -23,83 +22,6 @@ interface OrdersListProps {
   filteredEmptyMessage: string
   onViewDetails: (order: Order) => void
 }
-
-const columns: ColumnDef<Order>[] = [
-  {
-    accessorKey: 'createdAt',
-    header: 'Oluşturulma Tarihi',
-    cell: ({ row }) => (
-      <div className='text-muted-foreground text-sm'>
-        <span className='block'>{formatDateTimeTR(row.getValue('createdAt'))}</span>
-      </div>
-    )
-  },
-  {
-    accessorKey: 'customerName',
-    header: 'Müşteri',
-    size: 250,
-    cell: ({ row }) => (
-      <MaskedText
-        value={row.getValue('customerName')}
-        maskFn={maskLastName}
-        defaultMasked={true}
-        textClassName='font-medium'
-        className='flex flex-row-reverse justify-end'
-      />
-    )
-  },
-  {
-    accessorKey: 'status',
-    header: 'Durum',
-    cell: ({ row }) => {
-      const order = row.original
-      return (
-        <div className='flex items-center gap-3'>
-          <OrderStatusBadge status={order.status} />
-          {order.courierInfo && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-                </TooltipTrigger>
-                <TooltipContent>{order.courierInfo.name}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'channel',
-    header: 'Kanal',
-    size: 50,
-    cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
-  },
-  {
-    accessorKey: 'paymentType',
-    header: 'Ödeme Yöntemi',
-    size: 100,
-    cell: ({ row }) => {
-      const isPrepaid = row.original.isPrepaid
-      return (
-        <PaymentMethodBadge
-          showIcon
-          IsPrepaid={isPrepaid}
-          className='text-nowrap'
-          paymentMethod={row.original.paymentType}
-        />
-      )
-    }
-  },
-  {
-    accessorKey: 'totalAmount',
-    header: 'Tutar (₺)',
-    cell: ({ row }) => (
-      <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
-    )
-  }
-]
 
 export function OrdersList({
   orders,
@@ -116,16 +38,17 @@ export function OrdersList({
 
   if (viewMode === 'table')
     return (
-      <BasicDataTable
-        columns={columns}
-        data={orders ?? []}
-        isLoading={isLoading || isFetching}
-        emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
-        loadingLabel='Siparişler yükleniyor...'
-        onRowClick={onViewDetails}
-        enableColumnVisibility={false}
+      <TableView
+        orders={orders ?? []}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        emptyMessage={emptyMessage}
+        filteredEmptyMessage={filteredEmptyMessage}
+        onViewDetails={onViewDetails}
       />
     )
+
+  if (viewMode === 'map') return <MapView />
 
   if (isLoading || isFetching)
     return (

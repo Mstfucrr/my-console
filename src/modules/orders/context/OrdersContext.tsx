@@ -7,8 +7,9 @@ import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service/order.service'
 import { OrderFilterProperties } from '../types'
 
+export type ActiveTab = 'active' | 'completed'
 export interface OrdersContextType {
-  activeTab: 'active' | 'completed'
+  activeTab: ActiveTab
   filters: OrderFilterProperties
   handleFiltersChange: (newFilters: OrderFilterProperties) => void
   clearFilters: () => void
@@ -18,7 +19,7 @@ export interface OrdersContextType {
   isLoading: boolean
   isFetching: boolean
   error: string
-  setActiveTab: (tab: 'active' | 'completed') => void
+  setActiveTab: (tab: ActiveTab) => void
   refreshAllData: () => void
   pagination: PaginationOptions
   setPagination: (pagination: PaginationOptions) => void
@@ -31,19 +32,19 @@ export const defaultOrderFilters: OrderFilterProperties = {
 
 export const defaultPagination: PaginationOptions = {
   page: 1,
-  limit: 20
+  limit: 40
 }
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
 
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('active')
   const [filters, setFilters] = useState<OrderFilterProperties>(defaultOrderFilters)
   const queryClient = useQueryClient()
 
   const [pagination, setPagination] = useState<PaginationOptions>(defaultPagination)
 
-  const handleSetActiveTab = useCallback((tab: 'active' | 'completed') => {
+  const handleSetActiveTab = useCallback((tab: ActiveTab) => {
     setActiveTab(tab)
     setPagination(defaultPagination)
   }, [])
