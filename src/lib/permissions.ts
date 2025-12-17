@@ -1,4 +1,4 @@
-import { IProfileInfo } from '@/types/profile'
+import { IProfileResponse } from '@/types/profile'
 import { Route } from 'next'
 
 const allRoutes: Route[] = [
@@ -22,20 +22,20 @@ type RouteRestriction = {
 // Profile prop bazlı route kısıtlamaları
 // include: route'a erişim izni verilir (whitelist)
 // exclude: route'a erişim izni verilmez (blacklist)
-export const profileRouteRestrictions: Partial<Record<keyof IProfileInfo, RouteRestriction>> = {
+export const profileRouteRestrictions: Partial<Record<keyof IProfileResponse, RouteRestriction>> = {
   tab_fr: { include: ['/reconciliation'] }
   // isActiveForPackageService: { exclude: ['/orders'] }
 }
 
 // Profile prop kontrolü
-export const checkProfileRouteAccess = (profileInfo: IProfileInfo | undefined, route: Route): boolean => {
+export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, route: Route): boolean => {
   // Her profile için izinli route'lar
   if (allowedRoutesForEveryProfile.includes(route)) return true
 
-  if (!profileInfo) return true
+  if (!profile) return true
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {
-    const propValue = profileInfo[propKey as keyof IProfileInfo]
+    const propValue = profile[propKey as keyof IProfileResponse]
     if (propValue !== true || !restriction) continue
 
     if (restriction.include && !restriction.include.includes(route)) return false
@@ -45,11 +45,11 @@ export const checkProfileRouteAccess = (profileInfo: IProfileInfo | undefined, r
   return true
 }
 
-export const getFirstAllowedRoute = (profileInfo: IProfileInfo | undefined): Route => {
-  if (!profileInfo) return '/'
+export const getFirstAllowedRoute = (profile: IProfileResponse | undefined): Route => {
+  if (!profile) return '/'
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {
-    const propValue = profileInfo[propKey as keyof IProfileInfo]
+    const propValue = profile[propKey as keyof IProfileResponse]
     if (propValue !== true || !restriction) continue
 
     if (restriction.include && restriction.include.length > 0) return restriction.include[0]!

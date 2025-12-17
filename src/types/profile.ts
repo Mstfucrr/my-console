@@ -5,6 +5,7 @@ export interface IProfileResponse {
   email: string
   restaurantId: string
   omsRestaurantId: string
+  tab_fr?: boolean
   info: IProfileInfo
 }
 
@@ -30,7 +31,6 @@ export interface IProfileInfo {
   isActiveForPackageService: boolean
   isOpenForPackageService: boolean
   updatedAt: number
-  tab_fr?: boolean
 }
 
 export interface IProfileWorkingHour {
