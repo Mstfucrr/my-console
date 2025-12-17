@@ -30,13 +30,11 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const needsDetailFetch = order && (!order.customerPhone || !order.deliveryAddress)
-
   const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
     queryKey: ['orderDetail', order?.orderId],
     queryFn: () => ordersService.getOrderById(order!.orderId),
     staleTime: 0,
-    enabled: Boolean(needsDetailFetch && order?.orderId)
+    enabled: Boolean(order?.orderId)
   })
 
   // Detay varsa onu kullan, yoksa mevcut order'ı kullan
