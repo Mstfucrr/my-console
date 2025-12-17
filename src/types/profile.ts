@@ -5,6 +5,7 @@ export interface IProfileResponse {
   email: string
   restaurantId: string
   omsRestaurantId: string
+  tab_fr?: boolean
   info: IProfileInfo
 }
 

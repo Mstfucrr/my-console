@@ -12,13 +12,18 @@ export interface AuthTurnstileProps {
 }
 
 export function AuthTurnstile({ turnstileState }: AuthTurnstileProps) {
-  const { handlers, errorMessage } = turnstileState
+  const { handlers, errorMessage, refreshKey } = turnstileState
 
   if (isDevelopment || !isTurnstileActive) return null
 
   return (
     <div className='flex flex-col'>
-      <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || ''} theme='light' {...handlers} />
+      <Turnstile
+        key={refreshKey}
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || ''}
+        theme='light'
+        {...handlers}
+      />
       {errorMessage && <p className='text-destructive ml-1 text-xs'>{errorMessage}</p>}
     </div>
   )
