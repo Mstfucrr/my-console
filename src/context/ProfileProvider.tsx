@@ -15,12 +15,21 @@ type ProfileProviderProps = {
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined)
 
 export const ProfileProvider = ({ children }: ProfileProviderProps) => {
-  const { data: profileData, isLoading } = useQuery({
+  const {
+    data: profileData,
+    isLoading,
+    isFetching
+  } = useQuery({
     queryKey: ['profile'],
-    queryFn: () => profileService.getProfile()
+    queryFn: () => profileService.getProfile(),
+    staleTime: 1000 * 60 * 5 // 5 dakika
   })
 
-  return <ProfileContext.Provider value={{ profile: profileData, isLoading }}>{children}</ProfileContext.Provider>
+  return (
+    <ProfileContext.Provider value={{ profile: profileData, isLoading: isLoading || isFetching }}>
+      {children}
+    </ProfileContext.Provider>
+  )
 }
 
 export const useProfile = () => {

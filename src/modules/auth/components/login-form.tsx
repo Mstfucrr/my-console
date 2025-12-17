@@ -35,10 +35,14 @@ export function LoginForm() {
   const { handleSubmit, control } = form
 
   const onSubmit = async (data: LoginFormType) => {
-    await handleLogin({
-      ...data,
-      turnstileToken: turnstileState.token || undefined
-    })
+    try {
+      await handleLogin({
+        ...data,
+        turnstileToken: turnstileState.token || undefined
+      })
+    } catch {
+      turnstileState.resetToken()
+    }
   }
 
   return (
