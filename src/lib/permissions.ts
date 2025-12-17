@@ -23,7 +23,7 @@ type RouteRestriction = {
 // include: route'a erişim izni verilir (whitelist)
 // exclude: route'a erişim izni verilmez (blacklist)
 export const profileRouteRestrictions: Partial<Record<keyof IProfileInfo, RouteRestriction>> = {
-  // isAtaExpressActive: { include: ['/reconciliation'] }
+  tab_fr: { include: ['/reconciliation'] }
   // isActiveForPackageService: { exclude: ['/orders'] }
 }
 
