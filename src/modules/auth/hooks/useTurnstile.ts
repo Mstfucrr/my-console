@@ -9,6 +9,7 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 export function useTurnstile() {
   const [turnstileStatus, setTurnstileStatus] = useState<TurnstileStatus | undefined>(undefined)
   const [token, setToken] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const handleVerify = useCallback((newToken: string) => {
     setToken(newToken)
@@ -28,6 +29,7 @@ export function useTurnstile() {
   const resetToken = useCallback(() => {
     setToken(null)
     setTurnstileStatus('required')
+    setRefreshKey(prev => prev + 1)
   }, [])
 
   const handleLoad = useCallback(() => {
@@ -50,6 +52,7 @@ export function useTurnstile() {
     turnstileStatus,
     isValid,
     errorMessage,
+    refreshKey,
     handlers: {
       onVerify: handleVerify,
       onError: handleError,
