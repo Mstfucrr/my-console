@@ -73,31 +73,29 @@ export function BottomNavigation() {
             )}
 
             {/* Sağ taraf - Son 2 item */}
-            {visibleMenus.slice(2, 4).length > 0 && (
-              <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
-                {visibleMenus.slice(2, 3).map(item => (
-                  <BottomNavigationItem
-                    key={item.title}
-                    href={item.href}
-                    label={item.title}
-                    icon={item.Icon}
-                    isActive={isLocationMatch(item.href, pathname)}
-                  />
-                ))}
-                <AnimatePresence mode='wait'>{isOpen && <BottomMenu />}</AnimatePresence>
-                <div className='flex items-center justify-center'>
-                  <Button
-                    color={isOpen ? 'light' : 'secondary'}
-                    size='icon'
-                    className='size-14 rounded-full p-1 pt-0 pb-1'
-                    onClick={handleToggleMenu}
-                    aria-label='Menüyu Aç ve Kapat'
-                  >
-                    <SiteLogoNoText className='text-primary size-full' />
-                  </Button>
-                </div>
+            <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
+              {visibleMenus.slice(2, 3).map(item => (
+                <BottomNavigationItem
+                  key={item.title}
+                  href={item.href}
+                  label={item.title}
+                  icon={item.Icon}
+                  isActive={isLocationMatch(item.href, pathname)}
+                />
+              ))}
+              <AnimatePresence mode='wait'>{isOpen && <BottomMenu />}</AnimatePresence>
+              <div className='flex items-center justify-center'>
+                <Button
+                  color={isOpen ? 'light' : 'secondary'}
+                  size='icon'
+                  className='size-14 rounded-full p-1 pt-0 pb-1'
+                  onClick={handleToggleMenu}
+                  aria-label='Menüyu Aç ve Kapat'
+                >
+                  <SiteLogoNoText className='text-primary size-full' />
+                </Button>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </nav>
