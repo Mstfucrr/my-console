@@ -83,15 +83,26 @@ export function CreateOrderView() {
                   label='Telefon'
                   placeholder='(555) 123-4567'
                   tabIndex={3}
+                  regexPattern={/^[1-8][0-9]{0,9}$/}
+                  onPaste={e => {
+                    e.preventDefault()
+                    let val = e.clipboardData.getData('Text').replace(/\D/g, '')
+                    if (val.startsWith('0')) val = val.slice(1)
+                    else if (val.startsWith('90')) val = val.slice(2)
+                    const input = e.target as HTMLInputElement
+                    input.value = val
+                    input.dispatchEvent(new Event('input', { bubbles: true }))
+                  }}
                 />
                 <FormInputField
                   name='extensionPhone'
                   control={form.control}
                   label='Dahili Telefon'
                   placeholder='1234'
-                  type='number'
+                  regexPattern={/^\d{0,10}$/}
+                  type='text'
                   inputMode='numeric'
-                  pattern='[0-9]*'
+                  pattern='\d*'
                   tabIndex={4}
                 />
               </CardContent>
@@ -110,10 +121,11 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Hazırlık Süresi (dk)'
-                  type='number'
+                  type='text'
                   placeholder='30'
                   inputMode='numeric'
                   pattern='[0-9]*'
+                  regexPattern={/^[0-9]{0,3}$/}
                   tabIndex={5}
                 />
                 <FormInputField
@@ -121,10 +133,10 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Toplam Tutar (₺)'
-                  type='number'
+                  type='text'
                   placeholder='0.00'
                   inputMode='decimal'
-                  regexPattern='^[0-9]*(\.[0-9]{0,2})?$'
+                  regexPattern={/^[0-9]*(\.[0-9]{0,2})?$/}
                   tabIndex={6}
                 />
                 {isLoadingPaymentMethods ? (
@@ -235,6 +247,7 @@ export function CreateOrderView() {
                   label='Bina No'
                   placeholder='123'
                   tabIndex={15}
+                  regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
                 />
                 <FormInputField
                   name='floor'
@@ -254,6 +267,7 @@ export function CreateOrderView() {
                   label='Daire No'
                   placeholder='12'
                   tabIndex={17}
+                  regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
                 />
                 <FormInputField
                   name='postalCode'
@@ -261,7 +275,7 @@ export function CreateOrderView() {
                   label='Posta Kodu'
                   type='number'
                   inputMode='numeric'
-                  regexPattern='^[0-9]{0,5}$'
+                  regexPattern={/^[0-9]{0,5}$/}
                   placeholder='34710'
                   tabIndex={18}
                 />
@@ -270,9 +284,11 @@ export function CreateOrderView() {
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormTextareaField
                   name='fullAddress'
-                  required
                   control={form.control}
                   label='Tam Adres'
+                  className='resize-none'
+                  disabled
+                  readOnly
                   placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'
                   rows={3}
                   tabIndex={19}

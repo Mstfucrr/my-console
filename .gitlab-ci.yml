@@ -100,14 +100,13 @@ deploy:
   script:
     - aws s3 sync out/ $S3_BUCKET
     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths '/*'
-  when: manual
-  # rules:
-  #   - if: '$CI_COMMIT_BRANCH == "main"'
-  #     when: manual
-  #   - if: '$CI_COMMIT_BRANCH == "preprod"'
-  #     when: manual
-  #   - if: '$CI_COMMIT_BRANCH == "dev"'
-  #     when: manual
+  # Sadece dev için build başarılı ise otomatik deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main" && $CI_COMMIT_BRANCH != "preprod"'
+      when: on_success
+      needs: ["node-build"]
+    - when: manual
+      allow_failure: true
 # rollback:
 #   stage: redeploy
 #   image: node:16.1.0-alpine

@@ -5,13 +5,13 @@ import Leaflet from 'leaflet'
 import { useEffect, useMemo, useRef } from 'react'
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet'
 
+import MapLoading from '@/components/map-loaging'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
-import { Skeleton } from '@/components/ui/skeleton'
 import useIsTabActive from '@/hooks/use-is-tab-active'
 import { useQuery } from '@tanstack/react-query'
 import 'leaflet/dist/leaflet.css'
-import { AlertTriangle, Loader2 } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { ordersService } from '../../service/order.service'
 
 const iconUrl = '/images/courier/busy.png'
@@ -104,16 +104,7 @@ export default function CourierMap({
     )
   }
 
-  if (isLoading) {
-    return (
-      <div className='flex w-full items-start justify-center'>
-        <Skeleton className='flex size-full items-center justify-center'>
-          <Loader2 className='mr-2 size-12 animate-spin' />
-          <span className='text-md'>Harita yükleniyor...</span>
-        </Skeleton>
-      </div>
-    )
-  }
+  if (isLoading) return <MapLoading />
 
   return (
     <MapContainer

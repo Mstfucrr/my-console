@@ -1,10 +1,10 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { MessageCircle } from 'lucide-react'
 
-export function SupportDialog() {
+export function SupportDialog(props?: ButtonProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -12,6 +12,7 @@ export function SupportDialog() {
           size='icon'
           className='bg-primary/90 hover:bg-primary relative text-white shadow-lg'
           title='Destek Ekibine Mail Gönder'
+          {...props}
         >
           <MessageCircle className='size-6' />
         </Button>
