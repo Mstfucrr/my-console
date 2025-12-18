@@ -217,8 +217,8 @@ export function StatusSelect<T extends string | number>({
             {hasOptions ? (
               <div className='max-h-48 overflow-y-auto pr-0.5'>
                 {groupedOptions
-                  ? groupedOptions.map(group => (
-                      <SelectGroup key={group.groupLabel}>
+                  ? groupedOptions.map((group, index) => (
+                      <SelectGroup key={`${group.groupLabel}-${index}`}>
                         {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
                         {group.items.map(option => (
                           <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
