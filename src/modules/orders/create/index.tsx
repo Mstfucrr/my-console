@@ -125,7 +125,7 @@ export function CreateOrderView() {
                   placeholder='30'
                   inputMode='numeric'
                   pattern='[0-9]*'
-                  regexPattern={/^[0-9]*$/}
+                  regexPattern={/^[0-9]{0,3}$/}
                   tabIndex={5}
                 />
                 <FormInputField
@@ -133,10 +133,10 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Toplam Tutar (₺)'
-                  type='number'
+                  type='text'
                   placeholder='0.00'
                   inputMode='decimal'
-                  regexPattern='^[0-9]*(\.[0-9]{0,2})?$'
+                  regexPattern={/^[0-9]*(\.[0-9]{0,2})?$/}
                   tabIndex={6}
                 />
                 {isLoadingPaymentMethods ? (
