@@ -13,7 +13,18 @@ type IMaskInputElementProps = React.ComponentPropsWithoutRef<typeof IMaskInput>
 // IMask'ın kendi alanlarından override edeceklerimizi dışarı atıyoruz
 type MaskBaseProps = Omit<
   IMaskInputElementProps,
-  'value' | 'onAccept' | 'onBlur' | 'inputRef' | 'ref' | 'className' | 'type' | 'size' | 'name' | 'inputMode'
+  | 'value'
+  | 'onAccept'
+  | 'onBlur'
+  | 'inputRef'
+  | 'ref'
+  | 'className'
+  | 'type'
+  | 'size'
+  | 'name'
+  | 'inputMode'
+  | 'definitions'
+  | 'regexPattern'
 >
 
 interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps {
@@ -44,6 +55,7 @@ interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps
   mask: string | RegExp
   lazy?: boolean
   placeholderChar?: string
+  regexPattern?: RegExp
 }
 
 /**
@@ -76,8 +88,11 @@ export function FormMaskedInputField<T extends FieldValues>({
   Icon,
   className,
   type = 'text',
+  regexPattern,
   ...imaskProps
 }: FormMaskedInputFieldProps<T>) {
+  const lastValidRef = React.useRef<string>('')
+
   const {
     field,
     fieldState: { error }
@@ -113,10 +128,19 @@ export function FormMaskedInputField<T extends FieldValues>({
             id={name}
             name={field.name}
             value={field.value ?? ''}
-            onAccept={(val: unknown, mask?: { unmaskedValue?: string | number }) => {
-              const unmaskedValue = mask?.unmaskedValue ?? val
-              const normalized = unmaskedValue == null ? '' : String(unmaskedValue)
-              field.onChange(normalized)
+            onAccept={(val, mask) => {
+              const unmasked = mask?.unmaskedValue ?? val
+              const normalized = unmasked == null ? '' : String(unmasked)
+
+              const digits = normalized.replace(/\D/g, '')
+
+              if (digits.length > 0 && regexPattern && !regexPattern.test(digits)) {
+                if (mask) mask.unmaskedValue = lastValidRef.current
+                return
+              }
+
+              lastValidRef.current = digits
+              field.onChange(digits)
             }}
             onBlur={field.onBlur}
             inputRef={field.ref}

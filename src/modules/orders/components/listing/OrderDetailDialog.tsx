@@ -10,16 +10,21 @@ import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskAddress, maskLastName, maskPhone } from '@/lib/utils/mask'
 import { OrderStatusesGroups, type Order } from '@/types'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, Package, User } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { startTransition, useEffect, useState } from 'react'
 import { ordersService } from '../../service/order.service'
 
+import MapLoading from '@/components/map-loaging'
+import { TooltippedElement } from '@/components/tooltipped-element'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 import { OrderDetailSkeleton } from './OrderDetailSkeleton'
 
-const CourierMap = dynamic(() => import('../courier/CourierMap'), { ssr: false })
+const CourierMap = dynamic(() => import('../courier/CourierMap').then(mod => mod.default), {
+  ssr: false,
+  loading: () => <MapLoading />
+})
 
 interface OrderDetailDialogProps {
   order: Order | null
@@ -30,13 +35,11 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const needsDetailFetch = order && (!order.customerPhone || !order.deliveryAddress)
-
   const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
     queryKey: ['orderDetail', order?.orderId],
     queryFn: () => ordersService.getOrderById(order!.orderId),
     staleTime: 0,
-    enabled: Boolean(needsDetailFetch && order?.orderId)
+    enabled: Boolean(order?.orderId)
   })
 
   // Detay varsa onu kullan, yoksa mevcut order'ı kullan
@@ -217,15 +220,18 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                             {displayOrder &&
                               displayOrder.customerPosition?.[0] != null &&
                               displayOrder.customerPosition?.[1] != null && (
-                                <a
-                                  className='text-muted-foreground hover:text-primary mt-2 font-mono text-xs underline'
-                                  href={`https://maps.google.com/?q=${displayOrder.customerPosition[0]},${displayOrder.customerPosition[1]}`}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                >
-                                  ({displayOrder.customerPosition[0].toFixed(6)},{' '}
-                                  {displayOrder.customerPosition[1].toFixed(6)})
-                                </a>
+                                <TooltippedElement tooltipContent='Google Haritada Görüntüle' className='text-xs'>
+                                  <a
+                                    className='text-muted-foreground hover:text-primary my-2 flex items-center gap-1 font-mono text-xs text-nowrap underline'
+                                    href={`https://maps.google.com/?q=${displayOrder.customerPosition[0]},${displayOrder.customerPosition[1]}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                  >
+                                    ({displayOrder.customerPosition[0].toFixed(6)},{' '}
+                                    {displayOrder.customerPosition[1].toFixed(6)})
+                                    <ExternalLink className='size-3.5' />
+                                  </a>
+                                </TooltippedElement>
                               )}
                           </div>
                         </div>

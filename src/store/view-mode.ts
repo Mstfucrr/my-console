@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface ViewModeState {
-  viewMode: 'card' | 'table'
-  setViewMode: (viewMode: 'card' | 'table') => void
+  viewMode: 'card' | 'table' | 'map'
+  setViewMode: (viewMode: 'card' | 'table' | 'map') => void
 }
 
 export const useViewModeStore = create<ViewModeState>()(

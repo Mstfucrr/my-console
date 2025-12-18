@@ -16,7 +16,8 @@ const buttonVariants = cva(
         info: 'bg-info text-info-foreground hover:bg-info/80',
         warning: 'bg-warning text-warning-foreground hover:bg-warning/80',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        dark: 'bg-accent-foreground text-accent hover:bg-accent-foreground/80'
+        dark: 'bg-accent-foreground text-accent hover:bg-accent-foreground/80',
+        light: 'bg-background text-foreground hover:bg-background/80'
       },
       variant: {
         outline: 'hover:text-primary-foreground border border-current bg-transparent',
@@ -150,7 +151,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark'
+  color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark' | 'light'
 }
 
 const Button = ({ className, variant, size, color, asChild = false, ...props }: ButtonProps) => {

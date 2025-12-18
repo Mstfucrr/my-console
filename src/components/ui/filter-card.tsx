@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 import { isSameDateRange } from '@/lib/utils/date'
 import { Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
-import { ReactNode } from 'react'
+import { Children, cloneElement, isValidElement, ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { TooltippedElement } from '../tooltipped-element'
 
@@ -55,10 +55,30 @@ export function FilterCard<T>({
   children,
   className
 }: FilterCardProps<T>) {
+  // Children'a otomatik olarak onEnterPress ekle
+  const enhancedChildren = Children.map(children, child => {
+    if (!isValidElement(child)) return child
+
+    // SearchInput veya StatusSelect ise onEnterPress ekle
+    const componentName = child.type?.toString() || ''
+    const isSearchInput = componentName.includes('SearchInput') || child.type === SearchInput
+    const isStatusSelect = componentName.includes('StatusSelect') || child.type === StatusSelect
+
+    if ((isSearchInput || isStatusSelect) && hasPendingChanges && onApply) {
+      const existingProps = child.props as Record<string, unknown>
+      return cloneElement(child, {
+        ...existingProps,
+        onEnterPress: onApply
+      } as Partial<typeof existingProps & { onEnterPress: () => void }>)
+    }
+
+    return child
+  })
+
   return (
     <div className={cn('flex w-full justify-end gap-2 pt-2 max-lg:flex-wrap-reverse', className)}>
       <div className='flex w-full flex-wrap justify-end gap-2'>
-        {children}
+        {enhancedChildren}
 
         {(hasPendingChanges || hasActiveFilters) && (
           <div className='flex items-center gap-2'>
@@ -91,7 +111,8 @@ export function SearchInput({
   onChange,
   showLabel = false,
   className,
-  Icon
+  Icon,
+  onEnterPress
 }: {
   placeholder: string
   value: string
@@ -99,8 +120,16 @@ export function SearchInput({
   showLabel?: boolean
   className?: string
   Icon: LucideIcon
+  onEnterPress?: () => void
 }) {
   const isActive = value && value.length > 0
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onEnterPress) {
+      e.preventDefault()
+      onEnterPress()
+    }
+  }
 
   return (
     <div className={cn('flex-1', className)}>
@@ -111,6 +140,7 @@ export function SearchInput({
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
           size='sm'
           color={isActive ? 'info' : undefined}
           variant={isActive ? 'faded' : 'bordered'}
@@ -138,7 +168,8 @@ export function StatusSelect<T extends string | number>({
   value,
   onChange,
   placeholder = 'Durum',
-  showLabel = false
+  showLabel = false,
+  onEnterPress
 }: {
   options?: FilterOption[]
   groupedOptions?: GroupedFilterOption[]
@@ -146,9 +177,27 @@ export function StatusSelect<T extends string | number>({
   onChange: (value: T) => void
   placeholder?: string
   showLabel?: boolean
+  onEnterPress?: () => void
 }) {
   const isActive = value && value !== 'all'
   const hasOptions = groupedOptions ? groupedOptions.some(g => g.items.length > 0) : (options?.length ?? 0) > 0
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Select açık değilse ve Enter basıldıysa filtreleri uygula
+    if (e.key === 'Enter' && onEnterPress) {
+      // Select açık mı kontrol et
+      const selectContent = document.querySelector('[role="listbox"]')
+      const isSelectOpen = selectContent?.getAttribute('data-state') === 'open'
+
+      if (!isSelectOpen) {
+        // Select kapalıyken Enter basıldığında filtreleri uygula ve Select'in açılmasını engelle
+        e.preventDefault()
+        e.stopPropagation()
+        onEnterPress()
+      }
+      // Select açıksa normal davranışına izin ver (seçim yapılabilir)
+    }
+  }
 
   return (
     <div className='max-sm:w-full'>
@@ -160,6 +209,7 @@ export function StatusSelect<T extends string | number>({
             size='sm'
             color={isActive ? 'info' : undefined}
             variant={isActive ? 'faded' : 'bordered'}
+            onKeyDown={handleKeyDown}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
@@ -167,8 +217,8 @@ export function StatusSelect<T extends string | number>({
             {hasOptions ? (
               <div className='max-h-48 overflow-y-auto pr-0.5'>
                 {groupedOptions
-                  ? groupedOptions.map(group => (
-                      <SelectGroup key={group.groupLabel}>
+                  ? groupedOptions.map((group, index) => (
+                      <SelectGroup key={`${group.groupLabel}-${index}`}>
                         {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
                         {group.items.map(option => (
                           <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
