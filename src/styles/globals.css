@@ -268,10 +268,3 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
-
-/* Safe area insets for iOS */
-@supports (padding: max(0px)) {
-  .safe-area-inset-bottom {
-    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-  }
-}
