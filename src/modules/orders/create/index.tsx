@@ -121,10 +121,11 @@ export function CreateOrderView() {
                   required
                   control={form.control}
                   label='Hazırlık Süresi (dk)'
-                  type='number'
+                  type='text'
                   placeholder='30'
                   inputMode='numeric'
                   pattern='[0-9]*'
+                  regexPattern={/^[0-9]*$/}
                   tabIndex={5}
                 />
                 <FormInputField
