@@ -83,15 +83,26 @@ export function CreateOrderView() {
                   label='Telefon'
                   placeholder='(555) 123-4567'
                   tabIndex={3}
+                  regexPattern={/^[1-8][0-9]{0,9}$/}
+                  onPaste={e => {
+                    e.preventDefault()
+                    let val = e.clipboardData.getData('Text').replace(/\D/g, '')
+                    if (val.startsWith('0')) val = val.slice(1)
+                    else if (val.startsWith('90')) val = val.slice(2)
+                    const input = e.target as HTMLInputElement
+                    input.value = val
+                    input.dispatchEvent(new Event('input', { bubbles: true }))
+                  }}
                 />
                 <FormInputField
                   name='extensionPhone'
                   control={form.control}
                   label='Dahili Telefon'
                   placeholder='1234'
-                  type='number'
+                  regexPattern={/^\d{0,10}$/}
+                  type='text'
                   inputMode='numeric'
-                  pattern='[0-9]*'
+                  pattern='\d*'
                   tabIndex={4}
                 />
               </CardContent>

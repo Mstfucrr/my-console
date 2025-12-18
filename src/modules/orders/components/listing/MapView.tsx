@@ -3,14 +3,24 @@
 import { TooltippedElement } from '@/components/tooltipped-element'
 import { Button } from '@/components/ui/button'
 import { MaskedText } from '@/components/ui/masked-text'
-import { OrderStatusGroup } from '@/constants'
+import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants'
+import { cn } from '@/lib/utils'
 import { maskLastName } from '@/lib/utils/mask'
 import { MAP_THEMES, useMapThemeStore } from '@/store/map-theme'
 import { Order, OrderStatusesGroups } from '@/types'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { GripHorizontal, Info } from 'lucide-react'
+import {
+  GripHorizontal,
+  Info,
+  LucideProps,
+  MapPinCheckInside,
+  MapPinIcon,
+  MapPinXInsideIcon,
+  type LucideIcon
+} from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css'
@@ -22,23 +32,35 @@ const MIN_HEIGHT = 256
 const MAX_HEIGHT = 600
 const DEFAULT_HEIGHT = 384
 
+function lucideToSvgString(Icon: LucideIcon, opts?: LucideProps) {
+  const { size = 28, strokeWidth = 4, className, ...rest } = opts ?? {}
+  return renderToStaticMarkup(
+    <Icon width={size} height={size} strokeWidth={strokeWidth} className={className} {...rest} />
+  )
+}
+
 // Example: Using a Lucide icon (e.g., MapPin) as the marker icon with SVG
 
-const createCustomerIcon = (status: OrderStatusesGroups): L.DivIcon => {
-  const color = OrderStatusGroup[status]?.color ?? '#3b82f6' // default color
+const createCustomerIcon = (params: { status: OrderStatusesGroups }) => {
+  const { status } = params
+  const Icon =
+    status === OrderStatusesGroups.DELIVERED
+      ? MapPinCheckInside
+      : status === OrderStatusesGroups.CANCELLED
+        ? MapPinXInsideIcon
+        : MapPinIcon
 
-  // Render the Lucide React SVG to string
-  // Note: If you strictly want without SSR issues, consider replacing with static SVG below
-  const svgString = `
-    <svg xmlns="http://www.w3.org/2000/svg" fill="${color}" viewBox="0 0 24 24" stroke="${color}" stroke-width="2" width="28" height="28">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-.552 0-1-.58-1-.58S5 13.408 5 9.5A7 7 0 1119 9.5c0 3.908-6 10.92-6 10.92s-.448.58-1 .58z"/>
-      <circle cx="12" cy="9.5" r="2.5" fill="${color}" fill-opacity="0.4"/>
-    </svg>
-  `
+  const svg = lucideToSvgString(Icon, {
+    size: 23,
+    color: OrderStatusGroup[status]?.color,
+    stroke: OrderStatusGroup[status]?.color,
+    fill: '#fff',
+    className: cn(ORDER_STATUS_TEXT_COLORS[status], 'drop-shadow-lg')
+  })
 
   return new L.DivIcon({
     className: 'custom-marker',
-    html: svgString,
+    html: svg,
     iconSize: [28, 28],
     iconAnchor: [14, 28],
     popupAnchor: [0, -28]
@@ -123,7 +145,11 @@ export function MapView() {
             spiderfyDistanceMultiplier={2}
           >
             {orders.map(order => (
-              <Marker key={order.orderId} position={order.customerPosition!} icon={createCustomerIcon(order.status)}>
+              <Marker
+                key={order.orderId}
+                position={order.customerPosition!}
+                icon={createCustomerIcon({ status: order.status })}
+              >
                 <Popup>
                   <div className='flex items-center gap-1'>
                     <MaskedText maskFn={maskLastName} value={order.customerName} textClassName='text-nowrap' />
