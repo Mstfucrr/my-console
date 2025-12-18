@@ -247,6 +247,7 @@ export function CreateOrderView() {
                   label='Bina No'
                   placeholder='123'
                   tabIndex={15}
+                  regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
                 />
                 <FormInputField
                   name='floor'
@@ -266,6 +267,7 @@ export function CreateOrderView() {
                   label='Daire No'
                   placeholder='12'
                   tabIndex={17}
+                  regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
                 />
                 <FormInputField
                   name='postalCode'
@@ -273,7 +275,7 @@ export function CreateOrderView() {
                   label='Posta Kodu'
                   type='number'
                   inputMode='numeric'
-                  regexPattern='^[0-9]{0,5}$'
+                  regexPattern={/^[0-9]{0,5}$/}
                   placeholder='34710'
                   tabIndex={18}
                 />
@@ -282,9 +284,11 @@ export function CreateOrderView() {
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormTextareaField
                   name='fullAddress'
-                  required
                   control={form.control}
                   label='Tam Adres'
+                  className='resize-none'
+                  disabled
+                  readOnly
                   placeholder='Caferağa Mahallesi, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul'
                   rows={3}
                   tabIndex={19}
