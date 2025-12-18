@@ -64,7 +64,7 @@ export function BottomMenu() {
           label='Raporlar'
           icon={FileText}
           isActive={isLocationMatch('/reports', pathname)}
-          className='-bottom-[4%] left-[10%] size-15 rounded-full bg-white p-0'
+          className='-bottom-[6%] left-[10%] size-15 rounded-full bg-white p-0'
         />
       )}
       <motion.div
