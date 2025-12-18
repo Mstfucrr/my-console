@@ -84,7 +84,7 @@ export function BottomNavigation() {
                     isActive={isLocationMatch(item.href, pathname)}
                   />
                 ))}
-                <AnimatePresence>{isOpen && <BottomMenu />}</AnimatePresence>
+                <AnimatePresence mode='wait'>{isOpen && <BottomMenu />}</AnimatePresence>
                 <div className='flex items-center justify-center'>
                   <Button
                     color={isOpen ? 'light' : 'secondary'}

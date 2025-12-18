@@ -1,3 +1,5 @@
+import { usePermission } from '@/hooks/use-permission'
+import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { FileText } from 'lucide-react'
 import { usePathname } from 'next/navigation'
@@ -6,8 +8,18 @@ import { SupportDialog } from '../common/support-dialog'
 import { isLocationMatch } from '../utils'
 import { MotionBottomNavigationItem } from './BottomNavigationItem'
 
+const springConfig = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping: 30,
+  mass: 0.5
+}
+
 export function BottomMenu() {
   const pathname = usePathname()
+  const { checkRoute } = usePermission()
+
+  const hasReportsAccess = checkRoute('/reports')
   return (
     <motion.div
       variants={{
@@ -17,7 +29,7 @@ export function BottomMenu() {
       initial='hidden'
       animate='visible'
       exit='hidden'
-      transition={{ duration: 0.6, ease: 'easeInOut', type: 'spring' }}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1], ...springConfig }}
       className='absolute right-0 bottom-[110%] -z-10 h-[260%] w-[107%] origin-bottom-right rounded-tl-[100%] rounded-r-4xl rounded-bl-xl bg-white/70'
     >
       <motion.div
@@ -28,8 +40,8 @@ export function BottomMenu() {
         initial='hidden'
         animate='visible'
         exit='hidden'
-        transition={{ duration: 0.6, delay: 0.3, ease: 'easeInOut', type: 'spring' }}
-        className='absolute bottom-[15%] -left-[10%]'
+        transition={{ duration: 0.35, delay: 0.2, ease: [0.4, 0, 0.2, 1], ...springConfig }}
+        className={cn('absolute bottom-[15%] -left-[10%]', !hasReportsAccess && 'bottom-[30%] -left-[5%]')}
       >
         <LogoutButton
           className='text-destructive size-12 rounded-full border-none bg-white p-0'
@@ -37,22 +49,24 @@ export function BottomMenu() {
           color='light'
         />
       </motion.div>
-      <MotionBottomNavigationItem
-        key='reports'
-        variants={{
-          hidden: { opacity: 0, y: 40, x: 40 },
-          visible: { opacity: 1, y: 0, x: 0 }
-        }}
-        initial='hidden'
-        animate='visible'
-        exit='hidden'
-        transition={{ duration: 0.6, delay: 0.4, ease: 'easeInOut', type: 'spring' }}
-        href='/reports'
-        label='Raporlar'
-        icon={FileText}
-        isActive={isLocationMatch('/reports', pathname)}
-        className='-bottom-[4%] left-[10%] size-15 rounded-full bg-white p-0'
-      />
+      {hasReportsAccess && (
+        <MotionBottomNavigationItem
+          key='reports'
+          variants={{
+            hidden: { opacity: 0, y: 40, x: 40 },
+            visible: { opacity: 1, y: 0, x: 0 }
+          }}
+          initial='hidden'
+          animate='visible'
+          exit='hidden'
+          transition={{ duration: 0.35, delay: 0.3, ease: [0.4, 0, 0.2, 1], ...springConfig }}
+          href='/reports'
+          label='Raporlar'
+          icon={FileText}
+          isActive={isLocationMatch('/reports', pathname)}
+          className='-bottom-[4%] left-[10%] size-15 rounded-full bg-white p-0'
+        />
+      )}
       <motion.div
         key='support'
         variants={{
@@ -62,8 +76,11 @@ export function BottomMenu() {
         initial='hidden'
         animate='visible'
         exit='hidden'
-        transition={{ duration: 0.6, delay: 0.5, ease: 'easeInOut', type: 'spring' }}
-        className='absolute right-[14%] bottom-[86%] z-50'
+        transition={{ duration: 0.35, delay: 0.4, ease: [0.4, 0, 0.2, 1], ...springConfig }}
+        className={cn(
+          'absolute right-[14%] bottom-[86%] z-50',
+          !hasReportsAccess && 'right-[20%] bottom-[75%] -translate-x-1/2'
+        )}
       >
         <SupportDialog className='size-12 rounded-full p-0' />
       </motion.div>

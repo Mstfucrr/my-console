@@ -47,4 +47,6 @@ export function BottomNavigationItem({
   )
 }
 
-export const MotionBottomNavigationItem = motion(BottomNavigationItem)
+export const MotionBottomNavigationItem = motion(BottomNavigationItem, {
+  forwardMotionProps: true
+})
