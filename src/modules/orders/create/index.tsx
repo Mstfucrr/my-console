@@ -118,7 +118,8 @@ export function CreateOrderView() {
               <CardContent className='grid grid-cols-2 gap-x-4 gap-y-2'>
                 <FormInputField
                   name='preparationTime'
-                  required
+                  disabled
+                  readOnly
                   control={form.control}
                   label='Hazırlık Süresi (dk)'
                   type='text'
