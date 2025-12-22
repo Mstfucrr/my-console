@@ -22,7 +22,7 @@ export const createOrderSchema = z.object({
   preparationTime: z
     .string()
     .transform(transformPriceToNumber)
-    .default('')
+    .default('7')
     .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
     .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
   totalAmount: z
@@ -66,7 +66,7 @@ export const defaultCreateOrderValues: CreateOrderFormData = {
   customerPhone: '',
   extensionPhone: '',
   // @ts-expect-error - zod defaultValues için
-  preparationTime: '',
+  preparationTime: '7',
   // @ts-expect-error - zod defaultValues için
   totalAmount: '',
   city: { id: '', name: '' },

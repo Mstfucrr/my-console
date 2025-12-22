@@ -76,6 +76,7 @@ class OrdersService {
     // Form'daki obje yapısını backend'in beklediği string formatına çevir
     const payload = {
       ...order,
+      preparationTime: 7, // Önyüzde hazırlık süresi 7 dakika olarak default değerlendiriliyor.
       district: undefined,
       dontRingDoorBell: undefined,
       city: order.city.name,
