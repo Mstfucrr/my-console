@@ -69,6 +69,7 @@ export function LoginForm() {
             disabled={loadingState.login}
             Icon={Mail}
             placeholder='E-posta veya kullanıcı adı giriniz'
+            regexPattern={/^[^\s]+$/}
           />
           <FormInputField
             name='password'
