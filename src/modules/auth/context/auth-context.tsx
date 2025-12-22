@@ -1,6 +1,7 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -157,7 +158,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (error) {
       console.error('login error', error)
-      toast.error('Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.')
+      const axiosError = error as AxiosError<{ message: string }>
+      toast.error(axiosError.response?.data?.message ?? 'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.')
       throw error
     }
   }
