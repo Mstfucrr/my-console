@@ -128,8 +128,8 @@ export function MapView() {
     <div className='relative z-0'>
       <div style={{ height }} className='overflow-hidden rounded-t-lg border border-b-0'>
         <MapContainer
-          center={lastOrderPosition}
-          zoom={15}
+          center={lastOrderPosition ?? [37.064997, 37.378162]}
+          zoom={lastOrderPosition ? 15 : 10}
           className='min-h-full w-full'
           ref={(map: L.Map | null) => {
             if (map) {
