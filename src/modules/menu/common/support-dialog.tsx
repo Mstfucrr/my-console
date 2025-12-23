@@ -24,7 +24,7 @@ export function SupportDialog(props?: ButtonProps) {
           </div>
           <span className='text-primary text-lg font-bold'>İletişim E-Postaları</span>
 
-          <div className='flex w-full flex-col gap-1'>
+          <div className='flex w-max flex-col gap-1'>
             <span className='text-primary text-sm font-semibold'>Mutabakat sorularınız için:</span>
             <a
               href='mailto:restoranmutabakat@fiyuu.com.tr'
@@ -49,6 +49,15 @@ export function SupportDialog(props?: ButtonProps) {
               className='text-primary hover:text-primary-700 font-medium break-all underline underline-offset-2 transition'
             >
               odemeler@fiyuu.com.tr
+            </a>
+          </div>
+          <div className='mt-2 flex w-full flex-col gap-1'>
+            <span className='text-primary text-sm font-semibold'>Restoran destek numaramız:</span>
+            <a
+              href='tel:08508006061'
+              className='text-primary hover:text-primary-700 font-medium break-all underline underline-offset-2 transition'
+            >
+              0850 800 60 61
             </a>
           </div>
         </div>
