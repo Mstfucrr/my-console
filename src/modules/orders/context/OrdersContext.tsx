@@ -91,7 +91,6 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   } = useQuery({
     queryKey,
     queryFn: () => ordersService.getOrders({ status: statusFilters, search: filters.search }, pagination),
-    staleTime: Infinity,
     placeholderData: keepPreviousData
   })
 

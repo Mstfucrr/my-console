@@ -6,6 +6,7 @@ import { usePaymentMethods } from '@/service/payment-methods.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -14,13 +15,17 @@ import { createOrderSchema, defaultCreateOrderValues } from '../constants'
 import type { CreateOrderFormData } from '../types'
 
 export function useCreateOrder() {
+  const router = useRouter()
   const queryClient = useQueryClient()
+
   const { mutateAsync: createOrder, isPending: isSubmitting } = useMutation({
     mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
-      queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
-      queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
+        queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
+        queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+      }, 300)
     }
   })
 
@@ -191,6 +196,7 @@ export function useCreateOrder() {
         form.reset({ ...defaultCreateOrderValues, city: data.city }, { keepErrors: false })
         form.setFocus('firstName')
         setItem('last-order-city', data.city)
+        router.push('/orders')
       }, 0)
       return true
     } catch (error) {
