@@ -339,9 +339,7 @@ test.describe('Sipariş Oluşturma', () => {
     )
     await mahalleInput.fill('19 MAYIS')
     await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
-    await page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' }).click()
-
-    // Sokak boş bırakarak gönder
+    await page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' }).click() // Sokak boş bırakarak gönder
     await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
     await expect(page.getByText(/Sokak zorunludur/i)).toBeVisible()
 
