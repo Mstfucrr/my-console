@@ -1,4 +1,4 @@
-# Partners
+# Partner
 
 Modern ve ölçeklenebilir web uygulaması.
 
@@ -49,7 +49,7 @@ npm install -g pnpm
 
 ```bash
 git clone <repository-url>
-cd partners
+cd partner-frontend
 ```
 
 4. Bağımlılıkları yükleyin
