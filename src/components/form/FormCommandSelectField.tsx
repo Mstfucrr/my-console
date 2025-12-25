@@ -235,6 +235,7 @@ export function FormCommandSelectField<T extends FieldValues>({
               ref={inputRef}
               inputMode='search'
               id={name}
+              name={name}
               placeholder={isOpen ? searchPlaceholder : placeholder}
               value={getDisplayValue()}
               onChange={handleInputChange}

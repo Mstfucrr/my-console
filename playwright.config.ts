@@ -29,9 +29,9 @@ export default defineConfig({
     baseURL: 'http://localhost:3000',
 
     /* Test başarısız olduktan sonra yeniden denenirken trace toplar. Bkz: https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on',
     /* Hata durumunda ekran görüntüsü alır */
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     /* Hata durumunda video kaydeder */
     video: 'retain-on-failure'
   },

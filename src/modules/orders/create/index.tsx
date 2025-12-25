@@ -1,6 +1,7 @@
 'use client'
 
 import { FormCommandSelectField } from '@/components/form/FormCommandSelectField'
+import { FormCurrencyInputField } from '@/components/form/FormCurrencyInputField'
 import { FormInputField } from '@/components/form/FormInputField'
 import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
 import { FormSelectField } from '@/components/form/FormSelectField'
@@ -129,16 +130,16 @@ export function CreateOrderView() {
                   regexPattern={/^[0-9]{0,3}$/}
                   tabIndex={5}
                 />
-                <FormInputField
+                <FormCurrencyInputField
                   name='totalAmount'
                   required
                   control={form.control}
                   label='Toplam Tutar (₺)'
-                  type='text'
-                  placeholder='0.00'
-                  inputMode='decimal'
-                  regexPattern={/^[0-9]*(\.[0-9]{0,2})?$/}
+                  // inputMode='decimal'
+                  pattern='[0-9,]*'
+                  placeholder='1.234,56'
                   tabIndex={6}
+                  regexPattern={/^(\d{1,3}(\.\d{3})*|\d+)(,\d{0,2})?$/}
                 />
                 {isLoadingPaymentMethods ? (
                   <div className='flex items-center justify-center'>

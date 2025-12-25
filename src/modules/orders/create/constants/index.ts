@@ -1,8 +1,15 @@
 import { z } from 'zod'
 import { CreateOrderFormData } from '../types'
 
-const transformPriceToNumber = (price: string) => {
-  return Number(price)
+const parseTRCurrencyToNumber = (raw: string) => {
+  if (!raw) return NaN
+  const normalized = raw
+    .toString()
+    .trim()
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .replace(/[^\d.]/g, '')
+  return Number(normalized)
 }
 
 const PHONE_REGEX = /^[1-9][0-9]{9}$/
@@ -21,17 +28,16 @@ export const createOrderSchema = z.object({
   // Sipariş Bilgileri
   preparationTime: z
     .string()
-    .transform(transformPriceToNumber)
+    .transform(v => Number(v))
     .default('7')
     .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
     .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
   totalAmount: z
     .string()
     .min(1, 'Toplam tutar zorunludur')
-    .transform(transformPriceToNumber)
-    .default('')
-    .refine(value => value > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
-
+    .transform(parseTRCurrencyToNumber)
+    .refine(v => Number.isFinite(v), { message: 'Toplam tutar geçersiz' })
+    .refine(v => v > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
   // Adres Bilgileri
   city: z.object({
     id: z.string().min(1, 'Şehir zorunludur').default(''),
@@ -51,7 +57,7 @@ export const createOrderSchema = z.object({
   buildingName: z.string().optional(),
   doorNumber: z.string().min(1, 'Kapı numarası zorunludur').default(''),
   postalCode: z.string().optional(),
-  fullAddress: z.string().min(10, 'Tam adres en az 10 karakter olmalıdır').default(''),
+  fullAddress: z.string().default(''),
   addressDirection: z.string().optional(),
 
   // Ödeme ve Teslimat
