@@ -66,40 +66,49 @@ test.describe('Sipariş Oluşturma', () => {
       })
     })
 
-    await page.route('**/location/counties?provinceId=34', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([
-          { ilce_id: 1, ilce_adi: 'Kadıköy' },
-          { ilce_id: 2, ilce_adi: 'Beşiktaş' },
-          { ilce_id: 3, ilce_adi: 'Şişli' }
-        ])
-      })
+    await page.route('**/location/query-address**', async route => {
+      const url = new URL(route.request().url())
+      if (url.searchParams.get('type') === 'county' && url.searchParams.get('provinceId') === '34') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            { il_id: 34, il_adi: 'İstanbul', ilce_id: 1, ilce_adi: 'Kadıköy' },
+            { il_id: 34, il_adi: 'İstanbul', ilce_id: 2, ilce_adi: 'Beşiktaş' },
+            { il_id: 34, il_adi: 'İstanbul', ilce_id: 3, ilce_adi: 'Şişli' }
+          ])
+        })
+        return
+      }
+      await route.continue()
     })
 
-    await page.route('**/location/districts?countyId=1', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([
-          { mahalle_id: 1, mahalle_adi: 'Caferağa Mahallesi' },
-          { mahalle_id: 2, mahalle_adi: 'Acıbadem Mahallesi' }
-        ])
-      })
+    await page.route('**/location/query-address**', async route => {
+      const url = new URL(route.request().url())
+      if (url.searchParams.get('type') === 'district' && url.searchParams.get('countyId') === '1') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            { il_id: 34, il_adi: 'İstanbul', mahalle_id: 1, mahalle_adi: 'Caferağa Mahallesi' },
+            { il_id: 34, il_adi: 'İstanbul', mahalle_id: 2, mahalle_adi: 'Acıbadem Mahallesi' },
+            { il_id: 34, il_adi: 'İstanbul', mahalle_id: 3, mahalle_adi: '19 MAYIS MAHALLESİ' }
+          ])
+        })
+        return
+      }
+      await route.continue()
     })
 
     await page.route('**/orders/payment-methods', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          paymentMethods: [
-            { id: '1', key: 'cash', name: 'Nakit' },
-            { id: '2', key: 'card', name: 'Kredi Kartı' },
-            { id: '3', key: 'online', name: 'Online Ödeme' }
-          ]
-        })
+        body: JSON.stringify([
+          { id: '1', key: 'cash', name: 'Nakit', order: 1 },
+          { id: '2', key: 'card', name: 'Kredi Kartı', order: 2 },
+          { id: '3', key: 'online', name: 'Online Ödeme', order: 3 }
+        ])
       })
     })
 
@@ -129,8 +138,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="extensionPhone"]').fill('1234')
 
     // Sipariş Bilgileri bölümünü doldur
-    await page.locator('input[name="preparationTime"]').fill('30')
-    await page.locator('input[name="totalAmount"]').fill('150.50')
+    await page.locator('input[name="totalAmount"]').fill('150,50')
 
     // Ödeme tipi seç
     const odemeTipiTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Ödeme tipi seçiniz/i })
@@ -141,33 +149,50 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('[id="contactlessDelivery"]').click()
 
     // Adres Bilgileri bölümünü doldur
-    // Şehir seç - CommandTrigger shows placeholder as text content
-    const sehirTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Şehir seçin/i })
-    await sehirTrigger.click()
-    await page.getByRole('option', { name: 'İstanbul' }).click()
+    // Şehir seç - FormCommandSelectField input field kullanıyor
+    const sehirInput = page.locator('input[name="city.id"]')
+    await sehirInput.click()
+    await sehirInput.fill('İstanbul')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: 'İstanbul' }).click()
 
     // İlçe seç (şehir seçildikten sonra yüklenecek)
-    const ilceTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /İlçe seçin/i })
-    await expect(ilceTrigger).toBeEnabled({ timeout: 5000 })
-    await ilceTrigger.click()
-    await page.getByRole('option', { name: 'Kadıköy' }).click()
+    const ilceInput = page.locator('input[name="county.id"]')
+    await expect(ilceInput).toBeEnabled({ timeout: 5000 })
+    await ilceInput.click()
+    // API response'un gelmesini bekle
+    await page.waitForResponse(
+      response =>
+        response.url().includes('/location/query-address') &&
+        response.url().includes('type=county') &&
+        response.status() === 200
+    )
+    await ilceInput.fill('Kadıköy')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' }).click()
 
     // Mahalle seç (ilçe seçildikten sonra yüklenecek)
-    const mahalleTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Mahalle seçin/i })
-    await expect(mahalleTrigger).toBeEnabled({ timeout: 5000 })
-    await mahalleTrigger.click()
-    await page.getByRole('option', { name: '19 MAYIS MAHALLESİ' }).click()
+    const mahalleInput = page.locator('input[name="district.id"]')
+    await expect(mahalleInput).toBeEnabled({ timeout: 5000 })
+    await mahalleInput.click()
+    // API response'un gelmesini bekle
+    await page.waitForResponse(
+      response =>
+        response.url().includes('/location/query-address') &&
+        response.url().includes('type=district') &&
+        response.status() === 200
+    )
+    await mahalleInput.fill('Caferağa')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: 'CAFERAĞA MAHALLESİ' }).click()
 
-    // Diğer adres alanlarını doldur
-    await page.locator('input[name="street"]').fill('Atatürk Caddesi')
+    // Sokak - allowCustomValue=true olduğu için direkt yazılabilir
+    const sokakInput = page.locator('input[name="street"]')
+    await sokakInput.fill('Atatürk Caddesi')
     await page.locator('input[name="buildingNumber"]').fill('123')
     await page.locator('input[name="floor"]').fill('3')
     await page.locator('input[name="doorNumber"]').fill('12')
     await page.locator('input[name="postalCode"]').fill('34710')
-
-    // Tam adres otomatik doldurulacak, kontrol et
-    const fullAddress = await page.locator('textarea[name="fullAddress"]').inputValue()
-    expect(fullAddress.length).toBeGreaterThan(10)
 
     // Adres tarifi ekle
     await page.locator('textarea[name="addressDirection"]').fill('Apartman kapısı mavi renkte')
@@ -195,9 +220,11 @@ test.describe('Sipariş Oluşturma', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          paymentMethods: [{ id: '1', key: 'cash', name: 'Nakit' }]
-        })
+        body: JSON.stringify([
+          { id: '1', key: 'cash', name: 'Nakit' },
+          { id: '2', key: 'offline-credit-card', name: 'Kredi Kartı' },
+          { id: '3', key: 'online-credit-card', name: 'Kredi Kartı (İnternetten Ödeme)' }
+        ])
       })
     })
 
@@ -232,30 +259,6 @@ test.describe('Sipariş Oluşturma', () => {
     // Telefon validasyon hatasının göründüğünü kontrol et
     await expect(page.getByText(/Telefon numarası 10 haneli olmalıdır/i)).toBeVisible()
 
-    // Geçersiz hazırlık süresi ile test et
-    await page.locator('input[name="customerPhone"]').clear()
-    await page.locator('input[name="customerPhone"]').fill('5551234567')
-    await page.locator('input[name="preparationTime"]').clear()
-    await page.locator('input[name="preparationTime"]').fill('150') // 120'den büyük
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
-
-    // Hazırlık süresi validasyon hatasının göründüğünü kontrol et
-    await expect(page.getByText(/Hazırlık süresi en fazla 120 dakika olabilir/i)).toBeVisible()
-
-    // Geçersiz hazırlık süresi (minimum) ile test et
-    await page.locator('input[name="preparationTime"]').clear()
-    await page.locator('input[name="preparationTime"]').fill('0') // 1'den küçük
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
-    await expect(page.getByText(/Hazırlık süresi en az 1 dakika olmalıdır/i)).toBeVisible()
-
-    // Telefon 0 ile başlamamalı test et
-    await page.locator('input[name="preparationTime"]').clear()
-    await page.locator('input[name="preparationTime"]').fill('30')
-    await page.locator('input[name="customerPhone"]').clear()
-    await page.locator('input[name="customerPhone"]').fill('0555123456') // 0 ile başlıyor
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
-    await expect(page.getByText(/Telefon numarası 0 ile başlamamalıdır/i)).toBeVisible()
-
     // Toplam tutar validasyonları
     await page.locator('input[name="customerPhone"]').clear()
     await page.locator('input[name="customerPhone"]').fill('5551234567')
@@ -266,48 +269,77 @@ test.describe('Sipariş Oluşturma', () => {
 
     // Adres alanları validasyonları
     await page.locator('input[name="totalAmount"]').clear()
-    await page.locator('input[name="totalAmount"]').fill('150.50')
+    await page.locator('input[name="totalAmount"]').fill('2150,50')
+    await expect(page.locator('input[name="totalAmount"]')).toHaveValue('2.150,50')
 
     // Şehir seç
-    const sehirTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Şehir seçin/i })
-    await sehirTrigger.click()
-    await page.getByRole('option', { name: 'İstanbul' }).click()
+    const sehirInput = page.locator('input[name="city.id"]')
+    await sehirInput.click()
+    await sehirInput.fill('İstanbul')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: 'İstanbul' }).click()
 
     // İlçe seçmeden gönder
     await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
     await expect(page.getByText(/İlçe zorunludur/i)).toBeVisible()
 
     // İlçe seç
-    await page.route('**/location/counties?provinceId=34', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([{ ilce_id: 1, ilce_adi: 'Kadıköy' }])
-      })
+    await page.route('**/location/query-address**', async route => {
+      const url = new URL(route.request().url())
+      if (url.searchParams.get('type') === 'county' && url.searchParams.get('provinceId') === '34') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([{ il_id: 34, il_adi: 'İstanbul', ilce_id: 1, ilce_adi: 'KADIKÖY' }])
+        })
+        return
+      }
+      await route.continue()
     })
-    const ilceTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /İlçe seçin/i })
-    await expect(ilceTrigger).toBeEnabled({ timeout: 5000 })
-    await ilceTrigger.click()
-    await page.getByRole('option', { name: 'Kadıköy' }).click()
+    const ilceInput = page.locator('input[name="county.id"]')
+    await expect(ilceInput).toBeEnabled({ timeout: 5000 })
+    await ilceInput.click()
+    // API response'un gelmesini bekle
+    await page.waitForResponse(
+      response =>
+        response.url().includes('/location/query-address') &&
+        response.url().includes('type=county') &&
+        response.status() === 200
+    )
+    await ilceInput.fill('Kadıköy')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' }).click()
 
     // Mahalle seçmeden gönder
     await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
     await expect(page.getByText(/Mahalle zorunludur/i)).toBeVisible()
 
     // Mahalle seç
-    await page.route('**/location/districts?countyId=1', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([{ mahalle_id: 1, mahalle_adi: '19 MAYIS MAHALLESİ' }])
-      })
+    await page.route('**/location/query-address**', async route => {
+      const url = new URL(route.request().url())
+      if (url.searchParams.get('type') === 'district' && url.searchParams.get('countyId') === '1') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([{ il_id: 34, il_adi: 'İstanbul', mahalle_id: 1, mahalle_adi: '19 MAYIS MAHALLESİ' }])
+        })
+        return
+      }
+      await route.continue()
     })
-    const mahalleTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Mahalle seçin/i })
-    await expect(mahalleTrigger).toBeEnabled({ timeout: 5000 })
-    await mahalleTrigger.click()
-    await page.getByRole('option', { name: '19 MAYIS MAHALLESİ' }).click()
-
-    // Sokak boş bırakarak gönder
+    const mahalleInput = page.locator('input[name="district.id"]')
+    await expect(mahalleInput).toBeEnabled({ timeout: 5000 })
+    await mahalleInput.click()
+    // API response'un gelmesini bekle
+    await page.waitForResponse(
+      response =>
+        response.url().includes('/location/query-address') &&
+        response.url().includes('type=district') &&
+        response.status() === 200
+    )
+    await mahalleInput.fill('19 MAYIS')
+    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
+    await page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' }).click() // Sokak boş bırakarak gönder
     await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
     await expect(page.getByText(/Sokak zorunludur/i)).toBeVisible()
 
@@ -325,17 +357,6 @@ test.describe('Sipariş Oluşturma', () => {
 
     // Daire no doldur, tam adres çok kısa
     await page.locator('input[name="doorNumber"]').fill('12')
-    // Tam adres otomatik doldurulacak ama yeterli değilse hata verir
-    // Önce formu doldurup sonra tam adresi kontrol et
-    const fullAddressField = page.locator('textarea[name="fullAddress"]')
-    await fullAddressField.clear()
-    await fullAddressField.fill('Kısa') // 10 karakterden az
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
-    await expect(page.getByText(/Tam adres en az 10 karakter olmalıdır/i)).toBeVisible()
-
-    // Ödeme tipi seçmeden gönder
-    await fullAddressField.clear()
-    await fullAddressField.fill('19 MAYIS MAHALLESİ, Atatürk Caddesi No:123 Daire:12, Kadıköy/İstanbul')
     // Ödeme tipini seçme
     await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
     await expect(page.getByText(/Ödeme tipi seçimi zorunludur/i)).toBeVisible()

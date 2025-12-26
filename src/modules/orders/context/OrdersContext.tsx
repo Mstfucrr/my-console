@@ -91,7 +91,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   } = useQuery({
     queryKey,
     queryFn: () => ordersService.getOrders({ status: statusFilters, search: filters.search }, pagination),
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    staleTime: 60 * 1000 // 60 saniye
   })
 
   // Active orders - direkt backend'den gelen data
