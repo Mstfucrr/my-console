@@ -1,10 +1,10 @@
 import { OrderStatusesGroups } from '@/types'
 
 // Completed status groups
-const COMPLETED_STATUS_GROUPS = [OrderStatusesGroups.DELIVERED, OrderStatusesGroups.CANCELLED]
+const COMPLETED_ORDER_STATUS_GROUPS = [OrderStatusesGroups.DELIVERED, OrderStatusesGroups.CANCELLED]
 
 // Active status groups
-const ACTIVE_STATUS_GROUPS = [OrderStatusesGroups.CREATED, OrderStatusesGroups.SHIPPED]
+const ACTIVE_ORDER_STATUS_GROUPS = [OrderStatusesGroups.CREATED, OrderStatusesGroups.SHIPPED]
 
 import { OrderChannel } from '@/types'
 
@@ -51,10 +51,10 @@ const CHANNEL_IMAGES: Record<OrderChannel, string> = {
 } as const
 
 export {
-  ACTIVE_STATUS_GROUPS,
+  ACTIVE_ORDER_STATUS_GROUPS,
   CHANNEL_COLORS,
   CHANNEL_IMAGES,
   CHANNEL_LABELS,
-  COMPLETED_STATUS_GROUPS,
+  COMPLETED_ORDER_STATUS_GROUPS,
   PAYMENT_METHOD_COLORS
 }

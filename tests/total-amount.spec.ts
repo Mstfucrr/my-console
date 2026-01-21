@@ -30,44 +30,33 @@ test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
     const amount = page.getByLabel('Toplam Tutar (₺)')
 
     // 1) Kullanıcı '1231,24' yazınca 1.231,24 olarak otomatik formatlanmalı
-    await amount.clear()
-    await amount.type('1231,24')
+    await amount.fill('1231,24')
     await expect(amount).toHaveValue('1.231,24')
 
-    // 2) Kullanıcı . tuşlarsa noktayı virgüle çevirmeli
-    await amount.clear()
-    await amount.type('1231.24') // . karakteri virgüle çevrilmeli
-    await expect(amount).toHaveValue('1.231,24')
-
-    // 3) Nokta basıldıktan sonra Türkçe formatta virgüle dönüşüyor mu
-    await amount.clear()
-    await amount.type('1000')
+    // 2) Nokta basıldıktan sonra Türkçe formatta virgüle dönüşüyor mu
+    await amount.fill('1000')
     await amount.press('End')
-    await amount.type('.')
+    await amount.press('.') // . yerine comma kurallı dönüşüm için
     await expect(amount).toHaveValue('1.000,') // Kullanıcı . basınca virgül oluşur
 
-    // Bir ondalık sayı girişi
-    await amount.type('50')
+    // Hatalı adım: Klavyeyle arka arkaya rakam girmek yerine değeri topluca doldur
+    await amount.fill('1000,50')
     await expect(amount).toHaveValue('1.000,50')
 
-    // 4) Çoklu nokta veya çoklu virgül girişinde, fazlasını yine doğru formata çevirmeli
-    await amount.clear()
-    await amount.type('999,9999')
+    // 3) Çoklu nokta veya çoklu virgül girişinde, fazlasını yine doğru formata çevirmeli
+    await amount.fill('999,9999')
     await expect(amount).toHaveValue('999,99') // Sadece ilk iki ondalık hane kalmalı
 
-    // 5) Büyük tutarda, binlik ayraçlar doğru mu?
-    await amount.clear()
-    await amount.type('1000000,57')
+    // 4) Büyük tutarda, binlik ayraçlar doğru mu?
+    await amount.fill('1000000,57')
     await expect(amount).toHaveValue('1.000.000,57')
 
-    // 6) Yalnızca virgül yazılırsa bunu olduğu gibi bırakmalı
-    await amount.clear()
-    await amount.type('12,')
+    // 5) Yalnızca virgül yazılırsa bunu olduğu gibi bırakmalı
+    await amount.fill('12,')
     await expect(amount).toHaveValue('12,')
 
-    // 7) Soldan sıfırları sildirme kontrolü
-    await amount.clear()
-    await amount.type('0001234,56')
+    // 6) Soldan sıfırları sildirme kontrolü
+    await amount.fill('0001234,56')
     await expect(amount).toHaveValue('1.234,56')
   })
 

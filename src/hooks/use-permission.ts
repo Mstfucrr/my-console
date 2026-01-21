@@ -10,5 +10,10 @@ export const usePermission = () => {
 
   const firstAllowedRoute = useMemo(() => getFirstAllowedRoute(profile), [profile])
 
-  return { checkRoute, firstAllowedRoute }
+  const canCreateOrder = useMemo(
+    () => checkRoute('/orders/create') && profile?.info?.isPartnerEnabled,
+    [checkRoute, profile]
+  )
+
+  return { checkRoute, firstAllowedRoute, canCreateOrder }
 }

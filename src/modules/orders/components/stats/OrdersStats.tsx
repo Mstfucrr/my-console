@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
 import { memo, useCallback, useMemo } from 'react'
-import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../../constants'
+import { ACTIVE_ORDER_STATUS_GROUPS, COMPLETED_ORDER_STATUS_GROUPS } from '../../constants'
 import { useOrders } from '../../context/OrdersContext'
 import { useOrdersStats } from '../../hooks/useOrdersStats'
 
@@ -69,8 +69,8 @@ export const OrdersStats = memo(function OrdersStats() {
       cn('size-full max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center', {
         'opacity-50':
           statId !== 'total' &&
-          ((activeTab === 'completed' && ACTIVE_STATUS_GROUPS.includes(statId as OrderStatusesGroups)) ||
-            (activeTab === 'active' && COMPLETED_STATUS_GROUPS.includes(statId as OrderStatusesGroups))),
+          ((activeTab === 'completed' && ACTIVE_ORDER_STATUS_GROUPS.includes(statId as OrderStatusesGroups)) ||
+            (activeTab === 'active' && COMPLETED_ORDER_STATUS_GROUPS.includes(statId as OrderStatusesGroups))),
         'border-l-4 border-l-red-500': statId === OrderStatusesGroups.CREATED
       }),
     [activeTab]

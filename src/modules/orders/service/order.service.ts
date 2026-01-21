@@ -1,5 +1,6 @@
 import { getOperationDateRange } from '@/constants'
 import { privateAxiosInstance } from '@/lib/axios/instances'
+import { toCents } from '@/lib/money'
 import type {
   CourierTrackResponse,
   Order,
@@ -82,7 +83,7 @@ class OrdersService {
       city: order.city.name,
       county: order.county.name,
       neighborhood: order.district.name,
-      totalAmount: Number(order.totalAmount) * 100,
+      totalAmount: toCents(order.totalAmount),
       street: order.street,
       ringDoorBell: !order.dontRingDoorBell
     }

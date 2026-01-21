@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function OrderDetailSkeleton() {
   return (
-    <div className='space-y-6 p-6 pt-0'>
+    <div className='space-y-6 pt-0'>
       {/* Kurye Bilgileri Skeleton */}
       <div className='bg-muted/50 flex items-center justify-between rounded-lg p-4'>
         <div className='flex items-center gap-3'>
@@ -16,7 +16,7 @@ export function OrderDetailSkeleton() {
       </div>
 
       {/* İki Kolonlu Yapı */}
-      <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         {/* Sipariş Bilgileri Skeleton */}
         <div className='space-y-4 rounded-lg border p-4'>
           <div className='flex items-center gap-2'>

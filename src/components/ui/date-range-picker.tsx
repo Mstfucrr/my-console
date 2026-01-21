@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils'
 import { isSameDateRange } from '@/lib/utils/date'
 import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
-interface DateRangePickerProps {
+export interface DateRangePickerProps {
   dateRange: DateRange | undefined
   defaultDateRange?: DateRange
   defaultText?: string
@@ -28,6 +28,7 @@ interface DateRangePickerProps {
   quickClearable?: boolean
   quickClearableButtonProps?: ButtonProps
   quickApplyable?: boolean
+  customDisplayText?: string
 }
 
 function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
@@ -51,6 +52,7 @@ export function DateRangePicker({
   quickClearable = false,
   quickApplyable = false,
   quickClearableButtonProps,
+  customDisplayText,
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
@@ -133,6 +135,8 @@ export function DateRangePicker({
   }
 
   const displayText = useMemo(() => {
+    if (customDisplayText) return customDisplayText
+
     if (isDefaultDateRange) return defaultText ?? placeholder
 
     if (dateRange?.from) {
@@ -140,7 +144,7 @@ export function DateRangePicker({
       return formatDisplayDate(dateRange.from)
     }
     return placeholder
-  }, [dateRange, defaultText, formatDisplayDate, isDefaultDateRange, placeholder])
+  }, [customDisplayText, dateRange, defaultText, formatDisplayDate, isDefaultDateRange, placeholder])
 
   return (
     <div className={cn('grid gap-2', className)}>

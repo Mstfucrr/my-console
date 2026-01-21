@@ -3,21 +3,28 @@
 import { ButtonProps } from '@/components/ui/button'
 import { ConfirmButton } from '@/components/ui/confirm-button'
 import { useAuth } from '@/context/AuthContext'
-import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { LogOut } from 'lucide-react'
 
-export function LogoutButton({ className, iconClassName, ...props }: ButtonProps & { iconClassName?: string }) {
+export function LogoutButton({
+  className,
+  showLabel = false,
+  iconClassName,
+  ...props
+}: ButtonProps & { iconClassName?: string; showLabel?: boolean }) {
   const { logout } = useAuth()
 
-  const isSmallerThanTablet = useIsSmallerThanTablet()
+  const getButtonSize = () => {
+    if (showLabel) return 'xs'
+    return 'icon-sm'
+  }
 
   return (
     <ConfirmButton
       type='button'
-      size={isSmallerThanTablet ? 'icon-sm' : 'icon-sm'}
       onConfirm={logout}
       color='destructive'
+      size={getButtonSize()}
       variant='outline'
       confirmationMessage='Çıkış yapmak istediğinize emin misiniz?'
       confirmButtonMessage='Çıkış Yap'
@@ -27,7 +34,7 @@ export function LogoutButton({ className, iconClassName, ...props }: ButtonProps
       {...props}
     >
       <LogOut className={cn('size-4', iconClassName)} />
-      <span className='sr-only ml-2'>Çıkış Yap</span>
+      <span className={cn('ml-2', !showLabel && 'sr-only')}>Çıkış Yap</span>
     </ConfirmButton>
   )
 }

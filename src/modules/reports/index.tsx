@@ -28,7 +28,7 @@ export default function ReportsView() {
   })
 
   const handleReportsPageSizeChange = (size: number) => {
-    setReportsPagination({ ...reportsPagination, limit: size })
+    setReportsPagination({ page: 1, limit: size })
   }
 
   const handleReportsPageChange = (page: number) => {
@@ -74,7 +74,7 @@ export default function ReportsView() {
     )
 
   return (
-    <div className='flex flex-col gap-4 py-6 max-sm:p-0'>
+    <div className='flex flex-col gap-4 pb-6 max-sm:p-0'>
       <ReportsTable
         data={reportsData?.data || []}
         isLoading={isReportsLoading || isReportsFetching}

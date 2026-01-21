@@ -7,12 +7,11 @@ import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { FormSwitchField } from '@/components/form/FormSwitchField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
-import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { ONLY_LETTERS_REGEX } from '@/lib/regex'
-import { BookOpenIcon, Loader2, MapPinIcon, ShoppingCartIcon, UserIcon } from 'lucide-react'
+import { BookOpenIcon, Loader2, MapPinIcon, UserIcon } from 'lucide-react'
 import { useCreateOrder } from './hooks/useCreateOrder'
 
 export function CreateOrderView() {
@@ -40,13 +39,11 @@ export function CreateOrderView() {
   } = useCreateOrder()
 
   return (
-    <div className='flex flex-col gap-6 pt-6 max-sm:p-0'>
-      <PageHeader title='Yeni Sipariş Oluştur' icon={ShoppingCartIcon} />
-
+    <div className='flex flex-col gap-4 max-sm:p-0'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
           {/* Müşteri ve Sipariş Bilgileri - Yan Yana */}
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+          <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
             {/* Müşteri Bilgileri */}
             <Card>
               <CardHeader>
@@ -116,31 +113,7 @@ export function CreateOrderView() {
                   <BookOpenIcon className='size-4.5' /> Sipariş Bilgileri
                 </CardTitle>
               </CardHeader>
-              <CardContent className='grid grid-cols-2 gap-x-4 gap-y-2'>
-                <FormInputField
-                  name='preparationTime'
-                  disabled
-                  readOnly
-                  control={form.control}
-                  label='Hazırlık Süresi (dk)'
-                  type='text'
-                  placeholder='30'
-                  inputMode='numeric'
-                  pattern='[0-9]*'
-                  regexPattern={/^[0-9]{0,3}$/}
-                  tabIndex={5}
-                />
-                <FormCurrencyInputField
-                  name='totalAmount'
-                  required
-                  control={form.control}
-                  label='Toplam Tutar (₺)'
-                  // inputMode='decimal'
-                  pattern='[0-9,]*'
-                  placeholder='1.234,56'
-                  tabIndex={6}
-                  regexPattern={/^(\d{1,3}(\.\d{3})*|\d+)(,\d{0,2})?$/}
-                />
+              <CardContent className='grid gap-x-4 gap-y-2 sm:grid-cols-2'>
                 {isLoadingPaymentMethods ? (
                   <div className='flex items-center justify-center'>
                     <Loader2 className='size-4 animate-spin' />
@@ -155,18 +128,34 @@ export function CreateOrderView() {
                     required
                     groupedOptions={paymentMethodOptionsGrouped}
                     disabled={isLoadingPaymentMethods}
-                    tabIndex={7}
+                    tabIndex={6}
                   />
                 ) : null}
-                <div className='max-xs:flex-col flex gap-x-4 gap-y-2 self-center justify-self-center text-nowrap max-sm:col-span-2 sm:flex-col'>
-                  <FormSwitchField
-                    name='contactlessDelivery'
-                    control={form.control}
-                    label='Temassız teslimat'
-                    tabIndex={8}
-                  />
-                  <FormSwitchField name='dontRingDoorBell' control={form.control} label='Zili çalma' tabIndex={9} />
-                </div>
+                <FormCurrencyInputField
+                  name='totalAmount'
+                  required
+                  control={form.control}
+                  label='Toplam Tutar (₺)'
+                  formItemClassName='max-sm:col-span-2'
+                  pattern='[0-9,]*'
+                  placeholder='1.234,56'
+                  tabIndex={7}
+                  regexPattern={/^(\d{1,3}(\.\d{3})*|\d+)(,\d{0,2})?$/}
+                />
+                <FormSwitchField
+                  formItemClassName='max-sm:mt-5 lg:mt-5'
+                  name='contactlessDelivery'
+                  control={form.control}
+                  label='Temassız teslimat'
+                  tabIndex={8}
+                />
+                <FormSwitchField
+                  formItemClassName='max-sm:mt-5 lg:mt-5'
+                  name='dontRingDoorBell'
+                  control={form.control}
+                  label='Zili çalma'
+                  tabIndex={9}
+                />
               </CardContent>
             </Card>
           </div>
@@ -179,7 +168,7 @@ export function CreateOrderView() {
               </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <div className='relative grid grid-cols-2 gap-x-4 gap-y-2 lg:grid-cols-3 xl:grid-cols-5'>
+              <div className='relative grid grid-cols-2 gap-x-4 gap-y-2 lg:grid-cols-3 xl:grid-cols-4'>
                 <FormCommandSelectField
                   name='city.id'
                   required
@@ -239,7 +228,7 @@ export function CreateOrderView() {
                   control={form.control}
                   formItemClassName='max-sm:col-span-2'
                   label='Bina Adı'
-                  placeholder='Plaza Adı'
+                  placeholder='Yıldız Apartmanı'
                   tabIndex={14}
                 />
                 <FormInputField
@@ -270,16 +259,6 @@ export function CreateOrderView() {
                   placeholder='12'
                   tabIndex={17}
                   regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
-                />
-                <FormInputField
-                  name='postalCode'
-                  control={form.control}
-                  label='Posta Kodu'
-                  type='number'
-                  inputMode='numeric'
-                  regexPattern={/^[0-9]{0,5}$/}
-                  placeholder='34710'
-                  tabIndex={18}
                 />
               </div>
 

@@ -21,6 +21,8 @@ export interface Order {
   courierInfo?: CourierInfo
   paymentType: string
   channel: OrderChannel
+  customerNote?: string
+  addressDirection?: string
 }
 
 export type OrderChannel =
@@ -67,6 +69,45 @@ export enum OrderStatusesGroups {
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled'
 }
+
+export enum OrderOriginalStatus {
+  CREATED = 'order-created',
+  ACCEPTED = 'order-accepted',
+  ASSIGNED = 'order-assigned',
+  SHIPPED = 'order-shipped',
+  DELIVERED = 'order-delivered',
+  CANCELLED = 'order-canceled'
+}
+
+// Order Status WebSocket Data Types (Backend DTO'larına göre)
+// Base types to avoid repetition
+interface BaseOrderDataWithCreatedAt {
+  createdAt: string
+}
+
+export interface BaseOrderDataWithRider {
+  riderName: string
+  createdAt: string
+}
+
+// Specific types (names preserved for backward compatibility)
+export type OrderCreatedData = BaseOrderDataWithCreatedAt
+export type OrderAcceptedData = BaseOrderDataWithCreatedAt
+export type OrderAssignedData = BaseOrderDataWithRider
+export type OrderShippedData = BaseOrderDataWithRider
+export type OrderDeliveredData = BaseOrderDataWithRider
+export type OrderCanceledData = BaseOrderDataWithCreatedAt & {
+  reason: string
+}
+
+// Union type for OrderStatusUpdate data field
+export type OrderStatusUpdateData =
+  | OrderCreatedData
+  | OrderAcceptedData
+  | OrderAssignedData
+  | OrderShippedData
+  | OrderDeliveredData
+  | OrderCanceledData
 
 export type PaymentMethodType = 'online' | 'offline'
 

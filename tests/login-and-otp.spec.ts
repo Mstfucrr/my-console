@@ -25,12 +25,12 @@ test('OTP olmadan giriş akışı', async ({ page }) => {
 
   // Login formunun göründüğünü kontrol et
   await expect(page.getByPlaceholder('Hesap ID giriniz')).toBeVisible()
-  await expect(page.getByPlaceholder('E-posta veya kullanıcı adı giriniz')).toBeVisible()
+  await expect(page.getByPlaceholder('E-posta giriniz')).toBeVisible()
   await expect(page.getByPlaceholder('Şifrenizi giriniz')).toBeVisible()
 
   // Login form alanlarını doldur
   await page.getByPlaceholder('Hesap ID giriniz').fill(TEST_ACCOUNT_ID)
-  await page.getByPlaceholder('E-posta veya kullanıcı adı giriniz').fill(TEST_IDENTIFIER)
+  await page.getByPlaceholder('E-posta giriniz').fill(TEST_IDENTIFIER)
   await page.getByPlaceholder('Şifrenizi giriniz').fill(TEST_PASSWORD)
 
   // Giriş Yap butonuna bas

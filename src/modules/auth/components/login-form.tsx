@@ -12,7 +12,7 @@ import { AuthTurnstile } from './turnstile'
 
 const schema = z.object({
   accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
-  identifier: z.string().min(1, { message: 'E-posta veya kullanıcı adı zorunludur.' }),
+  identifier: z.string().min(1, { message: 'E-posta zorunludur.' }),
   password: z.string().min(1, { message: 'Şifre zorunludur.' })
 })
 
@@ -68,7 +68,7 @@ export function LoginForm() {
             size='lg'
             disabled={loadingState.login}
             Icon={Mail}
-            placeholder='E-posta veya kullanıcı adı giriniz'
+            placeholder='E-posta giriniz'
             regexPattern={/^[^\s]+$/}
           />
           <FormInputField

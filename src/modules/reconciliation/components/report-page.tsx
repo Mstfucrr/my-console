@@ -60,7 +60,8 @@ export function ReportPage({ onSubmit, isSubmitting }: ReportPageProps) {
               maxSize={10 * 1024 * 1024}
             />
             <FormDescription className='text-muted-foreground text-xs'>
-              Dosya boyutu 10MB&apos;den büyük olamaz.
+              Dosya boyutu 10MB&apos;den büyük olamaz. Sadece .jpeg, .doc, .docx, .xls, .xlsx, .pdf, .jpg, .png dosya
+              türleri yükleyebilirsiniz.
             </FormDescription>
           </div>
         </div>

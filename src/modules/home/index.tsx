@@ -19,7 +19,6 @@ import { formatDateTimeTR } from '@/lib/utils/date'
 import type { OrderStatusStats } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { OrderStatusBadge } from '../orders/components/Badges'
-import { RestaurantHeader } from './components/RestaurantHeader'
 import { useGetLatestOrders, useGetStats } from './hooks/useDashboard'
 
 type StatsList = {
@@ -124,8 +123,7 @@ export default function DashboardView() {
   }
 
   return (
-    <div className='flex flex-col gap-6 py-6 max-sm:pt-0 max-sm:pb-6'>
-      <RestaurantHeader />
+    <div className='flex flex-col gap-4 pb-6 max-sm:p-0'>
       {/* Stats */}
       <div className='grid grid-cols-2 gap-4 transition-all duration-300 sm:grid-cols-3 lg:grid-cols-5'>
         {statsList.map(stat => (

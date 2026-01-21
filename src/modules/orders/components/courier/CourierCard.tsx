@@ -27,7 +27,7 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap, isShippe
         <div className='flex items-center gap-3'>
           {/* Avatar / Baş harf */}
           <div className='bg-muted text-muted-foreground grid size-10 place-items-center rounded-full text-sm font-semibold'>
-            <Motorcycle className='opacity-70' />
+            <Motorcycle className='size-7 opacity-70' />
           </div>
 
           {/* İsim + pill'ler */}

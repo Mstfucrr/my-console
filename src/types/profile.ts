@@ -30,6 +30,7 @@ export interface IProfileInfo {
   workingHours: IProfileWorkingHour[]
   isActiveForPackageService: boolean
   isOpenForPackageService: boolean
+  isPartnerEnabled: boolean
   updatedAt: number
 }
 

@@ -6,9 +6,9 @@ import Link from 'next/link'
 
 export function CreateOrderButton() {
   const isMobile = useIsMobile()
-  const { checkRoute } = usePermission()
+  const { canCreateOrder } = usePermission()
 
-  if (!checkRoute('/orders/create')) return null
+  if (!canCreateOrder) return null
 
   return (
     <Link href='/orders/create'>
