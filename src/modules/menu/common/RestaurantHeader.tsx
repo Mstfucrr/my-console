@@ -6,7 +6,7 @@ import { Store } from 'lucide-react'
 export function RestaurantHeader() {
   const { profile, isLoading: isProfileLoading } = useProfile()
 
-  if (isProfileLoading) return <Skeleton className='-my-1 h-12 w-full self-center' />
+  if (isProfileLoading) return <Skeleton className='-my-1 h-6 w-full self-center' />
 
   if (!profile?.info.name) return null
 

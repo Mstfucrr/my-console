@@ -148,7 +148,7 @@ export function FormCommandSelectField<T extends FieldValues>({
       if (!containerRef.current?.contains(e.relatedTarget as Node)) {
         setIsOpen(false)
 
-        if (allowCustomValue && searchValue.trim()) {
+        if (allowCustomValue && searchValue.trim() && value) {
           const matchingOption = options.find(
             opt =>
               opt.label.toLowerCase() === searchValue.trim().toLowerCase() ||
@@ -193,6 +193,7 @@ export function FormCommandSelectField<T extends FieldValues>({
   }
 
   const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     onChange('')
     onValueChange?.('')
@@ -244,6 +245,7 @@ export function FormCommandSelectField<T extends FieldValues>({
               onKeyDown={handleInputKeyDown}
               disabled={disabled}
               tabIndex={tabIndex}
+              autoComplete='off'
               className={cn(
                 'h-9',
                 selectedOption || (allowCustomValue && value) ? 'pr-20' : 'pr-10',
@@ -257,6 +259,10 @@ export function FormCommandSelectField<T extends FieldValues>({
                 <button
                   type='button'
                   onClick={handleClear}
+                  onMouseDown={e => {
+                    e.preventDefault()
+                    handleClear(e)
+                  }}
                   className='hover:bg-accent pointer-events-auto rounded-sm p-0.5 transition-colors'
                   tabIndex={-1}
                 >
@@ -265,6 +271,10 @@ export function FormCommandSelectField<T extends FieldValues>({
               )}
               <div className='pointer-events-none'>
                 <ChevronDown
+                  onMouseDown={e => {
+                    e.preventDefault()
+                    handleInputFocus()
+                  }}
                   className={cn('text-muted-foreground size-4 transition-transform', isOpen && 'rotate-180')}
                 />
               </div>
@@ -289,7 +299,11 @@ export function FormCommandSelectField<T extends FieldValues>({
                       {allowCustomValue && filteredOptions.length === 0 && searchValue.trim() !== '' && (
                         <CommandItem
                           key='custom'
-                          onSelect={() => handleSelect(searchValue)}
+                          onSelect={() => handleSelect(searchValue.trim())}
+                          onMouseDown={e => {
+                            e.preventDefault()
+                            handleSelect(searchValue.trim())
+                          }}
                           value={searchValue}
                           data-value={searchValue}
                           className='cursor-pointer'
@@ -302,10 +316,13 @@ export function FormCommandSelectField<T extends FieldValues>({
                         <CommandItem
                           key={option.value}
                           value={option.label}
-                          onSelect={handleSelect}
+                          onSelect={() => handleSelect(option.value)}
+                          onMouseDown={e => {
+                            e.preventDefault()
+                            handleSelect(option.value)
+                          }}
                           disabled={option.disabled}
                           data-value={option.value}
-                          className='cursor-pointer'
                         >
                           <Check className={cn('mr-2 h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')} />
                           {option.label}

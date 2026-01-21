@@ -3,7 +3,7 @@
 import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
 import { keepPreviousData, QueryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
+import { ACTIVE_ORDER_STATUS_GROUPS, COMPLETED_ORDER_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service/order.service'
 import { OrderFilterProperties } from '../types'
 
@@ -23,6 +23,7 @@ export interface OrdersContextType {
   refreshAllData: () => void
   pagination: PaginationOptions
   setPagination: (pagination: PaginationOptions) => void
+  onPageSizeChange: (size: number) => void
 }
 
 export const defaultOrderFilters: OrderFilterProperties = {
@@ -32,7 +33,7 @@ export const defaultOrderFilters: OrderFilterProperties = {
 
 export const defaultPagination: PaginationOptions = {
   page: 1,
-  limit: 40
+  limit: 20
 }
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
@@ -55,8 +56,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       // Auto-switch tab based on status
       if (newFilters.status !== 'all') {
         const statusValue = Array.isArray(newFilters.status) ? newFilters.status[0] : newFilters.status
-        const isActiveStatus = ACTIVE_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
-        const isCompletedStatus = COMPLETED_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
+        const isActiveStatus = ACTIVE_ORDER_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
+        const isCompletedStatus = COMPLETED_ORDER_STATUS_GROUPS.includes(statusValue as OrderStatusesGroups)
         if (isActiveStatus && !isCompletedStatus) {
           setActiveTab('active')
         } else if (isCompletedStatus && !isActiveStatus) {
@@ -68,6 +69,10 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     [pagination.page]
   )
 
+  const handlePageSizeChange = useCallback((size: number) => {
+    setPagination({ page: 1, limit: size })
+  }, [])
+
   const clearFilters = useCallback(() => {
     setFilters(defaultOrderFilters)
   }, [])
@@ -75,7 +80,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const statusFilters = useMemo(() => {
     if (filters.status !== 'all') return filters.status
 
-    return activeTab === 'active' ? ACTIVE_STATUS_GROUPS : COMPLETED_STATUS_GROUPS
+    return activeTab === 'active' ? ACTIVE_ORDER_STATUS_GROUPS : COMPLETED_ORDER_STATUS_GROUPS
   }, [filters, activeTab])
 
   const queryKey: QueryOptions['queryKey'] = useMemo(() => {
@@ -97,13 +102,13 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
 
   // Active orders - direkt backend'den gelen data
   const activeOrders = useMemo(
-    () => ordersData?.data.filter(order => ACTIVE_STATUS_GROUPS.includes(order.status)) || [],
+    () => ordersData?.data?.filter(order => ACTIVE_ORDER_STATUS_GROUPS.includes(order.status)) || [],
     [ordersData]
   )
 
   // Completed orders - direkt backend'den gelen data
   const completedOrders = useMemo(
-    () => ordersData?.data.filter(order => COMPLETED_STATUS_GROUPS.includes(order.status)) || [],
+    () => ordersData?.data?.filter(order => COMPLETED_ORDER_STATUS_GROUPS.includes(order.status)) || [],
     [ordersData]
   )
 
@@ -127,7 +132,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       setActiveTab: handleSetActiveTab,
       refreshAllData,
       pagination,
-      setPagination
+      setPagination,
+      onPageSizeChange: handlePageSizeChange
     }),
     [
       activeTab,
@@ -143,7 +149,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       handleSetActiveTab,
       refreshAllData,
       pagination,
-      setPagination
+      setPagination,
+      handlePageSizeChange
     ]
   )
 

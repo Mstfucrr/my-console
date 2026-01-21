@@ -48,7 +48,10 @@ export function OrdersList({
       />
     )
 
-  if (viewMode === 'map') return <MapView />
+  if (viewMode === 'map') {
+    if (isLoading) return <MapLoading className='h-full' skeletonClassName='min-h-[400px] w-full' />
+    return <MapView />
+  }
 
   if (isLoading || isFetching)
     return (

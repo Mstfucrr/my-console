@@ -25,13 +25,6 @@ export const createOrderSchema = z.object({
     .refine(value => PHONE_REGEX.test(value), { message: 'Telefon numarası 0 ile başlamamalıdır' }),
   extensionPhone: z.string().max(10, 'Dahili telefon numarası en fazla 10 haneli olabilir').optional(),
 
-  // Sipariş Bilgileri
-  preparationTime: z
-    .string()
-    .transform(v => Number(v))
-    .default('7')
-    .refine(value => value >= 1, { message: 'Hazırlık süresi en az 1 dakika olmalıdır' })
-    .refine(value => value <= 120, { message: 'Hazırlık süresi en fazla 120 dakika olabilir' }),
   totalAmount: z
     .string()
     .min(1, 'Toplam tutar zorunludur')
@@ -56,7 +49,6 @@ export const createOrderSchema = z.object({
   floor: z.string().optional(),
   buildingName: z.string().optional(),
   doorNumber: z.string().min(1, 'Kapı numarası zorunludur').default(''),
-  postalCode: z.string().optional(),
   fullAddress: z.string().default(''),
   addressDirection: z.string().optional(),
 
@@ -72,8 +64,6 @@ export const defaultCreateOrderValues: CreateOrderFormData = {
   customerPhone: '',
   extensionPhone: '',
   // @ts-expect-error - zod defaultValues için
-  preparationTime: '7',
-  // @ts-expect-error - zod defaultValues için
   totalAmount: '',
   city: { id: '', name: '' },
   county: { id: '', name: '' },
@@ -83,7 +73,6 @@ export const defaultCreateOrderValues: CreateOrderFormData = {
   floor: '',
   buildingName: '',
   doorNumber: '',
-  postalCode: '',
   fullAddress: '',
   addressDirection: '',
   paymentTypeSId: '',

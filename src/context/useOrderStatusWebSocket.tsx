@@ -1,20 +1,54 @@
 'use client'
 
 import { OrderStatusGroup } from '@/constants'
-import { LatestOrder, Order, OrderStatusesGroups, OrderStatusStats } from '@/types'
+import {
+  BaseOrderDataWithRider,
+  LatestOrder,
+  Order,
+  OrderOriginalStatus,
+  OrderStatusesGroups,
+  OrderStatusStats,
+  OrderStatusUpdateData
+} from '@/types'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import { usePathname } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { toast } from 'react-toastify'
-import { JsonObject } from '../hooks/websocket/useWebSocket'
 import { createWebSocketNamespace, type WebSocketContextValue } from './WebsocketContext'
 
 interface OrderStatusUpdate {
   orderId: string
   status: OrderStatusesGroups
-  originalStatus?: OrderStatusesGroups
+  originalStatus?: OrderOriginalStatus
   timestamp: string
-  data?: JsonObject
+  data?: OrderStatusUpdateData
+}
+
+type ToastContext = {
+  orderId: string
+  newStatus: OrderStatusesGroups
+  originalStatus?: OrderOriginalStatus
+  customerName?: string
+}
+
+function buildOrderToastMessage({ orderId, newStatus, originalStatus, customerName }: ToastContext) {
+  // 1) Created her zaman en üst öncelik
+  if (newStatus === OrderStatusesGroups.CREATED) {
+    return 'Yeni sipariş eklendi'
+  }
+
+  // 2) Müşteri adı yoksa fallback
+  const name = customerName ?? `#${orderId.slice(-6)}`
+  const statusLabel = OrderStatusGroup[newStatus]?.label ?? newStatus
+
+  // 3) Özel durumlar
+  const specialMessages: Partial<Record<OrderOriginalStatus, string>> = {
+    [OrderOriginalStatus.ASSIGNED]: `${name} siparişi için kurye ataması yapıldı`
+  }
+
+  if (originalStatus && specialMessages[originalStatus]) return specialMessages[originalStatus]!
+
+  // 4) Default
+  return `${name} siparişi ${statusLabel} olarak güncellendi`
 }
 
 // Order WebSocket event map’i
@@ -81,34 +115,23 @@ function updateStatsCount(
 // Bu Provider gerçek domain mantığını içeriyor (query güncelleme vs.)
 export function OrderStatusWebSocketProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
-  const pathname = usePathname()
-  const isOrdersPage = useMemo(() => pathname?.startsWith('/orders'), [pathname])
 
   const handleOrderStatusUpdate = useCallback(
     (update: OrderStatusUpdate) => {
-      const { orderId, status: newStatus, data } = update
+      const { orderId, status: newStatus, data, originalStatus } = update
       let previousStatus: OrderStatusesGroups | undefined
 
-      // 1) Önce toast mesajını hazırlayalım (cache olup olmamasından bağımsız)
-      if (!isOrdersPage) {
-        if (newStatus === OrderStatusesGroups.CREATED) {
-          // Yeni sipariş - isim olmasa da generic mesaj
-          toast.info('Yeni sipariş eklendi', {
-            position: 'top-right',
-            autoClose: 3000
-          })
-        } else {
-          const orderForToast = findOrderForToast(queryClient, orderId)
-          console.log('orderForToast', orderForToast)
-          const customerName = orderForToast?.customerName ?? `#${orderId.slice(-6)}`
-          const statusLabel = OrderStatusGroup[newStatus]?.label ?? newStatus
+      const orderForToast =
+        newStatus === OrderStatusesGroups.CREATED ? undefined : findOrderForToast(queryClient, orderId)
 
-          toast.info(`${customerName} siparişi ${statusLabel} olarak güncellendi`, {
-            position: 'top-right',
-            autoClose: 3000
-          })
-        }
-      }
+      const message = buildOrderToastMessage({
+        orderId,
+        newStatus,
+        originalStatus,
+        customerName: orderForToast?.customerName
+      })
+
+      toast.info(message, { position: 'top-right', autoClose: 3000 })
 
       // 2) Orders cache’ini güncelle
       queryClient.setQueriesData({ queryKey: ['orders'] }, old => {
@@ -125,7 +148,12 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
         const updatedData = typed.data.map(order => {
           if (order.orderId === orderId) {
             previousStatus = order.status
-            return { ...order, status: newStatus, courierInfo: data }
+            return {
+              ...order,
+              status: newStatus,
+              courierInfo:
+                data && 'riderName' in data ? { name: (data as BaseOrderDataWithRider).riderName } : order.courierInfo
+            }
           }
           return order
         })
@@ -168,7 +196,7 @@ export function OrderStatusWebSocketProvider({ children }: { children: React.Rea
         return updateStatsCount(typed, previousStatus, newStatus)
       })
     },
-    [queryClient, isOrdersPage]
+    [queryClient]
   )
 
   const eventHandlers = useMemo(

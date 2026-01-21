@@ -6,8 +6,8 @@ import { OrderStatusWebSocketProvider } from '@/context/useOrderStatusWebSocket'
 import { useMounted } from '@/hooks/use-mounted'
 import { usePermission } from '@/hooks/use-permission'
 import { TopbarAndMobileMenu } from '@/modules/menu'
+import { RestaurantHeader } from '@/modules/menu/common/RestaurantHeader'
 import { motion } from 'framer-motion'
-// import 'leaflet/dist/leaflet.css'
 import { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
@@ -25,11 +25,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <ProfileGuard>
             <WebSocketProvider>
               <TopbarAndMobileMenu />
-              <div className='pt-12 pb-24 transition-all duration-150 lg:pt-16 lg:pb-16'>
+              <div className='pt-4 pb-24 transition-all duration-150 lg:pt-20 lg:pb-16'>
                 <div className='flex flex-col gap-4 pb-0'>
                   <LayoutWrapper>
                     <NuqsAdapter>
-                      <div className='container mx-auto'>{children}</div>
+                      <div className='container mx-auto flex flex-col gap-4'>
+                        <RestaurantHeader />
+                        {children}
+                      </div>
                     </NuqsAdapter>
                   </LayoutWrapper>
                 </div>

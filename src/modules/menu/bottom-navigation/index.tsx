@@ -20,10 +20,9 @@ export function BottomNavigation() {
 
   const handleToggleMenu = () => setIsOpen(prev => !prev)
 
-  const { checkRoute } = usePermission()
+  const { checkRoute, canCreateOrder } = usePermission()
 
   const visibleMenus = menusConfig.filter(item => checkRoute(item.href))
-  const canCreateOrder = checkRoute('/orders/create')
 
   if (visibleMenus.length < 2 && !canCreateOrder) return null
 
@@ -32,19 +31,19 @@ export function BottomNavigation() {
       {isOpen && <div className='bg-default-950/20 fixed inset-0 z-40 backdrop-blur-sm' onClick={handleToggleMenu} />}
 
       <nav className='border-border bg-muted/40 ring-accent fixed bottom-1 left-1/2 z-50 mb-1 w-[95%] max-w-max -translate-x-1/2 rounded-3xl border-t py-0.5 pr-0.5 pl-1 ring-2 backdrop-blur-2xl'>
-        {/* iOS home indicator için padding */}
-        <div className=''>
+        <div>
           <div className='xs:gap-x-3 relative flex items-center justify-between gap-x-2'>
             {/* Sol taraf - İlk 2 item */}
             {visibleMenus.slice(0, 2).length > 0 && (
               <div className='xs:gap-x-3 flex flex-1 items-center justify-around gap-x-2'>
                 {visibleMenus.slice(0, 2).map(item => (
                   <BottomNavigationItem
-                    key={item.title}
+                    key={item.href}
                     href={item.href}
                     label={item.title}
                     icon={item.Icon}
                     isActive={isLocationMatch(item.href, pathname)}
+                    onClick={() => setIsOpen(false)}
                   />
                 ))}
               </div>
@@ -63,6 +62,7 @@ export function BottomNavigation() {
                     'ring-background -mt-6 ring-4'
                   )}
                   aria-label='Yeni Sipariş Oluştur'
+                  onClick={() => setIsOpen(false)}
                 >
                   <Plus className='size-7' strokeWidth={2.5} />
                 </Link>
@@ -76,14 +76,15 @@ export function BottomNavigation() {
             <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
               {visibleMenus.slice(2, 3).map(item => (
                 <BottomNavigationItem
-                  key={item.title}
+                  key={item.href}
                   href={item.href}
                   label={item.title}
                   icon={item.Icon}
                   isActive={isLocationMatch(item.href, pathname)}
+                  onClick={() => setIsOpen(false)}
                 />
               ))}
-              <AnimatePresence mode='wait'>{isOpen && <BottomMenu />}</AnimatePresence>
+              <AnimatePresence mode='wait'>{isOpen && <BottomMenu onClick={handleToggleMenu} />}</AnimatePresence>
               <div className='flex items-center justify-center'>
                 <Button
                   color={isOpen ? 'light' : 'secondary'}

@@ -43,7 +43,7 @@ test.describe('Sipariş Oluşturma', () => {
       // Login sayfasına git ve giriş yap
       await page.goto('/login')
       await page.getByPlaceholder('Hesap ID giriniz').fill(TEST_ACCOUNT_ID)
-      await page.getByPlaceholder('E-posta veya kullanıcı adı giriniz').fill(TEST_IDENTIFIER)
+      await page.getByPlaceholder('E-posta giriniz').fill(TEST_IDENTIFIER)
       await page.getByPlaceholder('Şifrenizi giriniz').fill(TEST_PASSWORD)
       await page.getByRole('button', { name: /Giriş Yap/i }).click()
 
@@ -128,22 +128,26 @@ test.describe('Sipariş Oluşturma', () => {
     // Sipariş oluştur sayfasına git
     await page.goto('/orders/create')
 
-    // Sayfa başlığının göründüğünü kontrol et
-    await expect(page.locator('h3').getByText(/Yeni Sipariş Oluştur/i)).toBeVisible()
-
     // Müşteri Bilgileri bölümünü doldur
     await page.locator('input[name="firstName"]').fill('Ahmet')
     await page.locator('input[name="lastName"]').fill('Yılmaz')
     await page.locator('input[name="customerPhone"]').fill('5551234567')
     await page.locator('input[name="extensionPhone"]').fill('1234')
 
-    // Sipariş Bilgileri bölümünü doldur
-    await page.locator('input[name="totalAmount"]').fill('150,50')
+    // Sipariş Bilgileri bölümünü kontrol et
+    // Hazırlık süresi alanının görünmediğini kontrol et
+    await expect(page.locator('input[name="preparationTime"], label:has-text("Hazırlık Süresi")')).not.toBeVisible()
 
-    // Ödeme tipi seç
+    // Ödeme tipi seçimi ilk sırada olmalı (tabIndex 6)
     const odemeTipiTrigger = page.locator('button, [role="combobox"]').filter({ hasText: /Ödeme tipi seçiniz/i })
+    await expect(odemeTipiTrigger).toBeVisible()
     await odemeTipiTrigger.click()
     await page.getByRole('option', { name: 'Nakit' }).click()
+
+    // Toplam tutar ikinci sırada olmalı (tabIndex 7)
+    const totalAmountInput = page.locator('input[name="totalAmount"]')
+    await expect(totalAmountInput).toBeVisible()
+    await totalAmountInput.fill('594,80')
 
     // Temassız teslimat switch'ini aç
     await page.locator('[id="contactlessDelivery"]').click()
@@ -192,7 +196,6 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="buildingNumber"]').fill('123')
     await page.locator('input[name="floor"]').fill('3')
     await page.locator('input[name="doorNumber"]').fill('12')
-    await page.locator('input[name="postalCode"]').fill('34710')
 
     // Adres tarifi ekle
     await page.locator('textarea[name="addressDirection"]').fill('Apartman kapısı mavi renkte')

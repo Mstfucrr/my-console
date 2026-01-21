@@ -1,9 +1,9 @@
 'use client'
 
 import { Motorcycle } from '@/components/svg'
-import { TooltippedElement } from '@/components/tooltipped-element'
 import { Card, CardContent } from '@/components/ui/card'
 import { MaskedText } from '@/components/ui/masked-text'
+import { OrderStatusGroup } from '@/constants'
 import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
 import { formatDateTimeTR } from '@/lib/utils/date'
@@ -29,8 +29,8 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
       className={cn('cursor-pointer transition-all hover:shadow-md', isCreated && 'border-l-4 border-l-red-500')}
       onClick={() => onViewDetails(order)}
     >
-      <CardContent className='p-4 max-lg:p-2.5'>
-        <div className='flex flex-col items-start justify-between gap-3'>
+      <CardContent className='h-full p-4 max-lg:p-2.5'>
+        <div className='flex h-full flex-col items-start justify-between gap-3'>
           <div className='flex w-full items-center justify-between gap-8'>
             <div className='flex items-center gap-2'>
               <ChannelBadge channel={order.channel} />
@@ -41,11 +41,6 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
                 textClassName='text-sm font-semibold max-lg:text-xs'
                 className='flex flex-row-reverse justify-end'
               />
-              {order.courierInfo && (
-                <TooltippedElement tooltipContent={order.courierInfo.name}>
-                  <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-                </TooltippedElement>
-              )}
             </div>
 
             <div className='text-primary-700 text-lg font-bold text-nowrap max-lg:text-base'>
@@ -53,9 +48,20 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
             </div>
           </div>
 
-          <div className='flex w-full flex-wrap items-center justify-between gap-2 text-xs max-lg:items-start'>
+          <div className='flex w-full flex-wrap items-center justify-between gap-2 text-xs'>
             <span>{formatDateTimeTR(order.createdAt)}</span>
-            <div className='flex flex-nowrap items-center justify-end gap-2 max-lg:w-full max-lg:justify-between'>
+            {order.courierInfo && (
+              <div className='flex items-center gap-1'>
+                <Motorcycle className='-ml-1 size-5 shrink-0' style={{ color: OrderStatusGroup['shipped'].color }} />
+                <div className='text-sm'>{order.courierInfo?.name}</div>
+              </div>
+            )}
+            <div
+              className={cn(
+                'flex w-full flex-nowrap items-center justify-between gap-2',
+                !order.courierInfo && 'w-auto! justify-end'
+              )}
+            >
               <OrderStatusBadge status={order.status} className='max-sm:text-[11px]' />
               <PaymentMethodBadge
                 showIcon

@@ -42,15 +42,16 @@ export interface IRefreshTokenResponse {
 
 // Backend PasswordRecoveryDto'ya uygun
 export interface IPasswordRecoveryRequest {
-  accountId: string
+  accountId?: string
   email: string
   turnstileToken?: string
 }
 
 // Backend PasswordRecoveryResponse'a uygun
 export interface IPasswordRecoveryResponse {
-  recoverySessionId: string
+  recoverySessionId?: string
   message: string
+  requiresAccountId?: boolean
 }
 
 // Backend ConfirmCodeDto'ya uygun

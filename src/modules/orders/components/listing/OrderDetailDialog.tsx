@@ -6,9 +6,8 @@ import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } 
 import { MaskedText } from '@/components/ui/masked-text'
 import { Separator } from '@/components/ui/separator'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
-import { formatDateTimeTR } from '@/lib/utils/date'
 import { maskAddress, maskLastName, maskPhone } from '@/lib/utils/mask'
-import { OrderStatusesGroups, type Order } from '@/types'
+import { OrderStatusesGroups } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, ExternalLink, Package, User } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -17,9 +16,12 @@ import { ordersService } from '../../service/order.service'
 
 import MapLoading from '@/components/map-loaging'
 import { TooltippedElement } from '@/components/tooltipped-element'
+import { formatDateDifferentString } from '@/lib/utils/date'
+import { ACTIVE_ORDER_STATUS_GROUPS } from '../../constants'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 import { OrderDetailSkeleton } from './OrderDetailSkeleton'
+import { OrderTimeLine } from './OrderTimeLine'
 
 const CourierMap = dynamic(() => import('../courier/CourierMap').then(mod => mod.default), {
   ssr: false,
@@ -27,27 +29,24 @@ const CourierMap = dynamic(() => import('../courier/CourierMap').then(mod => mod
 })
 
 interface OrderDetailDialogProps {
-  order: Order | null
+  orderId?: string
   onClose: () => void
 }
 
-export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
+export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
 
-  const { data: orderDetail, isLoading: isLoadingDetail } = useQuery({
-    queryKey: ['orderDetail', order?.orderId],
-    queryFn: () => ordersService.getOrderById(order!.orderId),
+  const { data: order, isLoading: isLoadingDetail } = useQuery({
+    queryKey: ['orderDetail', orderId],
+    queryFn: () => ordersService.getOrderById(orderId!),
     staleTime: 0,
-    enabled: Boolean(order?.orderId)
+    enabled: Boolean(orderId)
   })
 
-  // Detay varsa onu kullan, yoksa mevcut order'ı kullan
-  const displayOrder = orderDetail || order
-
   useEffect(() => {
-    setOpen(Boolean(order))
-  }, [order])
+    setOpen(Boolean(orderId))
+  }, [orderId])
 
   const handleClose = () => {
     setOpen(false)
@@ -61,7 +60,7 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
     startTransition(() => setOpenMap(false))
   }, [open])
 
-  if (!order) return null
+  const isOrderInProgress = order && ACTIVE_ORDER_STATUS_GROUPS.includes(order.status)
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -86,30 +85,30 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
             <OrderDetailSkeleton />
           ) : (
             <>
-              {openMap && displayOrder?.courierInfo ? (
+              {openMap && order?.courierInfo ? (
                 <div className='flex h-104 w-full p-4 pt-0'>
                   <CourierMap
-                    orderId={displayOrder.orderId}
-                    orderSId={displayOrder.sId}
-                    courierInfo={displayOrder.courierInfo}
-                    courierPosition={displayOrder.courierInfo.position}
-                    customerPosition={displayOrder.customerPosition}
-                    key={displayOrder.courierInfo.id}
-                    customerName={displayOrder.customerName}
+                    orderId={order.orderId}
+                    orderSId={order.sId}
+                    courierInfo={order.courierInfo}
+                    courierPosition={order.courierInfo.position}
+                    customerPosition={order.customerPosition}
+                    key={order.courierInfo.id}
+                    customerName={order.customerName}
                   />
                 </div>
               ) : (
                 <div className='overflow-y-auto'>
                   {/* Kurye Bilgileri */}
-                  {displayOrder?.courierInfo && (
+                  {order?.courierInfo && (
                     <CourierCard
-                      courierInfo={displayOrder.courierInfo}
+                      courierInfo={order.courierInfo}
                       handleToggleMap={handleToggleMap}
-                      isShipped={displayOrder.status === OrderStatusesGroups.SHIPPED}
+                      isShipped={order.status === OrderStatusesGroups.SHIPPED}
                     />
                   )}
 
-                  <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
+                  <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
                     {/* Sipariş Bilgileri */}
                     <Card>
                       <CardHeader>
@@ -121,46 +120,44 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                       <CardContent className='space-y-3'>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Sipariş ID</span>
-                          <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{displayOrder?.orderId}</span>
+                          <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{order?.orderId}</span>
                         </div>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Durum</span>
-                          {displayOrder && (
-                            <OrderStatusBadge className='max-sm:ml-2' status={displayOrder.status} variant='soft' />
-                          )}
+                          {order && <OrderStatusBadge className='max-sm:ml-2' status={order.status} variant='soft' />}
                         </div>
                         <Separator />
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Ödeme Yöntemi</span>
-                          {displayOrder && (
+                          {order && (
                             <PaymentMethodBadge
                               className='w-full text-right max-sm:ml-2'
-                              paymentMethod={displayOrder.paymentType}
+                              paymentMethod={order.paymentType}
                               showIcon
-                              IsPrepaid={displayOrder.isPrepaid}
+                              IsPrepaid={order.isPrepaid}
                             />
                           )}
                         </div>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Kanal</span>
-                          {displayOrder && (
-                            <ChannelBadge className='max-sm:ml-2' showText channel={displayOrder.channel} />
-                          )}
+                          {order && <ChannelBadge className='max-sm:ml-2' showText channel={order.channel} />}
                         </div>
                         <Separator />
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground flex items-center gap-1 text-sm'>Oluşturulma</span>
-                          <span className='text-sm'>{displayOrder && formatDateTimeTR(displayOrder.createdAt)}</span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground flex items-center gap-1 text-sm'>Son Güncelleme</span>
-                          <span className='text-sm'>{displayOrder && formatDateTimeTR(displayOrder.updatedAt)}</span>
-                        </div>
+                        <OrderTimeLine order={order} />
+
+                        {!isOrderInProgress && order && (
+                          <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
+                            <span className='text-muted-foreground text-sm'>Tamamlanma Süresi</span>
+                            <span className='text-sm max-sm:ml-2 max-sm:text-xs'>
+                              {formatDateDifferentString(order.createdAt, order.updatedAt)}
+                            </span>
+                          </div>
+                        )}
                         <Separator />
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
                           <span className='text-primary-700 text-xl font-bold'>
-                            {displayOrder && formatCurrencyTRY(displayOrder.totalAmount)}
+                            {order && formatCurrencyTRY(order.totalAmount)}
                           </span>
                         </div>
                       </CardContent>
@@ -177,9 +174,9 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
                       <CardContent className='space-y-4'>
                         <div className='flex items-center justify-between gap-2'>
                           <span className='text-muted-foreground text-sm'>Ad Soyad</span>
-                          {displayOrder && (
+                          {order && (
                             <MaskedText
-                              value={displayOrder.customerName}
+                              value={order.customerName}
                               maskFn={maskLastName}
                               defaultMasked={true}
                               textClassName='text-sm'
@@ -192,13 +189,13 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
 
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground text-sm'>Telefon</span>
-                          {displayOrder && displayOrder.customerPhone && (
+                          {order?.customerPhone && (
                             <MaskedText
-                              value={displayOrder.customerPhone}
+                              value={order.customerPhone}
                               maskFn={maskPhone}
                               defaultMasked={true}
                               asLink={true}
-                              href={`tel:${displayOrder.customerPhone}`}
+                              href={`tel:${order.customerPhone}`}
                               textClassName='text-sm'
                               className='text-right'
                             />
@@ -207,34 +204,57 @@ export function OrderDetailDialog({ order, onClose }: OrderDetailDialogProps) {
 
                         <Separator />
 
-                        <div className='flex items-center justify-between gap-2'>
+                        {/* Müşteri Notu (Temassız Teslimat ve Zili Çalma) */}
+                        {order?.customerNote && (
+                          <>
+                            <div className='flex items-start justify-between gap-2'>
+                              <span className='text-muted-foreground text-sm text-nowrap'>Müşteri Notu</span>
+                              <div className='pl-6 text-right text-sm leading-relaxed'>
+                                <span className='text-gray-900'>{order.customerNote}</span>
+                              </div>
+                            </div>
+                            <Separator />
+                          </>
+                        )}
+
+                        <div className='flex items-start justify-between gap-2'>
                           <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
                           <div className='space-y-1 pl-6 text-right text-sm leading-relaxed'>
-                            {displayOrder && displayOrder.deliveryAddress && (
+                            {order?.deliveryAddress && (
                               <MaskedText
                                 className='items-start justify-end text-right'
                                 maskFn={maskAddress}
-                                value={displayOrder.deliveryAddress}
+                                value={order.deliveryAddress}
                               />
                             )}
-                            {displayOrder &&
-                              displayOrder.customerPosition?.[0] != null &&
-                              displayOrder.customerPosition?.[1] != null && (
-                                <TooltippedElement tooltipContent='Google Haritada Görüntüle' className='text-xs'>
-                                  <a
-                                    className='text-muted-foreground hover:text-primary my-2 flex items-center gap-1 font-mono text-xs text-nowrap underline'
-                                    href={`https://maps.google.com/?q=${displayOrder.customerPosition[0]},${displayOrder.customerPosition[1]}`}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                  >
-                                    ({displayOrder.customerPosition[0].toFixed(6)},{' '}
-                                    {displayOrder.customerPosition[1].toFixed(6)})
-                                    <ExternalLink className='size-3.5' />
-                                  </a>
-                                </TooltippedElement>
-                              )}
+                            {order?.customerPosition?.[0] != null && order?.customerPosition?.[1] != null && (
+                              <TooltippedElement tooltipContent='Google Haritada Görüntüle' className='text-xs'>
+                                <a
+                                  className='text-muted-foreground hover:text-primary my-2 flex items-center gap-1 font-mono text-xs text-nowrap underline'
+                                  href={`https://maps.google.com/?q=${order.customerPosition[0]},${order.customerPosition[1]}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                >
+                                  ({order.customerPosition[0].toFixed(6)}, {order.customerPosition[1].toFixed(6)})
+                                  <ExternalLink className='size-3.5' />
+                                </a>
+                              </TooltippedElement>
+                            )}
                           </div>
                         </div>
+
+                        {/* Adres Tarifi */}
+                        {order?.addressDirection && (
+                          <>
+                            <Separator />
+                            <div className='flex items-start justify-between gap-2'>
+                              <span className='text-muted-foreground text-sm text-nowrap'>Adres Tarifi</span>
+                              <div className='pl-6 text-right text-sm leading-relaxed'>
+                                <span className='text-gray-900'>{order.addressDirection}</span>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </CardContent>
                     </Card>
                   </div>

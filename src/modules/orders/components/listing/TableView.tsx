@@ -1,6 +1,4 @@
 import BasicDataTable from '@/components/basic-data-table'
-import { Motorcycle } from '@/components/svg'
-import { TooltippedElement } from '@/components/tooltipped-element'
 import { MaskedText } from '@/components/ui/masked-text'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTimeTR } from '@/lib/utils/date'
@@ -14,6 +12,7 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Oluşturulma Tarihi',
+    size: 100,
     cell: ({ row }) => (
       <div className='text-muted-foreground text-sm'>
         <span className='block'>{formatDateTimeTR(row.getValue('createdAt'))}</span>
@@ -38,24 +37,25 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'status',
     header: 'Durum',
     cell: ({ row }) => {
-      const order = row.original
-      return (
-        <div className='flex items-center gap-3'>
-          <OrderStatusBadge status={order.status} />
-          {order.courierInfo && (
-            <TooltippedElement tooltipContent={order.courierInfo.name} triggerProps={{ asChild: true }}>
-              <Motorcycle className='text-primary -ml-1 size-4 shrink-0' />
-            </TooltippedElement>
-          )}
-        </div>
-      )
+      return <OrderStatusBadge status={row.original.status} />
     }
   },
   {
     accessorKey: 'channel',
     header: 'Kanal',
     size: 50,
-    cell: ({ row }) => <ChannelBadge channel={row.getValue('channel')} />
+    cell: ({ row }) => {
+      return <ChannelBadge channel={row.original.channel} />
+    }
+  },
+  {
+    accessorKey: 'courierInfo',
+    header: 'Kurye',
+    size: 300,
+    cell: ({ row }) => {
+      const courierInfo = row.original.courierInfo
+      return <div className='text-sm'>{courierInfo?.name ?? '-'}</div>
+    }
   },
   {
     accessorKey: 'paymentType',
@@ -98,7 +98,7 @@ export function TableView({
   filteredEmptyMessage,
   onViewDetails
 }: TableViewProps) {
-  const { filters } = useOrders()
+  const { filters, total, pagination } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
 
   return (
@@ -110,6 +110,10 @@ export function TableView({
       loadingLabel='Siparişler yükleniyor...'
       onRowClick={onViewDetails}
       enableColumnVisibility={false}
+      total={total}
+      page={pagination.page}
+      pageSize={pagination.limit}
+      hidePagination
     />
   )
 }

@@ -180,7 +180,7 @@ export function MapView() {
         </Button>
       </div>
 
-      <OrderDetailDialog order={selectedOrder} onClose={handleCloseModal} />
+      <OrderDetailDialog orderId={selectedOrder?.orderId} onClose={handleCloseModal} />
     </div>
   )
 }

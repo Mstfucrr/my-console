@@ -71,7 +71,7 @@ const FormItem = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div className={cn('space-y-2', className)} {...props} />
+      <div className={cn('h-fit space-y-2', className)} {...props} />
     </FormItemContext.Provider>
   )
 }

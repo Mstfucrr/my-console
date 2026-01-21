@@ -79,6 +79,7 @@ export type BasicDataTableProps<TData, TValue = never> = Omit<
   total?: number
   onPageChange?: (page: number) => void
   onPageSizeChange?: (size: number) => void
+  hidePagination?: boolean
 
   // loading
   isLoading?: boolean
@@ -142,6 +143,7 @@ export function BasicDataTable<TData, TValue = never>({
   total,
   onPageChange,
   onPageSizeChange,
+  hidePagination = false,
   isLoading = false,
   emptyLabel = 'Kayıt bulunamadı',
   loadingLabel = 'Yükleniyor...',
@@ -327,7 +329,7 @@ export function BasicDataTable<TData, TValue = never>({
         <AnimatePresence>{showOverlayLoader && <TableOverlayLoader label={loadingLabel} />}</AnimatePresence>
       </div>
 
-      {manualPagination && total > pageSize && (
+      {!hidePagination && manualPagination && total > 0 && (
         <Pagination
           page={page}
           pageSize={pageSize}

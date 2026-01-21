@@ -1,4 +1,5 @@
 import { privateAxiosInstance } from '@/lib/axios'
+import { formatDateToApiString } from '@/lib/utils/date'
 import { PaginatedResponse, PaginationOptions } from '@/types'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord } from '../types'
@@ -8,11 +9,11 @@ class ReportsService {
     filters?: ReportsFilterProperties,
     pagination?: PaginationOptions
   ): Promise<PaginatedResponse<ReportRecord>> {
-    const params: Record<string, string | Date | number | string[] | undefined> = {
+    const params: Record<string, string | number | string[] | undefined> = {
       page: pagination?.page,
       limit: pagination?.limit,
-      startdate: filters?.dateRange.from,
-      enddate: filters?.dateRange.to
+      startdate: formatDateToApiString(filters?.dateRange.from),
+      enddate: formatDateToApiString(filters?.dateRange.to)
     }
 
     if (filters?.search && filters?.search?.length > 0) {

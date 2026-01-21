@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  DateFilters,
-  FilterCard,
-  SearchInput,
-  StatusSelect,
-  type GroupedFilterOption
-} from '@/components/ui/filter-card'
+import { FilterCard, SearchInput, StatusSelect, type GroupedFilterOption } from '@/components/ui/filter-card'
+import { OperationDateFilters } from '@/components/ui/operation-date-range-picker'
 import { useFilter } from '@/hooks/use-filter'
 import { groupPaymentMethods } from '@/lib/payment-methods'
 import { usePaymentMethods } from '@/service/payment-methods.service'
@@ -95,7 +90,7 @@ export function ReportsFilters({
           placeholder='Ödeme yöntemi seçin'
         />
       ) : null}
-      <DateFilters
+      <OperationDateFilters
         dateRange={pendingFilters.dateRange}
         onDateRangeChange={handleDateRangeChange}
         placeholder='Tarih aralığı seçin'

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { FileText } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { LogoutButton } from '../common/logout-button'
+import { ProfileButton } from '../common/profile-button'
 import { SupportDialog } from '../common/support-dialog'
 import { isLocationMatch } from '../utils'
 import { MotionBottomNavigationItem } from './BottomNavigationItem'
@@ -15,7 +15,10 @@ const springConfig = {
   mass: 0.5
 }
 
-export function BottomMenu() {
+type BottomMenuProps = {
+  onClick: () => void
+}
+export function BottomMenu({ onClick }: BottomMenuProps) {
   const pathname = usePathname()
   const { checkRoute } = usePermission()
 
@@ -43,11 +46,7 @@ export function BottomMenu() {
         transition={{ duration: 0.35, delay: 0.2, ease: [0.4, 0, 0.2, 1], ...springConfig }}
         className={cn('absolute bottom-[15%] -left-[10%]', !hasReportsAccess && 'bottom-[30%] -left-[5%]')}
       >
-        <LogoutButton
-          className='text-destructive size-12 rounded-full border-none bg-white p-0'
-          iconClassName='size-6'
-          color='light'
-        />
+        <ProfileButton className='size-12 rounded-full p-0' />
       </motion.div>
       {hasReportsAccess && (
         <MotionBottomNavigationItem
@@ -65,6 +64,7 @@ export function BottomMenu() {
           icon={FileText}
           isActive={isLocationMatch('/reports', pathname)}
           className='-bottom-[6%] left-[10%] size-15 rounded-full bg-white p-0'
+          onClick={onClick}
         />
       )}
       <motion.div

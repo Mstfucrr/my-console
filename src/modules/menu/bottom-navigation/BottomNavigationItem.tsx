@@ -7,7 +7,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { HtmlHTMLAttributes } from 'react'
 
-interface BottomNavigationItemProps {
+export interface BottomNavigationItemProps {
   href: Route
   label: string
   icon: LucideIcon

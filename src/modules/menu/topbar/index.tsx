@@ -4,8 +4,8 @@ import { SiteLogoBig } from '@/components/svg'
 import { menusConfig } from '@/modules/menu/menus'
 import Link from 'next/link'
 import { CreateOrderButton } from '../common/create-order-button'
-import { LogoutButton } from '../common/logout-button'
 import { MenuItem } from '../common/menu-item'
+import { ProfileButton } from '../common/profile-button'
 import { SupportDialog } from '../common/support-dialog'
 
 export function Topbar() {
@@ -29,8 +29,7 @@ export function Topbar() {
 
           <div className='ml-auto flex items-center gap-2'>
             <CreateOrderButton />
-            {/* <NotificationsPopover /> */}
-            <LogoutButton />
+            <ProfileButton />
           </div>
         </div>
       </div>

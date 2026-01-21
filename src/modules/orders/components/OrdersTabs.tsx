@@ -8,7 +8,7 @@ import type { Order } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useMemo, useState } from 'react'
-import { ACTIVE_STATUS_GROUPS, COMPLETED_STATUS_GROUPS } from '../constants'
+import { ACTIVE_ORDER_STATUS_GROUPS, COMPLETED_ORDER_STATUS_GROUPS } from '../constants'
 import { useOrders } from '../context/OrdersContext'
 import { useOrdersStats } from '../hooks/useOrdersStats'
 import { OrderFilters } from './filters/OrderFilters'
@@ -31,7 +31,8 @@ export function OrdersTabs() {
     isFetching,
     filters,
     pagination,
-    setPagination
+    setPagination,
+    onPageSizeChange
   } = useOrders()
   const { stats } = useOrdersStats()
   const [showFilters, setShowFilters] = useState(true)
@@ -61,8 +62,8 @@ export function OrdersTabs() {
     return hasActiveFilter ? completedOrders.length : stats.delivered + stats.cancelled
   }, [completedOrders, stats.delivered, stats.cancelled, hasActiveFilter])
 
-  const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_STATUS_GROUPS.includes(filters.status)
-  const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_STATUS_GROUPS.includes(filters.status)
+  const isActiveTabDisabled = filters.status !== 'all' && COMPLETED_ORDER_STATUS_GROUPS.includes(filters.status)
+  const isCompletedTabDisabled = filters.status !== 'all' && ACTIVE_ORDER_STATUS_GROUPS.includes(filters.status)
 
   const tabItems = useMemo(
     () => [
@@ -121,17 +122,18 @@ export function OrdersTabs() {
             onViewDetails={handleViewDetails}
           />
 
-          {total > pagination.limit && !isLoading && (
+          {!isLoading && total > 0 && (
             <Pagination
               page={pagination.page}
               pageSize={pagination.limit}
               total={total}
               onPageChange={handlePageChange}
+              onPageSizeChange={onPageSizeChange}
             />
           )}
         </div>
       </CardContent>
-      <OrderDetailDialog order={selectedOrder} onClose={handleCloseModal} />
+      <OrderDetailDialog orderId={selectedOrder?.orderId} onClose={handleCloseModal} />
     </Card>
   )
 }
