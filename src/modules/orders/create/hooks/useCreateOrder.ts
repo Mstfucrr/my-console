@@ -64,7 +64,7 @@ export function useCreateOrder() {
 
   // Sokak
   const { data: streets, isLoading: isLoadingStreets } = useQueryStreets(Number(districtId), !!districtId)
-  const streetOptions = streets?.map(street => ({ value: street.sokak_id.toString(), label: street.sokak_adi }))
+  const streetOptions = streets?.map(street => ({ value: street.sokak_adi, label: street.sokak_adi }))
 
   // 🔹 Adres alanlarını tek seferde watch et (tek subscription)
   const [city, county, district, street, buildingNumber, floor, buildingName, doorNumber] = useWatch({
