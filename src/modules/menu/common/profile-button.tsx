@@ -39,7 +39,9 @@ export function ProfileButton({ className }: { className?: string }) {
         <div className='flex flex-col gap-2'>
           <ProfileItem icon={Key} label={profile.accountId} tooltipContent='Hesap ID' />
           <ProfileItem icon={Mail} label={profile.email} tooltipContent='E-posta adresi' />
-          <ProfileItem icon={Phone} label={profile.info.authPhone} tooltipContent='Telefon Numarası' />
+          {profile.info && (
+            <ProfileItem icon={Phone} label={profile.info.authPhone} tooltipContent='Telefon Numarası' />
+          )}
           <LogoutButton showLabel className='w-full' />
         </div>
       </PopoverContent>

@@ -6,7 +6,7 @@ export interface IProfileResponse {
   restaurantId: string
   omsRestaurantId: string
   tab_fr?: boolean
-  info: IProfileInfo
+  info?: IProfileInfo
 }
 
 export interface IProfileInfo {

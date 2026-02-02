@@ -8,7 +8,7 @@ export function RestaurantHeader() {
 
   if (isProfileLoading) return <Skeleton className='-my-1 h-6 w-full self-center' />
 
-  if (!profile?.info.name) return null
+  if (!profile?.info?.name) return null
 
   const restaurantName = profile.info.name.charAt(0).toUpperCase() + profile.info.name.slice(1)
 

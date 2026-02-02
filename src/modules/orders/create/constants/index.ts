@@ -16,8 +16,12 @@ const PHONE_REGEX = /^[1-9][0-9]{9}$/
 
 export const createOrderSchema = z.object({
   // Müşteri Bilgileri
-  firstName: z.string().min(2, 'Ad en az 2 karakter olmalıdır').default(''),
-  lastName: z.string().min(2, 'Soyad en az 2 karakter olmalıdır').default(''),
+  firstName: z.string().min(2, 'Ad en az 2 karakter olmalıdır').max(50, 'Ad en fazla 50 karakter olabilir').default(''),
+  lastName: z
+    .string()
+    .min(2, 'Soyad en az 2 karakter olmalıdır')
+    .max(50, 'Soyad en fazla 50 karakter olabilir')
+    .default(''),
   customerPhone: z
     .string()
     .default('')
@@ -30,7 +34,8 @@ export const createOrderSchema = z.object({
     .min(1, 'Toplam tutar zorunludur')
     .transform(parseTRCurrencyToNumber)
     .refine(v => Number.isFinite(v), { message: 'Toplam tutar geçersiz' })
-    .refine(v => v > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' }),
+    .refine(v => v > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' })
+    .refine(v => v < 1000000, { message: "Toplam tutar 1.000.000 TL'den büyük olamaz" }),
   // Adres Bilgileri
   city: z.object({
     id: z.string().min(1, 'Şehir zorunludur').default(''),
@@ -44,13 +49,21 @@ export const createOrderSchema = z.object({
     id: z.string().min(1, 'Mahalle zorunludur').default(''),
     name: z.string()
   }),
-  street: z.string().min(1, 'Sokak zorunludur').default(''),
-  buildingNumber: z.string().min(1, 'Bina numarası zorunludur').default(''),
-  floor: z.string().optional(),
-  buildingName: z.string().optional(),
-  doorNumber: z.string().min(1, 'Kapı numarası zorunludur').default(''),
-  fullAddress: z.string().default(''),
-  addressDirection: z.string().optional(),
+  street: z.string().min(1, 'Sokak zorunludur').max(120, 'Sokak en fazla 120 karakter olabilir').default(''),
+  buildingNumber: z
+    .string()
+    .min(1, 'Bina numarası zorunludur')
+    .max(20, 'Bina numarası en fazla 20 karakter olabilir')
+    .default(''),
+  floor: z.string().max(3, 'Kat bilgisi en fazla 3 karakter olabilir').optional(),
+  buildingName: z.string().max(100, 'Bina adı en fazla 100 karakter olabilir').optional(),
+  doorNumber: z
+    .string()
+    .min(1, 'Kapı numarası zorunludur')
+    .max(10, 'Kapı numarası en fazla 10 karakter olabilir')
+    .default(''),
+  fullAddress: z.string().max(300, 'Adres en fazla 300 karakter olabilir').default(''),
+  addressDirection: z.string().max(300, 'Adres tarifi en fazla 300 karakter olabilir').optional(),
 
   // Ödeme ve Teslimat
   paymentTypeSId: z.string().min(1, 'Ödeme tipi seçimi zorunludur').default(''),

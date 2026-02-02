@@ -13,7 +13,7 @@ export function useOrdersStats() {
   } = useQuery<OrderStatusStats, Error>({
     queryKey: ['ordersStats'],
     queryFn: () => ordersService.getOrdersStats(),
-    staleTime: 60 * 1000 // 60 saniye
+    staleTime: 10 * 1000 // 10 saniye
   })
 
   const stats = useMemo(

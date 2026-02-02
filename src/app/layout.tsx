@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import { Open_Sans } from 'next/font/google'
 
+import { AppErrorBoundary } from '@/components/app-error-boundary'
 import { cn } from '@/lib/utils'
 import { QueryProvider } from '@/provider/QueryProvider'
 import type { Metadata, Viewport } from 'next'
@@ -41,7 +42,9 @@ export default function RootLayout({
         </head>
       )}
       <body className={cn(openSans.className, 'antialiased')}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AppErrorBoundary>{children}</AppErrorBoundary>
+        </QueryProvider>
         <ToastContainer autoClose={2500} />
       </body>
     </html>

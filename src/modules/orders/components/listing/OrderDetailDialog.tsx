@@ -75,7 +75,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                 </Button>
               </div>
             ) : (
-              <span>Sipariş Bilgileri</span>
+              <span>Sipariş Detayları</span>
             )}
           </DialogTitle>
         </DialogHeader>
@@ -219,7 +219,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
 
                         <div className='flex items-start justify-between gap-2'>
                           <span className='text-muted-foreground text-sm text-nowrap'>Teslimat Adresi</span>
-                          <div className='space-y-1 pl-6 text-right text-sm leading-relaxed'>
+                          <div className='justify-items-end space-y-1 pl-6 text-right text-sm leading-relaxed'>
                             {order?.deliveryAddress && (
                               <MaskedText
                                 className='items-start justify-end text-right'

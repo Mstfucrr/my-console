@@ -44,6 +44,7 @@ export function OrderFilters() {
         Icon={Search}
         showLabel={false}
         className='w-full'
+        defaultValue={defaultOrderFilters.search}
       />
       {/* Status Select */}
       <StatusSelect
