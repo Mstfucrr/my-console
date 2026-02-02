@@ -64,7 +64,7 @@ test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
     await page.goto('/orders/create')
 
     // Formu gönder
-    await page.getByRole('button', { name: 'Siparişi Oluştur' }).click()
+    await page.getByTestId('create-order-submit-button').click()
 
     // "Toplam tutar zorunludur" mesajı (FormMessage)
     await expect(page.getByText('Toplam tutar zorunludur')).toBeVisible()

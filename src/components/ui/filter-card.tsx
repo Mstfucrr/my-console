@@ -112,7 +112,8 @@ export function SearchInput({
   showLabel = false,
   className,
   Icon,
-  onEnterPress
+  onEnterPress,
+  defaultValue
 }: {
   placeholder: string
   value: string
@@ -121,6 +122,7 @@ export function SearchInput({
   className?: string
   Icon: LucideIcon
   onEnterPress?: () => void
+  defaultValue?: string
 }) {
   const isActive = value && value.length > 0
 
@@ -150,7 +152,7 @@ export function SearchInput({
           <Button
             size='icon-xs'
             variant='ghost'
-            onClick={() => onChange(undefined)}
+            onClick={() => onChange(defaultValue ?? undefined)}
             className='absolute top-1/2 right-0 -translate-y-1/2'
           >
             <XCircle className='size-5' />

@@ -70,6 +70,7 @@ export function ReportsFilters({
         value={pendingFilters.search ?? ''}
         onChange={value => updatePendingFilters({ search: value })}
         Icon={Search}
+        defaultValue={defaultReportsFilters.search}
       />
       <StatusSelect
         options={STATUS_OPTIONS}

@@ -41,7 +41,7 @@ export function CreateOrderView() {
   return (
     <div className='flex flex-col gap-4 max-sm:p-0'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6' autoComplete='off'>
           {/* Müşteri ve Sipariş Bilgileri - Yan Yana */}
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
             {/* Müşteri Bilgileri */}
@@ -61,6 +61,7 @@ export function CreateOrderView() {
                   regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Ahmet'
                   tabIndex={1}
+                  autoComplete='off'
                 />
                 <FormInputField
                   name='lastName'
@@ -70,6 +71,7 @@ export function CreateOrderView() {
                   regexPattern={ONLY_LETTERS_REGEX}
                   placeholder='Yılmaz'
                   tabIndex={2}
+                  autoComplete='off'
                 />
                 <FormMaskedInputField
                   mask='(000) 000-0000'
@@ -91,6 +93,7 @@ export function CreateOrderView() {
                     input.value = val
                     input.dispatchEvent(new Event('input', { bubbles: true }))
                   }}
+                  autoComplete='off'
                 />
                 <FormInputField
                   name='extensionPhone'
@@ -102,6 +105,7 @@ export function CreateOrderView() {
                   inputMode='numeric'
                   pattern='\d*'
                   tabIndex={4}
+                  autoComplete='off'
                 />
               </CardContent>
             </Card>
@@ -141,6 +145,7 @@ export function CreateOrderView() {
                   placeholder='1.234,56'
                   tabIndex={7}
                   regexPattern={/^(\d{1,3}(\.\d{3})*|\d+)(,\d{0,2})?$/}
+                  autoComplete='off'
                 />
                 <FormSwitchField
                   formItemClassName='max-sm:mt-5 lg:mt-5'
@@ -230,6 +235,7 @@ export function CreateOrderView() {
                   label='Bina Adı'
                   placeholder='Yıldız Apartmanı'
                   tabIndex={14}
+                  autoComplete='off'
                 />
                 <FormInputField
                   name='buildingNumber'
@@ -239,6 +245,7 @@ export function CreateOrderView() {
                   placeholder='123'
                   tabIndex={15}
                   regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
+                  autoComplete='off'
                 />
                 <FormInputField
                   name='floor'
@@ -249,6 +256,7 @@ export function CreateOrderView() {
                   inputMode='numeric'
                   pattern='[0-9]*'
                   tabIndex={16}
+                  autoComplete='off'
                 />
 
                 <FormInputField
@@ -259,6 +267,7 @@ export function CreateOrderView() {
                   placeholder='12'
                   tabIndex={17}
                   regexPattern={/^[a-zA-Z0-9\s]{0,5}$/}
+                  autoComplete='off'
                 />
               </div>
 
@@ -282,6 +291,7 @@ export function CreateOrderView() {
                   placeholder='Apartman kapısı mavi renkte, zil 3. katta...'
                   rows={2}
                   tabIndex={20}
+                  autoComplete='off'
                 />
               </div>
             </CardContent>
@@ -293,7 +303,9 @@ export function CreateOrderView() {
               type='submit'
               disabled={isSubmitting}
               color='success'
+              tabIndex={21}
               size='sm'
+              data-testid='create-order-submit-button'
               className='min-w-[120px] max-sm:w-full'
             >
               {isSubmitting ? 'Oluşturuluyor...' : 'Siparişi Oluştur'}

@@ -7,7 +7,6 @@ import { Eye, EyeOff } from 'lucide-react'
 import { Route } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
-import { TooltippedElement } from '../tooltipped-element'
 
 interface MaskedTextProps {
   /**
@@ -94,38 +93,21 @@ export function MaskedText({
           {isMasked ? <EyeOff className='size-4.5' /> : <Eye className='size-4.5' />}
         </Button>
       ) : (
-        <TooltippedElement tooltipContent='Basılı tutunuz' className='text-xs'>
-          <Button
-            size={buttonSize}
-            variant='ghost'
-            aria-label={isMasked ? 'Göster' : 'Gizle'}
-            type='button'
-            onMouseDown={e => {
-              e.stopPropagation()
-              showUnmasked()
-            }}
-            onMouseUp={e => {
-              e.stopPropagation()
-              hideMasked()
-            }}
-            onMouseLeave={e => {
-              e.stopPropagation()
-              hideMasked()
-            }}
-            onTouchStart={e => {
-              e.stopPropagation()
-              showUnmasked()
-            }}
-            onTouchEnd={e => {
-              e.stopPropagation()
-              hideMasked()
-            }}
-            onClick={e => e.stopPropagation()}
-            tabIndex={0}
-          >
-            {isMasked ? <EyeOff className='size-4' /> : <Eye className='size-4' />}
-          </Button>
-        </TooltippedElement>
+        <span
+          aria-label={isMasked ? 'Göster' : 'Gizle'}
+          className='hover:bg-primary hover:text-primary-foreground text-primary rounded-md p-1'
+          onMouseEnter={e => {
+            e.stopPropagation()
+            showUnmasked()
+          }}
+          onMouseLeave={e => {
+            e.stopPropagation()
+            hideMasked()
+          }}
+          tabIndex={0}
+        >
+          {isMasked ? <EyeOff className='size-4' /> : <Eye className='size-4' />}
+        </span>
       )}
     </div>
   )

@@ -78,7 +78,7 @@ export function FormCommandSelectField<T extends FieldValues>({
     }
 
     // Select first item when opening
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const commandList = containerRef.current?.querySelector('[cmdk-list]')
       if (commandList) {
         const firstItem = commandList.querySelector('[cmdk-item]:not([data-disabled="true"])') as HTMLElement
@@ -90,7 +90,7 @@ export function FormCommandSelectField<T extends FieldValues>({
           firstItem.setAttribute('aria-selected', 'true')
         }
       }
-    }, 0)
+    })
   }
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -178,7 +178,7 @@ export function FormCommandSelectField<T extends FieldValues>({
     }
 
     // Select first filtered item
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const commandList = containerRef.current?.querySelector('[cmdk-list]')
       if (commandList) {
         const items = Array.from(
@@ -189,7 +189,7 @@ export function FormCommandSelectField<T extends FieldValues>({
           items[0].setAttribute('aria-selected', 'true')
         }
       }
-    }, 0)
+    })
   }
 
   const handleClear = (e: React.MouseEvent) => {

@@ -2,7 +2,6 @@
 
 import { SiteLogoBig } from '@/components/svg'
 import { menusConfig } from '@/modules/menu/menus'
-import Link from 'next/link'
 import { CreateOrderButton } from '../common/create-order-button'
 import { MenuItem } from '../common/menu-item'
 import { ProfileButton } from '../common/profile-button'
@@ -13,9 +12,7 @@ export function Topbar() {
     <>
       <div className='bg-primary-10 fixed top-0 z-50 w-full border-b shadow-md backdrop-blur-xl'>
         <div className='container mx-auto flex h-16 items-center gap-4 px-4'>
-          <Link href='/' aria-label='Home' className='flex items-center'>
-            <SiteLogoBig className='text-primary w-32' />
-          </Link>
+          <SiteLogoBig className='text-primary w-32' />
 
           <div className='flex h-full flex-1 items-center'>
             <nav className='flex h-full items-center'>

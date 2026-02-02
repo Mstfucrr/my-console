@@ -19,10 +19,15 @@ export function useFilter<T extends BaseFilterProperties>(
   // Local state for pending changes
   const [pendingFilters, setPendingFilters] = useState<T>(filters)
 
-  // Update pending filters when external filters change
   useEffect(() => {
     setPendingFilters(filters)
   }, [filters])
+
+  useEffect(() => {
+    if (JSON.stringify(pendingFilters) === JSON.stringify(defaultFilters)) {
+      onClearFilters()
+    }
+  }, [pendingFilters, defaultFilters, onClearFilters])
 
   // Generic active filters check - checks all properties dynamically
   const hasActiveFilters = useMemo(
@@ -53,6 +58,7 @@ export function useFilter<T extends BaseFilterProperties>(
       Object.keys(pendingFilters).some(key => {
         const pendingValue = pendingFilters[key as keyof T]
         const currentValue = filters[key as keyof T]
+        if (key === 'dateRange') return !isSameDateRange(pendingValue as DateRange, filters.dateRange)
         return pendingValue !== currentValue
       }),
     [pendingFilters, filters]

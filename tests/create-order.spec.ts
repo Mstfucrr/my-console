@@ -6,6 +6,8 @@ const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
 const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
 const TEST_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || ''
 
+const repeat = (char: string, len: number) => Array.from({ length: len }, () => char).join('')
+
 test.describe('Sipariş Oluşturma', () => {
   test.beforeEach(async ({ page, context }) => {
     // Eğer token varsa direkt localStorage'a set et ve login adımını atla
@@ -201,7 +203,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('textarea[name="addressDirection"]').fill('Apartman kapısı mavi renkte')
 
     // Formu gönder
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
 
     // Başarı mesajını kontrol et
     await expect(page.locator('.Toastify__toast--success').getByText(/Sipariş başarıyla oluşturuldu/i)).toBeVisible({
@@ -210,6 +212,15 @@ test.describe('Sipariş Oluşturma', () => {
   })
 
   test('Sipariş oluşturma form validasyonları', async ({ page }) => {
+    // createOrderSchema max limitleri (src/modules/orders/create/constants/index.ts)
+    const MAX_FIRST_NAME = 50
+    const MAX_LAST_NAME = 50
+    const MAX_STREET = 120
+    const MAX_BUILDING_NAME = 100
+    const MAX_FLOOR = 3
+    const MAX_ADDRESS_DIRECTION = 300
+    const MAX_TOTAL_AMOUNT_EXCLUSIVE = 1000000 // must be < 1_000_000
+
     // Mock API endpoint'leri
     await page.route('**/location/provinces', async route => {
       await route.fulfill({
@@ -235,7 +246,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.goto('/orders/create')
 
     // Formu boş bırakarak göndermeyi dene
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
 
     // Validasyon hatalarının göründüğünü kontrol et
     // Use exact text match to avoid matching "Soyad en az 2 karakter olmalıdır"
@@ -255,9 +266,20 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="lastName"]').clear()
     await page.locator('input[name="lastName"]').fill('Yılmaz')
 
+    // Max-length: Ad (50) / Soyad (50)
+    await page.locator('input[name="firstName"]').fill(repeat('A', MAX_FIRST_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Ad en fazla 50 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="firstName"]').fill('Ahmet')
+
+    await page.locator('input[name="lastName"]').fill(repeat('B', MAX_LAST_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Soyad en fazla 50 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="lastName"]').fill('Yılmaz')
+
     await page.locator('input[name="customerPhone"]').clear()
     await page.locator('input[name="customerPhone"]').fill('123') // Geçersiz telefon
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
 
     // Telefon validasyon hatasının göründüğünü kontrol et
     await expect(page.getByText(/Telefon numarası 10 haneli olmalıdır/i)).toBeVisible()
@@ -267,8 +289,14 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="customerPhone"]').fill('5551234567')
     await page.locator('input[name="totalAmount"]').clear()
     await page.locator('input[name="totalAmount"]').fill('0') // Sıfır tutar
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Toplam tutar sıfırdan büyük olmalıdır/i)).toBeVisible()
+
+    // Max amount: must be < 1.000.000 TL
+    await page.locator('input[name="totalAmount"]').clear()
+    await page.locator('input[name="totalAmount"]').fill(String(MAX_TOTAL_AMOUNT_EXCLUSIVE))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText("Toplam tutar 1.000.000 TL'den büyük olamaz")).toBeVisible()
 
     // Adres alanları validasyonları
     await page.locator('input[name="totalAmount"]').clear()
@@ -283,7 +311,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('[cmdk-item]').filter({ hasText: 'İstanbul' }).click()
 
     // İlçe seçmeden gönder
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/İlçe zorunludur/i)).toBeVisible()
 
     // İlçe seç
@@ -314,7 +342,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' }).click()
 
     // Mahalle seçmeden gönder
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Mahalle zorunludur/i)).toBeVisible()
 
     // Mahalle seç
@@ -343,25 +371,52 @@ test.describe('Sipariş Oluşturma', () => {
     await mahalleInput.fill('19 MAYIS')
     await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
     await page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' }).click() // Sokak boş bırakarak gönder
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+
+    // Sokak required (bu noktada street hiç girilmedi)
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Sokak zorunludur/i)).toBeVisible()
+
+    // Max-length: Sokak (120)
+    await page.locator('input[name="street"]').fill(repeat('S', MAX_STREET + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Sokak en fazla 120 karakter olabilir')).toBeVisible()
+    // Required test için tekrar boşalt
+    await page.locator('input[name="street"]').fill('')
+
+    // Max-length: Bina adı (100) - opsiyonel ama girilirse validate edilir
+    await page.locator('input[name="buildingName"]').fill(repeat('B', MAX_BUILDING_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Bina adı en fazla 100 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="buildingName"]').clear()
+
+    // Max-length: Kat (3 karakter)
+    await page.locator('input[name="floor"]').fill(repeat('1', MAX_FLOOR + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Kat bilgisi en fazla 3 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="floor"]').clear()
+
+    // Max-length: Adres tarifi (300) - opsiyonel ama girilirse validate edilir
+    await page.locator('textarea[name="addressDirection"]').fill(repeat('T', MAX_ADDRESS_DIRECTION + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Adres tarifi en fazla 300 karakter olabilir')).toBeVisible()
+    await page.locator('textarea[name="addressDirection"]').clear()
 
     // Sokak doldur, bina no boş bırak
     await page.locator('input[name="street"]').fill('Atatürk Caddesi')
     await page.locator('input[name="buildingNumber"]').clear()
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Bina numarası zorunludur/i)).toBeVisible()
 
     // Bina no doldur, daire no boş bırak
     await page.locator('input[name="buildingNumber"]').fill('123')
     await page.locator('input[name="doorNumber"]').clear()
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Kapı numarası zorunludur/i)).toBeVisible()
 
     // Daire no doldur, tam adres çok kısa
     await page.locator('input[name="doorNumber"]').fill('12')
     // Ödeme tipini seçme
-    await page.getByRole('button', { name: /Siparişi Oluştur/i }).click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Ödeme tipi seçimi zorunludur/i)).toBeVisible()
   })
 })
