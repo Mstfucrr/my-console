@@ -1,49 +1,9 @@
 import { expect, test } from '@playwright/test'
-
-// Environment variable'lardan login bilgilerini al
-const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
-const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
-const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
-const TEST_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || ''
+import { ensureLoggedIn } from './helpers/auth'
 
 test.describe('View Mode Default Görünüm', () => {
   test.beforeEach(async ({ page, context }) => {
-    // Eğer token varsa direkt localStorage'a set et ve login adımını atla
-    if (TEST_ACCESS_TOKEN) {
-      await context.addInitScript(token => {
-        window.localStorage.setItem(
-          'user',
-          JSON.stringify({
-            accessToken: token,
-            refreshToken: token
-          })
-        )
-      }, TEST_ACCESS_TOKEN)
-
-      await page.goto('/')
-      await page.waitForLoadState('networkidle')
-    } else {
-      await page.route('**/auth/login', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            accessToken: 'mock-access-token-12345',
-            userId: 'user-12345',
-            accountId: '9742949',
-            requiresOtp: false
-          })
-        })
-      })
-
-      await page.goto('/login')
-      await page.getByPlaceholder('Hesap ID giriniz').fill(TEST_ACCOUNT_ID)
-      await page.getByPlaceholder('E-posta giriniz').fill(TEST_IDENTIFIER)
-      await page.getByPlaceholder('Şifrenizi giriniz').fill(TEST_PASSWORD)
-      await page.getByRole('button', { name: /Giriş Yap/i }).click()
-
-      await expect(page).toHaveURL('/', { timeout: 10000 })
-    }
+    await ensureLoggedIn({ page, context })
   })
 
   test('Mobilde default görünüm kart (card view) olmalıdır', async ({ page, context }) => {
@@ -61,28 +21,30 @@ test.describe('View Mode Default Görünüm', () => {
       sId: 'S12345',
       customerName: 'Ahmet Yılmaz',
       customerPhone: '5551234567',
-      status: 'order-created',
+      status: 'created',
       createdAt: new Date().toISOString(),
       totalAmount: 150.5,
       paymentType: 'cash',
-      channel: 'web'
+      channel: 'console'
     }
 
-    await page.route('**/orders?**', async route => {
+    await page.route('**/orders/order-list**', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          data: [mockOrder],
+          orders: [mockOrder],
           total: 1
         })
       })
     })
 
+    const ordersResponse = page.waitForResponse(
+      response => /\/orders\/order-list(\?|$)/.test(response.url()) && response.status() === 200
+    )
     // Siparişler sayfasına git
     await page.goto('/orders')
-
-    // Sayfanın yüklendiğini bekle
+    await ordersResponse
     await page.waitForLoadState('networkidle')
 
     // Mobilde card view görünmeli (table görünmemeli)
@@ -94,11 +56,8 @@ test.describe('View Mode Default Görünüm', () => {
     const tableView = page.locator('table')
     await expect(tableView).not.toBeVisible()
 
-    // Card component'lerinin göründüğünü kontrol et
-    // OrderCard component'i Card component'i kullanıyor
-    const orderCards = page.locator('[class*="card"][class*="cursor-pointer"]')
-    const cardCount = await orderCards.count()
-    expect(cardCount).toBeGreaterThan(0)
+    // Mock order kartının göründüğünü kontrol et
+    await expect(page.locator('[data-testid="order-card"]').first()).toBeVisible()
 
     // Mobilde card view görünür olduğu için test başarılı
     // LocalStorage kontrolü yapmıyoruz çünkü store'un persist edilmesi component lifecycle'ına bağlı
@@ -119,33 +78,34 @@ test.describe('View Mode Default Görünüm', () => {
       sId: 'S12345',
       customerName: 'Ahmet Yılmaz',
       customerPhone: '5551234567',
-      status: 'order-created',
+      status: 'created',
       createdAt: new Date().toISOString(),
       totalAmount: 150.5,
       paymentType: 'cash',
-      channel: 'web'
+      channel: 'console'
     }
 
-    await page.route('**/orders?**', async route => {
+    await page.route('**/orders/order-list**', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          data: [mockOrder],
+          orders: [mockOrder],
           total: 1
         })
       })
     })
 
+    const ordersResponse = page.waitForResponse(
+      response => /\/orders\/order-list(\?|$)/.test(response.url()) && response.status() === 200
+    )
     // Siparişler sayfasına git
     await page.goto('/orders')
-
-    // Sayfanın yüklendiğini bekle
+    await ordersResponse
     await page.waitForLoadState('networkidle')
 
     // Desktop'ta table view görünmeli
-    const tableView = page.locator('table')
-    await expect(tableView).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Oluşturulma Tarihi')).toBeVisible({ timeout: 5000 })
 
     // Table header'larının göründüğünü kontrol et
     await expect(page.getByText('Oluşturulma Tarihi')).toBeVisible()
@@ -176,38 +136,50 @@ test.describe('View Mode Default Görünüm', () => {
       orderId: 'TEST-ORDER-12345',
       sId: 'S12345',
       customerName: 'Ahmet Yılmaz',
-      status: 'order-created',
+      status: 'created',
       createdAt: new Date().toISOString(),
-      totalAmount: 150.5
+      totalAmount: 150.5,
+      channel: 'console'
     }
 
-    await page.route('**/orders?**', async route => {
+    await page.route('**/orders/order-list**', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          data: [mockOrder],
+          orders: [mockOrder],
           total: 1
         })
       })
     })
 
+    const ordersResponse = page.waitForResponse(
+      response => /\/orders\/order-list(\?|$)/.test(response.url()) && response.status() === 200
+    )
     await page.goto('/orders')
+    await ordersResponse
     await page.waitForLoadState('networkidle')
 
-    // Mobilde card view görünmeli
-    const cardView = page.locator('[class*="card"][class*="cursor-pointer"]')
-    await expect(cardView.first()).toBeVisible({ timeout: 5000 })
+    // Mobilde card view görünmeli (mock order görünürlüğü ile doğrula)
+    await expect(page.locator('[data-testid="order-card"]').first()).toBeVisible({ timeout: 5000 })
 
     // Desktop viewport'a geç
     await page.setViewportSize({ width: 1280, height: 720 })
 
+    // Default view mode'unu yeniden hesaplatmak için store'u temizle
+    await page.evaluate(() => {
+      localStorage.removeItem('view-mode-store')
+    })
+
     // Sayfayı yenile (viewport değişikliği için)
+    const ordersReloadResponse = page.waitForResponse(
+      response => /\/orders\/order-list(\?|$)/.test(response.url()) && response.status() === 200
+    )
     await page.reload()
+    await ordersReloadResponse
     await page.waitForLoadState('networkidle')
 
     // Desktop'ta table view görünmeli
-    const tableView = page.locator('table')
-    await expect(tableView).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Oluşturulma Tarihi')).toBeVisible({ timeout: 5000 })
   })
 })

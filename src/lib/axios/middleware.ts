@@ -1,6 +1,10 @@
+import { isPosthogReady, track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { getToken, removeToken, setToken } from '@/lib/local-storage-helper'
 import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
+import posthog, { Properties } from 'posthog-js'
+import { ApiCallEvent } from '../analytics/types'
 
 // Backend hata yanıt formatı
 interface BackendError {
@@ -13,14 +17,74 @@ type RequestMiddleware = (config: InternalAxiosRequestConfig) => InternalAxiosRe
 type ResponseMiddleware = (response: AxiosResponse) => AxiosResponse
 type ErrorMiddleware = (error: AxiosError<BackendError>) => Promise<never>
 
+type RequestMetadata = {
+  startTimeMs: number
+}
+
+type RequestConfigWithMetadata = InternalAxiosRequestConfig & {
+  metadata?: RequestMetadata
+}
+
+const API_CALL_SLOW_THRESHOLD_MS = 1000
+
 const isNetworkError = (error: AxiosError) =>
   error.message === 'Network Error' || error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK'
+
+const isTimeoutError = (error: AxiosError) => error.code === 'ECONNABORTED'
 
 const isAuthError = (error: AxiosError<BackendError>) =>
   error.response?.status === 401 || (error.response?.status === 403 && error.response.data?.error === 'Unauthorized')
 
+const sanitizeUrlPath = (url: string | undefined) => {
+  if (!url) return undefined
+  const withoutQuery = url.split('?')[0]
+  return withoutQuery
+}
+
+const capturePosthogApiError = async (error: AxiosError<BackendError>, payload: Properties) => {
+  if (typeof window === 'undefined') return
+  if (!isPosthogReady()) return
+
+  posthog.captureException(error, payload)
+}
+
 // Yönlendirme döngülerini önlemek için URL başına yasaklı hata sayısını takip eder
 const forbiddenCounts: Record<string, number> = {}
+
+// Request'e süre ölçümü için metadata ekler (body/header gibi hassas veriler içermez)
+export const requestTimingMiddleware: RequestMiddleware = config => {
+  const cfg = config as RequestConfigWithMetadata
+  if (!cfg.metadata) cfg.metadata = { startTimeMs: Date.now() }
+  return cfg
+}
+
+// API hatalarını PostHog'a event olarak yollar
+export const posthogErrorMiddleware =
+  (scope: 'public' | 'private', next: ErrorMiddleware): ErrorMiddleware =>
+  async error => {
+    const cfg = error.config as RequestConfigWithMetadata | undefined
+    const durationMs =
+      cfg?.metadata?.startTimeMs && cfg.metadata.startTimeMs > 0 ? Date.now() - cfg.metadata.startTimeMs : undefined
+
+    const method = (cfg?.method ?? '').toString().toUpperCase() || undefined
+
+    void capturePosthogApiError(error, {
+      scope,
+      endpoint: sanitizeUrlPath(cfg?.url),
+      method,
+      http_status: error.response?.status ?? null,
+      baseURL: cfg?.baseURL,
+      code: error.code,
+      isNetworkError: isNetworkError(error),
+      isTimeoutError: isTimeoutError(error),
+      durationMs,
+      pathname: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      errorMessage: error.response?.data?.message ?? error.message,
+      errorData: error.response?.data
+    })
+
+    return next(error)
+  }
 
 // Token varsa isteklere Authorization header'ı ekler
 export const authHeaderMiddleware: RequestMiddleware = config => {
@@ -59,6 +123,9 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
   if (isAuthError(error) && !window.location.pathname.includes('/login')) {
     console.error('auth error', error)
     removeToken()
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      posthog.reset()
+    }
     window.location.href = '/login'
     return Promise.reject(error)
   }
@@ -89,6 +156,24 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
 // Başarılı yanıtta yasaklı hata sayacını sıfırlar
 export const successResponseMiddleware: ResponseMiddleware = response => {
   forbiddenCounts[response.config.url as string] = 0
+
+  const cfg = response.config as RequestConfigWithMetadata
+  const durationMs =
+    cfg?.metadata?.startTimeMs && cfg.metadata.startTimeMs > 0 ? Date.now() - cfg.metadata.startTimeMs : undefined
+
+  // Don't spam: only send successful calls when they're slow
+  if (durationMs !== undefined && durationMs >= API_CALL_SLOW_THRESHOLD_MS) {
+    const method = (cfg?.method ?? '').toString().toUpperCase() || undefined
+    const endpoint = sanitizeUrlPath(cfg?.url)
+
+    track<ApiCallEvent>(ANALYTICS_EVENTS.apiCall, {
+      method,
+      endpoint,
+      duration_ms: durationMs,
+      http_status: response.status
+    })
+  }
+
   return response
 }
 
