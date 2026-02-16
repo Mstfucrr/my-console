@@ -35,7 +35,7 @@ export const createOrderSchema = z.object({
     .transform(parseTRCurrencyToNumber)
     .refine(v => Number.isFinite(v), { message: 'Toplam tutar geçersiz' })
     .refine(v => v > 0, { message: 'Toplam tutar sıfırdan büyük olmalıdır' })
-    .refine(v => v < 100000, { message: "Toplam tutar 100.000 TL'den küçük olmalıdır" }),
+    .refine(v => v < 1000000, { message: "Toplam tutar 1.000.000 TL'den büyük olamaz" }),
   // Adres Bilgileri
   city: z.object({
     id: z.string().min(1, 'Şehir zorunludur').default(''),

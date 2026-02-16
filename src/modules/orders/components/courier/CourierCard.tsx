@@ -33,12 +33,10 @@ export default function CourierCardPeek({ courierInfo, handleToggleMap, isShippe
           {/* İsim + pill'ler */}
           <div className='min-w-0 flex-1'>
             <div className='flex flex-col items-start gap-y-1'>
-              <h3 className='ph-sensitive truncate text-base font-semibold tracking-tight'>
-                {courierInfo?.name || 'Kurye'}
-              </h3>
+              <h3 className='truncate text-base font-semibold tracking-tight'>{courierInfo?.name || 'Kurye'}</h3>
 
               {hasPlate && (
-                <Badge variant='outline' color='secondary' className='ph-sensitive rounded-full px-2 py-0.5'>
+                <Badge variant='outline' color='secondary' className='rounded-full px-2 py-0.5'>
                   {courierInfo.licensePlate}
                 </Badge>
               )}

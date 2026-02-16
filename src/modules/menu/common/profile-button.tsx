@@ -31,12 +31,7 @@ export function ProfileButton({ className }: { className?: string }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          color='primary'
-          className={cn('rounded-full', className)}
-          size='icon-sm'
-          data-testid='profile-menu-button'
-        >
+        <Button color='primary' className={cn('rounded-full', className)} size='icon-sm'>
           <User className='size-6' />
         </Button>
       </PopoverTrigger>

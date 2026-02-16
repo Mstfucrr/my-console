@@ -1,12 +1,32 @@
 import { expect, test } from '@playwright/test'
-import { ensureLoggedIn } from './helpers/auth'
+
+const TEST_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || ''
 
 test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
   test.beforeEach(async ({ page, context }) => {
-    await ensureLoggedIn({ page, context, startPath: '/orders/create' })
+    // Eğer token varsa direkt localStorage'a kaydet ve login adımını atla
+    if (TEST_ACCESS_TOKEN) {
+      await context.addInitScript(token => {
+        window.localStorage.setItem(
+          'user',
+          JSON.stringify({
+            accessToken: token,
+            refreshToken: token
+          })
+        )
+      }, TEST_ACCESS_TOKEN)
+
+      // Direkt ana sayfaya git (login kontrolü geçilecek)
+      await page.goto('/')
+      // Sayfanın yüklendiğini bekle
+      await page.waitForLoadState('networkidle')
+    }
   })
 
   test('1.231,24 olarak formatlanır ve nokta girişi olduğunda virgüle çevirir', async ({ page }) => {
+    await page.goto('/orders/create')
+    await page.waitForLoadState('networkidle')
+
     const amount = page.getByLabel('Toplam Tutar (₺)')
 
     // 1) Kullanıcı '1231,24' yazınca 1.231,24 olarak otomatik formatlanmalı
@@ -41,6 +61,8 @@ test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
   })
 
   test('Boş bırakıldığında validasyon hatası gösterir', async ({ page }) => {
+    await page.goto('/orders/create')
+
     // Formu gönder
     await page.getByTestId('create-order-submit-button').click()
 

@@ -128,9 +128,9 @@ export default function CourierMap({
       <Marker position={currentCourierPosition} icon={courierIcon}>
         <Popup>
           <div className='text-center'>
-            <span className='ph-sensitive text-xs'>{courierInfo.name}</span>
+            <span className='text-xs'>{courierInfo.name}</span>
             {courierInfo.licensePlate && (
-              <div className='text-muted-foreground ph-sensitive text-xs'>{courierInfo.licensePlate}</div>
+              <div className='text-muted-foreground text-xs'>{courierInfo.licensePlate}</div>
             )}
           </div>
         </Popup>
@@ -140,7 +140,7 @@ export default function CourierMap({
       {customerPosition && (
         <Marker position={customerPosition}>
           <Popup>
-            <span className='ph-sensitive text-center text-sm'>{customerName}</span>
+            <span className='text-center text-sm'>{customerName}</span>
           </Popup>
         </Marker>
       )}

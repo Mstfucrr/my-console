@@ -28,7 +28,6 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
     <Card
       className={cn('cursor-pointer transition-all hover:shadow-md', isCreated && 'border-l-4 border-l-red-500')}
       onClick={() => onViewDetails(order)}
-      data-testid='order-card'
     >
       <CardContent className='h-full p-4 max-lg:p-2.5'>
         <div className='flex h-full flex-col items-start justify-between gap-3'>
@@ -39,12 +38,12 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
                 value={order.customerName}
                 maskFn={maskLastName}
                 defaultMasked={true}
-                textClassName='ph-sensitive text-sm font-semibold max-lg:text-xs'
+                textClassName='text-sm font-semibold max-lg:text-xs'
                 className='flex flex-row-reverse justify-end'
               />
             </div>
 
-            <div className='text-primary-700 ph-sensitive text-lg font-bold text-nowrap max-lg:text-base'>
+            <div className='text-primary-700 text-lg font-bold text-nowrap max-lg:text-base'>
               {formatCurrencyTRY(order.totalAmount)}
             </div>
           </div>
@@ -54,7 +53,7 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
             {order.courierInfo && (
               <div className='flex items-center gap-1'>
                 <Motorcycle className='-ml-1 size-5 shrink-0' style={{ color: OrderStatusGroup['shipped'].color }} />
-                <div className='ph-sensitive text-sm'>{order.courierInfo?.name}</div>
+                <div className='text-sm'>{order.courierInfo?.name}</div>
               </div>
             )}
             <div

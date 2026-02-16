@@ -1,13 +1,9 @@
 import { FormInputField } from '@/components/form/FormInputField'
 import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
-import { track } from '@/lib/analytics'
-import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
-import { PasswordChangeEvent } from '@/lib/analytics/types'
 import { cn } from '@/lib/utils'
 import { authService } from '@/modules/auth/service/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AxiosError } from 'axios'
 import { ArrowLeft, ArrowRight, CheckCircle, Key, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -108,18 +104,10 @@ export function ResetPasswordView() {
       })
 
       setIsSuccess(true)
-      track<PasswordChangeEvent>(ANALYTICS_EVENTS.passwordChange, { status: 'success' })
       toast.success(response.message || 'Şifreniz başarıyla güncellendi.')
     } catch (error) {
       console.error('reset password error', error)
-      const axiosError = error as AxiosError<{ message?: string }>
-      const message = axiosError.response?.data?.message ?? 'Bir hata oluştu. Lütfen tekrar deneyiniz.'
-      track<PasswordChangeEvent>(ANALYTICS_EVENTS.passwordChange, {
-        status: 'failed',
-        http_status: axiosError.response?.status ?? null,
-        message
-      })
-      toast.error(message)
+      toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
   }
 

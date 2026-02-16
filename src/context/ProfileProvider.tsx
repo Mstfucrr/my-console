@@ -1,8 +1,7 @@
 import { profileService } from '@/service/profile.service'
 import { IProfileResponse } from '@/types/profile'
 import { useQuery } from '@tanstack/react-query'
-import posthog from 'posthog-js'
-import { createContext, useContext, useEffect, useRef } from 'react'
+import { createContext, useContext } from 'react'
 
 type ProfileContextValue = {
   profile: IProfileResponse | undefined
@@ -16,7 +15,6 @@ type ProfileProviderProps = {
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined)
 
 export const ProfileProvider = ({ children }: ProfileProviderProps) => {
-  const lastIdentifiedUserIdRef = useRef<string | null>(null)
   const {
     data: profileData,
     isLoading,
@@ -26,22 +24,6 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     queryFn: () => profileService.getProfile(),
     staleTime: 1000 * 60 * 5 // 5 dakika
   })
-
-  useEffect(() => {
-    if (!profileData || !profileData.userId) return
-    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return
-    if (lastIdentifiedUserIdRef.current === profileData.userId) return
-
-    posthog.identify(profileData.userId, {
-      email: profileData.email,
-      accountId: profileData.accountId,
-      restaurantId: profileData.restaurantId,
-      omsRestaurantId: profileData.omsRestaurantId,
-      name: profileData.info?.name,
-      channelId: profileData.info?.channelId
-    })
-    lastIdentifiedUserIdRef.current = profileData.userId
-  }, [profileData, lastIdentifiedUserIdRef])
 
   return (
     <ProfileContext.Provider value={{ profile: profileData, isLoading: isLoading || isFetching }}>

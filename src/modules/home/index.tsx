@@ -180,15 +180,13 @@ export default function DashboardView() {
                         className='text-muted-foreground relative flex items-center justify-between rounded-lg border p-3'
                       >
                         <div className='flex-1'>
-                          <div className='ph-sensitive text-sm font-medium'>{order.customerName}</div>
+                          <div className='text-sm font-medium'>{order.customerName}</div>
                           <div className='mt-1 text-xs'>{formatDateTimeTR(order.date)}</div>
-                          <span className='ph-sensitive text-xs font-light'>{order.orderId}</span>
+                          <span className='text-xs font-light'>{order.orderId}</span>
                         </div>
                         <div className='flex flex-col gap-y-2 text-right'>
                           <OrderStatusBadge status={order.status} />
-                          <div className='text-primary-700 ph-sensitive font-semibold'>
-                            {formatCurrencyTRY(order.totalAmount)}
-                          </div>
+                          <div className='text-primary-700 font-semibold'>{formatCurrencyTRY(order.totalAmount)}</div>
                         </div>
                       </div>
                     ))}

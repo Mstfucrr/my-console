@@ -152,11 +152,7 @@ export function MapView() {
               >
                 <Popup>
                   <div className='flex items-center gap-1'>
-                    <MaskedText
-                      maskFn={maskLastName}
-                      value={order.customerName}
-                      textClassName='text-nowrap ph-sensitive'
-                    />
+                    <MaskedText maskFn={maskLastName} value={order.customerName} textClassName='text-nowrap' />
 
                     <TooltippedElement tooltipContent='Sipariş Detayı'>
                       <Button size='icon-xs' variant='link' onClick={() => setSelectedOrder(order)}>

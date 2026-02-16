@@ -23,7 +23,6 @@ export function LogoutButton({
     <ConfirmButton
       type='button'
       onConfirm={logout}
-      data-testid='logout-button'
       color='destructive'
       size={getButtonSize()}
       variant='outline'
@@ -31,7 +30,6 @@ export function LogoutButton({
       confirmButtonMessage='Çıkış Yap'
       cancelButtonMessage='İptal'
       confirmButtonColor='destructive'
-      confirmButtonProps={{ 'data-testid': 'logout-confirm' } as ButtonProps}
       className={className}
       {...props}
     >

@@ -28,53 +28,49 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
     accessorKey: 'totalOrderAmount',
     header: 'Toplam Sipariş Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalOrderAmount, false)}</span>
+    cell: ({ row }) => formatCurrency(row.original.totalOrderAmount, false)
   },
   {
     accessorKey: 'distributionCount',
     header: 'Dağıtım Adedi',
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{row.original.distributionCount}</span>
+    cell: ({ row }) => row.original.distributionCount
   },
   {
     accessorKey: 'totalDeliveryAmount',
     header: 'Ata Express Dağıtım Fatura Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalDeliveryAmount, false)}</span>
+    cell: ({ row }) => formatCurrency(row.original.totalDeliveryAmount, false)
   },
   {
     accessorKey: 'totalBillAmount',
     header: 'Düzenleyeceğiniz Fatura Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalBillAmount, false)}</span>
+    cell: ({ row }) => formatCurrency(row.original.totalBillAmount, false)
   },
   {
     accessorKey: 'totalFoodCouponAmount',
     header: "Yemek Kartı (Tahsilatı Ata'da) (₺)",
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalFoodCouponAmount, false)}</span>
+    cell: ({ row }) => formatCurrency(row.original.totalFoodCouponAmount, false)
   },
   {
     accessorKey: 'totalPrePaidFoodCouponAmount',
     header: 'Yemek Kartı (Tahsilatı Firmanızda) (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => (
-      <span className='ph-sensitive'>{formatCurrency(row.original.totalPrePaidFoodCouponAmount, false)}</span>
-    )
+    cell: ({ row }) => formatCurrency(row.original.totalPrePaidFoodCouponAmount, false)
   },
   {
     accessorKey: 'totalPrePaidAmount',
     header: 'Online Ödeme Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalPrePaidAmount, false)}</span>
+    cell: ({ row }) => formatCurrency(row.original.totalPrePaidAmount, false)
   },
   {
     accessorKey: 'restaurantPaymentAmount',
     header: 'Restoran Ödeme Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => (
-      <span className='ph-sensitive'>{formatCurrency(row.original.restaurantPaymentAmount, false)}</span>
-    )
+    cell: ({ row }) => formatCurrency(row.original.restaurantPaymentAmount, false)
   },
   {
     id: 'actions',

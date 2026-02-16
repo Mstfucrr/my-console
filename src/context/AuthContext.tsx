@@ -1,13 +1,8 @@
 'use client'
 
-import { track } from '@/lib/analytics'
-import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
-import { UserLogoutEvent } from '@/lib/analytics/types'
 import { getToken, removeToken } from '@/lib/local-storage-helper'
 import { authService } from '@/modules/auth/service/auth.service'
-import { useQueryClient } from '@tanstack/react-query'
 import { usePathname, useRouter } from 'next/navigation'
-import posthog from 'posthog-js'
 import { createContext, startTransition, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -23,7 +18,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-  const queryClient = useQueryClient()
 
   const pathname = usePathname()
 
@@ -53,28 +47,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuth()
   }, [pathname, router])
 
-  const handleLogout = () => {
-    queryClient.clear()
-    track<UserLogoutEvent>(ANALYTICS_EVENTS.userLogout)
-    removeToken()
-    if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-      posthog.reset()
-    }
-    setIsAuthenticated(false)
-    router.push('/login')
-  }
-
   const logout = async () => {
-    try {
-      await toast.promise(authService.logout(), {
+    await toast.promise(
+      async () => {
+        await authService.logout()
+        removeToken()
+        setIsAuthenticated(false)
+        router.push('/login')
+      },
+      {
         pending: 'Çıkış yapılıyor...',
-        success: 'Başarılıyla çıkış yapıldı.'
-      })
-    } catch (e) {
-      console.error('logout error', e)
-    } finally {
-      handleLogout()
-    }
+        success: 'Başarıyla çıkış yapıldı.',
+        error: 'Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.'
+      }
+    )
   }
 
   return <AuthContext.Provider value={{ isAuthenticated, isLoading, logout }}>{children}</AuthContext.Provider>
