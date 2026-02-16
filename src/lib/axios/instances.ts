@@ -3,10 +3,8 @@ import {
   applyRequestMiddleware,
   applyResponseMiddleware,
   authHeaderMiddleware,
-  posthogErrorMiddleware,
   privateErrorMiddleware,
   publicErrorMiddleware,
-  requestTimingMiddleware,
   successResponseMiddleware,
   tokenRefreshMiddleware
 } from './middleware'
@@ -23,19 +21,10 @@ const commonConfig = {
 
 // Kimlik doğrulama gerektirmeyen istekler için public axios instance (login, register, vb.)
 export const publicAxiosInstance: AxiosInstance = axios.create(commonConfig)
-applyRequestMiddleware(publicAxiosInstance, requestTimingMiddleware)
-applyResponseMiddleware(
-  publicAxiosInstance,
-  successResponseMiddleware,
-  posthogErrorMiddleware('public', publicErrorMiddleware)
-)
+applyResponseMiddleware(publicAxiosInstance, successResponseMiddleware, publicErrorMiddleware)
 
 // Kimlik doğrulama gerektiren istekler için private axios instance
 export const privateAxiosInstance: AxiosInstance = axios.create(commonConfig)
 tokenRefreshMiddleware(privateAxiosInstance, publicAxiosInstance)
-applyRequestMiddleware(privateAxiosInstance, requestTimingMiddleware, authHeaderMiddleware)
-applyResponseMiddleware(
-  privateAxiosInstance,
-  successResponseMiddleware,
-  posthogErrorMiddleware('private', privateErrorMiddleware)
-)
+applyRequestMiddleware(privateAxiosInstance, authHeaderMiddleware)
+applyResponseMiddleware(privateAxiosInstance, successResponseMiddleware, privateErrorMiddleware)

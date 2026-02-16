@@ -21,7 +21,6 @@ interface FormCommandSelectFieldProps<T extends FieldValues> {
   searchPlaceholder?: string
   emptyMessage?: string
   formItemClassName?: string
-  inputClassName?: string
   required?: boolean
   disabled?: boolean
   isLoading?: boolean
@@ -39,7 +38,6 @@ export function FormCommandSelectField<T extends FieldValues>({
   searchPlaceholder = 'Ara...',
   emptyMessage = 'Sonuç bulunamadı.',
   formItemClassName,
-  inputClassName,
   required,
   disabled,
   isLoading,
@@ -253,8 +251,7 @@ export function FormCommandSelectField<T extends FieldValues>({
                 selectedOption || (allowCustomValue && value) ? 'pr-20' : 'pr-10',
                 error && 'border-red-500',
                 disabled && 'cursor-not-allowed opacity-50',
-                !selectedOption && !isOpen && !value && 'text-muted-foreground',
-                inputClassName
+                !selectedOption && !isOpen && !value && 'text-muted-foreground'
               )}
             />
             <div className='absolute top-1/2 right-3 z-10 flex -translate-y-1/2 items-center gap-1'>
@@ -309,7 +306,7 @@ export function FormCommandSelectField<T extends FieldValues>({
                           }}
                           value={searchValue}
                           data-value={searchValue}
-                          className='ph-sensitive cursor-pointer'
+                          className='cursor-pointer'
                         >
                           <Check className='mr-2 size-4' />
                           {searchValue}

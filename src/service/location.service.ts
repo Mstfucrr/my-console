@@ -87,8 +87,7 @@ export function useQueryCounties(provinceId?: number, enabled: boolean = true) {
       if (typeof provinceId !== 'number') throw new Error('Missing provinceId')
       return fetchCounties(provinceId)
     },
-    enabled: !!provinceId && enabled,
-    staleTime: 1000 * 60 * 60 * 24 // 24 saat
+    enabled: !!provinceId && enabled
   })
 }
 
@@ -99,8 +98,7 @@ export function useQueryDistricts(countyId?: number, enabled: boolean = true) {
       if (typeof countyId !== 'number') throw new Error('Missing countyId')
       return fetchDistricts(countyId)
     },
-    enabled: !!countyId && enabled,
-    staleTime: 1000 * 60 * 60 * 24 // 24 saat
+    enabled: !!countyId && enabled
   })
 }
 
@@ -111,7 +109,6 @@ export function useQueryStreets(districtId?: number, enabled: boolean = true) {
       if (typeof districtId !== 'number') throw new Error('Missing districtId')
       return fetchStreets(districtId)
     },
-    enabled: !!districtId && enabled,
-    staleTime: 1000 * 60 * 60 * 24 // 24 saat
+    enabled: !!districtId && enabled
   })
 }

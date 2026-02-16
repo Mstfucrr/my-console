@@ -1,8 +1,5 @@
 'use client'
 
-import { track } from '@/lib/analytics'
-import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
-import { UserLoginEvent, UserResendOtpEvent } from '@/lib/analytics/types'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
@@ -156,26 +153,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         setLoginRequest(data)
       } else {
-        track<UserLoginEvent>(ANALYTICS_EVENTS.userLogin, {
-          status: 'success',
-          method: 'password',
-          requires_otp: false
-        })
         toast.success('Başarılıyla giriş yaptınız.')
         router.push('/')
       }
     } catch (error) {
       console.error('login error', error)
       const axiosError = error as AxiosError<{ message: string }>
-      track<UserLoginEvent>(ANALYTICS_EVENTS.userLogin, {
-        status: 'failed',
-        stage: 'login',
-        requires_otp: Boolean(otpState.sessionId),
-        http_status: axiosError.response?.status ?? null,
-        message: axiosError.response?.data?.message,
-        email: data.identifier,
-        accountId: data.accountId
-      })
       toast.error(axiosError.response?.data?.message ?? 'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyiniz.')
       throw error
     }
@@ -205,26 +188,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       )
 
-      track<UserLoginEvent>(ANALYTICS_EVENTS.userLogin, {
-        status: 'success',
-        method: 'otp',
-        requires_otp: true
-      })
       router.push('/')
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message: string }>
-      track<UserLoginEvent>(ANALYTICS_EVENTS.userLogin, {
-        status: 'failed',
-        stage: 'otp_verify',
-        requires_otp: true,
-        http_status: axiosError.response?.status ?? null,
-        message: axiosError.response?.data?.message,
-        accountId: loginRequest?.accountId,
-        email: loginRequest?.identifier
-      })
+    } catch {
       setTimeout(() => otpInputRefs.current[0]?.focus(), 0)
     }
-  }, [otpState.sessionId, otpState.values, verifyOtp, router, otpInputRefs, loginRequest])
+  }, [otpState.sessionId, otpState.values, verifyOtp, router, otpInputRefs])
 
   // OTP change handler
   const handleOtpChange = useCallback(
@@ -291,18 +259,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           maskedPhoneNumber: loginResponse.maskedPhoneNumber ?? ''
         }))
         resetOtp()
-        track<UserResendOtpEvent>(ANALYTICS_EVENTS.userResendOtp, {
-          status: 'success'
-        })
         toast.success('Yeni kod gönderildi.')
       }
     } catch (error) {
       console.error('resend otp error', error)
-      const axiosError = error as AxiosError<{ message: string }>
-      track<UserResendOtpEvent>(ANALYTICS_EVENTS.userResendOtp, {
-        status: 'failed',
-        http_status: axiosError.response?.status ?? null
-      })
       toast.error('Kod gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
   }
