@@ -1,5 +1,6 @@
 export interface LatestOrder {
   orderId: string
+  sId?: string
   status: OrderStatusesGroups
   customerName: string
   date: string

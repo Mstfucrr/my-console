@@ -1,5 +1,9 @@
 import { GroupedSelectOption } from '@/components/form/FormSelectField'
+import { track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
+import { OrderCreateEvent, PurchaseCompletedEvent } from '@/lib/analytics/types'
 import { getItemJson, setItem } from '@/lib/local-storage-helper'
+import { toCents } from '@/lib/money'
 import { groupPaymentMethods } from '@/lib/payment-methods'
 import { useQueryCounties, useQueryDistricts, useQueryProvinces, useQueryStreets } from '@/service/location.service'
 import { usePaymentMethods } from '@/service/payment-methods.service'
@@ -18,17 +22,6 @@ export function useCreateOrder() {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const { mutateAsync: createOrder, isPending: isSubmitting } = useMutation({
-    mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order),
-    onSuccess: () => {
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
-        queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
-        queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
-      }, 300)
-    }
-  })
-
   const form = useForm<CreateOrderFormData>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: defaultCreateOrderValues
@@ -46,6 +39,37 @@ export function useCreateOrder() {
     () => groupPaymentMethods(paymentMethods),
     [paymentMethods]
   )
+
+  const { mutateAsync: createOrder, isPending: isSubmitting } = useMutation({
+    mutationFn: (order: CreateOrderFormData) => ordersService.createOrder(order),
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['ordersStats'] })
+        queryClient.invalidateQueries({ queryKey: ['latest-orders'] })
+        queryClient.invalidateQueries({ queryKey: ['orders', 'active'] })
+      }, 300)
+      const body = {
+        total_amount: toCents(form.getValues('totalAmount')),
+        city_name: form.getValues('city.name'),
+        county_name: form.getValues('county.name'),
+        district_name: form.getValues('district.name'),
+        payment_type_name: paymentMethods?.find(p => p.key === form.getValues('paymentTypeSId'))?.name ?? undefined
+      }
+      track<OrderCreateEvent>(ANALYTICS_EVENTS.orderCreate, {
+        status: 'success',
+        ...body
+      })
+      track<PurchaseCompletedEvent>(ANALYTICS_EVENTS.purchaseCompleted, body)
+    },
+    onError: error => {
+      const errorResponse = (error as AxiosError<{ message: string }>).response
+      track<OrderCreateEvent>(ANALYTICS_EVENTS.orderCreate, {
+        status: 'failed',
+        http_status: errorResponse?.status ?? null,
+        message: errorResponse?.data?.message ?? null
+      })
+    }
+  })
 
   // Şehir
   const { data: provinces, isLoading: isLoadingProvinces } = useQueryProvinces()
@@ -181,6 +205,15 @@ export function useCreateOrder() {
   )
 
   const onSubmit = async (data: CreateOrderFormData) => {
+    track<OrderCreateEvent>(ANALYTICS_EVENTS.orderCreate, {
+      status: 'attempt',
+      total_amount: toCents(data.totalAmount),
+      city_name: data.city?.name,
+      county_name: data.county?.name,
+      district_name: data.district?.name,
+      payment_type_name: paymentMethods?.find(p => p.key === data.paymentTypeSId)?.name ?? undefined
+    })
+
     try {
       await toast.promise(async () => await createOrder(data), {
         pending: 'Sipariş oluşturuluyor...',

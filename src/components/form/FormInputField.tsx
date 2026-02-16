@@ -53,7 +53,7 @@ export function FormInputField<T extends FieldValues>({
             {...props}
             type={type}
             placeholder={placeholder}
-            className={cn('w-full', error && 'border-red-500', hideSpinButtons && 'no-spin')}
+            className={cn('w-full', props.className, error && 'border-red-500', hideSpinButtons && 'no-spin')}
           />
         )}
       </FormControl>

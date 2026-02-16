@@ -3,9 +3,12 @@
 import { FilterCard, SearchInput, StatusSelect, type GroupedFilterOption } from '@/components/ui/filter-card'
 import { OperationDateFilters } from '@/components/ui/operation-date-range-picker'
 import { useFilter } from '@/hooks/use-filter'
+import { normalizeSearch, track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
+import { ReportFiltersAppliedEvent } from '@/lib/analytics/types'
 import { groupPaymentMethods } from '@/lib/payment-methods'
 import { usePaymentMethods } from '@/service/payment-methods.service'
-import { OrderStatusesGroups } from '@/types'
+import { OrderStatusesGroups, PaymentMethod } from '@/types'
 import { Loader2, Search } from 'lucide-react'
 import { useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
@@ -23,6 +26,15 @@ export interface ReportsFilterProperties {
   paymentMethod?: string
   dateRange: DateRange
 }
+
+const getStatusLabel = (status: OrderStatusesGroups | 'all') =>
+  STATUS_OPTIONS.find(option => option.value === status)?.label?.toString() ?? 'all'
+
+const getPaymentMethodLabel = (
+  paymentMethods: Array<PaymentMethod> | undefined,
+  paymentMethodId: string | undefined
+) =>
+  paymentMethodId ? (paymentMethods?.find(method => method.id === paymentMethodId)?.name.toString() ?? 'all') : 'all'
 
 export function ReportsFilters({
   filters,
@@ -56,12 +68,27 @@ export function ReportsFilters({
     return [{ items: [{ value: 'all', label: 'Ödeme Yöntemleri' }] }, ...grouped]
   }, [paymentMethods])
 
+  const handleApply = () => {
+    track<ReportFiltersAppliedEvent>(ANALYTICS_EVENTS.reportFiltersApplied, {
+      status: getStatusLabel(pendingFilters.status),
+      payment_method: getPaymentMethodLabel(paymentMethods, pendingFilters.paymentMethod),
+      search: normalizeSearch(pendingFilters.search),
+      date_range_days:
+        pendingFilters.dateRange?.from && pendingFilters.dateRange?.to
+          ? Math.ceil(
+              (pendingFilters.dateRange.to.getTime() - pendingFilters.dateRange.from.getTime()) / (1000 * 60 * 60 * 24)
+            ) + 1
+          : undefined
+    })
+    handleApplyFilters()
+  }
+
   return (
     <FilterCard
       filters={filters}
       onFiltersChange={onFiltersChange}
       onClearFilters={handleClearFilters}
-      onApply={handleApplyFilters}
+      onApply={handleApply}
       hasActiveFilters={hasActiveFilters}
       hasPendingChanges={hasPendingChanges}
     >

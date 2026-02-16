@@ -47,7 +47,7 @@ export default function StatCard({
             )}
           </div>
         </div>
-        <span className={`text-foreground text-xl font-semibold max-xl:text-lg max-sm:text-base`}>
+        <span className={`text-foreground ph-sensitive text-xl font-semibold max-xl:text-lg max-sm:text-base`}>
           {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
         </span>
       </CardContent>
