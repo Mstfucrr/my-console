@@ -3,6 +3,9 @@
 import { FilterCard, SearchInput, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
 import { OrderStatusGroup } from '@/constants/orders'
 import { useFilter } from '@/hooks/use-filter'
+import { normalizeSearch, track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
+import { OrdersFiltersAppliedEvent } from '@/lib/analytics/types'
 import { OrderStatusesGroups } from '@/types'
 import { Search } from 'lucide-react'
 import { defaultOrderFilters, useOrders } from '../../context/OrdersContext'
@@ -16,6 +19,10 @@ const statusOptions: FilterOption[] = [
   { value: OrderStatusesGroups.CANCELLED, label: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label }
 ]
 
+const getStatusLabel = (status: OrderStatusesGroups | 'all') => {
+  return statusOptions.find(option => option.value === status)?.label?.toString() ?? 'all'
+}
+
 export function OrderFilters() {
   const { filters, handleFiltersChange, clearFilters } = useOrders()
   const {
@@ -27,12 +34,20 @@ export function OrderFilters() {
     updatePendingFilters
   } = useFilter<OrderFilterProperties>(filters, handleFiltersChange, clearFilters, defaultOrderFilters)
 
+  const handleApply = () => {
+    track<OrdersFiltersAppliedEvent>(ANALYTICS_EVENTS.ordersFiltersApplied, {
+      status: getStatusLabel(pendingFilters.status),
+      search: normalizeSearch(pendingFilters.search)
+    })
+    handleApplyFilters()
+  }
+
   return (
     <FilterCard
       filters={filters}
       onFiltersChange={handleFiltersChange}
       onClearFilters={handleClearFilters}
-      onApply={handleApplyFilters}
+      onApply={handleApply}
       hasActiveFilters={hasActiveFilters}
       hasPendingChanges={hasPendingChanges}
     >
