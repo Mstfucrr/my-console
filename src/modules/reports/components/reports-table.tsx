@@ -27,7 +27,7 @@ const columns: ColumnDef<ReportRecord>[] = [
     accessorKey: 'OrderId',
     header: 'Sipariş ID',
     minSize: 100,
-    cell: ({ row }) => <div className='text-xs'>{row.getValue('OrderId')}</div>
+    cell: ({ row }) => <div className='ph-sensitive text-xs'>{row.getValue('OrderId')}</div>
   },
   {
     accessorKey: 'CreatedOn',
@@ -38,7 +38,7 @@ const columns: ColumnDef<ReportRecord>[] = [
     accessorKey: 'customer_name',
     header: 'Müşteri',
     minSize: 150,
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('customer_name')}</div>
+    cell: ({ row }) => <div className='ph-sensitive font-medium'>{row.getValue('customer_name')}</div>
   },
   {
     accessorKey: 'Status',
@@ -61,7 +61,7 @@ const columns: ColumnDef<ReportRecord>[] = [
     header: 'Tutar (₺)',
     meta: { align: 'right' },
     size: 100,
-    cell: ({ row }) => formatCurrencyTRY(row.getValue('TotalAmount'), false)
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrencyTRY(row.getValue('TotalAmount'), false)}</span>
   }
 ]
 

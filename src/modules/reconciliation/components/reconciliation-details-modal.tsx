@@ -2,6 +2,9 @@
 
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { DialogContentInner } from '@/components/ui/dialog'
+import { track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
+import { ReconciliationActionEvent } from '@/lib/analytics/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { toast } from 'react-toastify'
@@ -103,30 +106,58 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
   const handleApprove = async (data: { invoiceFile: File }) => {
     if (!record) return
 
-    await toast.promise(
-      async () => {
-        // First upload the file to S3
-        await uploadFile(data.invoiceFile)
-        // Then approve with the file name
-        await approveReconciliation({
-          recordId: record.RecordID,
-          confirmRecordId: record.ConfirmID,
-          fileName: data.invoiceFile.name
-        })
-      },
-      {
-        pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
-        success: 'Fatura yüklendi ve mutabakat başarıyla onaylandı',
-        error: 'İşlem sırasında bir hata oluştu'
-      }
-    )
-    handleClose()
+    track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+      action: 'approve',
+      status: 'attempt',
+      period: record.period,
+      record_status: record.status
+    })
+
+    try {
+      await toast.promise(
+        async () => {
+          // First upload the file to S3
+          await uploadFile(data.invoiceFile)
+          // Then approve with the file name
+          await approveReconciliation({
+            recordId: record.RecordID,
+            confirmRecordId: record.ConfirmID,
+            fileName: data.invoiceFile.name
+          })
+        },
+        {
+          pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
+          success: 'Fatura yüklendi ve mutabakat başarıyla onaylandı',
+          error: 'İşlem sırasında bir hata oluştu'
+        }
+      )
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'approve',
+        status: 'success',
+        period: record.period,
+        record_status: record.status
+      })
+      handleClose()
+    } catch {
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'approve',
+        status: 'failed',
+        period: record.period,
+        record_status: record.status
+      })
+    }
   }
 
   const handleReportIssue = async (data: { description: string; statementFile: File }) => {
     if (!record) return
 
     try {
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'attempt',
+        period: record.period,
+        record_status: record.status
+      })
       await toast.promise(
         async () => {
           // First upload the statement file to S3
@@ -145,9 +176,21 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
           error: 'Mutabık olmadığınızın bildirimi yapılırken bir hata oluştu'
         }
       )
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'success',
+        period: record.period,
+        record_status: record.status
+      })
       handleClose()
     } catch {
       // Error is handled by toast
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'failed',
+        period: record.period,
+        record_status: record.status
+      })
     }
   }
 

@@ -1,57 +1,11 @@
 import { expect, test } from '@playwright/test'
-
-// Environment variable'lardan login bilgilerini al
-const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
-const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
-const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
-const TEST_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || ''
+import { ensureLoggedIn } from './helpers/auth'
 
 const repeat = (char: string, len: number) => Array.from({ length: len }, () => char).join('')
 
 test.describe('Sipariş Oluşturma', () => {
   test.beforeEach(async ({ page, context }) => {
-    // Eğer token varsa direkt localStorage'a set et ve login adımını atla
-    if (TEST_ACCESS_TOKEN) {
-      await context.addInitScript(token => {
-        window.localStorage.setItem(
-          'user',
-          JSON.stringify({
-            accessToken: token,
-            refreshToken: token
-          })
-        )
-      }, TEST_ACCESS_TOKEN)
-
-      // Direkt ana sayfaya git (login kontrolü geçilecek)
-      await page.goto('/')
-      // Sayfanın yüklendiğini bekle
-      await page.waitForLoadState('networkidle')
-    } else {
-      // Token yoksa login akışını kullan
-      // Login API endpoint'ini mock'la - requiresOtp: false döndür
-      await page.route('**/auth/login', async route => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            accessToken: 'mock-access-token-12345',
-            userId: 'user-12345',
-            accountId: '9742949',
-            requiresOtp: false
-          })
-        })
-      })
-
-      // Login sayfasına git ve giriş yap
-      await page.goto('/login')
-      await page.getByPlaceholder('Hesap ID giriniz').fill(TEST_ACCOUNT_ID)
-      await page.getByPlaceholder('E-posta giriniz').fill(TEST_IDENTIFIER)
-      await page.getByPlaceholder('Şifrenizi giriniz').fill(TEST_PASSWORD)
-      await page.getByRole('button', { name: /Giriş Yap/i }).click()
-
-      // Ana sayfaya yönlendirildiğini bekle
-      await expect(page).toHaveURL('/', { timeout: 10000 })
-    }
+    await ensureLoggedIn({ page, context, startPath: '/orders/create' })
   })
 
   test('Yeni sipariş oluşturma akışı', async ({ page }) => {
@@ -127,9 +81,6 @@ test.describe('Sipariş Oluşturma', () => {
     //   })
     // })
 
-    // Sipariş oluştur sayfasına git
-    await page.goto('/orders/create')
-
     // Müşteri Bilgileri bölümünü doldur
     await page.locator('input[name="firstName"]').fill('Ahmet')
     await page.locator('input[name="lastName"]').fill('Yılmaz')
@@ -166,13 +117,6 @@ test.describe('Sipariş Oluşturma', () => {
     const ilceInput = page.locator('input[name="county.id"]')
     await expect(ilceInput).toBeEnabled({ timeout: 5000 })
     await ilceInput.click()
-    // API response'un gelmesini bekle
-    await page.waitForResponse(
-      response =>
-        response.url().includes('/location/query-address') &&
-        response.url().includes('type=county') &&
-        response.status() === 200
-    )
     await ilceInput.fill('Kadıköy')
     await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
     await page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' }).click()
@@ -180,14 +124,14 @@ test.describe('Sipariş Oluşturma', () => {
     // Mahalle seç (ilçe seçildikten sonra yüklenecek)
     const mahalleInput = page.locator('input[name="district.id"]')
     await expect(mahalleInput).toBeEnabled({ timeout: 5000 })
-    await mahalleInput.click()
-    // API response'un gelmesini bekle
-    await page.waitForResponse(
+    const districtResponse = page.waitForResponse(
       response =>
         response.url().includes('/location/query-address') &&
         response.url().includes('type=district') &&
         response.status() === 200
     )
+    await mahalleInput.click()
+    await districtResponse
     await mahalleInput.fill('Caferağa')
     await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
     await page.locator('[cmdk-item]').filter({ hasText: 'CAFERAĞA MAHALLESİ' }).click()
@@ -211,7 +155,7 @@ test.describe('Sipariş Oluşturma', () => {
     })
   })
 
-  test('Sipariş oluşturma form validasyonları', async ({ page }) => {
+  test('Sipariş oluşturma form validasyonları', async ({ page, context }) => {
     // createOrderSchema max limitleri (src/modules/orders/create/constants/index.ts)
     const MAX_FIRST_NAME = 50
     const MAX_LAST_NAME = 50
@@ -242,10 +186,8 @@ test.describe('Sipariş Oluşturma', () => {
       })
     })
 
-    // Sipariş oluştur sayfasına git
-    await page.goto('/orders/create')
-
     // Formu boş bırakarak göndermeyi dene
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
 
     // Validasyon hatalarının göründüğünü kontrol et
@@ -277,8 +219,20 @@ test.describe('Sipariş Oluşturma', () => {
     await expect(page.getByText('Soyad en fazla 50 karakter olabilir')).toBeVisible()
     await page.locator('input[name="lastName"]').fill('Yılmaz')
 
+    // Max-length: Ad (50) / Soyad (50)
+    await page.locator('input[name="firstName"]').fill(repeat('A', MAX_FIRST_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Ad en fazla 50 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="firstName"]').fill('Ahmet')
+
+    await page.locator('input[name="lastName"]').fill(repeat('B', MAX_LAST_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Soyad en fazla 50 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="lastName"]').fill('Yılmaz')
+
     await page.locator('input[name="customerPhone"]').clear()
     await page.locator('input[name="customerPhone"]').fill('123') // Geçersiz telefon
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
 
     // Telefon validasyon hatasının göründüğünü kontrol et
@@ -290,13 +244,14 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="totalAmount"]').clear()
     await page.locator('input[name="totalAmount"]').fill('0') // Sıfır tutar
     await page.getByTestId('create-order-submit-button').click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Toplam tutar sıfırdan büyük olmalıdır/i)).toBeVisible()
 
-    // Max amount: must be < 1.000.000 TL
+    // Max amount: must be < 100.000 TL
     await page.locator('input[name="totalAmount"]').clear()
     await page.locator('input[name="totalAmount"]').fill(String(MAX_TOTAL_AMOUNT_EXCLUSIVE))
     await page.getByTestId('create-order-submit-button').click()
-    await expect(page.getByText("Toplam tutar 1.000.000 TL'den büyük olamaz")).toBeVisible()
+    await expect(page.getByText("Toplam tutar 100.000 TL'den küçük olmalıdır")).toBeVisible()
 
     // Adres alanları validasyonları
     await page.locator('input[name="totalAmount"]').clear()
@@ -311,6 +266,7 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('[cmdk-item]').filter({ hasText: 'İstanbul' }).click()
 
     // İlçe seçmeden gönder
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/İlçe zorunludur/i)).toBeVisible()
 
@@ -330,18 +286,13 @@ test.describe('Sipariş Oluşturma', () => {
     const ilceInput = page.locator('input[name="county.id"]')
     await expect(ilceInput).toBeEnabled({ timeout: 5000 })
     await ilceInput.click()
-    // API response'un gelmesini bekle
-    await page.waitForResponse(
-      response =>
-        response.url().includes('/location/query-address') &&
-        response.url().includes('type=county') &&
-        response.status() === 200
-    )
     await ilceInput.fill('Kadıköy')
-    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
-    await page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' }).click()
+    const kadikoyOption = page.locator('[cmdk-item]').filter({ hasText: 'KADIKÖY' })
+    await expect(kadikoyOption).toBeVisible({ timeout: 5000 })
+    await kadikoyOption.click()
 
     // Mahalle seçmeden gönder
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Mahalle zorunludur/i)).toBeVisible()
 
@@ -361,16 +312,13 @@ test.describe('Sipariş Oluşturma', () => {
     const mahalleInput = page.locator('input[name="district.id"]')
     await expect(mahalleInput).toBeEnabled({ timeout: 5000 })
     await mahalleInput.click()
-    // API response'un gelmesini bekle
-    await page.waitForResponse(
-      response =>
-        response.url().includes('/location/query-address') &&
-        response.url().includes('type=district') &&
-        response.status() === 200
-    )
     await mahalleInput.fill('19 MAYIS')
-    await page.waitForSelector('[cmdk-item]', { timeout: 5000 })
-    await page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' }).click() // Sokak boş bırakarak gönder
+    const mahalleOption = page.locator('[cmdk-item]').filter({ hasText: '19 MAYIS MAHALLESİ' })
+    await expect(mahalleOption).toBeVisible({ timeout: 5000 })
+    await mahalleOption.click() // Sokak boş bırakarak gönder
+
+    // Sokak required (bu noktada street hiç girilmedi)
+    await page.getByTestId('create-order-submit-button').click()
 
     // Sokak required (bu noktada street hiç girilmedi)
     await page.getByTestId('create-order-submit-button').click()
@@ -401,9 +349,35 @@ test.describe('Sipariş Oluşturma', () => {
     await expect(page.getByText('Adres tarifi en fazla 300 karakter olabilir')).toBeVisible()
     await page.locator('textarea[name="addressDirection"]').clear()
 
+    // Max-length: Sokak (120)
+    await page.locator('input[name="street"]').fill(repeat('S', MAX_STREET + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Sokak en fazla 120 karakter olabilir')).toBeVisible()
+    // Required test için tekrar boşalt
+    await page.locator('input[name="street"]').fill('')
+
+    // Max-length: Bina adı (100) - opsiyonel ama girilirse validate edilir
+    await page.locator('input[name="buildingName"]').fill(repeat('B', MAX_BUILDING_NAME + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Bina adı en fazla 100 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="buildingName"]').clear()
+
+    // Max-length: Kat (3 karakter)
+    await page.locator('input[name="floor"]').fill(repeat('1', MAX_FLOOR + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Kat bilgisi en fazla 3 karakter olabilir')).toBeVisible()
+    await page.locator('input[name="floor"]').clear()
+
+    // Max-length: Adres tarifi (300) - opsiyonel ama girilirse validate edilir
+    await page.locator('textarea[name="addressDirection"]').fill(repeat('T', MAX_ADDRESS_DIRECTION + 1))
+    await page.getByTestId('create-order-submit-button').click()
+    await expect(page.getByText('Adres tarifi en fazla 300 karakter olabilir')).toBeVisible()
+    await page.locator('textarea[name="addressDirection"]').clear()
+
     // Sokak doldur, bina no boş bırak
     await page.locator('input[name="street"]').fill('Atatürk Caddesi')
     await page.locator('input[name="buildingNumber"]').clear()
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Bina numarası zorunludur/i)).toBeVisible()
 
@@ -411,11 +385,13 @@ test.describe('Sipariş Oluşturma', () => {
     await page.locator('input[name="buildingNumber"]').fill('123')
     await page.locator('input[name="doorNumber"]').clear()
     await page.getByTestId('create-order-submit-button').click()
+    await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Kapı numarası zorunludur/i)).toBeVisible()
 
     // Daire no doldur, tam adres çok kısa
     await page.locator('input[name="doorNumber"]').fill('12')
     // Ödeme tipini seçme
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Ödeme tipi seçimi zorunludur/i)).toBeVisible()
   })

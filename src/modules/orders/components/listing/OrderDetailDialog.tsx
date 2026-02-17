@@ -120,7 +120,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                       <CardContent className='space-y-3'>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Sipariş ID</span>
-                          <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{order?.orderId}</span>
+                          <span className='ph-sensitive text-sm max-sm:ml-2 max-sm:text-xs'>{order?.orderId}</span>
                         </div>
                         <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                           <span className='text-muted-foreground text-sm'>Durum</span>
@@ -156,7 +156,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                         <Separator />
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground flex items-center gap-1 text-sm'>Toplam Tutar</span>
-                          <span className='text-primary-700 text-xl font-bold'>
+                          <span className='text-primary-700 ph-sensitive text-xl font-bold'>
                             {order && formatCurrencyTRY(order.totalAmount)}
                           </span>
                         </div>
@@ -179,7 +179,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                               value={order.customerName}
                               maskFn={maskLastName}
                               defaultMasked={true}
-                              textClassName='text-sm'
+                              textClassName='text-sm ph-sensitive'
                               className='text-right'
                             />
                           )}
@@ -196,7 +196,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                               defaultMasked={true}
                               asLink={true}
                               href={`tel:${order.customerPhone}`}
-                              textClassName='text-sm'
+                              textClassName='text-sm ph-sensitive'
                               className='text-right'
                             />
                           )}
@@ -210,7 +210,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                             <div className='flex items-start justify-between gap-2'>
                               <span className='text-muted-foreground text-sm text-nowrap'>Müşteri Notu</span>
                               <div className='pl-6 text-right text-sm leading-relaxed'>
-                                <span className='text-gray-900'>{order.customerNote}</span>
+                                <span className='ph-sensitive text-gray-900'>{order.customerNote}</span>
                               </div>
                             </div>
                             <Separator />
@@ -225,12 +225,13 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                                 className='items-start justify-end text-right'
                                 maskFn={maskAddress}
                                 value={order.deliveryAddress}
+                                textClassName='ph-sensitive'
                               />
                             )}
                             {order?.customerPosition?.[0] != null && order?.customerPosition?.[1] != null && (
                               <TooltippedElement tooltipContent='Google Haritada Görüntüle' className='text-xs'>
                                 <a
-                                  className='text-muted-foreground hover:text-primary my-2 flex items-center gap-1 font-mono text-xs text-nowrap underline'
+                                  className='ph-sensitive text-muted-foreground hover:text-primary my-2 flex items-center gap-1 font-mono text-xs text-nowrap underline'
                                   href={`https://maps.google.com/?q=${order.customerPosition[0]},${order.customerPosition[1]}`}
                                   target='_blank'
                                   rel='noopener noreferrer'
@@ -250,7 +251,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
                             <div className='flex items-start justify-between gap-2'>
                               <span className='text-muted-foreground text-sm text-nowrap'>Adres Tarifi</span>
                               <div className='pl-6 text-right text-sm leading-relaxed'>
-                                <span className='text-gray-900'>{order.addressDirection}</span>
+                                <span className='ph-sensitive text-gray-900'>{order.addressDirection}</span>
                               </div>
                             </div>
                           </>

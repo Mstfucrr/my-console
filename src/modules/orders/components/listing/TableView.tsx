@@ -28,7 +28,7 @@ const columns: ColumnDef<Order>[] = [
         value={row.getValue('customerName')}
         maskFn={maskLastName}
         defaultMasked={true}
-        textClassName='font-medium'
+        textClassName='font-medium ph-sensitive'
         className='flex flex-row-reverse justify-end'
       />
     )
@@ -54,7 +54,7 @@ const columns: ColumnDef<Order>[] = [
     size: 300,
     cell: ({ row }) => {
       const courierInfo = row.original.courierInfo
-      return <div className='text-sm'>{courierInfo?.name ?? '-'}</div>
+      return <div className='ph-sensitive text-sm'>{courierInfo?.name ?? '-'}</div>
     }
   },
   {
@@ -77,7 +77,9 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'totalAmount',
     header: 'Tutar (₺)',
     cell: ({ row }) => (
-      <div className='text-primary-700 font-bold'>{formatCurrency(row.getValue('totalAmount'), false)}</div>
+      <div className='text-primary-700 ph-sensitive font-bold'>
+        {formatCurrency(row.getValue('totalAmount'), false)}
+      </div>
     )
   }
 ]
