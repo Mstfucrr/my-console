@@ -26,6 +26,7 @@ const columns: ColumnDef<ReportRecord>[] = [
   {
     accessorKey: 'OrderId',
     header: 'Sipariş ID',
+    enableSorting: false,
     minSize: 100,
     cell: ({ row }) => <div className='ph-sensitive text-xs'>{row.getValue('OrderId')}</div>
   },

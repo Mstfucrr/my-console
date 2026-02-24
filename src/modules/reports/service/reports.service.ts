@@ -1,19 +1,25 @@
 import { privateAxiosInstance } from '@/lib/axios'
 import { formatDateToApiString } from '@/lib/utils/date'
 import { PaginatedResponse, PaginationOptions } from '@/types'
+import { ColumnSort } from '@tanstack/react-table'
 import type { ReportsFilterProperties } from '../components/reports-filters'
 import type { ReportRecord } from '../types'
 
 class ReportsService {
   async getReports(
     filters?: ReportsFilterProperties,
-    pagination?: PaginationOptions
+    pagination?: PaginationOptions,
+    sort?: ColumnSort
   ): Promise<PaginatedResponse<ReportRecord>> {
     const params: Record<string, string | number | string[] | undefined> = {
       page: pagination?.page,
       limit: pagination?.limit,
       startdate: formatDateToApiString(filters?.dateRange.from),
       enddate: formatDateToApiString(filters?.dateRange.to)
+    }
+    if (sort?.id) {
+      params.sortBy = sort.id
+      params.sortDirection = sort.desc ? 'DESC' : 'ASC'
     }
 
     if (filters?.search && filters?.search?.length > 0) {

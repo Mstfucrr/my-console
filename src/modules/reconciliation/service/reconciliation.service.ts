@@ -1,4 +1,5 @@
 import { privateAxiosInstance } from '@/lib/axios'
+import { ColumnSort } from '@tanstack/react-table'
 import { ReconciliationConfirmStatus, ReconciliationRecordResponse, type ReconciliationRecord } from '../types'
 
 // Helper function to convert File to base64
@@ -17,8 +18,15 @@ const fileToBase64 = (file: File): Promise<string> => {
 }
 
 class ReconciliationService {
-  async getReconciliationData(): Promise<ReconciliationRecord[]> {
-    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company')
+  async getReconciliationData(sort?: ColumnSort): Promise<ReconciliationRecord[]> {
+    const params: Record<string, string | number | string[] | undefined> = {}
+    if (sort?.id) {
+      params.sortBy = sort.id
+      params.sortDirection = sort.desc ? 'DESC' : 'ASC'
+    }
+    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company', {
+      params
+    })
     return response.data.rows
   }
 

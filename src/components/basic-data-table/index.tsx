@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import {
+  ColumnSort,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -14,11 +15,10 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type PaginationState,
-  type SortingState,
   type VisibilityState
 } from '@tanstack/react-table'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Loader2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, Loader2 } from 'lucide-react'
 import * as React from 'react'
 import { Pagination } from '../pagination'
 import { Button } from '../ui/button'
@@ -65,8 +65,8 @@ export type BasicDataTableProps<TData, TValue = never> = Omit<
   onRowSelectionChange?: (updater: Record<string, boolean>) => void
 
   // sorting and filters (controlled optional)
-  sorting?: SortingState
-  onSortingChange?: (sorting: SortingState) => void
+  sorting?: ColumnSort
+  onSortingChange?: (sorting: ColumnSort) => void
   columnFilters?: ColumnFiltersState
   onColumnFiltersChange?: (filters: ColumnFiltersState) => void
   columnVisibility?: VisibilityState
@@ -93,6 +93,17 @@ export type BasicDataTableProps<TData, TValue = never> = Omit<
 
   // row click handler
   onRowClick?: (row: TData) => void
+}
+
+function normalizeMinWidthPx(minSize: unknown): number | undefined {
+  if (typeof minSize !== 'number' || !Number.isFinite(minSize) || minSize <= 0) return undefined
+  return minSize
+}
+
+function normalizeMaxWidthPx(maxSize: unknown): number | undefined {
+  // TanStack Table default maxSize is Number.MAX_SAFE_INTEGER (meaning "no max")
+  if (typeof maxSize !== 'number' || !Number.isFinite(maxSize) || maxSize >= Number.MAX_SAFE_INTEGER) return undefined
+  return maxSize
 }
 
 function TableOverlayLoader({ label }: { label?: string }) {
@@ -177,7 +188,8 @@ export function BasicDataTable<TData, TValue = never>({
   }, [columns, enableRowSelection])
 
   const manualPagination = typeof total === 'number'
-  const [internalSorting, setInternalSorting] = React.useState<SortingState>(sorting ?? [])
+  const manualSorting = tableProps.manualSorting ?? false
+  const [internalSorting, setInternalSorting] = React.useState<ColumnSort>(sorting ?? { id: '', desc: false })
   const [internalColumnFilters, setInternalColumnFilters] = React.useState<ColumnFiltersState>(columnFilters ?? [])
   const [internalColumnVisibility, setInternalColumnVisibility] = React.useState<VisibilityState>(
     columnVisibility ?? {}
@@ -190,9 +202,10 @@ export function BasicDataTable<TData, TValue = never>({
     columns: computedColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: manualSorting ? undefined : getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     manualPagination,
+    manualSorting,
     pageCount: manualPagination ? Math.max(1, Math.ceil((total ?? 0) / pageSize)) : undefined,
     onPaginationChange: updater => {
       const current: PaginationState = { pageIndex: page - 1, pageSize }
@@ -202,9 +215,10 @@ export function BasicDataTable<TData, TValue = never>({
     },
     // sorting
     onSortingChange: updater => {
-      const next = typeof updater === 'function' ? updater(internalSorting) : updater
-      setInternalSorting(next)
-      onSortingChange?.(next)
+      const current: ColumnSort[] = [internalSorting]
+      const next = typeof updater === 'function' ? updater(current) : updater
+      setInternalSorting(next[0] ?? { id: undefined, desc: undefined })
+      onSortingChange?.(next[0] ?? { id: undefined, desc: undefined })
     },
     // filters
     onColumnFiltersChange: updater => {
@@ -227,7 +241,7 @@ export function BasicDataTable<TData, TValue = never>({
     state: {
       // pagination is controlled when manual
       pagination: { pageIndex: page - 1, pageSize },
-      sorting: sorting ?? internalSorting,
+      sorting: sorting ? [sorting] : [internalSorting],
       columnFilters: columnFilters ?? internalColumnFilters,
       columnVisibility: columnVisibility ?? internalColumnVisibility,
       rowSelection: selectedRowIds ?? internalRowSelection
@@ -266,21 +280,45 @@ export function BasicDataTable<TData, TValue = never>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className='h-auto'>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
                     style={{
                       width: header.getSize(),
-                      minWidth: header.column.columnDef.minSize,
-                      maxWidth: header.column.columnDef.maxSize
+                      minWidth: normalizeMinWidthPx(header.column.columnDef.minSize),
+                      maxWidth: normalizeMaxWidthPx(header.column.columnDef.maxSize)
                     }}
                     className={cn(
-                      'text-left',
+                      'py-1 text-left text-xs',
                       (header.column.columnDef.meta as { align?: 'right' | 'left' })?.align === 'right' && 'text-right'
                     )}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                      <Button
+                        type='button'
+                        variant='ghost'
+                        size='xs'
+                        className={cn(
+                          'h-min min-h-8 w-auto gap-1 px-2 text-wrap! text-inherit',
+                          (header.column.columnDef.meta as { align?: 'right' | 'left' })?.align === 'right'
+                            ? '-mr-2 justify-end text-right'
+                            : '-ml-2 justify-start text-left'
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.column.getIsSorted() === 'asc' ? (
+                          <ArrowUp className='size-3.5! min-w-3.5' />
+                        ) : header.column.getIsSorted() === 'desc' ? (
+                          <ArrowDown className='size-3.5! min-w-3.5' />
+                        ) : (
+                          <ArrowUpDown className='size-3.5! min-w-3.5 opacity-60' />
+                        )}
+                      </Button>
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
                   </TableHead>
                 ))}
               </TableRow>

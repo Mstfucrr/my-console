@@ -2,7 +2,7 @@ import { BasicDataTable } from '@/components/basic-data-table'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef, ColumnSort } from '@tanstack/react-table'
 import { useState } from 'react'
 import { ReconciliationStatus, type ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
@@ -10,6 +10,8 @@ import { ReconciliationDetailsModal } from './reconciliation-details-modal'
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
   isLoading: boolean
+  sorting?: ColumnSort
+  onSortingChange?: (sorting: ColumnSort) => void
 }
 
 declare module '@tanstack/react-table' {
@@ -79,7 +81,8 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     id: 'actions',
     header: 'İşlemler',
-    size: 200,
+    minSize: 230,
+    size: 230,
     meta: { align: 'right' },
     cell: ({ row, table }) => {
       const handleOpenModal = table.options.meta?.handleOpenModal as
@@ -119,7 +122,7 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   }
 ]
 
-export default function ReconciliationTable({ data, isLoading }: ReconciliationTableProps) {
+export default function ReconciliationTable({ data, isLoading, sorting, onSortingChange }: ReconciliationTableProps) {
   const [selected, setSelected] = useState<{ page: 'approve' | 'report'; record: ReconciliationRecord } | null>(null)
 
   const handleOpenModal = (page: 'approve' | 'report', record: ReconciliationRecord): void => {
@@ -141,6 +144,10 @@ export default function ReconciliationTable({ data, isLoading }: ReconciliationT
             loadingLabel='Mutabakat kayıtları yükleniyor...'
             meta={{ handleOpenModal }}
             enableColumnVisibility={false}
+            sorting={sorting}
+            onSortingChange={onSortingChange}
+            enableMultiSort={false}
+            manualSorting
           />
         </CardContent>
       </Card>

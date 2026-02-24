@@ -2,6 +2,7 @@
 
 import { type Order, OrderStatusesGroups, PaginationOptions } from '@/types'
 import { keepPreviousData, QueryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { ColumnSort } from '@tanstack/react-table'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { ACTIVE_ORDER_STATUS_GROUPS, COMPLETED_ORDER_STATUS_GROUPS } from '../constants'
 import { ordersService } from '../service/order.service'
@@ -24,6 +25,8 @@ export interface OrdersContextType {
   pagination: PaginationOptions
   setPagination: (pagination: PaginationOptions) => void
   onPageSizeChange: (size: number) => void
+  sorting: ColumnSort
+  setSorting: (sorting: ColumnSort) => void
 }
 
 export const defaultOrderFilters: OrderFilterProperties = {
@@ -38,16 +41,20 @@ export const defaultPagination: PaginationOptions = {
 
 const OrdersContext = createContext<OrdersContextType | undefined>(undefined)
 
+const defaultSort: ColumnSort = { id: 'createdAt', desc: true }
+
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<ActiveTab>('active')
   const [filters, setFilters] = useState<OrderFilterProperties>(defaultOrderFilters)
   const queryClient = useQueryClient()
 
   const [pagination, setPagination] = useState<PaginationOptions>(defaultPagination)
+  const [sorting, setSorting] = useState<ColumnSort>(defaultSort)
 
   const handleSetActiveTab = useCallback((tab: ActiveTab) => {
     setActiveTab(tab)
     setPagination(defaultPagination)
+    setSorting(defaultSort)
   }, [])
 
   const handleFiltersChange = useCallback(
@@ -84,8 +91,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   }, [filters, activeTab])
 
   const queryKey: QueryOptions['queryKey'] = useMemo(() => {
-    return ['orders', activeTab, statusFilters, filters.search, pagination]
-  }, [activeTab, statusFilters, filters.search, pagination])
+    return ['orders', activeTab, statusFilters, filters.search, pagination, sorting]
+  }, [activeTab, statusFilters, filters.search, pagination, sorting])
 
   const {
     data: ordersData,
@@ -95,7 +102,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
     refetch: refetchOrders
   } = useQuery({
     queryKey,
-    queryFn: () => ordersService.getOrders({ status: statusFilters, search: filters.search }, pagination),
+    queryFn: () => ordersService.getOrders({ status: statusFilters, search: filters.search }, pagination, sorting),
     placeholderData: keepPreviousData,
     staleTime: 10 * 1000 // 10 saniye
   })
@@ -133,7 +140,9 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       refreshAllData,
       pagination,
       setPagination,
-      onPageSizeChange: handlePageSizeChange
+      onPageSizeChange: handlePageSizeChange,
+      sorting,
+      setSorting
     }),
     [
       activeTab,
@@ -150,7 +159,8 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       refreshAllData,
       pagination,
       setPagination,
-      handlePageSizeChange
+      handlePageSizeChange,
+      sorting
     ]
   )
 
