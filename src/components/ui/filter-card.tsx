@@ -14,10 +14,13 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { isSameDateRange } from '@/lib/utils/date'
-import { Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
+import { SelectTriggerProps } from '@radix-ui/react-select'
+import { ColumnSort } from '@tanstack/react-table'
+import { ArrowDown, ArrowUp, Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
 import { Children, cloneElement, isValidElement, ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
 import { TooltippedElement } from '../tooltipped-element'
+import { ButtonGroup } from './button-group'
 
 export interface FilterOption {
   value: string | number
@@ -296,5 +299,64 @@ export function FilterToggleButton({
         <ChevronDown className={cn('absolute right-0 bottom-0 size-4.5', showFilters ? 'rotate-180' : 'rotate-0')} />
       </Button>
     </TooltippedElement>
+  )
+}
+
+export function SortSelect({
+  sortByOptions,
+  sorting,
+  onSortingChange,
+  placeholder = 'Sıralama',
+  showLabel = false,
+  ...selectTriggerProps
+}: {
+  sortByOptions: FilterOption[]
+  sorting: ColumnSort
+  onSortingChange: (sorting: ColumnSort) => void
+  placeholder?: string
+  showLabel?: boolean
+} & Omit<SelectTriggerProps, 'value' | 'onChange' | 'color'>) {
+  const { id, desc } = sorting ?? {}
+
+  const handleSortByChange = (value: string) => {
+    onSortingChange({ id: value, desc })
+  }
+
+  const handleSortOrderToggle = () => {
+    onSortingChange({ id, desc: !desc })
+  }
+
+  const currentSortByOption = sortByOptions.find(opt => opt.value === id)
+  const SortOrderIcon = desc ? ArrowDown : ArrowUp
+
+  return (
+    <div className='max-sm:w-full'>
+      {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Sıralama</label>}
+      <TooltippedElement tooltipContent='Sıralama' className='text-xs'>
+        <ButtonGroup orientation='horizontal' className='max-sm:w-full'>
+          <Select value={id} onValueChange={handleSortByChange}>
+            <SelectTrigger
+              {...selectTriggerProps}
+              className={cn('min-w-[140px]', selectTriggerProps.className)}
+              size='sm'
+              variant='bordered'
+              data-slot='select-trigger'
+            >
+              <SelectValue placeholder={placeholder}>{currentSortByOption?.label}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {sortByOptions.map(option => (
+                <SelectItem key={option.value} value={option.value.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button size='icon-sm' variant='soft' className='border-default-300 group' onClick={handleSortOrderToggle}>
+            <SortOrderIcon className='text-primary group-hover:text-primary-foreground h-4 w-4 transition-colors' />
+          </Button>
+        </ButtonGroup>
+      </TooltippedElement>
+    </div>
   )
 }

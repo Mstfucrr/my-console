@@ -39,7 +39,9 @@ export function ForgotPasswordView() {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyiniz.')
+        toast.error(error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyiniz.', {
+          autoClose: 15000
+        })
         return
       }
       console.error('forgot password error', error)

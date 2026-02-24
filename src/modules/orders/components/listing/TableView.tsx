@@ -1,10 +1,11 @@
 import BasicDataTable from '@/components/basic-data-table'
 import { MaskedText } from '@/components/ui/masked-text'
 import { formatCurrency } from '@/lib/formatCurrency'
-import { formatDateTimeTR } from '@/lib/utils/date'
+import { formatDateDifferentString, formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
 import { Order } from '@/types'
 import { ColumnDef } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import { useOrders } from '../../context/OrdersContext'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 
@@ -12,12 +13,23 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'createdAt',
     header: 'Oluşturulma Tarihi',
-    size: 100,
+    size: 200,
     cell: ({ row }) => (
       <div className='text-muted-foreground text-sm'>
         <span className='block'>{formatDateTimeTR(row.getValue('createdAt'))}</span>
       </div>
     )
+  },
+  {
+    id: 'completionTime',
+    accessorKey: 'completionTime',
+    header: 'Tamamlanma Süresi',
+    size: 200,
+    cell: ({ row }) => {
+      const createdAt = row.original.createdAt
+      const updatedAt = row.original.updatedAt
+      return <div className='text-sm'>{formatDateDifferentString(createdAt, updatedAt)}</div>
+    }
   },
   {
     accessorKey: 'customerName',
@@ -76,6 +88,7 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'totalAmount',
     header: 'Tutar (₺)',
+    meta: { sortable: true, align: 'right' },
     cell: ({ row }) => (
       <div className='text-primary-700 ph-sensitive font-bold'>
         {formatCurrency(row.getValue('totalAmount'), false)}
@@ -100,22 +113,28 @@ export function TableView({
   filteredEmptyMessage,
   onViewDetails
 }: TableViewProps) {
-  const { filters, total, pagination } = useOrders()
+  const { filters, total, pagination, sorting, setSorting, activeTab } = useOrders()
   const hasActiveFilter = filters.status !== 'all' || Boolean(filters.search)
+
+  const showCompletionTimeColumn = useMemo(() => activeTab === 'completed', [activeTab])
 
   return (
     <BasicDataTable
-      columns={columns}
+      columns={showCompletionTimeColumn ? columns : columns.filter(column => column.id !== 'completionTime')}
       data={orders ?? []}
       isLoading={isLoading || isFetching}
       emptyLabel={hasActiveFilter ? filteredEmptyMessage : emptyMessage}
       loadingLabel='Siparişler yükleniyor...'
       onRowClick={onViewDetails}
       enableColumnVisibility={false}
+      sorting={sorting}
+      onSortingChange={setSorting}
       total={total}
       page={pagination.page}
       pageSize={pagination.limit}
       hidePagination
+      enableMultiSort={false}
+      manualSorting
     />
   )
 }

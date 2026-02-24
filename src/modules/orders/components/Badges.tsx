@@ -13,14 +13,18 @@ interface StatusBadgeProps {
   status: OrderStatusesGroups
   variant?: 'outline' | 'soft'
   className?: string
+  diff?: string
 }
 
-export function OrderStatusBadge({ status, variant = 'soft', className }: StatusBadgeProps) {
+export function OrderStatusBadge({ status, variant = 'soft', className, diff }: StatusBadgeProps) {
   const groupInfo = OrderStatusGroup[status]
 
   return (
     <Badge className={cn(ORDER_STATUS_BADGE_CLASSES[status], 'shrink-0', className)} variant={variant}>
-      {groupInfo.label}
+      <div className='flex items-center gap-1 text-center text-nowrap'>
+        {groupInfo.label}
+        {diff && <span className='text-[10px]'>({diff})</span>}
+      </div>
     </Badge>
   )
 }

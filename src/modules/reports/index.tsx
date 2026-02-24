@@ -4,6 +4,7 @@ import PageError from '@/components/page-error'
 import { getOperationDateRange } from '@/constants'
 import { PaginationOptions } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import type { ColumnSort } from '@tanstack/react-table'
 import { useState } from 'react'
 import { type ReportsFilterProperties } from './components/reports-filters'
 import ReportsTable from './components/reports-table'
@@ -19,6 +20,8 @@ export const defaultReportsFilters: ReportsFilterProperties = {
   }
 }
 
+const defaultSort: ColumnSort = { id: 'CreatedOn', desc: true }
+
 export default function ReportsView() {
   const [filters, setFilters] = useState<ReportsFilterProperties>(defaultReportsFilters)
 
@@ -26,6 +29,7 @@ export default function ReportsView() {
     page: 1,
     limit: 20
   })
+  const [sorting, setSorting] = useState<ColumnSort>(defaultSort)
 
   const handleReportsPageSizeChange = (size: number) => {
     setReportsPagination({ page: 1, limit: size })
@@ -42,8 +46,8 @@ export default function ReportsView() {
     error: error,
     refetch: refetchReports
   } = useQuery({
-    queryKey: ['reports', filters, reportsPagination],
-    queryFn: () => reportsService.getReports(filters, reportsPagination),
+    queryKey: ['reports', filters, reportsPagination, sorting],
+    queryFn: () => reportsService.getReports(filters, reportsPagination, sorting),
     staleTime: 3 * 60 * 1000, // 2 dakika
     placeholderData: keepPreviousData
   })
@@ -82,11 +86,15 @@ export default function ReportsView() {
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
         onRefresh={refetchReports}
+        sorting={sorting}
+        onSortingChange={setSorting}
         onPageChange={handleReportsPageChange}
         page={reportsPagination.page}
         pageSize={reportsPagination.limit}
         total={reportsData?.total}
         onPageSizeChange={handleReportsPageSizeChange}
+        enableMultiSort={false}
+        manualSorting
       />
     </div>
   )

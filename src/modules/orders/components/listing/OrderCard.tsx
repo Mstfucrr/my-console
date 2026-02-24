@@ -6,11 +6,12 @@ import { MaskedText } from '@/components/ui/masked-text'
 import { OrderStatusGroup } from '@/constants'
 import { cn } from '@/lib/utils'
 import { formatCurrencyTRY } from '@/lib/utils/currency'
-import { formatDateTimeTR } from '@/lib/utils/date'
+import { formatDateDifferentString, formatDateTimeTR } from '@/lib/utils/date'
 import { maskLastName } from '@/lib/utils/mask'
 import type { Order } from '@/types'
 import { OrderStatusesGroups } from '@/types'
 import { memo } from 'react'
+import { COMPLETED_ORDER_STATUS_GROUPS } from '../../constants'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 
 interface OrderCardProps {
@@ -23,6 +24,10 @@ interface OrderCardProps {
 
 export const OrderCard = memo(function OrderCard({ order, onViewDetails }: OrderCardProps) {
   const isCreated = order.status === OrderStatusesGroups.CREATED
+
+  const diff = COMPLETED_ORDER_STATUS_GROUPS.includes(order.status)
+    ? formatDateDifferentString(order.createdAt, order.updatedAt)
+    : undefined
 
   return (
     <Card
@@ -50,20 +55,17 @@ export const OrderCard = memo(function OrderCard({ order, onViewDetails }: Order
           </div>
 
           <div className='flex w-full flex-wrap items-center justify-between gap-2 text-xs'>
-            <span>{formatDateTimeTR(order.createdAt)}</span>
-            {order.courierInfo && (
-              <div className='flex items-center gap-1'>
-                <Motorcycle className='-ml-1 size-5 shrink-0' style={{ color: OrderStatusGroup['shipped'].color }} />
-                <div className='ph-sensitive text-sm'>{order.courierInfo?.name}</div>
-              </div>
-            )}
-            <div
-              className={cn(
-                'flex w-full flex-nowrap items-center justify-between gap-2',
-                !order.courierInfo && 'w-auto! justify-end'
+            <div className='flex w-full items-center justify-between gap-2'>
+              <span>{formatDateTimeTR(order.createdAt)}</span>
+              {order.courierInfo && (
+                <div className='flex items-center gap-1'>
+                  <Motorcycle className='-ml-1 size-5 shrink-0' style={{ color: OrderStatusGroup['shipped'].color }} />
+                  <div className='ph-sensitive text-sm'>{order.courierInfo?.name}</div>
+                </div>
               )}
-            >
-              <OrderStatusBadge status={order.status} className='max-sm:text-[11px]' />
+            </div>
+            <div className='flex w-full flex-nowrap items-center justify-between gap-2'>
+              <OrderStatusBadge status={order.status} className='max-sm:text-[11px]' diff={diff} />
               <PaymentMethodBadge
                 showIcon
                 paymentMethod={order.paymentType}

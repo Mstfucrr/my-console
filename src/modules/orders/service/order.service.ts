@@ -9,6 +9,7 @@ import type {
   PaginatedResponse,
   PaginationOptions
 } from '@/types'
+import { ColumnSort } from '@tanstack/react-table'
 import { CreateOrderFormData } from '../create/types'
 import type { OrderDetailResponse, OrderListResponse, OrderStatsResponse } from '../types/api'
 
@@ -21,7 +22,11 @@ export interface FilterOptions {
 }
 
 class OrdersService {
-  async getOrders(filters?: FilterOptions, pagination?: PaginationOptions): Promise<PaginatedResponse<Order>> {
+  async getOrders(
+    filters?: FilterOptions,
+    pagination?: PaginationOptions,
+    sort?: ColumnSort
+  ): Promise<PaginatedResponse<Order>> {
     const page = pagination?.page
     const limit = pagination?.limit
     const { startDate, endDate } = getOperationDateRange()
@@ -31,6 +36,11 @@ class OrdersService {
       limit,
       startDate,
       endDate
+    }
+
+    if (sort?.id) {
+      params.sortBy = sort.id
+      params.sortDirection = sort.desc ? 'DESC' : 'ASC'
     }
 
     // Status filtresi: Backend artık array kabul ediyor
