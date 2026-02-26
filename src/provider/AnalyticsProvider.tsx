@@ -9,6 +9,7 @@ import React, { Suspense, useEffect } from 'react'
 import { isPosthogReady } from '@/lib/analytics'
 import { maskString } from '@/lib/utils/mask'
 import { usePosthogConsentGate } from '@/modules/analytics/hooks/usePosthogConsentGate'
+import { PosthogFeatureFlagsRefreshProvider } from '@/modules/analytics/hooks/usePosthogFeatureFlagsRefresh'
 import { APP_VERSION } from '@/version'
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
@@ -33,10 +34,10 @@ function AnalyticsProviderInner({ children }: { children: React.ReactNode }) {
   }, [pathname, searchParams])
 
   return (
-    <>
+    <PosthogFeatureFlagsRefreshProvider>
       {children}
       {showConsentBanner && <AnalyticsConsentBanner />}
-    </>
+    </PosthogFeatureFlagsRefreshProvider>
   )
 }
 

@@ -8,6 +8,8 @@ import dotenv from 'dotenv'
 import path from 'path'
 dotenv.config({ path: path.resolve(__dirname, '.env.test') })
 
+const authFile = path.join(__dirname, 'playwright/.auth/user.json')
+
 /**
  * https://playwright.dev/docs/test-configuration adresine bakınız.
  */
@@ -39,8 +41,17 @@ export default defineConfig({
   /* Temel tarayıcılar için projeleri yapılandır */
   projects: [
     {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/
+    },
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      testMatch: /.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: authFile
+      },
+      dependencies: ['setup']
     }
 
     // {
