@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test'
+import { ensureLoggedIn } from './helpers/auth'
 
 test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
-  test('1.231,24 olarak formatlanır ve nokta girişi olduğunda virgüle çevirir', async ({ page }) => {
-    await page.goto('/orders/create')
-    await page.waitForLoadState('networkidle')
+  test.beforeEach(async ({ page, context }) => {
+    await ensureLoggedIn({ page, context, startPath: '/orders/create' })
+  })
 
+  test('1.231,24 olarak formatlanır ve nokta girişi olduğunda virgüle çevirir', async ({ page }) => {
     const amount = page.getByLabel('Toplam Tutar (₺)')
 
     // 1) Kullanıcı '1231,24' yazınca 1.231,24 olarak otomatik formatlanmalı
@@ -39,9 +41,6 @@ test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
   })
 
   test('Boş bırakıldığında validasyon hatası gösterir', async ({ page }) => {
-    await page.goto('/orders/create')
-    await page.waitForLoadState('networkidle')
-
     // Formu gönder
     await page.getByTestId('create-order-submit-button').click()
 

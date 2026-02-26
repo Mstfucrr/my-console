@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test'
+import { ensureLoggedIn } from './helpers/auth'
 
 test.describe('View Mode Default Görünüm', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await ensureLoggedIn({ page, context })
+  })
+
   test('Mobilde default görünüm kart (card view) olmalıdır', async ({ page, context }) => {
     // Mobil viewport ayarla (iPhone 12 Pro boyutu)
     await page.setViewportSize({ width: 390, height: 844 })
@@ -170,7 +175,6 @@ test.describe('View Mode Default Görünüm', () => {
     const ordersReloadResponse = page.waitForResponse(
       response => /\/orders\/order-list(\?|$)/.test(response.url()) && response.status() === 200
     )
-
     await page.reload()
     await ordersReloadResponse
     await page.waitForLoadState('networkidle')

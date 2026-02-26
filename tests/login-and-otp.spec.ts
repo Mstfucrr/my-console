@@ -5,8 +5,6 @@ const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
 const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
 const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
 
-test.use({ storageState: { cookies: [], origins: [] } })
-
 test('OTP olmadan giriş akışı', async ({ page }) => {
   // Login API endpoint'ini mock'la - requiresOtp: false döndür
   await page.route('**/auth/login', async route => {
