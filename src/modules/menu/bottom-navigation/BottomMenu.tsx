@@ -82,7 +82,7 @@ export function BottomMenu({ onClick }: BottomMenuProps) {
           !hasReportsAccess && 'right-[20%] bottom-[75%] -translate-x-1/2'
         )}
       >
-        <SupportDialog className='size-12 rounded-full p-0' />
+        <SupportDialog className='size-12 rounded-full p-2' />
       </motion.div>
     </motion.div>
   )

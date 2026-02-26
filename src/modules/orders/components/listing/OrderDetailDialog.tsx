@@ -17,6 +17,7 @@ import { ordersService } from '../../service/order.service'
 import MapLoading from '@/components/map-loaging'
 import { TooltippedElement } from '@/components/tooltipped-element'
 import { formatDateDifferentString } from '@/lib/utils/date'
+import { SupportDialog } from '@/modules/menu/common/support-dialog'
 import { ACTIVE_ORDER_STATUS_GROUPS } from '../../constants'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
@@ -36,6 +37,7 @@ interface OrderDetailDialogProps {
 export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) {
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
+  const [openSupportDialog, setOpenSupportDialog] = useState(false)
 
   const { data: order, isLoading: isLoadingDetail } = useQuery({
     queryKey: ['orderDetail', orderId],
@@ -64,23 +66,31 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent size='4xl'>
-        <DialogHeader>
-          <DialogTitle>
-            {openMap ? (
-              <div className='-mb-2 flex w-full items-center justify-between gap-2 pr-10 pl-4'>
-                <span>Kurye Haritası</span>
-                <Button size='xs' variant='outline' onClick={handleToggleMap}>
-                  <ArrowLeft className='mr-1 size-4' /> Geri Dön
-                </Button>
-              </div>
-            ) : (
-              <span>Sipariş Detayları</span>
+      <DialogContent size='4xl' className='overflow-visible' onOpenAutoFocus={e => e.preventDefault()}>
+        <DialogHeader className='mr-10 flex flex-row items-center justify-between gap-2'>
+          <DialogTitle>{openMap ? <span>Kurye Haritası</span> : <span>Sipariş Detayları</span>}</DialogTitle>
+          <div className='flex items-center gap-2'>
+            {order && !isLoadingDetail && (
+              <SupportDialog
+                key={order.orderId}
+                order={order}
+                size='icon-sm'
+                data-testid='order-detail-dialog-support-dialog-button'
+                onOpenStateChange={setOpenSupportDialog}
+                className='flex items-center gap-2 p-1.5'
+                contentClassName='min-h-[550px] h-[550px]!'
+              />
             )}
-          </DialogTitle>
+            {openMap && (
+              <Button size='xs' variant='outline' onClick={handleToggleMap}>
+                <ArrowLeft className='mr-1 size-4' /> Geri Dön
+              </Button>
+            )}
+          </div>
         </DialogHeader>
 
         <DialogContentInner className='mb-2 sm:mb-4'>
+          {openSupportDialog && <div className='absolute inset-0 z-60 rounded-xl bg-black/25 backdrop-blur-[1px]' />}
           {isLoadingDetail ? (
             <OrderDetailSkeleton />
           ) : (
