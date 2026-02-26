@@ -4,7 +4,6 @@ import { AnimatedFilters } from '@/components/animated-filters'
 import { Pagination } from '@/components/pagination'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { TabsWithList } from '@/components/ui/tabs'
-import { usePosthogFeatureFlagsRefresh } from '@/modules/analytics/hooks/usePosthogFeatureFlagsRefresh'
 import type { Order } from '@/types'
 import { CheckCircle2, Flame } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -38,8 +37,6 @@ export function OrdersTabs() {
   const { stats } = useOrdersStats()
   const [showFilters, setShowFilters] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-
-  usePosthogFeatureFlagsRefresh(selectedOrder?.orderId)
 
   const handlePageChange = (page: number) => {
     setPagination({ ...pagination, page })

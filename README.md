@@ -173,17 +173,25 @@ npx playwright install
 touch .env.test
 ```
 
-`.env.test` dosyasına aşağıdaki değişkenleri ekleyin:
+`.env.test` dosyasına aşağıdaki değişkenlerden birini ekleyin:
 
-**Setup projesi ile login**
+**Seçenek 1: Token ile direkt giriş (Önerilen - Daha hızlı)**
 
 ```bash
+# Eğer TEST_ACCESS_TOKEN set edilirse, login adımı atlanır ve direkt token kullanılır
+TEST_ACCESS_TOKEN=your-access-token-here
+```
+
+**Seçenek 2: Login bilgileri ile giriş**
+
+```bash
+# TEST_ACCESS_TOKEN yoksa bu bilgiler kullanılır
 TEST_ACCOUNT_ID=your-account-id
 TEST_IDENTIFIER=your-email-or-username
 TEST_PASSWORD=your-password
 ```
 
-> **Not:** Playwright auth setup (`tests/auth.setup.ts`) bu bilgilerle login olup `storageState` üretir; testler tekrar login yapmadan çalışır. Üretilen dosya: `playwright/.auth/user.json`
+> **Not:** `TEST_ACCESS_TOKEN` varsa login adımı atlanır ve testler daha hızlı çalışır. Token yoksa login akışı kullanılır.
 
 ### Test Çalıştırma
 
@@ -210,7 +218,6 @@ pnpm test && npx playwright show-report
 - Test dosyaları `.spec.ts` uzantısı ile bitmelidir
 - Playwright otomatik olarak geliştirme sunucusunu başlatır (`pnpm dev`)
 - Testler `http://localhost:3000` adresinde çalışır
-- Auth gerektiren testlerde `storageState` otomatik kullanılır; login senaryoları `storageState` kapatılarak test edilir
 
 ### Test Yazma İpuçları
 

@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test'
+import { ensureLoggedIn } from './helpers/auth'
 
 test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await ensureLoggedIn({ page, context })
+  })
+
   test('Onayla: fatura yüklenir ve confirmation-process çağrılır (mock)', async ({ page }) => {
     const record = {
       RecordID: '1001',
@@ -54,9 +59,6 @@ test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
 
     await page.goto('/reconciliation')
     await page.waitForLoadState('networkidle')
-
-    // Mutabakat kaydı bulunamadı mesajı görünmemeli
-    await expect(page.getByText('Mutabakat kaydı bulunamadı')).not.toBeVisible()
 
     // Mutabakat kaydı bulunamadı mesajı görünmemeli
     await expect(page.getByText('Mutabakat kaydı bulunamadı')).not.toBeVisible()

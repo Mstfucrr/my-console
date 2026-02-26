@@ -1,8 +1,13 @@
 import { expect, test } from '@playwright/test'
+import { ensureLoggedIn } from './helpers/auth'
 
 const repeat = (char: string, len: number) => Array.from({ length: len }, () => char).join('')
 
 test.describe('Sipariş Oluşturma', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await ensureLoggedIn({ page, context, startPath: '/orders/create' })
+  })
+
   test('Yeni sipariş oluşturma akışı', async ({ page }) => {
     // Mock API endpoint'leri
     await page.route('**/location/provinces', async route => {
@@ -62,9 +67,6 @@ test.describe('Sipariş Oluşturma', () => {
         ])
       })
     })
-
-    await page.goto('/orders/create')
-    await page.waitForLoadState('networkidle')
 
     // Sipariş oluşturma endpoint'ini mock'la
     // await page.route('**/orders/create', async route => {
@@ -184,10 +186,8 @@ test.describe('Sipariş Oluşturma', () => {
       })
     })
 
-    await page.goto('/orders/create')
-    await page.waitForLoadState('networkidle')
-
     // Formu boş bırakarak göndermeyi dene
+    await page.getByTestId('create-order-submit-button').click()
     await page.getByTestId('create-order-submit-button').click()
 
     // Validasyon hatalarının göründüğünü kontrol et
