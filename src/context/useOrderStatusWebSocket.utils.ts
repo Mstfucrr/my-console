@@ -159,3 +159,65 @@ export function updateDashboardStatsCache({ queryClient, previousStatus, newStat
     return updateStatsCount(typed, previousStatus, newStatus)
   })
 }
+
+let courierAssignedAudio: HTMLAudioElement | null = null
+let unlockListenersBound = false
+
+const UNLOCK_EVENTS = ['pointerdown', 'mousedown', 'click', 'keydown', 'touchstart'] as const
+
+function getCourierAssignedAudio() {
+  if (typeof window === 'undefined') return null
+  if (courierAssignedAudio) return courierAssignedAudio
+
+  courierAssignedAudio = new Audio('/sounds/courier-assigned.mp3')
+  courierAssignedAudio.volume = 0.7
+  courierAssignedAudio.preload = 'auto'
+
+  return courierAssignedAudio
+}
+
+function bindUnlockListeners() {
+  if (typeof document === 'undefined') return
+  if (unlockListenersBound) return
+  unlockListenersBound = true
+
+  const unlock = () => {
+    const audio = getCourierAssignedAudio()
+    if (!audio) return
+
+    // İlk kullanıcı etkileşiminde sesi prime ederek autoplay kısıtını aç.
+    const prevMuted = audio.muted
+    audio.muted = true
+    void audio
+      .play()
+      .then(() => {
+        audio.pause()
+        audio.currentTime = 0
+      })
+      .catch((e: unknown) => {
+        console.error('Error playing courier assigned sound', e)
+      })
+      .finally(() => {
+        audio.muted = prevMuted
+      })
+
+    UNLOCK_EVENTS.forEach(eventName => document.removeEventListener(eventName, unlock, true))
+    unlockListenersBound = false
+  }
+
+  UNLOCK_EVENTS.forEach(eventName => {
+    document.addEventListener(eventName, unlock, { once: true, capture: true, passive: true })
+  })
+}
+
+export function playCourierAssignedSound() {
+  const audio = getCourierAssignedAudio()
+  if (!audio) return
+
+  audio.currentTime = 0
+  void audio.play().catch(() => {
+    // Kullanıcı henüz etkileşime girmediyse unlock listener'larını devreye al.
+    console.warn('Playing courier assigned sound failed, binding unlock listeners')
+    void bindUnlockListeners()
+  })
+}

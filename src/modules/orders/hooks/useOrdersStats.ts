@@ -1,19 +1,23 @@
 'use client'
 
 import { OrderStatusStats } from '@/types'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useOrders } from '../context/OrdersContext'
 import { ordersService } from '../service/order.service'
 
 export function useOrdersStats() {
+  const { activeTab } = useOrders()
+
   const {
     data: statsData,
     error: statsError,
     isLoading: isStatsLoading
   } = useQuery<OrderStatusStats, Error>({
-    queryKey: ['ordersStats'],
+    queryKey: ['ordersStats', activeTab],
     queryFn: () => ordersService.getOrdersStats(),
-    staleTime: 10 * 1000 // 10 saniye
+    staleTime: 10 * 1000, // 10 saniye
+    placeholderData: keepPreviousData
   })
 
   const stats = useMemo(

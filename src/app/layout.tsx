@@ -53,7 +53,7 @@ export default function RootLayout({
             <AnalyticsProvider>{children}</AnalyticsProvider>
           </AppErrorBoundary>
         </QueryProvider>
-        <ToastContainer autoClose={2500} />
+        <ToastContainer autoClose={2500} pauseOnFocusLoss={false} limit={6} stacked />
         <TooltippedElement tooltipContent='Versiyon' className='p-0.5 text-[10px]'>
           <span className='bg-background fixed bottom-0 left-1/2 z-500 rounded-full p-1 py-0.5 text-[10px] max-sm:-translate-x-1/2 sm:bottom-2 sm:left-3'>
             {APP_VERSION}

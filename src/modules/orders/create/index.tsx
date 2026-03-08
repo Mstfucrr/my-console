@@ -144,7 +144,8 @@ export function CreateOrderView() {
                   pattern='[0-9,]*'
                   placeholder='1.234,56'
                   tabIndex={7}
-                  regexPattern={/^(\d{1,3}(\.\d{3})*|\d+)(,\d{0,2})?$/}
+                  // Virgülden önce max 99999, arada otomatik eklenen noktalar olabilir, en fazla 9 karakter, virgülden sonra max 2 hane
+                  regexPattern={/^((\d{1,2}|\d{1,2}\.\d{3}|[1-9]{1}\d{0,4}))(,\d{0,2})?$/}
                   autoComplete='off'
                 />
                 <FormSwitchField
@@ -252,9 +253,10 @@ export function CreateOrderView() {
                   control={form.control}
                   label='Kat'
                   placeholder='3'
-                  type='number'
+                  type='text'
                   inputMode='numeric'
                   pattern='[0-9]*'
+                  regexPattern={/^[0-9]{0,3}$/}
                   tabIndex={16}
                   autoComplete='off'
                 />

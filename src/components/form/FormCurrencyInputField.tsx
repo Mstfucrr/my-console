@@ -82,6 +82,10 @@ export function FormCurrencyInputField<T extends FieldValues>({
           placeholder={placeholder}
           className={cn('w-full', error && 'border-red-500', className)}
           onChange={e => commit(e.target.value)}
+          onBlur={() => {
+            field.onChange(value.endsWith(',') ? `${value}00` : value)
+            field.onBlur?.()
+          }}
           onPaste={e => {
             e.preventDefault()
             commit(e.clipboardData.getData('Text'))
