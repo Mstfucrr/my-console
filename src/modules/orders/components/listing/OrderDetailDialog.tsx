@@ -16,12 +16,15 @@ import { ordersService } from '../../service/order.service'
 
 import MapLoading from '@/components/map-loaging'
 import { TooltippedElement } from '@/components/tooltipped-element'
+import { cn } from '@/lib/utils'
 import { formatDateDifferentString } from '@/lib/utils/date'
+import { useIsChatFeatureFlagActive } from '@/modules/chat/hooks/useIsChatFeatureFlagActive'
 import { SupportDialog } from '@/modules/menu/common/support-dialog'
 import { ACTIVE_ORDER_STATUS_GROUPS } from '../../constants'
 import { ChannelBadge, OrderStatusBadge, PaymentMethodBadge } from '../Badges'
 import CourierCard from '../courier/CourierCard'
 import { OrderDetailSkeleton } from './OrderDetailSkeleton'
+import { OrderReceiptPrint } from './OrderReceiptPrint'
 import { OrderTimeLine } from './OrderTimeLine'
 
 const CourierMap = dynamic(() => import('../courier/CourierMap').then(mod => mod.default), {
@@ -38,6 +41,7 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
   const [openMap, setOpenMap] = useState(false)
   const [open, setOpen] = useState(false)
   const [openSupportDialog, setOpenSupportDialog] = useState(false)
+  const isChatFeatureFlagActive = useIsChatFeatureFlagActive()
 
   const { data: order, isLoading: isLoadingDetail } = useQuery({
     queryKey: ['orderDetail', orderId],
@@ -71,15 +75,18 @@ export function OrderDetailDialog({ orderId, onClose }: OrderDetailDialogProps) 
           <DialogTitle>{openMap ? <span>Kurye Haritası</span> : <span>Sipariş Detayları</span>}</DialogTitle>
           <div className='flex items-center gap-2'>
             {order && !isLoadingDetail && (
-              <SupportDialog
-                key={order.orderId}
-                order={order}
-                size='icon-sm'
-                data-testid='order-detail-dialog-support-dialog-button'
-                onOpenStateChange={setOpenSupportDialog}
-                className='flex items-center gap-2 p-1.5'
-                contentClassName='min-h-[550px] h-[550px]!'
-              />
+              <>
+                <OrderReceiptPrint order={order} />
+                <SupportDialog
+                  key={order.orderId}
+                  order={order}
+                  size='icon-sm'
+                  data-testid='order-detail-dialog-support-dialog-button'
+                  onOpenStateChange={setOpenSupportDialog}
+                  className='flex items-center gap-2 p-1.5'
+                  contentClassName={cn(isChatFeatureFlagActive && 'h-[550px]! min-h-[550px]')}
+                />
+              </>
             )}
             {openMap && (
               <Button size='xs' variant='outline' onClick={handleToggleMap}>

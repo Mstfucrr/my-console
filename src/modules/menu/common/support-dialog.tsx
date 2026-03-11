@@ -117,7 +117,8 @@ export function SupportDialog({
         onOpenAutoFocus={e => e.preventDefault()}
         onCloseAutoFocus={e => e.preventDefault()}
         className={cn(
-          'relative left-1/2! h-[500px] max-h-max min-h-[400px] w-80 -translate-x-1/2! border-0! bg-transparent p-0 shadow-none',
+          'relative left-1/2! max-h-max min-h-[400px] w-80 -translate-x-1/2! border-0! bg-transparent p-0 shadow-none',
+          showLiveSupportChatFlag ? 'h-[500px]' : 'h-max',
           contentClassName
         )}
       >
