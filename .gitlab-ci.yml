@@ -1,5 +1,12 @@
+include:
+  - project: 'fiyuu_devops/DevopStation'
+    ref: main
+    file: '/pipelines/ci/templates/gemini-review.yml'
+
 workflow:
   rules:
+
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
       variables:
         ENVIRONMENT: 'prod'
@@ -50,9 +57,14 @@ workflow:
         NEXT_PUBLIC_ALOTECH_CLICK2CONNECT_SRC: $NEXT_PUBLIC_ALOTECH_CLICK2CONNECT_SRC_DEV
 
 stages:
+  - gemini-review
   - syntax-check
   - build
   - deploy
+
+start_ai_review:
+  extends: .gemini-review
+
 
 syntax-check:
   stage: syntax-check
