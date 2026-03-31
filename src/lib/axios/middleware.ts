@@ -1,6 +1,7 @@
 import { isPosthogReady, track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { getToken, removeToken, setToken } from '@/lib/local-storage-helper'
+import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import createAuthRefreshInterceptor from 'axios-auth-refresh'
 import posthog, { Properties } from 'posthog-js'
@@ -43,7 +44,7 @@ const sanitizeUrlPath = (url: string | undefined) => {
 
 const capturePosthogApiError = async (error: AxiosError<BackendError>, payload: Properties) => {
   if (typeof window === 'undefined') return
-  if (!isPosthogReady()) return
+  if (!isPosthogReady() || !isPosthogEnabled) return
 
   posthog.captureException(error, payload)
 }

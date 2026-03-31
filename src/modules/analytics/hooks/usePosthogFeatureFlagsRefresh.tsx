@@ -1,6 +1,7 @@
 'use client'
 
 import { isPosthogReady } from '@/lib/analytics'
+import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { usePathname, useSearchParams } from 'next/navigation'
 import posthog from 'posthog-js'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, type PropsWithChildren } from 'react'
@@ -9,7 +10,7 @@ type RequestRefresh = (reason?: string) => void
 
 const FeatureFlagsRefreshContext = createContext<RequestRefresh | null>(null)
 
-const FLAGS_REFRESH_THROTTLE_MS = 30_000
+const FLAGS_REFRESH_THROTTLE_MS = 120_000
 
 export function PosthogFeatureFlagsRefreshProvider({ children }: PropsWithChildren) {
   const pathname = usePathname()
@@ -18,7 +19,7 @@ export function PosthogFeatureFlagsRefreshProvider({ children }: PropsWithChildr
 
   const requestRefresh = useCallback<RequestRefresh>(() => {
     if (typeof window === 'undefined') return
-    if (!isPosthogReady()) return
+    if (!isPosthogReady() || !isPosthogEnabled) return
     if (posthog.has_opted_out_capturing?.()) return
 
     const now = Date.now()

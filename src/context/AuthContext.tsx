@@ -5,6 +5,7 @@ import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { UserLogoutEvent } from '@/lib/analytics/types'
 import { getToken, removeToken } from '@/lib/local-storage-helper'
 import { authService } from '@/modules/auth/service/auth.service'
+import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { useQueryClient } from '@tanstack/react-query'
 import { usePathname, useRouter } from 'next/navigation'
 import posthog from 'posthog-js'
@@ -57,9 +58,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryClient.clear()
     track<UserLogoutEvent>(ANALYTICS_EVENTS.userLogout)
     removeToken()
-    if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-      posthog.reset()
-    }
+    if (isPosthogEnabled) posthog.reset()
     setIsAuthenticated(false)
     router.push('/login')
   }
