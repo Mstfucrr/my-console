@@ -1,3 +1,4 @@
+import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { profileService } from '@/service/profile.service'
 import { IProfileResponse } from '@/types/profile'
 import { useQuery } from '@tanstack/react-query'
@@ -29,7 +30,7 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
 
   useEffect(() => {
     if (!profileData || !profileData.userId) return
-    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return
+    if (!isPosthogEnabled) return
     if (lastIdentifiedUserIdRef.current === profileData.userId) return
 
     posthog.identify(profileData.userId, {
