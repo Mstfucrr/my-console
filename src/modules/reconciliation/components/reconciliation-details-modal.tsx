@@ -6,7 +6,6 @@ import { track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { ReconciliationActionEvent } from '@/lib/analytics/types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRef } from 'react'
 import { toast } from 'react-toastify'
 import { reconciliationService } from '../service/reconciliation.service'
 import type { ReconciliationRecord } from '../types'
@@ -28,7 +27,6 @@ interface ReconciliationDetailsModalProps {
 }
 
 export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: ReconciliationDetailsModalProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const queryClient = useQueryClient()
 
   // Upload File Mutation
@@ -77,28 +75,6 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
     }
   })
 
-  const handleInvoiceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file || !record) return
-
-    toast.promise(
-      async () => {
-        await uploadFile(file)
-        // After upload, update the confirmation with the file name
-        await approveReconciliation({
-          recordId: record.RecordID,
-          confirmRecordId: record.ConfirmID,
-          fileName: file.name
-        })
-      },
-      {
-        pending: 'Fatura yükleniyor...',
-        success: 'Fatura başarıyla yüklendi',
-        error: 'Fatura yüklenirken bir hata oluştu'
-      }
-    )
-  }
-
   const handleClose = () => {
     onClose()
   }
@@ -117,12 +93,13 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
       await toast.promise(
         async () => {
           // First upload the file to S3
-          await uploadFile(data.invoiceFile)
+          const uploadData = await uploadFile(data.invoiceFile)
+          if (!uploadData) throw new Error('Fatura yüklenemedi')
           // Then approve with the file name
           await approveReconciliation({
             recordId: record.RecordID,
             confirmRecordId: record.ConfirmID,
-            fileName: data.invoiceFile.name
+            fileName: uploadData.url
           })
         },
         {
@@ -161,13 +138,14 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
       await toast.promise(
         async () => {
           // First upload the statement file to S3
-          await uploadFile(data.statementFile)
+          const uploadData = await uploadFile(data.statementFile)
+          if (!uploadData) throw new Error('Fatura yüklenemedi')
           // Then report issue with description and file name
           await reportIssue({
             recordId: record.RecordID,
             confirmRecordId: record.ConfirmID,
             description: data.description,
-            fileName: data.statementFile.name
+            fileName: uploadData.url
           })
         },
         {
@@ -195,26 +173,17 @@ export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: Re
   }
 
   return (
-    <>
-      <input
-        ref={fileInputRef}
-        type='file'
-        accept='.pdf,.jpg,.jpeg,.png'
-        onChange={handleInvoiceFileChange}
-        className='hidden'
-      />
-      <AlertDialog open={isOpen} onOpenChange={handleClose}>
-        <AlertDialogContent size='lg' className='p-2 sm:p-4'>
-          <AlertDialogHeader>
-            <AlertDialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</AlertDialogTitle>
-          </AlertDialogHeader>
+    <AlertDialog open={isOpen} onOpenChange={handleClose}>
+      <AlertDialogContent size='lg' className='p-2 sm:p-4'>
+        <AlertDialogHeader>
+          <AlertDialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</AlertDialogTitle>
+        </AlertDialogHeader>
 
-          <DialogContentInner>
-            {page === 'approve' && <ApprovePage onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />}
-            {page === 'report' && <ReportPage onSubmit={handleReportIssue} isSubmitting={isReporting} />}
-          </DialogContentInner>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        <DialogContentInner>
+          {page === 'approve' && <ApprovePage onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />}
+          {page === 'report' && <ReportPage onSubmit={handleReportIssue} isSubmitting={isReporting} />}
+        </DialogContentInner>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
