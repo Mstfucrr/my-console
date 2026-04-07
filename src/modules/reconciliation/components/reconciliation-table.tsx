@@ -4,20 +4,38 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import type { ColumnDef, ColumnSort } from '@tanstack/react-table'
 import { useState } from 'react'
+import type { DateRange } from 'react-day-picker'
 import { ReconciliationStatus, type ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
+import { ReconciliationFilter } from './reconciliation-filter'
 
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
   isLoading: boolean
   sorting?: ColumnSort
   onSortingChange?: (sorting: ColumnSort) => void
+  dateRange?: DateRange
+  onDateRangeChange?: (range: DateRange | undefined) => void
+  page?: number
+  pageSize?: number
+  total?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (size: number) => void
 }
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData = unknown> {
     handleOpenModal?: (page: 'approve' | 'report', record: TData) => void
   }
+}
+
+/** Şu anki ay veya bir önceki takvim ayı. */
+function isWithinLastTwoMonths(record: ReconciliationRecord): boolean {
+  const toMonth = (y: number, m: number) => y * 12 + m
+  const now = new Date()
+  const cur = toMonth(now.getFullYear(), now.getMonth() + 1)
+  const row = toMonth(record.RecordYear, record.RecordMonth)
+  return row === cur || row === cur - 1
 }
 
 const columns: ColumnDef<ReconciliationRecord>[] = [
@@ -90,10 +108,13 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
         | undefined
 
       const status = row.original.status
+      const canAct = isWithinLastTwoMonths(row.original)
 
       if (status === ReconciliationStatus.APPROVED) return <span className='text-success'>Onaylandı</span>
 
       const isReportable = status === ReconciliationStatus.PENDING
+
+      if (isReportable && !canAct) return '-'
 
       return (
         <div className='flex flex-row items-center justify-end gap-2'>
@@ -122,7 +143,19 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
   }
 ]
 
-export default function ReconciliationTable({ data, isLoading, sorting, onSortingChange }: ReconciliationTableProps) {
+export default function ReconciliationTable({
+  data,
+  isLoading,
+  sorting,
+  onSortingChange,
+  dateRange,
+  onDateRangeChange,
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  onPageSizeChange
+}: ReconciliationTableProps) {
   const [selected, setSelected] = useState<{ page: 'approve' | 'report'; record: ReconciliationRecord } | null>(null)
 
   const handleOpenModal = (page: 'approve' | 'report', record: ReconciliationRecord): void => {
@@ -133,7 +166,8 @@ export default function ReconciliationTable({ data, isLoading, sorting, onSortin
     <>
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Kayıtlar ({data.length})</CardTitle>
+          <CardTitle>Kayıtlar ({total ?? data.length})</CardTitle>
+          <ReconciliationFilter dateRange={dateRange} onDateRangeChange={onDateRangeChange} />
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
           <BasicDataTable
@@ -148,6 +182,11 @@ export default function ReconciliationTable({ data, isLoading, sorting, onSortin
             onSortingChange={onSortingChange}
             enableMultiSort={false}
             manualSorting
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
           />
         </CardContent>
       </Card>

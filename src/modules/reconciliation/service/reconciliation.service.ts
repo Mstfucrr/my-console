@@ -1,5 +1,8 @@
 import { privateAxiosInstance } from '@/lib/axios'
+import { formatDateToApiString } from '@/lib/utils/date'
+import { PaginatedResponse, PaginationOptions } from '@/types'
 import { ColumnSort } from '@tanstack/react-table'
+import type { DateRange } from 'react-day-picker'
 import { ReconciliationConfirmStatus, ReconciliationRecordResponse, type ReconciliationRecord } from '../types'
 
 // Helper function to convert File to base64
@@ -18,16 +21,28 @@ const fileToBase64 = (file: File): Promise<string> => {
 }
 
 class ReconciliationService {
-  async getReconciliationData(sort?: ColumnSort): Promise<ReconciliationRecord[]> {
-    const params: Record<string, string | number | string[] | undefined> = {}
+  async getReconciliationData(
+    dateRange?: DateRange,
+    pagination?: PaginationOptions,
+    sort?: ColumnSort
+  ): Promise<PaginatedResponse<ReconciliationRecord>> {
+    const params: Record<string, string | number | string[] | undefined> = {
+      page: pagination?.page,
+      limit: pagination?.limit,
+      startDate: formatDateToApiString(dateRange?.from),
+      endDate: formatDateToApiString(dateRange?.to)
+    }
     if (sort?.id) {
       params.sortBy = sort.id
       params.sortDirection = sort.desc ? 'DESC' : 'ASC'
     }
-    const response = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company', {
+    const { data } = await privateAxiosInstance.get<ReconciliationRecordResponse>('/reconciliation/report-by-company', {
       params
     })
-    return response.data.rows
+    return {
+      data: data.rows,
+      total: data.total
+    }
   }
 
   async uploadFile(file: File): Promise<{ url: string }> {

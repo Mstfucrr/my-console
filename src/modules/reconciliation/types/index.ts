@@ -22,6 +22,7 @@ export interface ReconciliationRecord {
 
 export interface ReconciliationRecordResponse {
   rows: ReconciliationRecord[]
+  total: number
 }
 
 export enum ReconciliationStatus {
