@@ -29,6 +29,8 @@ export interface DateRangePickerProps {
   quickClearableButtonProps?: ButtonProps
   quickApplyable?: boolean
   customDisplayText?: string
+  /** Takvim ilk açıldığında hangi tarihin ayını göstersin (varsayılan: başlangıç) */
+  initialCalendarMonth?: 'from' | 'to'
 }
 
 function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
@@ -53,6 +55,7 @@ export function DateRangePicker({
   quickApplyable = false,
   quickClearableButtonProps,
   customDisplayText,
+  initialCalendarMonth = 'from',
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
@@ -174,7 +177,7 @@ export function DateRangePicker({
           <div className='p-3'>
             <Calendar
               numberOfMonths={isSmallerThanTablet ? 1 : 2}
-              defaultMonth={tempDateRange?.from}
+              defaultMonth={initialCalendarMonth === 'to' && tempDateRange?.to ? tempDateRange.to : tempDateRange?.from}
               locale={tr}
               {...calendarProps}
               selected={tempDateRange}
