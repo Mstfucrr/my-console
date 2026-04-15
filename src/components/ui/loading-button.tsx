@@ -24,7 +24,7 @@ const LoadingButton = ({
   const content = isLoading && loadingText ? loadingText : children
 
   return (
-    <Button disabled={isDisabled} className={cn('flex items-center gap-2', props.className)} {...props}>
+    <Button {...props} disabled={isDisabled} className={cn('flex items-center gap-2', props.className)}>
       {isLoading && <Loader2 className={`size-4 animate-spin ${spinnerClassName ?? ''}`} />}
       {(showContentWhenLoading || !isLoading) && content}
     </Button>

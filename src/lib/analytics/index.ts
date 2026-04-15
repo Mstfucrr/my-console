@@ -5,6 +5,9 @@ import posthog from 'posthog-js'
 import type { AnalyticsEventName, AnalyticsEventPayload } from './events'
 import { NormalizedSearch } from './types'
 
+/** PostHog identify tekrarını önlemek; `posthog.reset` sonrası `sessionStorage.removeItem` */
+export const PH_IDENTIFY_SESSION_KEY = 'ph_profile_identified_user_id'
+
 /**
  * Posthog'un yüklü ve kullanıma hazır olup olmadığını kontrol eder.
  * Sadece tarayıcı ortamında ve posthog yüklenmişse true döner.

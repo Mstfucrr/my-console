@@ -81,6 +81,33 @@ export type PasswordChangeEvent =
   | { status: 'success' }
   | { status: 'failed'; http_status: number | null; message: string | null }
 
+export type OnboardingStepCompletedEvent =
+  | { step: 'contact' | 'verification' | 'password-setup'; status: 'success' }
+  | {
+      step: 'contact' | 'verification' | 'password-setup'
+      status: 'failed'
+      http_status?: number | null
+      message?: string | null
+    }
+
+export type StoreApplicationStepCompletedEvent =
+  | { step: 'location' | 'branch'; status: 'success' }
+  | {
+      step: 'workingHours'
+      status: 'success'
+      city_name?: string
+      district_name?: string
+      sector_name?: string
+      sub_sector_names?: Array<string>
+      restaurant_name?: string
+    }
+  | {
+      step: 'workingHours'
+      status: 'failed'
+      http_status?: number | null
+      message?: string | null
+    }
+
 export type ApiCallEvent = {
   method?: string
   endpoint?: string
@@ -99,6 +126,8 @@ export type AnalyticsEventPayloadMap = {
   [ANALYTICS_EVENTS.userResendOtp]: UserResendOtpEvent
   [ANALYTICS_EVENTS.userLogout]: UserLogoutEvent
   [ANALYTICS_EVENTS.passwordChange]: PasswordChangeEvent
+  [ANALYTICS_EVENTS.onboardingStepCompleted]: OnboardingStepCompletedEvent
+  [ANALYTICS_EVENTS.storeApplicationStepCompleted]: StoreApplicationStepCompletedEvent
 }
 
 export type AnalyticsEventPayload<E extends AnalyticsEventName> = AnalyticsEventPayloadMap[E]

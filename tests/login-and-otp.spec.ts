@@ -5,8 +5,6 @@ const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
 const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
 const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
 
-test.use({ storageState: { cookies: [], origins: [] } })
-
 test('OTP olmadan giriş akışı', async ({ page }) => {
   // Login API endpoint'ini mock'la - requiresOtp: false döndür
   await page.route('**/auth/login', async route => {
@@ -26,14 +24,14 @@ test('OTP olmadan giriş akışı', async ({ page }) => {
   await page.goto('/login')
 
   // Login formunun göründüğünü kontrol et
-  await expect(page.getByPlaceholder('Hesap ID giriniz')).toBeVisible()
-  await expect(page.getByPlaceholder('E-posta giriniz')).toBeVisible()
-  await expect(page.getByPlaceholder('Şifrenizi giriniz')).toBeVisible()
+  await expect(page.getByPlaceholder('Hesap ID (Şubeler için zorunludur)')).toBeVisible()
+  await expect(page.getByPlaceholder('E-posta')).toBeVisible()
+  await expect(page.getByPlaceholder('Şifre')).toBeVisible()
 
   // Login form alanlarını doldur
-  await page.getByPlaceholder('Hesap ID giriniz').fill(TEST_ACCOUNT_ID)
-  await page.getByPlaceholder('E-posta giriniz').fill(TEST_IDENTIFIER)
-  await page.getByPlaceholder('Şifrenizi giriniz').fill(TEST_PASSWORD)
+  await page.getByPlaceholder('Hesap ID (Şubeler için zorunludur)').fill(TEST_ACCOUNT_ID)
+  await page.getByPlaceholder('E-posta').fill(TEST_IDENTIFIER)
+  await page.getByPlaceholder('Şifre').fill(TEST_PASSWORD)
 
   // Giriş Yap butonuna bas
   await page.getByRole('button', { name: /Giriş Yap/i }).click()

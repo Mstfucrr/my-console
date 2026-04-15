@@ -137,7 +137,12 @@ export function MapView() {
             }
           }}
         >
-          <TileLayer key={mapTheme} url={MAP_THEMES[mapTheme].url} attribution={MAP_THEMES[mapTheme].attribution} />
+          <TileLayer
+            key={mapTheme}
+            referrerPolicy='origin'
+            url={MAP_THEMES[mapTheme].url}
+            attribution={MAP_THEMES[mapTheme].attribution}
+          />
           <MarkerClusterGroup
             spiderfyOnMaxZoom={true}
             showCoverageOnHover={false}

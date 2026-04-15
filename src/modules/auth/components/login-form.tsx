@@ -11,7 +11,7 @@ import { useTurnstile } from '../hooks/useTurnstile'
 import { AuthTurnstile } from './turnstile'
 
 const schema = z.object({
-  accountId: z.string().min(1, { message: 'Hesap ID zorunludur.' }),
+  accountId: z.string().optional(),
   identifier: z.string().min(1, { message: 'E-posta zorunludur.' }),
   password: z.string().min(1, { message: 'Şifre zorunludur.' })
 })
@@ -46,7 +46,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className='w-full space-y-4'>
+    <div className='flex w-full flex-col gap-8'>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 text-left'>
           <FormInputField
@@ -58,7 +58,7 @@ export function LoginForm() {
             size='lg'
             disabled={loadingState.login}
             Icon={User}
-            placeholder='Hesap ID giriniz'
+            placeholder='Hesap ID (Şubeler için zorunludur)'
           />
           <FormInputField
             name='identifier'
@@ -68,7 +68,7 @@ export function LoginForm() {
             size='lg'
             disabled={loadingState.login}
             Icon={Mail}
-            placeholder='E-posta giriniz'
+            placeholder='E-posta'
             regexPattern={/^[^\s]+$/}
           />
           <FormInputField
@@ -79,7 +79,7 @@ export function LoginForm() {
             size='lg'
             disabled={loadingState.login}
             Icon={Lock}
-            placeholder='Şifrenizi giriniz'
+            placeholder='Şifre'
           />
 
           <AuthTurnstile turnstileState={turnstileState} />
@@ -91,9 +91,10 @@ export function LoginForm() {
           </div>
 
           <LoadingButton
+            type='submit'
             className='w-full'
             isLoading={loadingState.login}
-            size='lg'
+            size='md'
             loadingText='Giriş Yapılıyor...'
             disabled={!turnstileState.isValid}
           >

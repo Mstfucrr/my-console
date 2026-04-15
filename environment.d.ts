@@ -1,6 +1,8 @@
 namespace NodeJS {
   interface ProcessEnv {
     NEXT_PUBLIC_API_BASE_URL: string
+    NEXT_PUBLIC_ACTIVE_TENANT: string
+    NEXT_PUBLIC_ACTIVE_STORE_APPLICATION: string
     NEXT_PUBLIC_TURNSTILE_SITEKEY: string
     NEXT_PUBLIC_TURNSTILE_ACTIVE: string
     NEXT_PUBLIC_POSTHOG_KEY: string

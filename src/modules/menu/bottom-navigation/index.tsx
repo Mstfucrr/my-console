@@ -2,29 +2,69 @@
 
 import { SiteLogoNoText } from '@/components/svg'
 import { Button } from '@/components/ui/button'
+import { useProfile } from '@/context/ProfileProvider'
 import { usePermission } from '@/hooks/use-permission'
+import { getMenuConfig } from '@/lib/get-menu-config'
+import { isTenantUser } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { menusConfig } from '../menus'
 import { isLocationMatch } from '../utils'
 import { BottomMenu } from './BottomMenu'
 import { BottomNavigationItem } from './BottomNavigationItem'
 
+type CenterActionButtonProps = {
+  showCreateOrder: boolean
+  onClose: () => void
+}
+
+function CenterActionButton({ showCreateOrder, onClose }: CenterActionButtonProps) {
+  const pathname = usePathname()
+
+  const href = showCreateOrder ? '/orders/create' : '/applications/new'
+  const ariaLabel = showCreateOrder ? 'Yeni Sipariş Oluştur' : 'Şube Başvurusu'
+  const isActive = isLocationMatch(href, pathname)
+
+  return (
+    <div className='relative flex flex-col items-center justify-center'>
+      <Link
+        href={href}
+        className={cn(
+          'relative z-11',
+          'flex size-14 items-center justify-center rounded-full',
+          'bg-success text-primary-foreground shadow-lg',
+          'transition-all hover:scale-105 hover:shadow-xl active:scale-95',
+          'ring-background -mt-6 ring-4'
+        )}
+        aria-label={ariaLabel}
+        onClick={onClose}
+      >
+        <Plus className='size-7' strokeWidth={2.5} />
+      </Link>
+      {isActive && <div className='bg-primary absolute -bottom-3 h-0.5 w-full' />}
+    </div>
+  )
+}
+
 export function BottomNavigation() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const { profile } = useProfile()
+  const tenant = isTenantUser(profile)
+  const menus = getMenuConfig(profile)
 
   const handleToggleMenu = () => setIsOpen(prev => !prev)
 
   const { checkRoute, canCreateOrder } = usePermission()
 
-  const visibleMenus = menusConfig.filter(item => checkRoute(item.href))
+  const visibleMenus = menus?.filter(item => checkRoute(item.href)) ?? []
+  const showCreateOrder = !tenant && canCreateOrder
+  const showNewApplication = !!tenant
 
-  if (visibleMenus.length < 2 && !canCreateOrder) return null
+  if (visibleMenus.length < 2 && !showCreateOrder && !showNewApplication) return null
 
   return (
     <>
@@ -49,27 +89,9 @@ export function BottomNavigation() {
               </div>
             )}
 
-            {/* Ortadaki Add Button */}
-            {canCreateOrder && (
-              <div className='relative flex flex-col items-center justify-center'>
-                <Link
-                  href='/orders/create'
-                  className={cn(
-                    'relative z-10',
-                    'flex size-14 items-center justify-center rounded-full',
-                    'bg-success text-primary-foreground shadow-lg',
-                    'transition-all hover:scale-105 hover:shadow-xl active:scale-95',
-                    'ring-background -mt-6 ring-4'
-                  )}
-                  aria-label='Yeni Sipariş Oluştur'
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Plus className='size-7' strokeWidth={2.5} />
-                </Link>
-                {isLocationMatch('/orders/create', pathname) && (
-                  <div className='bg-primary absolute -bottom-3 h-0.5 w-full' />
-                )}
-              </div>
+            {/* Ortadaki Add Button: restoran → Yeni Sipariş, tenant → Yeni Başvuru */}
+            {(showCreateOrder || showNewApplication) && (
+              <CenterActionButton showCreateOrder={!!showCreateOrder} onClose={() => setIsOpen(false)} />
             )}
 
             {/* Sağ taraf - Son 2 item */}

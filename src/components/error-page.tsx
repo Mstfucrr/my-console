@@ -11,14 +11,20 @@ type ErrorPageProps = {
     label: string
     href?: Route
     onClick?: () => void
-  }
+  } | null
+  multipleActions?: Array<{
+    label: string
+    href?: Route
+    onClick?: () => void
+  }>
 }
 
 export default function ErrorPage({
   image,
   title,
   description,
-  action = { label: 'Anasayfaya Git', href: '/' }
+  action = { label: 'Anasayfaya Git', href: '/' },
+  multipleActions = []
 }: ErrorPageProps) {
   return (
     <div className='flex min-h-screen items-center justify-center overflow-y-auto p-10'>
@@ -29,14 +35,27 @@ export default function ErrorPage({
         <div className='mt-16 text-center'>
           <div className='text-default-900 text-2xl font-semibold md:text-4xl lg:text-5xl'>{title}</div>
           <div className='text-default-600 mt-3 text-sm md:text-base'>{description}</div>
-          {action.href ? (
-            <Button asChild className='mt-9 md:min-w-[300px]' size='lg'>
-              <Link href={action.href}>{action.label}</Link>
-            </Button>
-          ) : (
-            <Button className='mt-9 md:min-w-[300px]' size='lg' onClick={action.onClick}>
-              {action.label}
-            </Button>
+          {action && (
+            <>
+              {action.href ? (
+                <Button asChild className='mt-6 md:min-w-[300px]' size='lg'>
+                  <Link href={action.href}>{action.label}</Link>
+                </Button>
+              ) : (
+                <Button className='mt-6 md:min-w-[300px]' size='lg' onClick={action.onClick}>
+                  {action.label}
+                </Button>
+              )}
+            </>
+          )}
+          {multipleActions.length > 0 && (
+            <div className='mt-6 flex flex-wrap justify-center gap-2 md:flex-row'>
+              {multipleActions.map(action => (
+                <Button key={action.label} className='w-auto min-w-[200px]' size='md' onClick={action.onClick}>
+                  {action.label}
+                </Button>
+              ))}
+            </div>
           )}
         </div>
       </div>

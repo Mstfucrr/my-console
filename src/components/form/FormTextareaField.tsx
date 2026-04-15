@@ -40,7 +40,7 @@ export function FormTextareaField<T extends FieldValues>({
           {...props}
           id={name}
           placeholder={placeholder}
-          className={cn('w-full', error && 'border-red-500')}
+          className={cn('w-full', props.className, error && 'border-red-500')}
         />
       </FormControl>
       {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}

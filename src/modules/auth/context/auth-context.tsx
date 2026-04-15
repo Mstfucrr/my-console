@@ -1,5 +1,6 @@
 'use client'
 
+import { createEmptyOtp, useOtpInput } from '@/hooks/use-otp-input'
 import { track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { UserLoginEvent, UserResendOtpEvent } from '@/lib/analytics/types'
@@ -14,9 +15,6 @@ import { ILoginRequest, IVerifyOtpRequest } from '../types'
 const OTP_TIMEOUT = 60
 const TOTAL_OTP_FIELD = 6
 
-// Create empty OTP array outside component to avoid recreation on every render
-const createEmptyOtpArray = () => Array.from({ length: TOTAL_OTP_FIELD }, () => '')
-
 type OtpState = {
   values: string[]
   timer: number
@@ -27,7 +25,7 @@ type OtpState = {
 }
 
 const defaultOtpState: OtpState = {
-  values: createEmptyOtpArray(),
+  values: createEmptyOtp(TOTAL_OTP_FIELD),
   timer: OTP_TIMEOUT,
   isComplete: false,
   requiresOtp: false,
@@ -126,7 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const resetOtp = useCallback(() => {
     setOtpState(prev => ({
       ...prev,
-      values: createEmptyOtpArray()
+      values: createEmptyOtp(TOTAL_OTP_FIELD)
     }))
     setTimeout(() => otpInputRefs.current[0]?.focus(), 0)
   }, [])
@@ -147,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (loginResponse.requiresOtp && loginResponse.otpSessionId) {
         hasResetOnTimerComplete.current = false
         setOtpState({
-          values: createEmptyOtpArray(),
+          values: createEmptyOtp(TOTAL_OTP_FIELD),
           timer: OTP_TIMEOUT,
           isComplete: false,
           sessionId: loginResponse.otpSessionId,
@@ -186,7 +184,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!otpState.sessionId) return
 
     const enteredOtp = otpState.values.join('')
-    setOtpState(prev => ({ ...prev, values: createEmptyOtpArray() }))
+    setOtpState(prev => ({ ...prev, values: createEmptyOtp(TOTAL_OTP_FIELD) }))
 
     try {
       await toast.promise(
@@ -226,54 +224,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [otpState.sessionId, otpState.values, verifyOtp, router, otpInputRefs, loginRequest])
 
-  // OTP change handler
-  const handleOtpChange = useCallback(
-    (index: number, value: string) => {
-      const digit = value.replace(/[^0-9]/g, '').slice(0, 1)
-      setOtpState(prev => {
-        const newValues = [...prev.values]
-        newValues[index] = digit
-        return { ...prev, values: newValues }
-      })
+  const setOtpValues = useCallback((updater: React.SetStateAction<string[]>) => {
+    setOtpState(prev => ({
+      ...prev,
+      values: typeof updater === 'function' ? updater(prev.values) : updater
+    }))
+  }, [])
 
-      if (digit && index < TOTAL_OTP_FIELD - 1) {
-        otpInputRefs.current[index + 1]?.focus()
-      }
-    },
-    [otpInputRefs]
-  )
-
-  // OTP key down handler
-  const handleOtpKeyDown = useCallback(
-    (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Backspace' && otpState.values[index] === '' && index > 0) {
-        setOtpState(prev => {
-          const newValues = [...prev.values]
-          newValues[index - 1] = ''
-          return { ...prev, values: newValues }
-        })
-        otpInputRefs.current[index - 1]?.focus()
-      } else if (event.key === 'ArrowLeft' && index > 0) {
-        otpInputRefs.current[index - 1]?.focus()
-      } else if (event.key === 'ArrowRight' && index < TOTAL_OTP_FIELD - 1) {
-        otpInputRefs.current[index + 1]?.focus()
-      } else if (event.key === 'Enter') {
-        handleVerifyOtp()
-      }
-    },
-    [otpState.values, handleVerifyOtp, otpInputRefs]
-  )
-
-  // OTP paste handler
-  const handleOtpPaste = useCallback(
-    (index: number, value: string) => {
-      const cleanedValue = value.replace(/\D/g, '')
-      for (let i = 0; i < cleanedValue.length; i++) {
-        handleOtpChange(index + i, cleanedValue[i])
-      }
-    },
-    [handleOtpChange]
-  )
+  const { handleOtpChange, handleOtpKeyDown, handleOtpPaste } = useOtpInput({
+    length: TOTAL_OTP_FIELD,
+    values: otpState.values,
+    setValues: setOtpValues,
+    inputRefs: otpInputRefs,
+    onEnter: () => {
+      void handleVerifyOtp()
+    }
+  })
 
   // Resend OTP handler
   const handleResendOtp = async () => {

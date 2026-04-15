@@ -74,7 +74,7 @@ export function FormSelectField<T extends FieldValues>({
         <Select value={value} onValueChange={handleValueChange} {...props}>
           <SelectTrigger
             id={name}
-            className={cn('w-full', error && 'border-red-500', inputClassName)}
+            className={cn('mb-0 w-full', error && 'border-red-500', inputClassName)}
             tabIndex={tabIndex}
           >
             <SelectValue placeholder={placeholder} />
@@ -107,7 +107,7 @@ export function FormSelectField<T extends FieldValues>({
           </SelectContent>
         </Select>
       </FormControl>
-      {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
+      {error && <FormMessage>{error.message}</FormMessage>}
     </FormItem>
   )
 }

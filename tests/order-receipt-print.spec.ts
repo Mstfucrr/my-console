@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, storeTest as test } from '../playwright/fixtures/authenticated'
 
 const mockOrder = {
   orderId: 'ORDER-PRINT-1',

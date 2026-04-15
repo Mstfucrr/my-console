@@ -21,8 +21,9 @@ type UseAlotechWidgetParams = {
 type WidgetSession = {
   userId: string
   restaurantId: string
-  restaurantName?: string
-  restaurantEmail?: string
+  clientName?: string
+  companyName?: string | null
+  clientEmail?: string
   phoneNumber?: string
   hubId?: string
   hubName?: string
@@ -59,8 +60,10 @@ function getWidgetSession(profile?: IProfileResponse): WidgetSession | null {
   return {
     userId: profile.userId,
     restaurantId: profile.restaurantId,
-    restaurantName: profile.info.name,
-    restaurantEmail: profile.email,
+    clientName:
+      profile.accountType === 'tenant' ? profile.data?.firstName + ' ' + profile.data?.surname : profile.info.name,
+    companyName: profile.accountType === 'tenant' ? profile.data?.financialDetails?.companyName : null,
+    clientEmail: profile.email,
     phoneNumber: profile.info.authPhone,
     hubId: profile.info.hubId,
     hubName: profile.hubName
@@ -75,7 +78,7 @@ function buildWidgetUserData({ token, order, session }: { token: string; order?:
     token,
     userId: session.userId,
     restaurantId: session.restaurantId,
-    restaurantName: session.restaurantName ?? ''
+    restaurantName: session.companyName ?? session.clientName ?? ''
   }
 
   if (order) {
@@ -191,12 +194,12 @@ export function useAlotechWidget({ enabled, token, order }: UseAlotechWidgetPara
         const userData = buildWidgetUserData({ token, order, session })
 
         window.startWidget({
-          client_name: session.restaurantName ?? '',
-          client_email: session.restaurantEmail ?? '',
+          client_name: session.clientName ?? '',
+          client_email: session.clientEmail ?? '',
           phone_number: session.phoneNumber ?? '',
           user_data: {
             ...userData,
-            client_email: session.restaurantEmail ?? '',
+            client_email: session.clientEmail ?? '',
             phone_number: session.phoneNumber ?? ''
           }
         })

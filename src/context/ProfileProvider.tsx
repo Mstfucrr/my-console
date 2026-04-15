@@ -1,13 +1,15 @@
+import { PH_IDENTIFY_SESSION_KEY } from '@/lib/analytics'
 import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { profileService } from '@/service/profile.service'
 import { IProfileResponse } from '@/types/profile'
 import { useQuery } from '@tanstack/react-query'
 import posthog from 'posthog-js'
-import { createContext, useContext, useEffect, useRef } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
 type ProfileContextValue = {
   profile: IProfileResponse | undefined
   isLoading: boolean
+  isError: boolean
 }
 
 type ProfileProviderProps = {
@@ -17,10 +19,10 @@ type ProfileProviderProps = {
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined)
 
 export const ProfileProvider = ({ children }: ProfileProviderProps) => {
-  const lastIdentifiedUserIdRef = useRef<string | null>(null)
   const {
     data: profileData,
     isLoading,
+    isError,
     isFetching
   } = useQuery({
     queryKey: ['profile'],
@@ -29,23 +31,23 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
   })
 
   useEffect(() => {
-    if (!profileData || !profileData.userId) return
-    if (!isPosthogEnabled) return
-    if (lastIdentifiedUserIdRef.current === profileData.userId) return
-
-    posthog.identify(profileData.userId, {
+    const uid = profileData?.userId
+    if (!uid || !isPosthogEnabled) return
+    if (sessionStorage.getItem(PH_IDENTIFY_SESSION_KEY) === uid) return
+    posthog.identify(uid, {
       email: profileData.email,
       accountId: profileData.accountId,
       restaurantId: profileData.restaurantId,
       omsRestaurantId: profileData.omsRestaurantId,
       name: profileData.info?.name,
-      channelId: profileData.info?.channelId
+      channelId: profileData.info?.channelId,
+      accountType: profileData.accountType
     })
-    lastIdentifiedUserIdRef.current = profileData.userId
-  }, [profileData, lastIdentifiedUserIdRef])
+    sessionStorage.setItem(PH_IDENTIFY_SESSION_KEY, uid)
+  }, [profileData])
 
   return (
-    <ProfileContext.Provider value={{ profile: profileData, isLoading: isLoading || isFetching }}>
+    <ProfileContext.Provider value={{ profile: profileData, isLoading: isLoading || isFetching, isError }}>
       {children}
     </ProfileContext.Provider>
   )

@@ -13,3 +13,14 @@ export const formatCurrency = (amount: number, showSymbol = true) => {
     .format(amount)
     .replace('₺', '')
 }
+
+export const parseTRCurrencyToNumber = (raw: string) => {
+  if (!raw) return NaN
+  const normalized = raw
+    .toString()
+    .trim()
+    .replace(/\./g, '')
+    .replace(',', '.')
+    .replace(/[^\d.]/g, '')
+  return Number(normalized)
+}

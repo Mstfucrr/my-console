@@ -2,6 +2,9 @@
 
 @plugin 'tailwindcss-animate';
 
+/* Force hover utilities to compile as plain :hover (Tailwind v4 defaults to hover-capable media query). */
+@custom-variant hover (&:hover);
+
 @layer base {
   :root {
     --radius: 0.75rem;
@@ -55,6 +58,18 @@
   --color-primary-900: oklch(0.2668 0.0331 269.12);
   --color-primary-950: oklch(0.2022 0.0248 269.12);
   --color-primary: oklch(0.4676 0.0668 266.74);
+
+  --color-primary-pink-50: oklch(95.06% 0.0262 347.12);
+  --color-primary-pink-100: oklch(84.94% 0.0831 347.11);
+  --color-primary-pink-200: oklch(78.3% 0.1258 349.04);
+  --color-primary-pink-300: oklch(69.76% 0.1816 351.68);
+  --color-primary-pink-400: oklch(65.53% 0.2098 354.2);
+  --color-primary-pink-500: oklch(60.77% 0.236 358.73);
+  --color-primary-pink-600: oklch(56.62% 0.2189 358.72);
+  --color-primary-pink-700: oklch(47.22% 0.1814 357.98);
+  --color-primary-pink-800: oklch(39.53% 0.1495 358.02);
+  --color-primary-pink-900: oklch(32.85% 0.1225 356.85);
+  --color-primary-pink: oklch(60.77% 0.236 358.73);
 
   --color-primary-foreground: oklch(97.25% 0.0135 286.15);
 
@@ -269,4 +284,10 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
+}
+
+@media only screen and (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 100% !important;
+  }
 }

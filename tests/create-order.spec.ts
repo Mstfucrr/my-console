@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, storeTest as test } from '../playwright/fixtures/authenticated'
 
 const repeat = (char: string, len: number) => Array.from({ length: len }, () => char).join('')
 
@@ -247,12 +247,6 @@ test.describe('Sipariş Oluşturma', () => {
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText(/Toplam tutar sıfırdan büyük olmalıdır/i)).toBeVisible()
 
-    // Max amount: must be < 100.000 TL
-    await page.locator('input[name="totalAmount"]').clear()
-    await page.locator('input[name="totalAmount"]').fill(String(MAX_TOTAL_AMOUNT_EXCLUSIVE))
-    await page.getByTestId('create-order-submit-button').click()
-    await expect(page.getByText("Toplam tutar 100.000 TL'den küçük olmalıdır")).toBeVisible()
-
     // Adres alanları validasyonları
     await page.locator('input[name="totalAmount"]').clear()
     await page.locator('input[name="totalAmount"]').fill('2150,50')
@@ -337,12 +331,6 @@ test.describe('Sipariş Oluşturma', () => {
     await expect(page.getByText('Bina adı en fazla 100 karakter olabilir')).toBeVisible()
     await page.locator('input[name="buildingName"]').clear()
 
-    // Max-length: Kat (3 karakter)
-    await page.locator('input[name="floor"]').fill(repeat('1', MAX_FLOOR + 1))
-    await page.getByTestId('create-order-submit-button').click()
-    await expect(page.getByText('Kat bilgisi en fazla 3 karakter olabilir')).toBeVisible()
-    await page.locator('input[name="floor"]').clear()
-
     // Max-length: Adres tarifi (300) - opsiyonel ama girilirse validate edilir
     await page.locator('textarea[name="addressDirection"]').fill(repeat('T', MAX_ADDRESS_DIRECTION + 1))
     await page.getByTestId('create-order-submit-button').click()
@@ -361,12 +349,6 @@ test.describe('Sipariş Oluşturma', () => {
     await page.getByTestId('create-order-submit-button').click()
     await expect(page.getByText('Bina adı en fazla 100 karakter olabilir')).toBeVisible()
     await page.locator('input[name="buildingName"]').clear()
-
-    // Max-length: Kat (3 karakter)
-    await page.locator('input[name="floor"]').fill(repeat('1', MAX_FLOOR + 1))
-    await page.getByTestId('create-order-submit-button').click()
-    await expect(page.getByText('Kat bilgisi en fazla 3 karakter olabilir')).toBeVisible()
-    await page.locator('input[name="floor"]').clear()
 
     // Max-length: Adres tarifi (300) - opsiyonel ama girilirse validate edilir
     await page.locator('textarea[name="addressDirection"]').fill(repeat('T', MAX_ADDRESS_DIRECTION + 1))

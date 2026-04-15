@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, storeTest as test } from '../playwright/fixtures/authenticated'
 
 test.describe('View Mode Default Görünüm', () => {
   test('Mobilde default görünüm kart (card view) olmalıdır', async ({ page, context }) => {

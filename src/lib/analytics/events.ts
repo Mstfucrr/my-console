@@ -19,7 +19,11 @@ export const ANALYTICS_EVENTS = {
   userLogin: 'user_login',
   userResendOtp: 'user_resend_otp',
   userLogout: 'user_logout',
-  passwordChange: 'password_change'
+  passwordChange: 'password_change',
+
+  // Onboarding (tenant application)
+  onboardingStepCompleted: 'onboarding_step_completed',
+  storeApplicationStepCompleted: 'store_application_step_completed'
 } as const
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS]

@@ -21,9 +21,9 @@ const CHANNEL_LABELS: Record<OrderChannel, string> = {
   migrosYemek: 'Migros Yemek',
   tiklaGelsin: 'Tıkla Gelsin',
   araGelsin: 'Ara Gelsin',
-  fiyuu: 'Fiyuu',
+  fiyuu: 'fiyuu',
   manuel: 'Manuel',
-  Console: 'Fiyuu Channel'
+  Console: 'fiyuu Channel'
 } as const
 
 const CHANNEL_COLORS: Record<OrderChannel, string> = {

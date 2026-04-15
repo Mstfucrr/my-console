@@ -12,7 +12,7 @@ interface MaskedTextProps {
   /**
    * The value to display (will be masked or shown based on state)
    */
-  value: string
+  value?: string
   /**
    * Function to mask the value
    */
@@ -64,9 +64,9 @@ export function MaskedText({
   const showUnmasked = () => setIsMasked(false)
   const hideMasked = () => setIsMasked(true)
 
-  const displayValue = isMasked ? maskFn(value) : value
+  const displayValue = isMasked ? maskFn(value ?? '') : value
 
-  if (!displayValue.length) return null
+  if (!displayValue?.length) return null
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

@@ -1,18 +1,7 @@
+import { parseTRCurrencyToNumber } from '@/lib/formatCurrency'
+import { PHONE_REGEX } from '@/lib/regex'
 import { z } from 'zod'
 import { CreateOrderFormData } from '../types'
-
-const parseTRCurrencyToNumber = (raw: string) => {
-  if (!raw) return NaN
-  const normalized = raw
-    .toString()
-    .trim()
-    .replace(/\./g, '')
-    .replace(',', '.')
-    .replace(/[^\d.]/g, '')
-  return Number(normalized)
-}
-
-const PHONE_REGEX = /^[1-9][0-9]{9}$/
 
 export const createOrderSchema = z.object({
   // Müşteri Bilgileri

@@ -1,6 +1,6 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { FormControl, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Input, InputProps } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { Check, ChevronDown, Loader2, X } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
@@ -12,7 +12,7 @@ interface SelectOption {
   disabled?: boolean
 }
 
-interface FormCommandSelectFieldProps<T extends FieldValues> {
+interface FormCommandSelectFieldProps<T extends FieldValues> extends InputProps {
   name: FieldPath<T>
   control: Control<T>
   label?: string
@@ -45,7 +45,8 @@ export function FormCommandSelectField<T extends FieldValues>({
   isLoading,
   onValueChange,
   tabIndex,
-  allowCustomValue = false
+  allowCustomValue = false,
+  ...props
 }: FormCommandSelectFieldProps<T>) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -235,6 +236,7 @@ export function FormCommandSelectField<T extends FieldValues>({
         <div ref={containerRef} className='relative w-full'>
           <div className='relative'>
             <Input
+              {...props}
               ref={inputRef}
               inputMode='search'
               id={name}
