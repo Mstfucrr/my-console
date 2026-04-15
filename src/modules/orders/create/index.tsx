@@ -3,7 +3,7 @@
 import { FormCommandSelectField } from '@/components/form/FormCommandSelectField'
 import { FormCurrencyInputField } from '@/components/form/FormCurrencyInputField'
 import { FormInputField } from '@/components/form/FormInputField'
-import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
+import { FormPhoneField } from '@/components/form/FormPhoneField'
 import { FormSelectField } from '@/components/form/FormSelectField'
 import { FormSwitchField } from '@/components/form/FormSwitchField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
@@ -41,7 +41,7 @@ export function CreateOrderView() {
   return (
     <div className='flex flex-col gap-4 max-sm:p-0'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6' autoComplete='off'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-4' autoComplete='off'>
           {/* Müşteri ve Sipariş Bilgileri - Yan Yana */}
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
             {/* Müşteri Bilgileri */}
@@ -73,26 +73,13 @@ export function CreateOrderView() {
                   tabIndex={2}
                   autoComplete='off'
                 />
-                <FormMaskedInputField
-                  mask='(000) 000-0000'
-                  lazy={false}
-                  type='number'
+                <FormPhoneField
                   name='customerPhone'
                   required
                   control={form.control}
                   label='Telefon'
                   placeholder='(555) 123-4567'
                   tabIndex={3}
-                  regexPattern={/^[1-8][0-9]{0,9}$/}
-                  onPaste={e => {
-                    e.preventDefault()
-                    let val = e.clipboardData.getData('Text').replace(/\D/g, '')
-                    if (val.startsWith('0')) val = val.slice(1)
-                    else if (val.startsWith('90')) val = val.slice(2)
-                    const input = e.target as HTMLInputElement
-                    input.value = val
-                    input.dispatchEvent(new Event('input', { bubbles: true }))
-                  }}
                   autoComplete='off'
                 />
                 <FormInputField
@@ -174,7 +161,7 @@ export function CreateOrderView() {
               </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <div className='relative grid grid-cols-2 gap-x-4 gap-y-2 lg:grid-cols-3 xl:grid-cols-4'>
+              <div className='relative grid grid-cols-2 gap-x-4 lg:grid-cols-3 xl:grid-cols-4'>
                 <FormCommandSelectField
                   name='city.id'
                   required

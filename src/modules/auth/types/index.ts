@@ -1,6 +1,6 @@
 // Backend LoginDto'ya uygun
 export interface ILoginRequest {
-  accountId: string
+  accountId?: string
   identifier: string
   password: string
   turnstileToken?: string

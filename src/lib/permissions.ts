@@ -1,7 +1,18 @@
 import { IProfileResponse } from '@/types/profile'
 import { Route } from 'next'
 
-const allRoutes: Route[] = [
+/** profile accountType tenant ise tenant (şube) kullanıcısıdır */
+export const isTenantUser = (profile?: IProfileResponse): boolean => profile?.accountType === 'tenant'
+
+/** NEXT_PUBLIC_ACTIVE_TENANT environment variable'ı true ise tenant kullanıcıları mevcut URL'de kalır; private layout bakım UI'si gösterilir */
+export const isActiveTenant = process.env.NEXT_PUBLIC_ACTIVE_TENANT === 'true'
+
+export const canSubmitStoreApplication = process.env.NEXT_PUBLIC_ACTIVE_STORE_APPLICATION === 'true'
+
+/** Tenant modülü kapalı mı? (layout'ta URL değiştirmeden bakım göstermek için) */
+export const isTenantModuleAvailable = (profile?: IProfileResponse): boolean => isTenantUser(profile) && isActiveTenant
+
+const allRoutes: Array<Route> = [
   '/',
   '/orders',
   '/orders/create',
@@ -9,14 +20,33 @@ const allRoutes: Route[] = [
   '/login',
   '/forgot-password',
   '/reset-password',
-  '/reports'
+  '/reports',
+  '/onboarding',
+  '/applications',
+  '/applications/new',
+  '/stores',
+  '/welcome',
+  '/account'
 ]
 
-const allowedRoutesForEveryProfile: Route[] = ['/login', '/forgot-password', '/reset-password']
+const tenantRoutes: Array<Route> = [
+  '/welcome',
+  '/applications',
+  '/applications/new',
+  '/stores',
+  '/onboarding',
+  '/account'
+]
+
+/** Tenant’ta finans adımı zorunlu: yalnızca API açıkça false döndürdüğünde; undefined = eski yanıtlar, kısıtlama yok */
+export const tenantNeedsFinancialOnboarding = (profile?: IProfileResponse): boolean =>
+  !profile?.data?.financialDetails?.companyType
+
+const allowedRoutesForEveryProfile: Array<Route> = ['/login', '/forgot-password', '/reset-password', '/onboarding']
 
 type RouteRestriction = {
-  include?: Route[]
-  exclude?: Route[]
+  include?: Array<Route>
+  exclude?: Array<Route>
 }
 
 // Profile prop bazlı route kısıtlamaları
@@ -29,10 +59,26 @@ export const profileRouteRestrictions: Partial<Record<keyof IProfileResponse, Ro
 
 // Profile prop kontrolü
 export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, route: Route): boolean => {
-  // Her profile için izinli route'lar
   if (allowedRoutesForEveryProfile.includes(route)) return true
 
   if (!profile) return true
+
+  // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
+  if (isTenantUser(profile)) {
+    // Tenant modülü kapalıysa izin verme
+    if (!isActiveTenant) return false
+
+    // route tenant'a ait değilse izin verme
+    if (!tenantRoutes.includes(route)) return false
+
+    const isFinancialRequired = tenantNeedsFinancialOnboarding(profile)
+
+    // Finansal onboarding GEREKİYORSA, sadece /welcome'a erişilebilir
+    if (isFinancialRequired && route !== '/welcome') return false
+
+    // Finansal onboarding GEREKMiYORSA, /welcome'a erişim kapalı olmalı
+    if (!isFinancialRequired && route === '/welcome') return false
+  }
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {
     const propValue = profile[propKey as keyof IProfileResponse]
@@ -47,6 +93,10 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
 export const getFirstAllowedRoute = (profile: IProfileResponse | undefined): Route => {
   if (!profile) return '/'
+
+  if (isTenantUser(profile)) {
+    return tenantNeedsFinancialOnboarding(profile) ? '/welcome' : '/applications'
+  }
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {
     const propValue = profile[propKey as keyof IProfileResponse]

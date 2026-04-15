@@ -37,7 +37,7 @@ export function BottomMenu({ onClick }: BottomMenuProps) {
       exit='hidden'
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1], ...springConfig }}
       className={cn(
-        'absolute right-0 bottom-[110%] -z-10 h-[260%] w-[107%] origin-bottom-right rounded-tl-[100%] rounded-r-4xl rounded-bl-xl bg-white/70',
+        'absolute right-0 bottom-[110%] -z-10 h-[260%] w-[107%] min-w-32 origin-bottom-right rounded-tl-[100%] rounded-r-4xl rounded-bl-xl bg-white/70',
         openSupportDialog && 'bottom-7 h-0 overflow-hidden'
       )}
     >
@@ -52,7 +52,7 @@ export function BottomMenu({ onClick }: BottomMenuProps) {
         transition={{ duration: 0.35, delay: 0.2, ease: [0.4, 0, 0.2, 1], ...springConfig }}
         className={cn('absolute bottom-[15%] -left-[10%]', !hasReportsAccess && 'bottom-[30%] -left-[5%]')}
       >
-        <ProfileButton className='size-12 rounded-full p-0' />
+        <ProfileButton className='size-12 rounded-full p-0' onClick={onClick} />
       </motion.div>
       {hasReportsAccess && (
         <MotionBottomNavigationItem

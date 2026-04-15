@@ -1,11 +1,10 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
 import posthog from 'posthog-js'
 import { sampleByEvent } from 'posthog-js/lib/src/customizations'
 import { PostHogProvider } from 'posthog-js/react'
-import React, { Suspense, useEffect, useRef } from 'react'
+import React, { Suspense, useEffect } from 'react'
 
 import { isPosthogReady } from '@/lib/analytics'
 import { maskString } from '@/lib/utils/mask'
@@ -18,8 +17,6 @@ const hasPosthogKey = Boolean(posthogKey && posthogKey.trim() !== '')
 export const isPosthogEnabled = Boolean(hasPosthogKey && process.env.NEXT_PUBLIC_POSTHOG_ENABLED === 'true')
 const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST
 
-const PAGEVIEW_CAPTURE_THROTTLE_MS = 3000
-
 const AnalyticsConsentBanner = dynamic(
   () => import('@/modules/analytics/components/AnalyticsConsentBanner').then(m => m.AnalyticsConsentBanner),
   { ssr: false }
@@ -27,21 +24,6 @@ const AnalyticsConsentBanner = dynamic(
 
 function AnalyticsProviderInner({ children }: { children: React.ReactNode }) {
   const { showConsentBanner } = usePosthogConsentGate()
-  const pathname = usePathname()
-  const isPosthogReadyValue = isPosthogReady()
-  const lastPageviewAt = useRef(0)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!isPosthogReadyValue || !isPosthogEnabled) return
-    if (posthog.has_opted_out_capturing?.()) return
-
-    const now = Date.now()
-    // Eğer son pageview capture'ı 3 saniye içinde yapılırsa capture'ı yapma
-    if (now - lastPageviewAt.current < PAGEVIEW_CAPTURE_THROTTLE_MS) return
-    lastPageviewAt.current = now
-    posthog.capture('$pageview', { $current_url: window.location.href })
-  }, [pathname, isPosthogReadyValue, lastPageviewAt])
 
   return (
     <PosthogFeatureFlagsRefreshProvider>
@@ -59,8 +41,8 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     posthog.init(posthogKey, {
       api_host: posthogHost || 'https://eu.i.posthog.com',
       person_profiles: 'identified_only',
-      capture_pageview: false, // SPA/App Router: route değişiminde manuel $pageview capture ediyoruz
-      capture_pageleave: true,
+      capture_pageview: false,
+      capture_pageleave: false,
       before_send: sampleByEvent(['$dead_click', '$web_vitals'], 0.1),
       opt_out_capturing_by_default: false,
       capture_exceptions: {

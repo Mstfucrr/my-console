@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, storeTest as test } from '../playwright/fixtures/authenticated'
 
 test.describe('Sipariş Oluştur - Toplam Tutar TR formatlama', () => {
   test('1.231,24 olarak formatlanır ve nokta girişi olduğunda virgüle çevirir', async ({ page }) => {

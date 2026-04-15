@@ -1,10 +1,10 @@
-import { expect, test } from '@playwright/test'
+import { expect, storeTest as test } from '../playwright/fixtures/authenticated'
 
 test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
   test('Onayla: fatura yüklenir ve confirmation-process çağrılır (mock)', async ({ page }) => {
     const record = {
       RecordID: '1001',
-      period: '2026-01',
+      period: '2026-04',
       totalOrderAmount: 1000,
       distributionCount: 10,
       totalDeliveryAmount: 100,
@@ -16,7 +16,7 @@ test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
       status: 'pending',
       RestaurantTaxNumber: '1111111111',
       RecordYear: 2026,
-      RecordMonth: 1,
+      RecordMonth: 4,
       RecordPeriod: 1,
       ConfirmID: '2002',
       ConfirmStatus: 0,
@@ -83,13 +83,13 @@ test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
     expect(confirmationPayload?.recordID).toBe(1001)
     expect(confirmationPayload?.confirmRecordID).toBe(2002)
     expect(confirmationPayload?.confirmStatus).toBe(1) // APPROVED
-    expect(confirmationPayload?.fileName).toBe('invoice.pdf')
+    expect(confirmationPayload?.fileName).toBe('https://example.com/invoice.pdf')
   })
 
   test('Kontrole Gönder: açıklama + dosya ile confirmation-process çağrılır (mock)', async ({ page }) => {
     const record = {
       RecordID: '1002',
-      period: '2026-01',
+      period: '2026-04',
       totalOrderAmount: 1000,
       distributionCount: 10,
       totalDeliveryAmount: 100,
@@ -101,7 +101,7 @@ test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
       status: 'pending',
       RestaurantTaxNumber: '1111111111',
       RecordYear: 2026,
-      RecordMonth: 1,
+      RecordMonth: 4,
       RecordPeriod: 1,
       ConfirmID: '2003',
       ConfirmStatus: 0,
@@ -161,6 +161,6 @@ test.describe('Mutabakat işlemleri (Onayla / Kontrole Gönder)', () => {
     expect(confirmationPayload?.confirmRecordID).toBe(2003)
     expect(confirmationPayload?.confirmStatus).toBe(2) // FAILED
     expect(confirmationPayload?.note).toBe('Test: veriyi etkilemeyen kontrol bildirimi')
-    expect(confirmationPayload?.fileName).toBe('statement.pdf')
+    expect(confirmationPayload?.fileName).toBe('https://example.com/statement.pdf')
   })
 })

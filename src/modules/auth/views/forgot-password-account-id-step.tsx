@@ -1,6 +1,7 @@
 'use client'
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { OnboardingHeading } from '@/modules/tenant/onboarding/components/OnboardingHeading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Mail, User } from 'lucide-react'
 import Link from 'next/link'
@@ -34,13 +35,12 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordA
   })
 
   return (
-    <div className='w-full space-y-4'>
-      <div className='text-center'>
-        <h2 className='text-primary text-xl font-bold'>Şifremi Unuttum</h2>
-        <p className='mt-2 text-sm text-gray-600'>
-          Bu email adresine ait birden fazla hesap bulundu. Lütfen hesap ID&apos;nizi giriniz.
-        </p>
-      </div>
+    <>
+      <OnboardingHeading
+        description="Bu email adresine ait birden fazla hesap bulundu. Lütfen hesap ID'nizi giriniz."
+        variant='page'
+        title='Şifremi Unuttum'
+      />
 
       <FormProvider {...accountIdForm}>
         <form onSubmit={accountIdForm.handleSubmit(onSubmit)} className='space-y-4'>
@@ -62,7 +62,7 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordA
             id='accountId'
             size='lg'
             disabled={accountIdForm.formState.isSubmitting}
-            placeholder='Hesap ID giriniz'
+            placeholder='Hesap ID'
             Icon={User}
             autoFocus
           />
@@ -70,9 +70,10 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordA
           <AuthTurnstile turnstileState={turnstileState} />
 
           <LoadingButton
+            type='submit'
             className='w-full'
             isLoading={accountIdForm.formState.isSubmitting}
-            size='lg'
+            size='md'
             loadingText='Gönderiliyor...'
             disabled={!turnstileState.isValid}
           >
@@ -90,6 +91,6 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordA
           Giriş sayfasına dön
         </Link>
       </div>
-    </div>
+    </>
   )
 }

@@ -276,7 +276,7 @@ export function BasicDataTable<TData, TValue = never>({
         }}
       />
 
-      <div className={cn('relative rounded-md border', tableClassName)}>
+      <div className={cn('relative overflow-x-hidden rounded-md border', tableClassName)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (

@@ -1,10 +1,12 @@
 'use client'
+import ErrorPage from '@/components/error-page'
 import LayoutLoader from '@/components/layout-loader'
 import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { ProfileProvider, useProfile } from '@/context/ProfileProvider'
 import { OrderStatusWebSocketProvider } from '@/context/useOrderStatusWebSocket'
 import { useMounted } from '@/hooks/use-mounted'
 import { usePermission } from '@/hooks/use-permission'
+import { cn } from '@/lib/utils'
 import { TopbarAndMobileMenu } from '@/modules/menu'
 import { RestaurantHeader } from '@/modules/menu/common/RestaurantHeader'
 import { motion } from 'framer-motion'
@@ -15,8 +17,11 @@ import { useEffect } from 'react'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const mounted = useMounted()
+  const pathname = usePathname()
 
   if (!mounted) return <LayoutLoader />
+
+  const isWelcomePage = pathname === '/welcome'
 
   return (
     <AuthProvider>
@@ -25,7 +30,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <ProfileGuard>
             <WebSocketProvider>
               <TopbarAndMobileMenu />
-              <div className='pt-4 pb-24 transition-all duration-150 lg:pt-20 lg:pb-16'>
+              <div
+                className={cn('pt-4 pb-24 transition-all duration-300 lg:pt-20 lg:pb-16', {
+                  'max-sm:pt-8 max-sm:pb-16 sm:pb-10 md:pt-0! md:pb-0!': isWelcomePage
+                })}
+              >
                 <div className='flex flex-col gap-4 pb-0'>
                   <LayoutWrapper>
                     <NuqsAdapter>
@@ -64,19 +73,34 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 }
 
 const ProfileGuard = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading } = useProfile()
+  const { isLoading, isError } = useProfile()
   const pathname = usePathname()
   const router = useRouter()
   const { checkRoute, firstAllowedRoute } = usePermission()
+  const { logout } = useAuth()
 
   useEffect(() => {
-    if (isLoading || !pathname) return
+    if (isLoading || isError || !pathname) return
     if (checkRoute(pathname as Route)) return
     if (pathname === firstAllowedRoute) return
     router.replace(firstAllowedRoute)
-  }, [pathname, isLoading, checkRoute, firstAllowedRoute, router])
+  }, [pathname, isLoading, isError, checkRoute, firstAllowedRoute, router])
 
-  if (isLoading || !checkRoute(pathname as Route)) return <LayoutLoader />
+  if (isError)
+    return (
+      <ErrorPage
+        image='/images/error/light-503.png'
+        title='Kısa Bir Mola Verdik'
+        description='Çok yakında tekrar buradayız. Lütfen daha sonra tekrar deneyin.'
+        action={null}
+        multipleActions={[
+          { label: 'Çıkış yap', onClick: logout },
+          { label: 'Tekrar dene', onClick: () => window.location.reload() }
+        ]}
+      />
+    )
+
+  if (isLoading) return <LayoutLoader />
 
   return children
 }
@@ -108,5 +132,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
+  const { profile } = useProfile()
+  if (profile?.accountType === 'tenant') return <>{children}</>
   return <OrderStatusWebSocketProvider>{children}</OrderStatusWebSocketProvider>
 }

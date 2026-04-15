@@ -1,11 +1,12 @@
 import { FormInputField } from '@/components/form/FormInputField'
+import { PASSWORD_REGEXES, PasswordRequirements } from '@/components/password-requirements'
 import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { PasswordChangeEvent } from '@/lib/analytics/types'
-import { cn } from '@/lib/utils'
 import { authService } from '@/modules/auth/service/auth.service'
+import { OnboardingHeading } from '@/modules/tenant/onboarding/components/OnboardingHeading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AxiosError } from 'axios'
 import { ArrowLeft, ArrowRight, CheckCircle, Key, Lock } from 'lucide-react'
@@ -16,13 +17,6 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { z } from 'zod'
 
-// Regex patterns centralized for reusability
-const PASSWORD_REGEXES = {
-  lowercase: { regex: /[a-z]/, message: 'Şifre en az bir küçük harf içermelidir.' },
-  uppercase: { regex: /[A-Z]/, message: 'Şifre en az bir büyük harf içermelidir.' },
-  number: { regex: /\d/, message: 'Şifre en az bir rakam içermelidir.' }
-}
-
 const schema = z
   .object({
     codeFromEmail: z
@@ -32,9 +26,9 @@ const schema = z
     newPassword: z
       .string()
       .min(8, { message: 'Şifre en az 8 karakter olmalıdır.' })
-      .regex(PASSWORD_REGEXES.lowercase.regex, { message: PASSWORD_REGEXES.lowercase.message })
-      .regex(PASSWORD_REGEXES.uppercase.regex, { message: PASSWORD_REGEXES.uppercase.message })
-      .regex(PASSWORD_REGEXES.number.regex, { message: PASSWORD_REGEXES.number.message }),
+      .regex(PASSWORD_REGEXES.lowercase, { message: 'Şifre en az bir küçük harf içermelidir.' })
+      .regex(PASSWORD_REGEXES.uppercase, { message: 'Şifre en az bir büyük harf içermelidir.' })
+      .regex(PASSWORD_REGEXES.number, { message: 'Şifre en az bir rakam içermelidir.' }),
     confirmNewPassword: z.string().min(1, { message: 'Şifre tekrarı zorunludur.' })
   })
   .superRefine((data, ctx) => {
@@ -70,13 +64,6 @@ export function ResetPasswordView() {
 
   const newPasswordValue = useWatch({ control, name: 'newPassword', defaultValue: '' })
   const confirmNewPasswordValue = useWatch({ control, name: 'confirmNewPassword', defaultValue: '' })
-
-  const isLengthValid = newPasswordValue.length >= 8
-  const hasUppercase = PASSWORD_REGEXES.uppercase.regex.test(newPasswordValue)
-  const hasLowercase = PASSWORD_REGEXES.lowercase.regex.test(newPasswordValue)
-  const hasNumber = PASSWORD_REGEXES.number.regex.test(newPasswordValue)
-
-  const isValid = isLengthValid && hasUppercase && hasLowercase && hasNumber
 
   useEffect(() => {
     // İkisi de boşken gereksiz trigger etme
@@ -138,21 +125,13 @@ export function ResetPasswordView() {
     )
   }
 
-  const reqItem = (ok: boolean, content: React.ReactNode) => (
-    <span className={ok ? 'text-green-700' : 'text-primary'}>
-      {ok ? '✔' : '•'} {content}
-      <br />
-    </span>
-  )
-
   return (
-    <div className='w-full space-y-4'>
-      <div className='text-center'>
-        <h2 className='text-primary text-xl font-bold'>Yeni Şifre Belirle</h2>
-        <p className='mt-2 text-sm text-gray-600'>
-          E-posta adresinize gönderilen 6 haneli kodu girin ve yeni şifrenizi belirleyin.
-        </p>
-      </div>
+    <>
+      <OnboardingHeading
+        variant='page'
+        title='Yeni Şifre Belirle'
+        description='E-posta adresinize gönderilen 6 haneli kodu girin ve yeni şifrenizi belirleyin.'
+      />
 
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
@@ -199,18 +178,15 @@ export function ResetPasswordView() {
             />
           </div>
 
-          <div className={cn('rounded-lg bg-blue-50 p-3', isValid ? 'bg-green-50' : 'bg-blue-50')}>
-            <p className='text-xs'>
-              <strong className={cn(isValid ? 'text-green-700' : 'text-primary')}>Şifre gereksinimleri:</strong>
-              <br />
-              {reqItem(isLengthValid, 'En az 8 karakter')}
-              {reqItem(hasUppercase, 'En az bir büyük harf (A-Z)')}
-              {reqItem(hasLowercase, 'En az bir küçük harf (a-z)')}
-              {reqItem(hasNumber, 'En az bir rakam (0-9)')}
-            </p>
-          </div>
+          <PasswordRequirements password={newPasswordValue} />
 
-          <LoadingButton className='w-full' isLoading={formState.isSubmitting} size='lg' loadingText='Güncelleniyor...'>
+          <LoadingButton
+            type='submit'
+            className='w-full'
+            isLoading={formState.isSubmitting}
+            size='md'
+            loadingText='Güncelleniyor...'
+          >
             Şifreyi Güncelle
           </LoadingButton>
         </form>
@@ -225,6 +201,6 @@ export function ResetPasswordView() {
           Giriş sayfasına dön
         </Link>
       </div>
-    </div>
+    </>
   )
 }

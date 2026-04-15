@@ -93,3 +93,30 @@ export function maskAddress(address: string) {
   if (address.length <= 12) return address[0] + '*'.repeat(address.length - 2) + address[address.length - 1]
   return `${address.slice(0, 8)}${'*'.repeat(6)}`
 }
+
+/** VKN (10 hane) — ilk 2 ve son 2 rakam görünür */
+export function maskTaxNumber(value: string): string {
+  const digits = value.replace(/\D/g, '')
+  if (!digits) return ''
+  if (digits.length <= 4) return '*'.repeat(digits.length)
+  return maskString(digits, { visibleStart: 2, visibleEnd: 2, maskChar: '*', preserveNonDigits: false })
+}
+
+/** TCKN (11 hane) — ilk 1 ve son 2 rakam görünür */
+export function maskIdentityNumber(value: string): string {
+  const digits = value.replace(/\D/g, '')
+  if (!digits) return ''
+  if (digits.length <= 3) return '*'.repeat(digits.length)
+  return maskString(digits, { visibleStart: 1, visibleEnd: 2, maskChar: '*', preserveNonDigits: false })
+}
+
+/** IBAN — ülke kodu + kontrol + banka önü ve hesap sonu kısmen görünür (örn. TR + ilk 4 + son 4) */
+export function maskIban(value: string): string {
+  const normalized = value.replace(/\s/g, '').toUpperCase()
+  if (!normalized) return ''
+  const totalVisible = 10
+  if (normalized.length <= totalVisible) {
+    return maskString(normalized, { visibleStart: 2, visibleEnd: Math.min(2, normalized.length - 2) })
+  }
+  return maskString(normalized, { visibleStart: 6, visibleEnd: 4, maskChar: '*', preserveNonDigits: false })
+}

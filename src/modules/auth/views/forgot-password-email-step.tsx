@@ -1,6 +1,7 @@
 'use client'
 import { FormInputField } from '@/components/form/FormInputField'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { OnboardingHeading } from '@/modules/tenant/onboarding/components/OnboardingHeading'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Mail } from 'lucide-react'
 import Link from 'next/link'
@@ -31,11 +32,12 @@ export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepPro
   })
 
   return (
-    <div className='w-full space-y-4'>
-      <div className='text-center'>
-        <h2 className='text-primary text-xl font-bold'>Şifremi Unuttum</h2>
-        <p className='mt-2 text-sm text-gray-600'>E-posta adresinizi girin, size şifre sıfırlama kodu gönderelim.</p>
-      </div>
+    <>
+      <OnboardingHeading
+        description='E-posta adresinizi girin, size şifre sıfırlama kodu gönderelim.'
+        variant='page'
+        title='Şifremi Unuttum'
+      />
 
       <FormProvider {...emailForm}>
         <form onSubmit={emailForm.handleSubmit(onSubmit)} className='space-y-4'>
@@ -47,16 +49,17 @@ export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepPro
             size='lg'
             autoFocus
             disabled={emailForm.formState.isSubmitting}
-            placeholder='E-posta giriniz'
+            placeholder='E-posta'
             Icon={Mail}
           />
 
           <AuthTurnstile turnstileState={turnstileState} />
 
           <LoadingButton
+            type='submit'
             className='w-full'
             isLoading={emailForm.formState.isSubmitting}
-            size='lg'
+            size='md'
             loadingText='Gönderiliyor...'
             disabled={!turnstileState.isValid}
           >
@@ -74,6 +77,6 @@ export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepPro
           Giriş sayfasına dön
         </Link>
       </div>
-    </div>
+    </>
   )
 }

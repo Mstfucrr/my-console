@@ -1,4 +1,4 @@
-import { expect, Page, test, type BrowserContext, type Route } from '@playwright/test'
+import { expect, Page, storeTest as test, type BrowserContext, type Route } from '../playwright/fixtures/authenticated'
 
 const TEST_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || 'mock-access-token-12345'
 
@@ -218,7 +218,7 @@ function sortRows<T>(rows: T[], sortDirection: string | null, getValue: (row: T)
   return sortDirection === 'DESC' ? sorted.reverse() : sorted
 }
 
-test.describe('FP-2186 sıralama davranışları', () => {
+test.describe('Sıralama davranışları', () => {
   test.beforeEach(async ({ page, context }) => {
     await mockAuth(page, context)
     await mockDashboardBase(page)

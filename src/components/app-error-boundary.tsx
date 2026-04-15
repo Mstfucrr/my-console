@@ -19,7 +19,6 @@ class AppErrorBoundaryImpl extends React.Component<AppErrorBoundaryProps, AppErr
   }
 
   componentDidCatch(error: unknown) {
-    // eslint-disable-next-line no-console
     console.error('Unhandled UI error caught by AppErrorBoundary', error)
   }
 

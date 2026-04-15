@@ -124,6 +124,7 @@ export interface InputProps
   Icon?: LucideIcon
   regexPattern?: string | RegExp
   allowRegexMatch?: boolean
+  autoFirstLetterUppercase?: boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -140,11 +141,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       regexPattern,
       allowRegexMatch = true,
       onChange,
+      autoFirstLetterUppercase = false,
       ...props
     },
     ref
   ) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (autoFirstLetterUppercase && e.target.value?.length > 0) {
+        e.target.value = e.target.value
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+      }
       if (!regexPattern || !allowRegexMatch) {
         onChange?.(e)
         return

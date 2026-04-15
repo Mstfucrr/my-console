@@ -1,4 +1,5 @@
 // Backend ProfileResponse'a uygun
+// accountId yoksa/boşsa kullanıcı tenant (şube) hesabıdır; restoran hesabı değildir
 export interface IProfileResponse {
   userId: string
   accountId: string
@@ -7,7 +8,34 @@ export interface IProfileResponse {
   omsRestaurantId: string
   tab_fr?: boolean
   hubName?: string
+  accountType: 'tenant' | 'store'
   info?: IProfileInfo
+  data?: IProfileData
+}
+
+export interface IProfileData {
+  merchantId: string
+  taxNumber: string
+  hasFinancialDetails?: boolean
+  firstName: string
+  surname: string
+  email: string
+  phoneNumber: string
+  status: string
+  updatedAt: string
+  financialDetails?: IProfileFinancialDetails | null
+}
+
+export interface IProfileFinancialDetails {
+  companyType: 'Bireysel' | 'Kurumsal' | null
+  companyName: string | null
+  taxOffice: string | null
+  iban: string | null
+  tckn: string | null
+  taxDocumentUrl: string | null
+  signatureCircularUrl: string | null
+  idFrontUrl: string | null
+  idBackUrl: string | null
 }
 
 export interface IProfileInfo {

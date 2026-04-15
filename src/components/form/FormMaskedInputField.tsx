@@ -27,7 +27,7 @@ type MaskBaseProps = Omit<
   | 'regexPattern'
 >
 
-interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps {
+export interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps {
   // RHF alanları
   name: FieldPath<T>
   control: Control<T>
@@ -36,6 +36,8 @@ interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps
   label?: string
   formItemClassName?: string
   required?: boolean
+  /** true ise hata metni burada gösterilmez (üst bileşende birleşik liste için) */
+  hideErrorMessage?: boolean
   hideSpinButtons?: boolean
 
   size?: InputProps['size']
@@ -47,7 +49,7 @@ interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps
   className?: string
 
   // numeric klavye için helper
-  type?: 'text' | 'number'
+  type?: 'text' | 'number' | 'time'
 
   /**
    * IMask options
@@ -56,6 +58,11 @@ interface FormMaskedInputFieldProps<T extends FieldValues> extends MaskBaseProps
   lazy?: boolean
   placeholderChar?: string
   regexPattern?: RegExp
+
+  preValidateDigits?: (digits: string) => boolean
+
+  /** Mask kabul edilip RHF değeri güncellendikten sonra (bağımlı alan doğrulaması için) */
+  onMaskedAccept?: () => void
 }
 
 /**
@@ -79,6 +86,7 @@ export function FormMaskedInputField<T extends FieldValues>({
   label,
   formItemClassName,
   required,
+  hideErrorMessage = false,
   hideSpinButtons = true,
   size = 'md',
   color,
@@ -89,6 +97,8 @@ export function FormMaskedInputField<T extends FieldValues>({
   className,
   type = 'text',
   regexPattern,
+  preValidateDigits,
+  onMaskedAccept,
   ...imaskProps
 }: FormMaskedInputFieldProps<T>) {
   const lastValidRef = React.useRef<string>('')
@@ -134,6 +144,11 @@ export function FormMaskedInputField<T extends FieldValues>({
 
               const digits = normalized.replace(/\D/g, '')
 
+              if (preValidateDigits && !preValidateDigits(digits)) {
+                if (mask) mask.unmaskedValue = lastValidRef.current
+                return
+              }
+
               if (digits.length > 0 && regexPattern && !regexPattern.test(digits)) {
                 if (mask) mask.unmaskedValue = lastValidRef.current
                 return
@@ -141,16 +156,17 @@ export function FormMaskedInputField<T extends FieldValues>({
 
               lastValidRef.current = digits
               field.onChange(digits)
+              onMaskedAccept?.()
             }}
             onBlur={field.onBlur}
             inputRef={field.ref}
             // native input props
-            type='text' // IMaskInput ile her zaman text
+            type={type === 'time' ? 'time' : 'text'} // IMaskInput ile her zaman text
             inputMode={resolvedInputMode}
             className={cn(
               inputVariants({ color, size, radius, variant, shadow }),
               Icon && 'pl-10',
-              error && 'border-red-500',
+              error && 'border-red-500!',
               hideSpinButtons && 'no-spin',
               className
             )}
@@ -158,7 +174,7 @@ export function FormMaskedInputField<T extends FieldValues>({
         </div>
       </FormControl>
 
-      {error && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
+      {error && !hideErrorMessage && <FormMessage className='-mt-2'>{error.message}</FormMessage>}
     </FormItem>
   )
 }
