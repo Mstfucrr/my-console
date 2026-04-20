@@ -1,5 +1,8 @@
+import type { AccountType } from '@/types/profile'
+
 // Backend LoginDto'ya uygun
 export interface ILoginRequest {
+  accountType: AccountType
   accountId?: string
   identifier: string
   password: string
@@ -42,6 +45,7 @@ export interface IRefreshTokenResponse {
 
 // Backend PasswordRecoveryDto'ya uygun
 export interface IPasswordRecoveryRequest {
+  accountType: AccountType
   accountId?: string
   email: string
   turnstileToken?: string

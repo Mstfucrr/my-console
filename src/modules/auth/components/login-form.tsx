@@ -1,20 +1,41 @@
 'use client'
 import { FormInputField } from '@/components/form/FormInputField'
+import { TooltippedElement } from '@/components/tooltipped-element'
+import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { cn } from '@/lib/utils'
+import { AccountType } from '@/types/profile'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Lock, Mail, User } from 'lucide-react'
 import Link from 'next/link'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useController, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useAuth } from '../context/auth-context'
 import { useTurnstile } from '../hooks/useTurnstile'
 import { AuthTurnstile } from './turnstile'
 
-const schema = z.object({
-  accountId: z.string().optional(),
-  identifier: z.string().min(1, { message: 'E-posta zorunludur.' }),
-  password: z.string().min(1, { message: 'Şifre zorunludur.' })
-})
+const ACCOUNT_TYPES: Array<{ value: AccountType; label: string; tooltip: string }> = [
+  { value: 'tenant', label: 'İşletme', tooltip: 'Tüm şubelerini yönet' },
+  { value: 'store', label: 'Şube', tooltip: 'Şubenin siparişlerini takip et' }
+]
+
+const schema = z
+  .object({
+    accountType: z.enum(['tenant', 'store'], { required_error: 'Hesap türü zorunludur.' }),
+    accountId: z.string().optional(),
+    identifier: z.string().min(1, { message: 'E-posta zorunludur.' }),
+    password: z.string().min(1, { message: 'Şifre zorunludur.' })
+  })
+  .superRefine((data, ctx) => {
+    if (data.accountType === 'store' && !data.accountId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Hesap ID zorunludur.',
+        path: ['accountId']
+      })
+    }
+  })
 
 type LoginFormType = z.infer<typeof schema>
 
@@ -32,7 +53,17 @@ export function LoginForm() {
     }
   })
 
-  const { handleSubmit, control } = form
+  const { handleSubmit, control, setValue } = form
+
+  const {
+    field: accountTypeField,
+    fieldState: { error: accountTypeError }
+  } = useController({ name: 'accountType', control })
+
+  const handleAccountTypeChange = (next: AccountType) => {
+    accountTypeField.onChange(next)
+    if (next === 'tenant') setValue('accountId', undefined)
+  }
 
   const onSubmit = async (data: LoginFormType) => {
     try {
@@ -48,18 +79,56 @@ export function LoginForm() {
   return (
     <div className='flex w-full flex-col gap-8'>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 text-left'>
-          <FormInputField
-            autoFocus
-            name='accountId'
-            control={control}
-            type='text'
-            id='accountId'
-            size='lg'
-            disabled={loadingState.login}
-            Icon={User}
-            placeholder='Hesap ID (Şubeler için zorunludur)'
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-y-3 text-left'>
+          <div className='flex w-full flex-col gap-2'>
+            <div className='flex w-full items-center justify-between gap-2'>
+              {ACCOUNT_TYPES.map(item => (
+                <TooltippedElement
+                  key={item.value}
+                  tooltipContent={item.tooltip}
+                  side='top'
+                  className='max-w-52 text-center text-xs'
+                >
+                  <Button
+                    type='button'
+                    data-testid={`login-form-account-type-button-${item.value}`}
+                    variant={item.value === accountTypeField.value ? undefined : 'outline'}
+                    size='sm'
+                    color='primary'
+                    className={cn('flex-1 text-sm', accountTypeError && 'border-destructive')}
+                    onClick={() => handleAccountTypeChange(item.value)}
+                  >
+                    {item.label}
+                  </Button>
+                </TooltippedElement>
+              ))}
+            </div>
+            {accountTypeError && (
+              <p className='text-destructive px-1 text-xs leading-none'>{accountTypeError.message}</p>
+            )}
+          </div>
+          <AnimatePresence mode='wait'>
+            {accountTypeField.value === 'store' && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, maxHeight: 0 }}
+                animate={{ opacity: 1, y: 0, maxHeight: 120 }}
+                exit={{ opacity: 0, y: -20, maxHeight: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FormInputField
+                  autoFocus
+                  name='accountId'
+                  control={control}
+                  type='text'
+                  id='accountId'
+                  size='lg'
+                  disabled={loadingState.login}
+                  Icon={User}
+                  placeholder='Hesap ID'
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
           <FormInputField
             name='identifier'
             control={control}

@@ -80,7 +80,6 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   const onFinancialSubmit = useCallback(
     (data: WelcomeFinancialFormValues) => {
       // Gerçek uygulamada API çağrısı
-      console.log('Welcome financial form submitted:', data)
       toast.promise(
         async () => {
           await createFinance({ ...data, iban: 'TR' + data.iban, vkn: undefined })

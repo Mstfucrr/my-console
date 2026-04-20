@@ -9,7 +9,11 @@ export function LoginView() {
 
   return (
     <>
-      <OnboardingHeading variant='page' title='Giriş Yap' />
+      <OnboardingHeading
+        variant='page'
+        title='Giriş Yap'
+        description={isOtp ? undefined : 'Giriş yapmak istediğiniz hesap türünü seçin.'}
+      />
       <div className='mb-3'>
         <AnimatePresence mode='wait'>
           {!isOtp ? (

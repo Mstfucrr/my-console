@@ -1,6 +1,6 @@
 'use client'
 
-import { PH_IDENTIFY_SESSION_KEY, track } from '@/lib/analytics'
+import { track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { UserLogoutEvent } from '@/lib/analytics/types'
 import { getToken, removeToken } from '@/lib/local-storage-helper'
@@ -60,7 +60,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     removeToken()
     if (isPosthogEnabled) {
       posthog.reset()
-      sessionStorage.removeItem(PH_IDENTIFY_SESSION_KEY)
     }
     setIsAuthenticated(false)
     router.push('/login')

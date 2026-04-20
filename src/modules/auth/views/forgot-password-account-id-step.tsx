@@ -27,7 +27,6 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordA
 
   const accountIdForm = useForm<AccountIdFormType>({
     resolver: zodResolver(accountIdSchema),
-    mode: 'onBlur',
     defaultValues: {
       email: email,
       accountId: ''

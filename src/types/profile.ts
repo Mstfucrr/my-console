@@ -1,5 +1,5 @@
-// Backend ProfileResponse'a uygun
-// accountId yoksa/boşsa kullanıcı tenant (şube) hesabıdır; restoran hesabı değildir
+export type AccountType = 'tenant' | 'store'
+
 export interface IProfileResponse {
   userId: string
   accountId: string
@@ -8,7 +8,7 @@ export interface IProfileResponse {
   omsRestaurantId: string
   tab_fr?: boolean
   hubName?: string
-  accountType: 'tenant' | 'store'
+  accountType: AccountType
   info?: IProfileInfo
   data?: IProfileData
 }

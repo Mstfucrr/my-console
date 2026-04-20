@@ -28,8 +28,6 @@ export function ContactInformationStep() {
   const { isSubmitted, errors } = useFormState({ control: form.control })
   const hasAnyEmptyField = isSubmitted && Object.values(errors).some(error => error?.message === '')
 
-  console.log('errors', errors)
-
   const onSubmit = async (data: OnboardingContactFormValues) => {
     try {
       const response = await requestApplicationSession(data, turnstileState.token ?? undefined)

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const welcomeFinancialFormSchema = z
   .object({
+    accountType: z.enum(['platform', 'tenant']).optional(),
     taxOffice: z.string().min(1, '').max(120, 'En fazla 120 karakter'),
     companyName: z.string().min(1, '').max(254, 'En fazla 254 karakter'),
     companyType: z.enum(['Bireysel', 'Kurumsal']),
@@ -28,6 +29,13 @@ export const welcomeFinancialFormSchema = z
         code: z.ZodIssueCode.custom,
         message: '',
         path: ['signatureCircularKey']
+      })
+    }
+    if (!data.accountType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '',
+        path: ['accountType']
       })
     }
   })

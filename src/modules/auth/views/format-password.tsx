@@ -1,6 +1,7 @@
 'use client'
 import { authService } from '@/modules/auth/service/auth.service'
 import { IPasswordRecoveryRequest } from '@/modules/auth/types'
+import type { AccountType } from '@/types/profile'
 import { useMutation } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
@@ -15,6 +16,7 @@ export function ForgotPasswordView() {
   const turnstileState = useTurnstile()
   const [requiresAccountId, setRequiresAccountId] = useState(false)
   const [email, setEmail] = useState('')
+  const [recoveryAccountType, setRecoveryAccountType] = useState<AccountType>('store')
 
   const { mutateAsync: passwordRecover } = useMutation({
     mutationFn: (request: IPasswordRecoveryRequest) => authService.passwordRecovery(request)
@@ -23,6 +25,7 @@ export function ForgotPasswordView() {
   const onEmailSubmit = async (data: EmailFormType) => {
     try {
       const response = await passwordRecover({
+        accountType: data.accountType,
         email: data.email,
         turnstileToken: turnstileState.token || undefined
       })
@@ -31,6 +34,7 @@ export function ForgotPasswordView() {
         // Birden fazla hesap bulundu, accountId istenmeli
         setRequiresAccountId(true)
         setEmail(data.email)
+        setRecoveryAccountType(data.accountType)
         toast.info("Bu email adresine ait birden fazla hesap bulundu. Lütfen hesap ID'nizi giriniz.")
       } else if (response.recoverySessionId) {
         // Tek hesap bulundu, direkt reset-password sayfasına yönlendir
@@ -52,6 +56,7 @@ export function ForgotPasswordView() {
   const onAccountIdSubmit = async (data: AccountIdFormType) => {
     try {
       const response = await passwordRecover({
+        accountType: recoveryAccountType,
         accountId: data.accountId,
         email: data.email,
         turnstileToken: turnstileState.token || undefined

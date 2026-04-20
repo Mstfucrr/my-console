@@ -43,9 +43,16 @@ async function loginAsRole(page: Page, role: Role) {
   }
 
   await page.goto(`${BASE_URL}/login`)
-  await page
-    .getByPlaceholder('Hesap ID (Şubeler için zorunludur)')
-    .fill(role === 'tenant' ? '' : credentials.accountId || '')
+
+  if (role === 'tenant') {
+    await page.getByTestId(`login-form-account-type-button-tenant`).click()
+  } else {
+    await page.getByTestId(`login-form-account-type-button-store`).click()
+    const accountIdInput = page.getByPlaceholder('Hesap ID')
+    await expect(accountIdInput).toBeVisible()
+    await accountIdInput.fill(credentials.accountId || '')
+  }
+
   await page.getByPlaceholder('E-posta').fill(credentials.identifier)
   await page.getByPlaceholder('Şifre').fill(credentials.password)
   await page.getByRole('button', { name: /Giriş Yap/i }).click()

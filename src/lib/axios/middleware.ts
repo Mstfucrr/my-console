@@ -1,4 +1,4 @@
-import { isPosthogReady, PH_IDENTIFY_SESSION_KEY, track } from '@/lib/analytics'
+import { isPosthogReady, track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import { getToken, removeToken, setToken } from '@/lib/local-storage-helper'
 import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
@@ -126,7 +126,6 @@ export const privateErrorMiddleware: ErrorMiddleware = async error => {
     removeToken()
     if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
       posthog.reset()
-      sessionStorage.removeItem(PH_IDENTIFY_SESSION_KEY)
     }
     window.location.href = '/login'
     return Promise.reject(error)

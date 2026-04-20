@@ -1,4 +1,3 @@
-import { PH_IDENTIFY_SESSION_KEY } from '@/lib/analytics'
 import { isPosthogEnabled } from '@/provider/AnalyticsProvider'
 import { profileService } from '@/service/profile.service'
 import { IProfileResponse } from '@/types/profile'
@@ -33,7 +32,6 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
   useEffect(() => {
     const uid = profileData?.userId
     if (!uid || !isPosthogEnabled) return
-    if (sessionStorage.getItem(PH_IDENTIFY_SESSION_KEY) === uid) return
     posthog.identify(uid, {
       email: profileData.email,
       accountId: profileData.accountId,
@@ -41,9 +39,18 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
       omsRestaurantId: profileData.omsRestaurantId,
       name: profileData.info?.name,
       channelId: profileData.info?.channelId,
-      accountType: profileData.accountType
+      accountType: profileData.accountType,
+      tenantData: profileData.data?.merchantId
+        ? {
+            merchantId: profileData.data.merchantId,
+            companyType: profileData.data.financialDetails?.companyType,
+            companyName: profileData.data.financialDetails?.companyName,
+            name: profileData.data.firstName + ' ' + profileData.data.surname,
+            email: profileData.data.email,
+            phoneNumber: profileData.data.phoneNumber
+          }
+        : undefined
     })
-    sessionStorage.setItem(PH_IDENTIFY_SESSION_KEY, uid)
   }, [profileData])
 
   return (
