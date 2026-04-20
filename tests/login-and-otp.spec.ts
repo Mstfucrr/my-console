@@ -23,13 +23,18 @@ test('OTP olmadan giriş akışı', async ({ page }) => {
   // Login sayfasına git
   await page.goto('/login')
 
-  // Login formunun göründüğünü kontrol et
-  await expect(page.getByPlaceholder('Hesap ID (Şubeler için zorunludur)')).toBeVisible()
+  await expect(page.getByTestId('login-form-account-type-button-tenant')).toBeVisible()
+  await expect(page.getByTestId('login-form-account-type-button-store')).toBeVisible()
   await expect(page.getByPlaceholder('E-posta')).toBeVisible()
   await expect(page.getByPlaceholder('Şifre')).toBeVisible()
 
-  // Login form alanlarını doldur
-  await page.getByPlaceholder('Hesap ID (Şubeler için zorunludur)').fill(TEST_ACCOUNT_ID)
+  await page.getByTestId('login-form-account-type-button-tenant').click()
+  await expect(page.getByPlaceholder('Hesap ID')).not.toBeVisible()
+
+  await page.getByTestId('login-form-account-type-button-store').click()
+  const hesapIdInput = page.getByPlaceholder('Hesap ID')
+  await expect(hesapIdInput).toBeVisible()
+  await hesapIdInput.fill(TEST_ACCOUNT_ID)
   await page.getByPlaceholder('E-posta').fill(TEST_IDENTIFIER)
   await page.getByPlaceholder('Şifre').fill(TEST_PASSWORD)
 

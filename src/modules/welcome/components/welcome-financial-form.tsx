@@ -5,18 +5,27 @@ import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
 import { Button } from '@/components/ui/button'
 import { Form, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { LoadingButton } from '@/components/ui/loading-button'
+import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Building, User } from 'lucide-react'
+import { ArrowRight, Building, Building2Icon, LucideIcon, User } from 'lucide-react'
 import { useController } from 'react-hook-form'
 import { useWelcomeOnboarding } from '../context/welcome-onboarding-context'
-import type { WelcomeCompanyType } from '../types'
+import type { WelcomeAccountType, WelcomeCompanyType } from '../types'
 import { WelcomeDocumentUploadSection } from './welcome-document-upload-section'
 
 const COMPANY_TYPES: WelcomeCompanyType[] = ['Bireysel', 'Kurumsal']
+const ACCOUNT_TYPES: { value: WelcomeAccountType; label: string; Icon: LucideIcon }[] = [
+  { value: 'platform', label: 'Platform', Icon: Building2Icon },
+  { value: 'tenant', label: 'İşletme', Icon: User }
+]
 
 export function WelcomeFinancialForm() {
   const { form, taxNumberDisplay, onFinancialSubmit, onFinancialCancel, isCreatingFinance } = useWelcomeOnboarding()
   const companyType = form.watch('companyType')
+  const {
+    field: accountTypeField,
+    fieldState: { error: accountTypeError }
+  } = useController({ name: 'accountType', control: form.control })
   const {
     field: companyTypeField,
     fieldState: { error: companyTypeError }
@@ -26,34 +35,58 @@ export function WelcomeFinancialForm() {
     companyTypeField.onChange(v)
     form.setValue('tckn', '')
     if (v === 'Bireysel') {
-      form.setValue('signatureCircularKey', '', { shouldDirty: true, shouldValidate: false })
+      form.setValue('signatureCircularKey', '', { shouldDirty: true, shouldValidate: true })
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onFinancialSubmit)} className='flex flex-col gap-x-4 gap-y-2'>
-        <FormItem>
-          <FormLabel className='text-sm font-medium'>
-            Şirket Türü<span className='ml-0.5'>*</span>
-          </FormLabel>
-          <div className='mt-1 grid grid-cols-2 gap-3'>
-            {COMPANY_TYPES.map(type => (
-              <Button
-                key={type}
-                type='button'
-                size='md'
-                variant={companyTypeField.value === type ? undefined : 'outline'}
-                onClick={() => setCompanyType(type)}
-                className='flex items-center justify-center gap-3'
-              >
-                {type === 'Bireysel' ? <User className='h-5 w-5' /> : <Building className='h-5 w-5' />}
-                <span className='text-sm font-medium'>{type}</span>
-              </Button>
-            ))}
-          </div>
-          {companyTypeError && <FormMessage>{companyTypeError.message}</FormMessage>}
-        </FormItem>
+        <div className='grid gap-x-4 gap-y-2 sm:grid-cols-2'>
+          <FormItem>
+            <FormLabel className={cn('mb-1 text-sm font-medium', accountTypeError && 'text-red-500')}>
+              Hesap Türü<span className='ml-0.5'>*</span>
+            </FormLabel>
+            <div className='mt-1 grid grid-cols-2 gap-3'>
+              {ACCOUNT_TYPES.map(type => (
+                <Button
+                  key={type.value}
+                  type='button'
+                  data-testid={`welcome-financial-account-type-${type.value}`}
+                  size='md'
+                  variant={accountTypeField.value === type.value ? undefined : 'outline'}
+                  onClick={() => accountTypeField.onChange(type.value)}
+                  className={cn('flex items-center justify-center gap-3', accountTypeError && 'border-red-500')}
+                >
+                  <type.Icon className='size-5' />
+                  <span className='text-sm font-medium'>{type.label}</span>
+                </Button>
+              ))}
+            </div>
+          </FormItem>
+
+          <FormItem>
+            <FormLabel className='mb-1 text-sm font-medium'>
+              Şirket Türü<span className='ml-0.5'>*</span>
+            </FormLabel>
+            <div className='mt-1 grid grid-cols-2 gap-3'>
+              {COMPANY_TYPES.map(type => (
+                <Button
+                  key={type}
+                  type='button'
+                  size='md'
+                  variant={companyTypeField.value === type ? undefined : 'outline'}
+                  onClick={() => setCompanyType(type)}
+                  className='flex items-center justify-center gap-3'
+                >
+                  {type === 'Bireysel' ? <User className='h-5 w-5' /> : <Building className='h-5 w-5' />}
+                  <span className='text-sm font-medium'>{type}</span>
+                </Button>
+              ))}
+            </div>
+            {companyTypeError && <FormMessage>{companyTypeError.message}</FormMessage>}
+          </FormItem>
+        </div>
 
         <div className='grid gap-4 sm:grid-cols-2'>
           <FormInputField
@@ -82,9 +115,9 @@ export function WelcomeFinancialForm() {
             {companyType === 'Bireysel' ? (
               <motion.div
                 key='tckn'
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className='overflow-hidden'
               >
@@ -103,9 +136,9 @@ export function WelcomeFinancialForm() {
             ) : (
               <motion.div
                 key='vkn'
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.3 }}
                 className='content-end overflow-hidden'
               >
@@ -121,20 +154,20 @@ export function WelcomeFinancialForm() {
                 />
               </motion.div>
             )}
-
-            <FormMaskedInputField
-              mask='TR00 0000 0000 0000 0000 0000 00'
-              lazy={false}
-              type='text'
-              name='iban'
-              required
-              control={form.control}
-              label='IBAN'
-              placeholder='TR33 0006 1005 1978 6457 8413 26'
-              className='font-mono'
-              tabIndex={3}
-            />
           </AnimatePresence>
+
+          <FormMaskedInputField
+            mask='TR00 0000 0000 0000 0000 0000 00'
+            lazy={false}
+            type='text'
+            name='iban'
+            required
+            control={form.control}
+            label='IBAN'
+            placeholder='TR33 0006 1005 1978 6457 8413 26'
+            className='font-mono'
+            tabIndex={3}
+          />
         </div>
 
         <WelcomeDocumentUploadSection />

@@ -67,6 +67,7 @@ test.describe('Welcome finans onboarding', () => {
     await page.getByTestId('welcome-onboarding-start-button').click()
 
     await expect(page.locator('input[name="companyName"]')).toBeVisible({ timeout: 10000 })
+    await page.getByTestId('welcome-financial-account-type-tenant').click()
     await page.locator('input[name="companyName"]').fill('Welcome Test Şirketi')
     await page.locator('input[name="taxOffice"]').first().fill('Kadıköy V.D.')
     await page.locator('input[name="tckn"]').fill('12345678901')

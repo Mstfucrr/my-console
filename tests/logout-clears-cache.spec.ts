@@ -82,7 +82,10 @@ test('logout sonrası restoran bilgisi değişir (cache temiz)', async ({ page }
   })
 
   const fillLoginFormAndSubmit = async (accountId: string, email: string) => {
-    await page.getByPlaceholder('Hesap ID (Şubeler için zorunludur)').fill(accountId)
+    await page.getByTestId('login-form-account-type-button-store').click()
+    const hesapIdInput = page.getByPlaceholder('Hesap ID')
+    await expect(hesapIdInput).toBeVisible()
+    await hesapIdInput.fill(accountId)
     await page.getByPlaceholder('E-posta').fill(email)
     await page.getByPlaceholder('Şifre').fill('pw')
     await page.getByRole('button', { name: /Giriş Yap/i }).click()

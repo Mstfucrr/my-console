@@ -78,6 +78,8 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
     // Finansal onboarding GEREKMiYORSA, /welcome'a erişim kapalı olmalı
     if (!isFinancialRequired && route === '/welcome') return false
+  } else {
+    if (tenantRoutes.includes(route)) return false
   }
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {
