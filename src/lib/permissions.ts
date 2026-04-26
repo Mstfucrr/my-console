@@ -16,6 +16,7 @@ const allRoutes: Array<Route> = [
   '/',
   '/orders',
   '/orders/create',
+  '/supply-orders/create',
   '/reconciliation',
   '/login',
   '/forgot-password',

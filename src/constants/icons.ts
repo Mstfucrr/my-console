@@ -1,9 +1,10 @@
 import { DeliveryCheckList, Motorcycle } from '@/components/svg'
 import { OrderStatusesGroups } from '@/types'
-import { BadgeTurkishLira, CheckCircle, Clock, Home, LucideIcon, Plus, ShoppingCart, XCircle } from 'lucide-react'
+import { BadgeTurkishLira, CheckCircle, Clock, Home, LucideIcon, Plus, ShoppingCart, Truck, XCircle } from 'lucide-react'
 
 // Module Icons
 export const ModuleIcons = {
+  Supply: Truck,
   Reconciliation: BadgeTurkishLira,
   Orders: ShoppingCart,
   OrdersCreate: Plus,
