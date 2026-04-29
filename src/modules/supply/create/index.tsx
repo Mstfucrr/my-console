@@ -8,7 +8,6 @@ import { PaginationOptions } from '@/types'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Package, Search, ShoppingCart } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { SupplyCartCheckoutSection, SupplyCartHeader, SupplyCartItemsList } from './components/supply-cart-panel'
 import { SupplyCartSheet } from './components/supply-cart-sheet'
 import { SupplyGridDensityToolbar } from './components/supply-grid-density-toolbar'
 import { SupplyProductCard } from './components/supply-product-card'
@@ -22,7 +21,7 @@ import { getSupplyUnitPrice } from './utils/supply-price'
 
 export default function SupplyOrdersCreateView() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 10 })
+  const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 20 })
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<SupplyProduct | null>(null)
 
@@ -51,7 +50,7 @@ export default function SupplyOrdersCreateView() {
 
   return (
     <div className='bg-background min-h-screen'>
-      <header className='bg-card border-border sticky top-0 z-40 border-b'>
+      <header className='bg-card border-border sticky top-16 z-40 border-b'>
         <div className='mx-auto max-w-[1920px] px-4 py-4'>
           <div className='flex flex-wrap items-center justify-between gap-4'>
             <SearchInput
@@ -67,12 +66,7 @@ export default function SupplyOrdersCreateView() {
             />
 
             <div className='flex w-full flex-wrap items-center justify-between gap-4 sm:w-auto sm:justify-end'>
-              <Button
-                variant='outline'
-                size='xs'
-                className='relative gap-2 xl:hidden'
-                onClick={() => setIsCartSheetOpen(true)}
-              >
+              <Button variant='outline' size='xs' className='relative gap-2' onClick={() => setIsCartSheetOpen(true)}>
                 <ShoppingCart className='size-4' />
                 <span>Sepet</span>
                 {cartItemCount > 0 && (
@@ -125,19 +119,6 @@ export default function SupplyOrdersCreateView() {
               onPageSizeChange={limit => setPagination({ page: 1, limit })}
             />
           </div>
-
-          <aside className='bg-card border-border sticky top-24 hidden h-max w-96 shrink-0 overflow-hidden rounded-2xl border xl:block'>
-            <SupplyCartHeader cartItemCount={cartItemCount} />
-            <div className='max-h-[400px] overflow-x-hidden overflow-y-auto p-4'>
-              <SupplyCartItemsList cart={cart} onUpdateQuantity={updateQuantity} />
-            </div>
-            <SupplyCartCheckoutSection
-              cart={cart}
-              cartTotal={cartTotal}
-              minOrderAmount={MIN_SUPPLY_ORDER_AMOUNT}
-              canOrder={canOrder}
-            />
-          </aside>
         </div>
       </div>
 

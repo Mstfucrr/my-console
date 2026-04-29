@@ -88,7 +88,7 @@ export function SupplyProductCard({
             {product.hasDiscount ? (
               <div className='flex items-end gap-1 sm:flex-col sm:items-baseline sm:gap-0'>
                 <span className='text-primary text-base font-bold'>{formatCurrency(unitPrice)}</span>
-                <span className='text-muted-foreground text-xs line-through'>{formatCurrency(product.price)}</span>
+                <span className='text-muted-foreground text-sm line-through'>{formatCurrency(product.price)}</span>
               </div>
             ) : (
               <span className='text-primary text-base font-bold'>{formatCurrency(product.price)}</span>

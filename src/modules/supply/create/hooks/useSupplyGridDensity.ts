@@ -1,7 +1,7 @@
 'use client'
 
 import { useIsMobile, useIsSmallerThanTablet } from '@/hooks/use-media-query'
-import { Columns2, Columns3, Columns4, Square, type LucideIcon } from 'lucide-react'
+import { Columns2, Columns3, Columns4, Grid3X3Icon, Square, type LucideIcon } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
 function clampToAllowed(count: number, allowed: number[]): number {
@@ -23,8 +23,8 @@ const tabletOptions: SupplyGridDensityOption[] = [
 ]
 
 const desktopOptions: SupplyGridDensityOption[] = [
-  { cols: 4, icon: Columns4 },
-  { cols: 3, icon: Columns3 }
+  { cols: 5, icon: Grid3X3Icon },
+  { cols: 4, icon: Columns4 }
 ]
 
 function getGridClassName(cols: number) {
