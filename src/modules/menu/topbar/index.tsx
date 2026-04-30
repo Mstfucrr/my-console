@@ -24,7 +24,7 @@ export function Topbar() {
           <div className='flex h-full flex-1 items-center'>
             <nav className='flex h-full items-center'>
               <ul className='flex items-center gap-1'>
-                {menus?.map(item => <MenuItem key={item.href} item={item} />)}
+                {menus?.map(item => <MenuItem key={item.title} item={item} />)}
               </ul>
             </nav>
           </div>

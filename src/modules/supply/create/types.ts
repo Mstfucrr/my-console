@@ -1,13 +1,19 @@
+import { ColumnSort, SortDirection } from '@tanstack/react-table'
+
 export interface SupplyTag {
   id: string
   name: string
 }
 
+export type SupplyCategory = SupplyTag
+
+export type SupplyBrand = SupplyTag
+
 export interface SupplyProduct {
   id: string
   name: string
-  brand: SupplyTag
-  category: SupplyTag | null
+  brand: SupplyBrand
+  category: SupplyCategory
   quantityPerBox: number
   boxWeight: string
   unit: string
@@ -25,4 +31,47 @@ export interface SupplyCartItem {
 
 export interface ListSupplyProductsParams {
   search?: string
+  categoryId?: string
+  brandId?: string
+  sortBy?: ColumnSort['id']
+  sortDirection?: SortDirection
+}
+
+export interface SupplyOrderSummary {
+  id: string
+  totalAmount: number
+  orderDate: string
+  isPaymentReceived: boolean
+  productCount: number
+}
+
+export interface SupplyOrderItem {
+  productId: string
+  productName: string
+  brandName: string
+  quantity: number
+  unitPrice: number
+  totalPrice: number
+}
+
+export interface SupplyOrderDetail extends SupplyOrderSummary {
+  items: SupplyOrderItem[]
+}
+
+export interface SupplyPaymentInformation {
+  iban: string
+  accountName: string
+  description: string
+}
+
+export interface CreateSupplyOrderPayload {
+  items: Array<{
+    productId: string
+    quantity: number
+  }>
+}
+
+export interface CreateSupplyOrderResponse {
+  orderId: string
+  message: string
 }

@@ -46,11 +46,16 @@ export function useSupplyCart() {
 
   const cartItemCount = useMemo(() => cart.reduce((count, item) => count + item.quantity, 0), [cart])
 
+  const clearCart = useCallback(() => {
+    setCart([])
+  }, [])
+
   return {
     cart,
     addToCart,
     updateQuantity,
     getCartQuantity,
-    cartItemCount
+    cartItemCount,
+    clearCart
   }
 }

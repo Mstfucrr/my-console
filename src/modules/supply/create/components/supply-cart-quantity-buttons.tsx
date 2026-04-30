@@ -32,7 +32,10 @@ export function SupplyCartQuantityButtons({
         variant='outline'
         color='secondary'
         className={cn(isRemove && 'border-destructive/30 text-destructive hover:text-destructive')}
-        onClick={onDecrement}
+        onClick={e => {
+          e.stopPropagation()
+          onDecrement()
+        }}
         aria-label={isRemove ? 'Urunu sepetten cikar' : 'Adet azalt'}
       >
         {isRemove ? <Trash2 className='size-4' /> : <Minus className='size-4' />}
@@ -40,7 +43,15 @@ export function SupplyCartQuantityButtons({
       <span className='text-foreground w-5 min-w-0 text-center text-xs font-semibold sm:w-8 sm:text-base'>
         {quantity}
       </span>
-      <Button type='button' size='icon-xs' onClick={onIncrement} aria-label='Adet artir'>
+      <Button
+        type='button'
+        size='icon-xs'
+        onClick={e => {
+          e.stopPropagation()
+          onIncrement()
+        }}
+        aria-label='Adet artir'
+      >
         <Plus className='size-4' />
       </Button>
     </div>

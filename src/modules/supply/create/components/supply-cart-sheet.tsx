@@ -12,7 +12,9 @@ interface SupplyCartSheetProps {
   cartTotal: number
   minOrderAmount: number
   canOrder: boolean
+  isSubmitting?: boolean
   onUpdateQuantity: (productId: string, quantity: number) => void
+  onPlaceOrder?: () => void
 }
 
 export function SupplyCartSheet({
@@ -23,7 +25,9 @@ export function SupplyCartSheet({
   cartTotal,
   minOrderAmount,
   canOrder,
-  onUpdateQuantity
+  onUpdateQuantity,
+  isSubmitting = false,
+  onPlaceOrder
 }: SupplyCartSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -45,6 +49,8 @@ export function SupplyCartSheet({
             cartTotal={cartTotal}
             minOrderAmount={minOrderAmount}
             canOrder={canOrder}
+            isSubmitting={isSubmitting}
+            onPlaceOrder={onPlaceOrder}
           />
         </div>
       </SheetContent>

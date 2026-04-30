@@ -6,6 +6,7 @@ export interface IProfileResponse {
   email: string
   restaurantId: string
   omsRestaurantId: string
+  canSupply?: boolean
   tab_fr?: boolean
   hubName?: string
   accountType: AccountType

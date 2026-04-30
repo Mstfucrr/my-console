@@ -99,6 +99,7 @@ interface SupplyCartCheckoutSectionProps {
   cartTotal: number
   minOrderAmount: number
   canOrder: boolean
+  isSubmitting?: boolean
   onPlaceOrder?: () => void
 }
 
@@ -107,6 +108,7 @@ export function SupplyCartCheckoutSection({
   cartTotal,
   minOrderAmount,
   canOrder,
+  isSubmitting = false,
   onPlaceOrder
 }: SupplyCartCheckoutSectionProps) {
   if (cart.length === 0) return null
@@ -142,9 +144,9 @@ export function SupplyCartCheckoutSection({
         </div>
       )}
 
-      <Button size='lg' className='w-full gap-2' disabled={!canOrder} onClick={onPlaceOrder}>
+      <Button size='lg' className='w-full gap-2' disabled={!canOrder || isSubmitting} onClick={onPlaceOrder}>
         <Check className='size-5' />
-        Siparis Ver
+        {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
       </Button>
     </div>
   )
