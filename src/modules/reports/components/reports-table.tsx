@@ -11,6 +11,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
 import type { ReportRecord } from '../types'
 import { ReportsFilters, type ReportsFilterProperties } from './reports-filters'
+import { SendEmailButton } from './send-email-button'
 
 interface ReportsTableProps {
   data: PaginatedResponse<ReportRecord>['data']
@@ -20,6 +21,8 @@ interface ReportsTableProps {
   onClearFilters: () => void
   onRefresh: () => void
   total: number | undefined
+  handleSendEmail: () => void
+  isSending: boolean
 }
 
 const columns: ColumnDef<ReportRecord>[] = [
@@ -74,6 +77,8 @@ export default function ReportsTable({
   onClearFilters,
   onRefresh,
   total,
+  handleSendEmail,
+  isSending,
   ...props
 }: ReportsTableProps & Omit<BasicDataTableProps<ReportRecord>, 'columns' | 'data'>) {
   const [showFilters, setShowFilters] = useState(true)
@@ -83,6 +88,7 @@ export default function ReportsTable({
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Tamamlanan Siparişler ({total})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
+          <SendEmailButton sendEmail={handleSendEmail} isSending={isSending} hasData={total ? total > 0 : false} />
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
           <FilterToggleButton showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} color='primary' />
         </div>
