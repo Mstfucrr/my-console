@@ -13,9 +13,14 @@ import type {
 } from '../types'
 import { mockSupplyOrderDetails, mockSupplyPaymentInformation } from './mock/supply-orders.mock'
 import { mockSupplyCategories, mockSupplyProducts } from './mock/supply-products.mock'
+import { parseSupplyFilterSelection } from '../utils/supply-filter-selection'
 
 type ListBrandsParams = {
-  categoryId?: string
+  categoryId?: string | string[]
+}
+
+type ListCategoriesParams = {
+  brandId?: string | string[]
 }
 
 class SupplyService {
@@ -26,8 +31,8 @@ class SupplyService {
   ): Promise<PaginatedResponse<SupplyProduct>> {
     const search = params.search?.trim()
     const q = search ? search.toLocaleLowerCase('tr-TR') : ''
-    const categoryId = this.normalizeFilterValue(params.categoryId)
-    const brandId = this.normalizeFilterValue(params.brandId)
+    const categoryIds = this.toFilterIdSet(params.categoryId)
+    const brandIds = this.toFilterIdSet(params.brandId)
 
     const filtered = mockSupplyProducts
       .filter(product => {
@@ -39,11 +44,11 @@ class SupplyService {
           return false
         }
 
-        if (categoryId && product.category.id !== categoryId) {
+        if (categoryIds && !categoryIds.has(product.category.id)) {
           return false
         }
 
-        if (brandId && product.brand.id !== brandId) {
+        if (brandIds && !brandIds.has(product.brand.id)) {
           return false
         }
 
@@ -60,23 +65,41 @@ class SupplyService {
     }
   }
 
-  async listCategories(): Promise<SupplyCategory[]> {
-    return [...mockSupplyCategories]
+  async listCategories(params?: ListCategoriesParams): Promise<SupplyCategory[]> {
+    const brandIds = this.toFilterIdSet(params?.brandId)
+    const products = brandIds ? mockSupplyProducts.filter(product => brandIds.has(product.brand.id)) : mockSupplyProducts
+
+    const productCountByCategoryId = products.reduce<Record<string, number>>((acc, product) => {
+      acc[product.category.id] = (acc[product.category.id] ?? 0) + 1
+      return acc
+    }, {})
+
+    return mockSupplyCategories.map(category => ({
+      ...category,
+      productCount: productCountByCategoryId[category.id] ?? 0
+    }))
   }
 
   async listBrands(params?: ListBrandsParams): Promise<SupplyBrand[]> {
-    const categoryId = this.normalizeFilterValue(params?.categoryId)
-    const products = categoryId
-      ? mockSupplyProducts.filter(product => product.category.id === categoryId)
+    const categoryIds = this.toFilterIdSet(params?.categoryId)
+    const products = categoryIds
+      ? mockSupplyProducts.filter(product => categoryIds.has(product.category.id))
       : mockSupplyProducts
 
+    const brandCounts = new Map<string, number>()
     const uniqueBrands = new Map<string, SupplyBrand>()
 
     for (const product of products) {
       uniqueBrands.set(product.brand.id, product.brand)
+      brandCounts.set(product.brand.id, (brandCounts.get(product.brand.id) ?? 0) + 1)
     }
 
-    return [...uniqueBrands.values()].sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+    return [...uniqueBrands.values()]
+      .map(brand => ({
+        ...brand,
+        productCount: brandCounts.get(brand.id) ?? 0
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'tr'))
   }
 
   async listMyOrders(params: { pagination: PaginationOptions }): Promise<PaginatedResponse<SupplyOrderSummary>> {
@@ -164,10 +187,10 @@ class SupplyService {
     return sortDirection === 'desc' ? -base : base
   }
 
-  private normalizeFilterValue(value?: string): string | undefined {
-    const normalized = value?.trim()
-    if (!normalized || normalized === 'all') return undefined
-    return normalized
+  private toFilterIdSet(value?: string | string[]): Set<string> | undefined {
+    const ids = parseSupplyFilterSelection(value)
+    if (ids.length === 0) return undefined
+    return new Set(ids)
   }
 }
 

@@ -1,10 +1,10 @@
 import type { SupplyBrand, SupplyCategory, SupplyProduct } from '../../types'
 
-export const mockSupplyCategories: SupplyCategory[] = [
+const mockSupplyCategoryStubs = [
   { id: 'frozen', name: 'Donuk Ürünler' },
   { id: 'vegetable', name: 'Sebze' },
   { id: 'dairy', name: 'Süt Ürünleri' }
-]
+] as const
 
 export const mockSupplyBrands: SupplyBrand[] = [
   { id: 'fasdat', name: 'FASDAT' },
@@ -13,7 +13,9 @@ export const mockSupplyBrands: SupplyBrand[] = [
   { id: 'melus', name: 'MELUS' }
 ]
 
-const categoriesById = Object.fromEntries(mockSupplyCategories.map(category => [category.id, category]))
+const categoriesById = Object.fromEntries(
+  mockSupplyCategoryStubs.map(category => [category.id, { id: category.id, name: category.name } as SupplyCategory])
+)
 const brandsById = Object.fromEntries(mockSupplyBrands.map(brand => [brand.id, brand]))
 
 const getCategory = (id: string) => categoriesById[id]!
@@ -145,3 +147,14 @@ export const mockSupplyProducts: SupplyProduct[] = [
     price: 680
   }
 ]
+
+const productCountByCategoryId = mockSupplyProducts.reduce<Record<string, number>>((acc, product) => {
+  acc[product.category.id] = (acc[product.category.id] ?? 0) + 1
+  return acc
+}, {})
+
+export const mockSupplyCategories: SupplyCategory[] = mockSupplyCategoryStubs.map(category => ({
+  id: category.id,
+  name: category.name,
+  productCount: productCountByCategoryId[category.id] ?? 0
+}))

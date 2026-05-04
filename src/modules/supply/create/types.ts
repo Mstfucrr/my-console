@@ -3,6 +3,8 @@ import { ColumnSort, SortDirection } from '@tanstack/react-table'
 export interface SupplyTag {
   id: string
   name: string
+  /** Kategori/marka listelerinde; seçili filtreye göre BE dönebilir */
+  productCount?: number
 }
 
 export type SupplyCategory = SupplyTag
@@ -31,8 +33,8 @@ export interface SupplyCartItem {
 
 export interface ListSupplyProductsParams {
   search?: string
-  categoryId?: string
-  brandId?: string
+  categoryId?: string | string[]
+  brandId?: string | string[]
   sortBy?: ColumnSort['id']
   sortDirection?: SortDirection
 }

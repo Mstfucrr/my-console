@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
+import { useIsDesktop } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Package, Search, ShoppingCart } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { SupplyCatalogSidebar } from './components/supply-catalog-sidebar'
 import { SupplyCartSheet } from './components/supply-cart-sheet'
 import { SupplyGridDensityToolbar } from './components/supply-grid-density-toolbar'
 import { SupplyOrderResultDialog } from './components/supply-order-result-dialog'
@@ -23,6 +25,7 @@ import {
   useSupplyProductsListQuery,
   type SupplyProductsFilters
 } from './hooks/useSupplyProductsListQuery'
+import { parseSupplyFilterSelection, serializeSupplyFilterSelection } from './utils/supply-filter-selection'
 import { getSupplyUnitPrice } from './utils/supply-price'
 
 const sortByOptions: FilterOption[] = [
@@ -33,6 +36,7 @@ const sortByOptions: FilterOption[] = [
 export default function SupplyOrdersCreateView() {
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false)
   const [orderResult, setOrderResult] = useState<{ orderId: string; message: string } | null>(null)
+  const isDesktop = useIsDesktop()
 
   const { cart, addToCart, updateQuantity, getCartQuantity, cartItemCount, clearCart } = useSupplyCart()
   const { gridClassName, options, columnCount, selectCols } = useSupplyGridDensity()
@@ -64,8 +68,15 @@ export default function SupplyOrdersCreateView() {
     defaultSupplyProductsFilters
   )
 
-  const { data: categories = [] } = useSupplyCategoriesQuery()
-  const { data: brands = [] } = useSupplyBrandsQuery(pendingFilters.categoryId)
+  const brandsListCategoryId = isDesktop ? filters.categoryId : pendingFilters.categoryId
+  const categoriesListBrandId = isDesktop ? filters.brandId : pendingFilters.brandId
+  const { data: categories = [] } = useSupplyCategoriesQuery(categoriesListBrandId)
+  const { data: brands = [] } = useSupplyBrandsQuery(brandsListCategoryId)
+
+  const totalCatalogProductCount = useMemo(
+    () => categories.reduce((sum, category) => sum + (category.productCount ?? 0), 0),
+    [categories]
+  )
 
   const createSupplyOrderMutation = useCreateSupplyOrderMutation()
 
@@ -83,8 +94,12 @@ export default function SupplyOrdersCreateView() {
   )
 
   const shouldShowBrandSelect = brands.length > 1
+  const selectedCategoryIds = useMemo(() => parseSupplyFilterSelection(filters.categoryId), [filters.categoryId])
+  const selectedBrandIds = useMemo(() => parseSupplyFilterSelection(filters.brandId), [filters.brandId])
 
   useEffect(() => {
+    if (isDesktop) return
+
     if (!shouldShowBrandSelect && pendingFilters.brandId !== 'all') {
       updatePendingFilters({ brandId: 'all' })
       return
@@ -93,7 +108,35 @@ export default function SupplyOrdersCreateView() {
     if (pendingFilters.brandId !== 'all' && !brandOptions.some(option => option.value === pendingFilters.brandId)) {
       updatePendingFilters({ brandId: 'all' })
     }
-  }, [brandOptions, pendingFilters.brandId, shouldShowBrandSelect, updatePendingFilters])
+  }, [brandOptions, isDesktop, pendingFilters.brandId, shouldShowBrandSelect, updatePendingFilters])
+
+  useEffect(() => {
+    if (!isDesktop) return
+
+    if (selectedBrandIds.length === 0) return
+
+    const availableBrandIds = new Set(brands.map(brand => brand.id))
+    const nextBrandIds = selectedBrandIds.filter(brandId => availableBrandIds.has(brandId))
+
+    if (nextBrandIds.length !== selectedBrandIds.length) {
+      handleFiltersChange({ ...filters, brandId: serializeSupplyFilterSelection(nextBrandIds) })
+    }
+  }, [brands, filters, handleFiltersChange, isDesktop, selectedBrandIds])
+
+  useEffect(() => {
+    if (!isDesktop) return
+
+    if (selectedCategoryIds.length === 0) return
+
+    const enabledCategoryIds = new Set(
+      categories.filter(category => (category.productCount ?? 0) > 0).map(category => category.id)
+    )
+    const nextCategoryIds = selectedCategoryIds.filter(categoryId => enabledCategoryIds.has(categoryId))
+
+    if (nextCategoryIds.length !== selectedCategoryIds.length) {
+      handleFiltersChange({ ...filters, categoryId: serializeSupplyFilterSelection(nextCategoryIds) })
+    }
+  }, [categories, filters, handleFiltersChange, isDesktop, selectedCategoryIds])
 
   const cartTotal = useMemo(
     () => cart.reduce((total, item) => total + getSupplyUnitPrice(item.product) * item.quantity, 0),
@@ -101,6 +144,18 @@ export default function SupplyOrdersCreateView() {
   )
 
   const canOrder = cartTotal >= MIN_SUPPLY_ORDER_AMOUNT
+
+  const applyDesktopCategorySelection = (categoryIds: string[]) => {
+    const nextCategoryId = serializeSupplyFilterSelection(categoryIds)
+    updatePendingFilters({ categoryId: nextCategoryId })
+    handleFiltersChange({ ...filters, categoryId: nextCategoryId })
+  }
+
+  const applyDesktopBrandSelection = (brandIds: string[]) => {
+    const nextBrandId = serializeSupplyFilterSelection(brandIds)
+    updatePendingFilters({ brandId: nextBrandId })
+    handleFiltersChange({ ...filters, brandId: nextBrandId })
+  }
 
   const handlePlaceOrder = async () => {
     if (!canOrder || cart.length === 0 || createSupplyOrderMutation.isPending) return
@@ -119,8 +174,20 @@ export default function SupplyOrdersCreateView() {
   }
 
   return (
-    <>
-      <Card>
+    <div className={cn('flex flex-col gap-4 pb-6 max-sm:p-0', isDesktop && 'xl:flex-row xl:items-start xl:gap-6')}>
+      {isDesktop && (
+        <SupplyCatalogSidebar
+          categories={categories}
+          brands={brands}
+          selectedCategoryIds={selectedCategoryIds}
+          selectedBrandIds={selectedBrandIds}
+          totalProductCount={totalCatalogProductCount}
+          onSelectCategories={applyDesktopCategorySelection}
+          onSelectBrands={applyDesktopBrandSelection}
+        />
+      )}
+
+      <Card className='min-w-0 flex-1'>
         <CardHeader className='flex flex-row items-center justify-between'>
           <CardTitle>Tedarik ürünleri ({totalProducts})</CardTitle>
           <div className='flex flex-row items-center gap-2'>
@@ -155,14 +222,16 @@ export default function SupplyOrdersCreateView() {
               defaultValue=''
             />
 
-            <StatusSelect
-              options={categoryOptions}
-              value={pendingFilters.categoryId}
-              onChange={value => updatePendingFilters({ categoryId: value, brandId: 'all' })}
-              placeholder='Kategori seçin'
-            />
+            {!isDesktop && (
+              <StatusSelect
+                options={categoryOptions}
+                value={pendingFilters.categoryId}
+                onChange={value => updatePendingFilters({ categoryId: value, brandId: 'all' })}
+                placeholder='Kategori seçin'
+              />
+            )}
 
-            {shouldShowBrandSelect && (
+            {!isDesktop && shouldShowBrandSelect && (
               <StatusSelect
                 options={brandOptions}
                 value={pendingFilters.brandId}
@@ -234,6 +303,6 @@ export default function SupplyOrdersCreateView() {
           if (!open) setOrderResult(null)
         }}
       />
-    </>
+    </div>
   )
 }
