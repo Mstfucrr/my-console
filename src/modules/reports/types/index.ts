@@ -22,3 +22,8 @@ export interface ReportsFilters {
   }
   paymentMethod: string
 }
+
+export interface SendEmailResponse {
+  accepted: boolean
+  message: string
+}

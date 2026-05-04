@@ -3,12 +3,15 @@
 import PageError from '@/components/page-error'
 import { getOperationDateRange } from '@/constants'
 import { PaginationOptions } from '@/types'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import type { ColumnSort } from '@tanstack/react-table'
+import { AxiosError } from 'axios'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { type ReportsFilterProperties } from './components/reports-filters'
 import ReportsTable from './components/reports-table'
 import { reportsService } from './service/reports.service'
+import { SendEmailResponse } from './types'
 
 export const defaultReportsFilters: ReportsFilterProperties = {
   search: '',
@@ -51,6 +54,23 @@ export default function ReportsView() {
     staleTime: 3 * 60 * 1000, // 2 dakika
     placeholderData: keepPreviousData
   })
+
+  const { mutateAsync: sendEmail, isPending: isSending } = useMutation({
+    mutationFn: ({ filters, sorting }: { filters: ReportsFilterProperties; sorting?: ColumnSort }) =>
+      reportsService.sendEmail(filters, sorting),
+    mutationKey: ['send-email']
+  })
+
+  const handleSendEmail = async () => {
+    await toast.promise(async () => await sendEmail({ filters, sorting }), {
+      pending: 'Raporlar e-posta olarak gönderiliyor...',
+      success: { render: ({ data }: { data: SendEmailResponse }) => data.message },
+      error: {
+        render: ({ data }: { data: AxiosError<{ message?: string }> }) =>
+          data?.response?.data?.message ?? 'Raporlar e-posta olarak gönderilirken bir hata oluştu'
+      }
+    })
+  }
 
   const handleFiltersChange = (newFilters: ReportsFilterProperties) => {
     setFilters(newFilters)
@@ -95,6 +115,8 @@ export default function ReportsView() {
         onPageSizeChange={handleReportsPageSizeChange}
         enableMultiSort={false}
         manualSorting
+        handleSendEmail={handleSendEmail}
+        isSending={isSending}
       />
     </div>
   )
