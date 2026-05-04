@@ -11,9 +11,9 @@ import type {
   SupplyPaymentInformation,
   SupplyProduct
 } from '../types'
+import { parseSupplyFilterSelection } from '../utils/supply-filter-selection'
 import { mockSupplyOrderDetails, mockSupplyPaymentInformation } from './mock/supply-orders.mock'
 import { mockSupplyCategories, mockSupplyProducts } from './mock/supply-products.mock'
-import { parseSupplyFilterSelection } from '../utils/supply-filter-selection'
 
 type ListBrandsParams = {
   categoryId?: string | string[]
@@ -67,7 +67,9 @@ class SupplyService {
 
   async listCategories(params?: ListCategoriesParams): Promise<SupplyCategory[]> {
     const brandIds = this.toFilterIdSet(params?.brandId)
-    const products = brandIds ? mockSupplyProducts.filter(product => brandIds.has(product.brand.id)) : mockSupplyProducts
+    const products = brandIds
+      ? mockSupplyProducts.filter(product => brandIds.has(product.brand.id))
+      : mockSupplyProducts
 
     const productCountByCategoryId = products.reduce<Record<string, number>>((acc, product) => {
       acc[product.category.id] = (acc[product.category.id] ?? 0) + 1
