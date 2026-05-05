@@ -69,7 +69,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
   if (!profile) return true
 
-  // if ((!canB2BCommerce || !profile.canB2BCommerce) && b2bCommerceRoutes.includes(route)) return false
+  if (!canB2BCommerce && b2bCommerceRoutes.includes(route)) return false
 
   // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
   if (isTenantUser(profile)) {
