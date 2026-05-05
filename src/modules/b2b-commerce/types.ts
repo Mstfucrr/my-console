@@ -45,6 +45,7 @@ export interface B2BOrderSummary {
   orderDate: string
   isPaymentReceived: boolean
   productCount: number
+  address?: string
 }
 
 export interface B2BOrderItem {
@@ -71,6 +72,7 @@ export interface CreateB2BOrderPayload {
     productId: string
     quantity: number
   }>
+  fullAddress: string
 }
 
 export interface CreateB2BOrderResponse {

@@ -12,6 +12,8 @@ interface B2BCartSheetProps {
   cartTotal: number
   minOrderAmount: number
   canOrder: boolean
+  deliveryAddress?: string
+  onChangeAddress?: () => void
   isSubmitting?: boolean
   onUpdateQuantity: (productId: string, quantity: number) => void
   onPlaceOrder?: () => void
@@ -25,6 +27,8 @@ export function B2BCartSheet({
   cartTotal,
   minOrderAmount,
   canOrder,
+  deliveryAddress,
+  onChangeAddress,
   onUpdateQuantity,
   isSubmitting = false,
   onPlaceOrder
@@ -49,6 +53,8 @@ export function B2BCartSheet({
             cartTotal={cartTotal}
             minOrderAmount={minOrderAmount}
             canOrder={canOrder}
+            deliveryAddress={deliveryAddress}
+            onChangeAddress={onChangeAddress}
             isSubmitting={isSubmitting}
             onPlaceOrder={onPlaceOrder}
           />

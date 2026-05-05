@@ -1,7 +1,9 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import {
@@ -12,7 +14,7 @@ import {
   useB2BOrderDetailQuery,
   useB2BPaymentInformationQuery
 } from '@/modules/b2b-commerce/orders/hooks/useB2BOrderDetailQueries'
-import { AlertCircle, CheckCircle2, CreditCard, Package } from 'lucide-react'
+import { AlertCircle, CheckCircle2, CreditCard, MapPin, Package } from 'lucide-react'
 
 interface B2BOrderDetailDialogProps {
   orderId?: string
@@ -26,7 +28,7 @@ export function B2BOrderDetailDialog({ orderId, onClose }: B2BOrderDetailDialogP
 
   return (
     <Dialog open={Boolean(orderId)} onOpenChange={open => !open && onClose()}>
-      <DialogContent size='3xl'>
+      <DialogContent size='4xl'>
         <DialogHeader>
           <DialogTitle>Sipariş Detayı</DialogTitle>
         </DialogHeader>
@@ -36,51 +38,93 @@ export function B2BOrderDetailDialog({ orderId, onClose }: B2BOrderDetailDialogP
             <B2BOrderDetailSkeleton />
           ) : (
             <>
-              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                <Card className='border-border/70'>
-                  <CardContent className='space-y-2 pt-4 text-sm'>
-                    <p>
-                      <span className='text-muted-foreground'>Sipariş No:</span> {detail.id}
-                    </p>
-                    <p>
-                      <span className='text-muted-foreground'>Sipariş Tarihi:</span>{' '}
-                      {formatDateTR(detail.orderDate, true)}
-                    </p>
-                    <p className='flex items-center gap-1'>
-                      <span className='text-muted-foreground'>Ödeme Durumu:</span>
-                      {detail.isPaymentReceived ? 'Alındı' : 'Alınmadı'}
-                      {detail.isPaymentReceived ? (
-                        <CheckCircle2 className='size-4 text-green-600' />
-                      ) : (
-                        <AlertCircle className='size-4 text-amber-600' />
-                      )}
-                    </p>
-                    <p>
-                      <span className='text-muted-foreground'>Toplam:</span> {formatCurrency(detail.totalAmount)}
-                    </p>
-                  </CardContent>
-                </Card>
+              <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
                 <Card className='border-border/70'>
                   <CardHeader>
                     <CardTitle className='flex items-center gap-2 text-base'>
-                      <CreditCard className='text-primary size-4' />
+                      <Package className='text-primary size-4' />
+                      Sipariş Bilgileri
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className='space-y-3 text-sm'>
+                    <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
+                      <span className='text-muted-foreground'>Sipariş Tarihi</span>
+                      <span className='text-foreground max-sm:ml-2 max-sm:text-xs'>
+                        {formatDateTR(detail.orderDate, true)}
+                      </span>
+                    </div>
+
+                    <Separator />
+
+                    <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
+                      <span className='text-muted-foreground'>Ödeme Durumu</span>
+                      <span className='flex items-center gap-1 max-sm:ml-2'>
+                        {detail.isPaymentReceived ? (
+                          <Badge color='success' variant='outline' className='border-0'>
+                            <CheckCircle2 className='size-3.5' />
+                            Alındı
+                          </Badge>
+                        ) : (
+                          <Badge color='warning' variant='outline' className='border-0'>
+                            <AlertCircle className='size-3.5' />
+                            Bekleniyor
+                          </Badge>
+                        )}
+                      </span>
+                    </div>
+
+                    <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
+                      <span className='text-muted-foreground'>Ürün Sayısı</span>
+                      <span className='text-foreground max-sm:ml-2'>{detail.productCount}</span>
+                    </div>
+
+                    <Separator />
+                    <div className='flex items-start justify-between gap-2'>
+                      <span className='text-muted-foreground text-nowrap'>Teslimat Adresi</span>
+                      <span className='text-foreground max-w-[70%] text-right leading-relaxed'>
+                        {detail.address || '-'}
+                      </span>
+                    </div>
+                    <Separator />
+
+                    <div className='flex items-center justify-between'>
+                      <span className='text-muted-foreground'>Toplam Tutar</span>
+                      <span className='text-primary text-xl font-bold'>{formatCurrency(detail.totalAmount)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className='border-border/70'>
+                  <CardHeader>
+                    <CardTitle className='flex items-center gap-2 text-base'>
+                      <MapPin className='text-primary size-4' />
                       Ödeme Bilgileri
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className='space-y-1 text-sm'>
+                  <CardContent className='space-y-4 text-sm'>
                     {isLoadingPaymentInformation ? (
                       <B2BPaymentBlockSkeleton />
                     ) : (
                       <>
-                        <p>
-                          <span className='font-medium'>IBAN:</span> {paymentInformation?.iban}
-                        </p>
-                        <p>
-                          <span className='font-medium'>Hesap Adı:</span> {paymentInformation?.accountName}
-                        </p>
-                        <p>
-                          <span className='font-medium'>Açıklama:</span> {paymentInformation?.description}
-                        </p>
+                        <div className='flex items-start justify-between gap-2'>
+                          <span className='text-muted-foreground flex items-center gap-1 text-nowrap'>
+                            <CreditCard className='size-4' />
+                            IBAN
+                          </span>
+                          <span className='text-foreground max-w-[70%] text-right break-all'>
+                            {paymentInformation?.iban || '-'}
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between gap-2'>
+                          <span className='text-muted-foreground text-nowrap'>Hesap Adı</span>
+                          <span className='text-foreground text-right'>{paymentInformation?.accountName || '-'}</span>
+                        </div>
+                        <div className='flex items-start justify-between gap-2'>
+                          <span className='text-muted-foreground text-nowrap'>Açıklama</span>
+                          <span className='text-foreground max-w-[70%] text-right leading-relaxed'>
+                            {paymentInformation?.description || '-'}
+                          </span>
+                        </div>
                       </>
                     )}
                   </CardContent>

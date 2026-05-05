@@ -129,6 +129,8 @@ interface B2BCartCheckoutSectionProps {
   cartTotal: number
   minOrderAmount: number
   canOrder: boolean
+  deliveryAddress?: string
+  onChangeAddress?: () => void
   compact?: boolean
   isSubmitting?: boolean
   onPlaceOrder?: () => void
@@ -139,6 +141,8 @@ export function B2BCartCheckoutSection({
   cartTotal,
   minOrderAmount,
   canOrder,
+  deliveryAddress,
+  onChangeAddress,
   compact = false,
   isSubmitting = false,
   onPlaceOrder
@@ -158,8 +162,15 @@ export function B2BCartCheckoutSection({
         <MapPin className={cn('text-primary shrink-0', compact ? 'size-4' : 'size-5')} />
         <div className='min-w-0 flex-1'>
           <p className='text-muted-foreground text-xs'>Teslimat Adresi</p>
-          <p className='text-foreground truncate text-sm font-medium'>Restoran Konumu</p>
+          <p className='text-foreground line-clamp-2 text-xs font-medium'>
+            {deliveryAddress || 'Restoran adresi bekleniyor'}
+          </p>
         </div>
+        {onChangeAddress && (
+          <Button type='button' variant='outline' size='xs' className='shrink-0' onClick={onChangeAddress}>
+            Farklı Adres
+          </Button>
+        )}
       </div>
 
       <div className='flex items-center justify-between'>

@@ -138,7 +138,8 @@ export function BottomNavigation() {
     }
 
     const restaurantPrimaryOrder: Array<Route> = ['/', '/orders', '/reconciliation']
-    const lockedToOverflow = (item: MobileMenuWithChildren) => item.href === '/reports' || Boolean(item.children?.length)
+    const lockedToOverflow = (item: MobileMenuWithChildren) =>
+      item.href === '/reports' || Boolean(item.children?.length)
 
     const picked: MobileMenuWithChildren[] = []
     const pickedKeys = new Set<string>()
@@ -236,7 +237,7 @@ export function BottomNavigation() {
             {/* Sol taraf - İlk 2 item */}
             {primaryMenus.slice(0, 2).length > 0 && (
               <div className='xs:gap-x-3 flex flex-1 items-center justify-around gap-x-2'>
-                {primaryMenus.slice(0, 2).map(item => (
+                {primaryMenus.slice(0, 2).map(item =>
                   item.children?.length ? (
                     <BottomNavigationItem
                       key={item.key}
@@ -263,7 +264,7 @@ export function BottomNavigation() {
                       }}
                     />
                   )
-                ))}
+                )}
               </div>
             )}
 
@@ -274,7 +275,7 @@ export function BottomNavigation() {
 
             {/* Sağ taraf - Son 2 item */}
             <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
-              {primaryMenus.slice(2, 3).map(item => (
+              {primaryMenus.slice(2, 3).map(item =>
                 item.children?.length ? (
                   <BottomNavigationItem
                     key={item.key}
@@ -301,7 +302,7 @@ export function BottomNavigation() {
                     }}
                   />
                 )
-              ))}
+              )}
               <AnimatePresence mode='wait'>
                 {isOpen && (
                   <BottomMenu onClick={handleToggleMenu} quickItems={overflowQuickItems} sections={overflowSections} />

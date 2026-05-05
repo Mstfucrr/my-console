@@ -50,6 +50,7 @@ export interface IProfileInfo {
   id: string
   lat: number
   name: string
+  address?: string
   state: string
   isAtaExpressActive: boolean
   hubId: string

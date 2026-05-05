@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, type FilterOption } from '@/components/ui/filter-card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useProfile } from '@/context/ProfileProvider'
 import { useFilter } from '@/hooks/use-filter'
 import { useIsDesktop } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
@@ -17,6 +18,7 @@ import { getB2BUnitPrice } from '../../utils/b2b-price'
 import { B2BCartCheckoutSection, B2BCartHeader, B2BCartItemsList } from './components/b2b-cart-panel'
 import { B2BCartSheet } from './components/b2b-cart-sheet'
 import { B2BCatalogSidebar } from './components/b2b-catalog-sidebar'
+import { B2BDeliveryAddressDialog } from './components/b2b-delivery-address-dialog'
 import { B2BGridDensityToolbar } from './components/b2b-grid-density-toolbar'
 import { B2BOrderResultDialog } from './components/b2b-order-result-dialog'
 import { B2BProductCard } from './components/b2b-product-card'
@@ -39,9 +41,12 @@ const sortByOptions: FilterOption[] = [
 
 export default function B2BCommerceOrderCreateView() {
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false)
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false)
+  const [customDeliveryAddress, setCustomDeliveryAddress] = useState('')
   const [isMobileCatalogOpen, setIsMobileCatalogOpen] = useState(false)
   const [orderResult, setOrderResult] = useState<{ orderId: string; message: string } | null>(null)
   const isDesktop = useIsDesktop()
+  const { profile } = useProfile()
 
   const { cart, addToCart, updateQuantity, getCartQuantity, cartItemCount, clearCart } = useB2BCart()
   const { gridClassName, options, columnCount, selectCols } = useB2BGridDensity()
@@ -89,6 +94,8 @@ export default function B2BCommerceOrderCreateView() {
   const selectedCategoryIds = useMemo(() => parseB2BFilterSelection(filters.categoryId), [filters.categoryId])
   const selectedBrandIds = useMemo(() => parseB2BFilterSelection(filters.brandId), [filters.brandId])
   const selectedCatalogFilterCount = selectedCategoryIds.length + selectedBrandIds.length
+  const restaurantAddress = profile?.info?.address?.trim() || ''
+  const selectedDeliveryAddress = customDeliveryAddress || restaurantAddress
 
   useEffect(() => {
     if (selectedBrandIds.length === 0) return
@@ -134,11 +141,12 @@ export default function B2BCommerceOrderCreateView() {
   }
 
   const handlePlaceOrder = async () => {
-    if (!canOrder || cart.length === 0 || createB2BOrderMutation.isPending) return
+    if (!canOrder || cart.length === 0 || !selectedDeliveryAddress || createB2BOrderMutation.isPending) return
 
     try {
       const result = await createB2BOrderMutation.mutateAsync({
-        items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity }))
+        items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity })),
+        fullAddress: selectedDeliveryAddress
       })
 
       clearCart()
@@ -314,7 +322,7 @@ export default function B2BCommerceOrderCreateView() {
         </CardContent>
       </Card>
 
-      <aside className='border-border/70 bg-card sticky top-20 hidden h-auto max-h-[calc(100vh-12rem)] w-80 shrink-0 flex-col overflow-hidden rounded-xl border shadow-sm xl:flex 2xl:w-84'>
+      <aside className='border-border/70 bg-card sticky top-20 hidden h-auto max-h-[calc(100vh-10rem)] w-80 shrink-0 flex-col overflow-hidden rounded-xl border shadow-sm xl:flex 2xl:w-84'>
         <B2BCartHeader cartItemCount={cartItemCount} compact />
         <div className='min-h-0 flex-1 overflow-y-auto p-3'>
           <B2BCartItemsList cart={cart} onUpdateQuantity={updateQuantity} compact />
@@ -325,6 +333,8 @@ export default function B2BCommerceOrderCreateView() {
             cartTotal={cartTotal}
             minOrderAmount={MIN_B2B_ORDER_AMOUNT}
             canOrder={canOrder}
+            deliveryAddress={selectedDeliveryAddress}
+            onChangeAddress={() => setIsAddressDialogOpen(true)}
             compact
             isSubmitting={createB2BOrderMutation.isPending}
             onPlaceOrder={handlePlaceOrder}
@@ -340,10 +350,22 @@ export default function B2BCommerceOrderCreateView() {
         cartTotal={cartTotal}
         minOrderAmount={MIN_B2B_ORDER_AMOUNT}
         canOrder={canOrder}
+        deliveryAddress={selectedDeliveryAddress}
+        onChangeAddress={() => setIsAddressDialogOpen(true)}
         onUpdateQuantity={updateQuantity}
         onPlaceOrder={handlePlaceOrder}
         isSubmitting={createB2BOrderMutation.isPending}
       />
+
+      {isAddressDialogOpen && (
+        <B2BDeliveryAddressDialog
+          open={isAddressDialogOpen}
+          onOpenChange={setIsAddressDialogOpen}
+          restaurantAddress={restaurantAddress}
+          selectedAddress={selectedDeliveryAddress}
+          onSelectAddress={address => setCustomDeliveryAddress(address === restaurantAddress ? '' : address)}
+        />
+      )}
 
       <B2BOrderResultDialog
         open={Boolean(orderResult)}
