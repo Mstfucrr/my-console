@@ -22,7 +22,7 @@ export function SupplyCartQuantityButtons({
   return (
     <div
       className={cn(
-        'bg-primary/10 flex w-full items-center justify-between gap-0.5 rounded-lg p-0.5 sm:w-auto sm:justify-start sm:gap-1 sm:rounded-xl sm:p-1',
+        'bg-muted/50 flex w-full items-center justify-between gap-0.5 rounded-lg p-0.5 sm:w-auto sm:justify-start sm:gap-1 sm:rounded-xl sm:p-1',
         className
       )}
     >
