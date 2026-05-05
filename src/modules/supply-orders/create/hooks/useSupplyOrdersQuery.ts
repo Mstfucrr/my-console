@@ -5,11 +5,11 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { supplyService } from '../service/supply.service'
 
-export function useSupplyMyOrdersQuery() {
+export function useSupplyOrdersQuery() {
   const [pagination, setPagination] = useState<PaginationOptions>({ page: 1, limit: 20 })
 
   const queryRes = useQuery({
-    queryKey: ['supply-my-orders', pagination],
+    queryKey: ['supply-orders', pagination],
     queryFn: () => supplyService.listMyOrders({ pagination }),
     placeholderData: keepPreviousData
   })

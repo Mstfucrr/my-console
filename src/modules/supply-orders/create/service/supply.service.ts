@@ -77,10 +77,9 @@ class SupplyService {
 
   async listMyOrders(params: { pagination: PaginationOptions }): Promise<PaginatedResponse<SupplyOrderSummary>> {
     const { page, limit } = params.pagination
-    const { data } = await privateAxiosInstance.get<{ data: SupplyOrderSummary[]; total: number }>(
-      '/commerce/orders',
-      { params: { page, limit } }
-    )
+    const { data } = await privateAxiosInstance.get<{ data: SupplyOrderSummary[]; total: number }>('/commerce/orders', {
+      params: { page, limit }
+    })
 
     return {
       data: data.data,

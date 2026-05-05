@@ -9,7 +9,7 @@ export function useCreateSupplyOrderMutation() {
   return useMutation({
     mutationFn: supplyService.createOrder.bind(supplyService),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['supply-my-orders'] })
+      void queryClient.invalidateQueries({ queryKey: ['supply-orders'] })
     }
   })
 }

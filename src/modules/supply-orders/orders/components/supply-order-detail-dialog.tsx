@@ -7,23 +7,22 @@ import { formatDateTR } from '@/lib/utils/date'
 import {
   useSupplyOrderDetailQuery,
   useSupplyPaymentInformationQuery
-} from '@/modules/supply/create/hooks/useSupplyOrderDetailQueries'
+} from '@/modules/supply-orders/create/hooks/useSupplyOrderDetailQueries'
 import {
   SupplyOrderDetailSkeleton,
   SupplyPaymentBlockSkeleton
-} from '@/modules/supply/components/supply-loading-skeletons'
+} from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { AlertCircle, CheckCircle2, CreditCard, Package } from 'lucide-react'
 
-interface MySupplyOrderDetailDialogProps {
+interface SupplyOrderDetailDialogProps {
   orderId?: string
   onClose: () => void
 }
 
-export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDetailDialogProps) {
+export function SupplyOrderDetailDialog({ orderId, onClose }: SupplyOrderDetailDialogProps) {
   const open = Boolean(orderId)
   const { data: detail, isLoading } = useSupplyOrderDetailQuery(orderId)
-  const { data: paymentInformation, isLoading: isLoadingPaymentInformation } =
-    useSupplyPaymentInformationQuery(open)
+  const { data: paymentInformation, isLoading: isLoadingPaymentInformation } = useSupplyPaymentInformationQuery(open)
 
   return (
     <Dialog open={Boolean(orderId)} onOpenChange={open => !open && onClose()}>

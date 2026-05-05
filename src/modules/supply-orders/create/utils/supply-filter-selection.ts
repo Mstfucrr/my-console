@@ -7,9 +7,7 @@ export function parseSupplyFilterSelection(value: SupplyFilterSelectionValue): s
 
   const rawValues = Array.isArray(value) ? value : value.split(',')
 
-  return rawValues
-    .map(item => item.trim())
-    .filter(item => item && item !== SUPPLY_FILTER_ALL)
+  return rawValues.map(item => item.trim()).filter(item => item && item !== SUPPLY_FILTER_ALL)
 }
 
 export function serializeSupplyFilterSelection(ids: string[]): string {

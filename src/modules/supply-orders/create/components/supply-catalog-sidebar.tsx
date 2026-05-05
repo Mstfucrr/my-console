@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { SupplySidebarSectionSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
+import { SupplySidebarSectionSkeleton } from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { cn } from '@/lib/utils'
 import { Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'

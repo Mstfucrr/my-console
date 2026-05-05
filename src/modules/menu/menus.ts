@@ -13,7 +13,7 @@ export const menusConfig: MenuItem[] = [
     Icon: ModuleIcons.Supply,
     children: [
       { title: 'Sipariş Ver', href: '/supply-orders/create' },
-      { title: 'Siparişlerim', href: '/supply-orders/my-orders' }
+      { title: 'Siparişlerim', href: '/supply-orders' }
     ]
   }
 ]

@@ -4,17 +4,17 @@ import PageError from '@/components/page-error'
 import { Pagination } from '@/components/pagination'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SupplyOrdersGridSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
+import { SupplyOrdersGridSkeleton } from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { Package } from 'lucide-react'
 import { useState } from 'react'
-import { useSupplyMyOrdersQuery } from '../create/hooks/useSupplyMyOrdersQuery'
-import { MySupplyOrderCard } from './components/my-supply-order-card'
-import { MySupplyOrderDetailDialog } from './components/my-supply-order-detail-dialog'
+import { useSupplyOrdersQuery } from '../create/hooks/useSupplyOrdersQuery'
+import { SupplyOrderCard } from './components/supply-order-card'
+import { SupplyOrderDetailDialog } from './components/supply-order-detail-dialog'
 
-export default function MySupplyOrdersView() {
+export default function SupplyOrdersView() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>()
   const { data, total, isLoading, isFetching, error, pagination, handlePageChange, handlePageSizeChange, refetch } =
-    useSupplyMyOrdersQuery()
+    useSupplyOrdersQuery()
 
   if (error) {
     return (
@@ -54,7 +54,7 @@ export default function MySupplyOrdersView() {
           ) : (
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>
               {data.map(order => (
-                <MySupplyOrderCard key={order.id} order={order} onSelect={setSelectedOrderId} />
+                <SupplyOrderCard key={order.id} order={order} onSelect={setSelectedOrderId} />
               ))}
             </div>
           )}
@@ -69,7 +69,7 @@ export default function MySupplyOrdersView() {
         </CardContent>
       </Card>
 
-      <MySupplyOrderDetailDialog orderId={selectedOrderId} onClose={() => setSelectedOrderId(undefined)} />
+      <SupplyOrderDetailDialog orderId={selectedOrderId} onClose={() => setSelectedOrderId(undefined)} />
     </>
   )
 }

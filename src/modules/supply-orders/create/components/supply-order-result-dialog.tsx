@@ -1,6 +1,6 @@
 'use client'
 
-import { SupplyPaymentBlockSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
+import { SupplyPaymentBlockSkeleton } from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSupplyPaymentInformationQuery } from '../hooks/useSupplyOrderDetailQueries'

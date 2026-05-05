@@ -18,8 +18,8 @@ const allRoutes: Array<Route> = [
   '/',
   '/orders',
   '/orders/create',
+  '/supply-orders',
   '/supply-orders/create',
-  '/supply-orders/my-orders',
   '/reconciliation',
   '/login',
   '/forgot-password',
@@ -41,8 +41,6 @@ const tenantRoutes: Array<Route> = [
   '/onboarding',
   '/account'
 ]
-
-const supplyRoutes: Array<Route> = ['/supply-orders/create', '/supply-orders/my-orders']
 
 /** Tenant’ta finans adımı zorunlu: yalnızca API açıkça false döndürdüğünde; undefined = eski yanıtlar, kısıtlama yok */
 export const tenantNeedsFinancialOnboarding = (profile?: IProfileResponse): boolean =>
@@ -69,7 +67,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
   if (!profile) return true
 
-  // if ((!canSupply || !profile.canSupply) && supplyRoutes.includes(route)) return false // TODO: Supply routes'a erişim izni verilir
+  // TODO: Supply routes'a erişim izni verilir
 
   // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
   if (isTenantUser(profile)) {

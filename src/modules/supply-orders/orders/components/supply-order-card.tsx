@@ -4,16 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
-import type { SupplyOrderSummary } from '@/modules/supply/create/types'
+import type { SupplyOrderSummary } from '@/modules/supply-orders/create/types'
 import { motion } from 'framer-motion'
 import { AlertCircle, ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
 
-interface MySupplyOrderCardProps {
+interface SupplyOrderCardProps {
   order: SupplyOrderSummary
   onSelect: (orderId: string) => void
 }
 
-export function MySupplyOrderCard({ order, onSelect }: MySupplyOrderCardProps) {
+export function SupplyOrderCard({ order, onSelect }: SupplyOrderCardProps) {
   return (
     <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
       <Card className='border-border/70 hover:border-primary/20 h-full overflow-hidden transition-all hover:shadow-md'>
