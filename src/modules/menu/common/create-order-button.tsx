@@ -1,21 +1,22 @@
-import { Button } from '@/components/ui/button'
 import { useIsMobile } from '@/hooks/use-media-query'
 import { usePermission } from '@/hooks/use-permission'
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { isLocationMatch } from '../utils'
+import { MenuPrimaryActionLink } from './menu-primary-action-link'
 
 export function CreateOrderButton() {
   const isMobile = useIsMobile()
   const { canCreateOrder } = usePermission()
+  const pathname = usePathname()
 
   if (!canCreateOrder) return null
 
   return (
-    <Link href='/orders/create'>
-      <Button className='font-extrabold' color='success' size={!isMobile ? 'xs' : 'icon-sm'}>
-        <Plus className='size-5' />
-        <span className='ml-2 max-md:sr-only'>Yeni Sipariş</span>
-      </Button>
-    </Link>
+    <MenuPrimaryActionLink
+      href='/orders/create'
+      label='Yeni Sipariş'
+      isOnRoute={isLocationMatch('/orders/create', pathname)}
+      size={!isMobile ? 'xs' : 'icon-sm'}
+    />
   )
 }
