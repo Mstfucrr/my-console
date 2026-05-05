@@ -14,12 +14,12 @@ import { AuthTurnstile } from '../components/turnstile'
 import { useTurnstile } from '../hooks/useTurnstile'
 
 const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
-  { value: 'tenant', label: 'İşletme' },
-  { value: 'store', label: 'Şube' }
+  { value: 'store', label: 'Şube' },
+  { value: 'tenant', label: 'İşletme' }
 ]
 
 export const emailSchema = z.object({
-  accountType: z.enum(['tenant', 'store'], { required_error: 'Hesap türü zorunludur.' }),
+  accountType: z.enum(['tenant', 'store'], { required_error: 'Hesap türü zorunludur.' }).default('store'),
   email: z.string().min(1, { message: 'E-posta zorunludur.' }).email({ message: 'Geçerli bir e-posta giriniz.' })
 })
 
@@ -35,6 +35,7 @@ export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepPro
   const emailForm = useForm<EmailFormType>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
+      accountType: 'store',
       email: ''
     }
   })

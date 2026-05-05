@@ -50,7 +50,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
         </div>
       </div>
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row'>
-        <div className='relative top-0 w-full flex-auto max-md:hidden sm:sticky md:h-screen md:w-[65%] md:shrink-0 md:self-start'>
+        <div className='relative top-0 w-full flex-auto max-lg:hidden sm:sticky lg:h-screen lg:w-[55%] lg:shrink-0 lg:self-start xl:w-[65%]'>
           <CustomImage src='/images/home/bg-image.png' alt='logo' className='size-full h-full w-full object-cover' />
           <div className='bg-primary/70 absolute -bottom-5 left-1/2 flex items-center justify-center rounded-4xl p-3.5 shadow-lg max-md:-translate-x-1/2 md:bottom-1/4 md:left-20 md:p-10 xl:p-14'>
             <span className='text-sm font-bold text-nowrap text-white md:text-2xl xl:text-4xl'>
@@ -58,7 +58,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
             </span>
           </div>
         </div>
-        <div className='flex w-full flex-auto flex-col items-center justify-between gap-5 md:w-[45%]'>
+        <div className='flex w-full flex-auto flex-col items-center justify-between gap-5 lg:w-[45%] xl:w-[35%]'>
           <OnboardingProvider>
             <div className='flex size-full min-h-min flex-col items-center pt-10 pb-5 md:pt-28'>
               <div className='flex w-full max-w-sm flex-col gap-4 px-5'>{children}</div>
