@@ -9,6 +9,8 @@ export const isActiveTenant = process.env.NEXT_PUBLIC_ACTIVE_TENANT === 'true'
 
 export const canSubmitStoreApplication = process.env.NEXT_PUBLIC_ACTIVE_STORE_APPLICATION === 'true'
 
+export const canSupply = process.env.NEXT_PUBLIC_CAN_SUPPLY === 'true'
+
 /** Tenant modülü kapalı mı? (layout'ta URL değiştirmeden bakım göstermek için) */
 export const isTenantModuleAvailable = (profile?: IProfileResponse): boolean => isTenantUser(profile) && isActiveTenant
 
@@ -67,7 +69,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
   if (!profile) return true
 
-  if (profile.canSupply && supplyRoutes.includes(route)) return false // TODO: Supply routes'a erişim izni verilir
+  // if ((!canSupply || !profile.canSupply) && supplyRoutes.includes(route)) return false // TODO: Supply routes'a erişim izni verilir
 
   // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
   if (isTenantUser(profile)) {
