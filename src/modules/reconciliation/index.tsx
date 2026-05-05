@@ -14,7 +14,7 @@ const defaultSort: ColumnSort = { id: 'period', desc: true }
 
 export const defaultReconciliationDateRange: DateRange = {
   from: new Date(
-    new Date(getOperationDateRange().endDate).setMonth(new Date(getOperationDateRange().endDate).getMonth() - 2)
+    new Date(getOperationDateRange().endDate).setDate(new Date(getOperationDateRange().endDate).getDate() - 60)
   ),
   to: new Date(getOperationDateRange().endDate)
 }
@@ -45,11 +45,17 @@ export default function ReconciliationView() {
     setDateRange(range)
   }
 
+  const handleRefresh = () => {
+    setPagination(prev => ({ ...prev, page: 1 }))
+    setDateRange(defaultReconciliationDateRange)
+    void refetchData()
+  }
+
   if (error)
     return (
       <PageError
         errorMessage='Mutabakat verileri yüklenirken bir hata oluştu'
-        onRefresh={refetchData}
+        onRefresh={handleRefresh}
         isLoading={isDataFetching}
         title='Mutabakat Verileri Yüklenemedi'
         description='Mutabakat verileri yüklenirken bir hata oluştu. Lütfen tekrar deneyin.'
@@ -58,21 +64,19 @@ export default function ReconciliationView() {
 
   return (
     <div className='flex flex-col gap-4 pb-6 max-sm:p-0'>
-      {!error && (
-        <ReconciliationTable
-          data={reconciliationData?.data || []}
-          isLoading={isDataLoading || isDataFetching}
-          sorting={sorting}
-          onSortingChange={setSorting}
-          dateRange={dateRange}
-          onDateRangeChange={handleDateRangeChange}
-          page={pagination.page}
-          pageSize={pagination.limit}
-          total={reconciliationData?.total || 0}
-          onPageChange={page => setPagination(prev => ({ ...prev, page }))}
-          onPageSizeChange={limit => setPagination({ page: 1, limit })}
-        />
-      )}
+      <ReconciliationTable
+        data={reconciliationData?.data || []}
+        isLoading={isDataLoading || isDataFetching}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        dateRange={dateRange}
+        onDateRangeChange={handleDateRangeChange}
+        page={pagination.page}
+        pageSize={pagination.limit}
+        total={reconciliationData?.total || 0}
+        onPageChange={page => setPagination(prev => ({ ...prev, page }))}
+        onPageSizeChange={limit => setPagination({ page: 1, limit })}
+      />
     </div>
   )
 }
