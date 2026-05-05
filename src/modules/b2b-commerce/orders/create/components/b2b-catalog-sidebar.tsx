@@ -182,10 +182,13 @@ export function B2BCatalogSidebar({
   return (
     <aside
       className={cn(
-        'bg-card w-full shrink-0 rounded-md border shadow-sm backdrop-blur',
+        'bg-card max-h-[calc(100vh-10rem)] w-full shrink-0 overflow-y-auto rounded-md border shadow-sm backdrop-blur',
         'xl:sticky xl:top-24 xl:w-56',
         className
       )}
+      style={{
+        scrollbarWidth: 'thin'
+      }}
     >
       <div className='grid gap-4 p-3 md:grid-cols-2 xl:block xl:space-y-6'>
         {isCategoriesLoading ? (
