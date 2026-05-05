@@ -3,6 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSupplyOrderPaymentInformationQuery } from '../hooks/useSupplyOrderDetailQueries'
+import { CheckCircle2 } from 'lucide-react'
 
 interface SupplyOrderResultDialogProps {
   orderId?: string
@@ -22,13 +23,16 @@ export function SupplyOrderResultDialog({ orderId, message, open, onOpenChange }
         </DialogHeader>
 
         <DialogContentInner className='space-y-4 pb-4'>
-          <Card>
-            <CardContent className='space-y-2 pt-4'>
+          <Card className='border-primary/20 bg-primary/5'>
+            <CardContent className='flex items-start gap-3 pt-4'>
+              <div className='bg-primary/10 text-primary mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full'>
+                <CheckCircle2 className='size-5' />
+              </div>
               <p className='text-sm'>{message ?? 'Siparişiniz başarıyla alındı.'}</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className='border-border/70'>
             <CardContent className='space-y-2 pt-4'>
               <h4 className='text-sm font-semibold'>Ödeme Bilgileri</h4>
               {isLoading ? (

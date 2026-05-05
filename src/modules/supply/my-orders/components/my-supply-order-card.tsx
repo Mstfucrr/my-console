@@ -5,7 +5,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import type { SupplyOrderSummary } from '@/modules/supply/create/types'
-import { AlertCircle, ArrowRightIcon } from 'lucide-react'
+import { AlertCircle, ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 interface MySupplyOrderCardProps {
   order: SupplyOrderSummary
@@ -14,25 +15,42 @@ interface MySupplyOrderCardProps {
 
 export function MySupplyOrderCard({ order, onSelect }: MySupplyOrderCardProps) {
   return (
-    <Card className='transition-all hover:shadow-md'>
-      <CardContent className='space-y-3 pt-4'>
-        <div className='flex items-start justify-between gap-2'>
-          <p className='text-sm font-semibold'>{order.id}</p>
-          {!order.isPaymentReceived && <AlertCircle className='size-4 text-amber-600' />}
-        </div>
-        <div className='space-y-1 text-sm'>
-          <p>
-            <span className='text-muted-foreground'>Toplam Tutar:</span> {formatCurrency(order.totalAmount)}
-          </p>
-          <p>
-            <span className='text-muted-foreground'>Sipariş Tarihi:</span> {formatDateTR(order.orderDate, true)}
-          </p>
-          <p>
-            <span className='text-muted-foreground'>Ödeme:</span> {order.isPaymentReceived ? 'Alındı' : 'Alınmadı'}
-          </p>
-          <div className='flex items-center justify-between gap-1'>
-            <p>
-              <span className='text-muted-foreground'>Ürün Adedi:</span> {order.productCount}
+    <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
+      <Card className='border-border/70 hover:border-primary/20 h-full overflow-hidden transition-all hover:shadow-md'>
+        <CardContent className='space-y-4 pt-4'>
+          <div className='flex items-start justify-between gap-2'>
+            <div className='min-w-0'>
+              <p className='text-muted-foreground text-xs'>Sipariş No</p>
+              <p className='truncate text-sm font-semibold'>{order.id}</p>
+            </div>
+            <div className='shrink-0'>
+              {order.isPaymentReceived ? (
+                <span className='inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-1 text-xs font-medium text-green-600'>
+                  <CheckCircle2 className='size-3.5' />
+                  Alındı
+                </span>
+              ) : (
+                <span className='inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-600'>
+                  <AlertCircle className='size-3.5' />
+                  Bekliyor
+                </span>
+              )}
+            </div>
+          </div>
+          <div className='bg-secondary/30 border-border/50 grid grid-cols-2 gap-3 rounded-xl border p-3 text-sm'>
+            <div>
+              <p className='text-muted-foreground text-xs'>Toplam</p>
+              <p className='text-primary font-bold'>{formatCurrency(order.totalAmount)}</p>
+            </div>
+            <div>
+              <p className='text-muted-foreground text-xs'>Tarih</p>
+              <p className='font-medium'>{formatDateTR(order.orderDate, true)}</p>
+            </div>
+          </div>
+          <div className='flex items-center justify-between gap-2'>
+            <p className='text-muted-foreground flex items-center gap-1.5 text-sm'>
+              <Package className='size-4' />
+              <span>{order.productCount} ürün</span>
             </p>
             <Button
               variant='link'
@@ -43,8 +61,8 @@ export function MySupplyOrderCard({ order, onSelect }: MySupplyOrderCardProps) {
               <span>Detay</span> <ArrowRightIcon className='size-3.5' />
             </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

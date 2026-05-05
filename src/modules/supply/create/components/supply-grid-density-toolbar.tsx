@@ -22,6 +22,7 @@ export function SupplyGridDensityToolbar({ options, columnCount, onSelectCols }:
             type='button'
             variant={isActive ? undefined : 'outline'}
             size='icon-sm'
+            className='shadow-xs'
             onClick={() => onSelectCols(option.cols)}
             aria-label={`${option.cols} sutun`}
             aria-pressed={isActive}

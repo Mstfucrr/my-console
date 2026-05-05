@@ -187,15 +187,23 @@ export default function SupplyOrdersCreateView() {
         />
       )}
 
-      <Card className='min-w-0 flex-1'>
-        <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Tedarik ürünleri ({totalProducts})</CardTitle>
+      <Card className='border-border/70 min-w-0 flex-1 overflow-hidden shadow-sm'>
+        <CardHeader className='from-card to-secondary/30 flex flex-row items-center justify-between gap-3 bg-linear-to-r'>
+          <div className='min-w-0 space-y-1'>
+            <CardTitle className='truncate'>Tedarik ürünleri</CardTitle>
+            <p className='text-muted-foreground text-xs'>{totalProducts} ürün listeleniyor</p>
+          </div>
           <div className='flex flex-row items-center gap-2'>
-            <Button variant='outline' size='xs' className='relative gap-2' onClick={() => setIsCartSheetOpen(true)}>
+            <Button
+              variant='outline'
+              size='xs'
+              className='relative gap-2 shadow-xs'
+              onClick={() => setIsCartSheetOpen(true)}
+            >
               <ShoppingCart className='size-4' />
               <span>Sepet</span>
               {cartItemCount > 0 && (
-                <span className='bg-primary text-primary-foreground absolute -top-2 -right-2 flex min-w-5 items-center justify-center rounded-full px-1 text-sm font-medium'>
+                <span className='bg-primary text-primary-foreground ring-card absolute -top-2 -right-2 flex min-w-5 items-center justify-center rounded-full px-1 text-sm font-medium ring-2'>
                   {cartItemCount}
                 </span>
               )}
@@ -266,9 +274,11 @@ export default function SupplyOrdersCreateView() {
           </div>
 
           {products.length === 0 && !isFetching && (
-            <div className='py-16 text-center'>
-              <Package className='text-muted-foreground/30 mx-auto mb-4 size-16' />
-              <p className='text-muted-foreground'>Ürün bulunamadı</p>
+            <div className='bg-secondary/20 border-border/60 rounded-xl border border-dashed py-16 text-center'>
+              <div className='bg-background mx-auto mb-4 flex size-16 items-center justify-center rounded-full shadow-sm'>
+                <Package className='text-muted-foreground/35 size-8' />
+              </div>
+              <p className='text-muted-foreground text-sm'>Ürün bulunamadı</p>
             </div>
           )}
 

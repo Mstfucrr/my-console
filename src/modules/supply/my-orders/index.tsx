@@ -28,15 +28,20 @@ export default function MySupplyOrdersView() {
 
   return (
     <>
-      <Card>
-        <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Siparişlerim ({total})</CardTitle>
+      <Card className='border-border/70 overflow-hidden'>
+        <CardHeader className='from-card to-secondary/30 flex flex-row items-center justify-between bg-linear-to-r'>
+          <div className='space-y-1'>
+            <CardTitle>Siparişlerim</CardTitle>
+            <p className='text-muted-foreground text-xs'>{total} sipariş kaydı</p>
+          </div>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
           {data.length === 0 && !isLoading ? (
-            <div className='py-16 text-center'>
-              <Package className='text-muted-foreground/30 mx-auto mb-4 size-16' />
-              <p className='text-muted-foreground'>Henüz sipariş bulunmuyor.</p>
+            <div className='bg-secondary/20 border-border/60 rounded-xl border border-dashed py-16 text-center'>
+              <div className='bg-background mx-auto mb-4 flex size-16 items-center justify-center rounded-full shadow-sm'>
+                <Package className='text-muted-foreground/35 size-8' />
+              </div>
+              <p className='text-muted-foreground text-sm'>Henüz sipariş bulunmuyor.</p>
             </div>
           ) : (
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3'>

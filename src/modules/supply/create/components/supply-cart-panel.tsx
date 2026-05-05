@@ -16,12 +16,14 @@ interface SupplyCartHeaderProps {
 
 export function SupplyCartHeader({ cartItemCount, rightSlot }: SupplyCartHeaderProps) {
   return (
-    <div className='border-border flex items-center justify-between gap-3 border-b p-4'>
+    <div className='from-card to-secondary/30 border-border flex items-center justify-between gap-3 border-b bg-linear-to-r p-4'>
       <div className='flex min-w-0 items-center gap-3'>
-        <ShoppingCart className='text-primary size-5 shrink-0' />
+        <div className='bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg'>
+          <ShoppingCart className='size-5' />
+        </div>
         <h2 className='text-foreground truncate text-lg font-bold'>Sepetim</h2>
         <span className='bg-primary/10 text-primary shrink-0 rounded-full px-2 py-0.5 text-sm font-medium'>
-          {cartItemCount} Urun
+          {cartItemCount} Ürün
         </span>
       </div>
       {rightSlot}
@@ -45,8 +47,10 @@ export function SupplyCartItemsList({
   if (cart.length === 0) {
     return (
       <div className={emptyClassName ?? 'py-8 text-center'}>
-        <ShoppingCart className='text-muted-foreground/30 mx-auto mb-3 size-12' />
-        <p className='text-muted-foreground text-sm'>Sepetiniz bos</p>
+        <div className='bg-secondary/40 mx-auto mb-3 flex size-12 items-center justify-center rounded-full'>
+          <ShoppingCart className='text-muted-foreground/35 size-6' />
+        </div>
+        <p className='text-muted-foreground text-sm'>Sepetiniz boş</p>
       </div>
     )
   }
@@ -63,11 +67,12 @@ export function SupplyCartItemsList({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className='bg-secondary/20 flex gap-3 rounded-xl p-3 shadow-sm backdrop-blur-2xl'
+              className='bg-secondary/25 border-border/50 flex gap-3 rounded-xl border p-3 shadow-sm backdrop-blur-2xl'
             >
               <div
                 className={
-                  thumbClassName ?? 'bg-muted flex size-14 shrink-0 items-center justify-center rounded-lg sm:size-16'
+                  thumbClassName ??
+                  'bg-background flex size-14 shrink-0 items-center justify-center rounded-lg shadow-xs sm:size-16'
                 }
               >
                 <Package className='text-muted-foreground/30 size-7 sm:size-8' />
@@ -116,8 +121,8 @@ export function SupplyCartCheckoutSection({
   const remaining = minOrderAmount - cartTotal
 
   return (
-    <div className='border-border space-y-4 border-t p-4'>
-      <div className='bg-secondary/50 flex items-center gap-3 rounded-xl p-3'>
+    <div className='border-border bg-card space-y-4 border-t p-4'>
+      <div className='bg-secondary/45 border-border/50 flex items-center gap-3 rounded-xl border p-3'>
         <MapPin className='text-primary size-5 shrink-0' />
         <div className='min-w-0 flex-1'>
           <p className='text-muted-foreground text-xs'>Teslimat Adresi</p>
@@ -144,7 +149,7 @@ export function SupplyCartCheckoutSection({
         </div>
       )}
 
-      <Button size='lg' className='w-full gap-2' disabled={!canOrder || isSubmitting} onClick={onPlaceOrder}>
+      <Button size='lg' className='w-full gap-2 shadow-sm' disabled={!canOrder || isSubmitting} onClick={onPlaceOrder}>
         <Check className='size-5' />
         {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
       </Button>

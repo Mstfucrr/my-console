@@ -33,14 +33,14 @@ function SidebarSection({
 }) {
   return (
     <div className='space-y-2.5'>
-      <p className='text-muted-foreground px-1 text-xs font-medium tracking-wide uppercase'>{title}</p>
+      <p className='text-muted-foreground px-1 text-xs font-semibold tracking-wide uppercase'>{title}</p>
       <Input
         Icon={Search}
         value={searchValue}
         onChange={event => onSearchChange(event.target.value)}
         placeholder={searchPlaceholder}
         size='sm'
-        className='h-8 text-xs'
+        className='bg-background/70 h-8 text-xs shadow-xs'
       />
       <div className='flex flex-col gap-0.5'>{children}</div>
     </div>
@@ -73,8 +73,10 @@ function SidebarRow({
         }
       }}
       className={cn(
-        'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors',
-        isChecked ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-muted/80',
+        'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-all',
+        isChecked
+          ? 'bg-primary/10 text-primary ring-primary/15 font-medium shadow-xs ring-1'
+          : 'text-foreground hover:bg-muted/80',
         disabled && !isChecked
           ? 'text-muted-foreground cursor-not-allowed opacity-60 hover:bg-transparent'
           : 'cursor-pointer'
@@ -112,8 +114,10 @@ function SidebarClearButton({
       type='button'
       onClick={onClick}
       className={cn(
-        'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-        isActive ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-muted/80'
+        'flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-all',
+        isActive
+          ? 'bg-primary/10 text-primary ring-primary/15 font-medium shadow-xs ring-1'
+          : 'text-foreground hover:bg-muted/80'
       )}
     >
       <span className='min-w-0 flex-1 truncate'>{label}</span>
@@ -173,7 +177,7 @@ export function SupplyCatalogSidebar({
   return (
     <aside
       className={cn(
-        'bg-card text-card-foreground border-border w-full shrink-0 rounded-md border shadow-sm',
+        'bg-card/95 text-card-foreground border-border/70 w-full shrink-0 rounded-md border shadow-sm backdrop-blur',
         'xl:w-56',
         className
       )}

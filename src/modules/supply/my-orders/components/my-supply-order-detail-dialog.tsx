@@ -8,7 +8,7 @@ import {
   useSupplyOrderDetailQuery,
   useSupplyOrderPaymentInformationQuery
 } from '@/modules/supply/create/hooks/useSupplyOrderDetailQueries'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle2, CreditCard, Package } from 'lucide-react'
 
 interface MySupplyOrderDetailDialogProps {
   orderId?: string
@@ -33,7 +33,7 @@ export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDet
           ) : (
             <>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                <Card>
+                <Card className='border-border/70'>
                   <CardContent className='space-y-2 pt-4 text-sm'>
                     <p>
                       <span className='text-muted-foreground'>Sipariş No:</span> {detail.id}
@@ -45,16 +45,23 @@ export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDet
                     <p className='flex items-center gap-1'>
                       <span className='text-muted-foreground'>Ödeme Durumu:</span>
                       {detail.isPaymentReceived ? 'Alındı' : 'Alınmadı'}
-                      {!detail.isPaymentReceived && <AlertCircle className='size-4 text-amber-600' />}
+                      {detail.isPaymentReceived ? (
+                        <CheckCircle2 className='size-4 text-green-600' />
+                      ) : (
+                        <AlertCircle className='size-4 text-amber-600' />
+                      )}
                     </p>
                     <p>
                       <span className='text-muted-foreground'>Toplam:</span> {formatCurrency(detail.totalAmount)}
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='border-border/70'>
                   <CardHeader>
-                    <CardTitle className='text-base'>Ödeme Bilgilerimiz</CardTitle>
+                    <CardTitle className='flex items-center gap-2 text-base'>
+                      <CreditCard className='text-primary size-4' />
+                      Ödeme Bilgilerimiz
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className='space-y-1 text-sm'>
                     {isLoadingPaymentInformation ? (
@@ -76,18 +83,27 @@ export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDet
                 </Card>
               </div>
 
-              <Card>
+              <Card className='border-border/70'>
                 <CardHeader>
-                  <CardTitle className='text-base'>Ürünler</CardTitle>
+                  <CardTitle className='flex items-center gap-2 text-base'>
+                    <Package className='text-primary size-4' />
+                    Ürünler
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-2 text-sm'>
                   {detail.items.map((item, index) => (
-                    <div key={`${item.productId}-${index}`} className='border-border rounded-lg border p-2'>
-                      <p className='font-medium'>{item.productName}</p>
-                      <p className='text-muted-foreground'>{item.brandName}</p>
-                      <p>
-                        {item.quantity} x {formatCurrency(item.unitPrice)} = {formatCurrency(item.totalPrice)}
-                      </p>
+                    <div
+                      key={`${item.productId}-${index}`}
+                      className='bg-secondary/25 border-border/60 flex items-start justify-between gap-3 rounded-lg border p-3'
+                    >
+                      <div className='min-w-0'>
+                        <p className='line-clamp-1 font-medium'>{item.productName}</p>
+                        <p className='text-muted-foreground'>{item.brandName}</p>
+                        <p className='text-muted-foreground text-xs'>
+                          {item.quantity} x {formatCurrency(item.unitPrice)}
+                        </p>
+                      </div>
+                      <p className='text-primary shrink-0 font-semibold'>{formatCurrency(item.totalPrice)}</p>
                     </div>
                   ))}
                 </CardContent>
