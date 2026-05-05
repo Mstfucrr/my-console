@@ -4,6 +4,7 @@ import CustomImage from '@/components/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
+import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightIcon, Package, Plus, Truck } from 'lucide-react'
 import type { CSSProperties } from 'react'
@@ -86,22 +87,22 @@ export function SupplyProductCard({
                 </div>
               </div>
 
-              <CardContent className='flex min-h-40 flex-1 flex-col justify-between p-3'>
+              <CardContent className='flex h-3/5 min-h-40 flex-1 flex-col justify-between p-3 sm:h-auto'>
                 <div className='flex flex-col gap-1'>
                   <div className='text-muted-foreground flex items-start justify-between gap-1 py-0.5 text-[10px] sm:text-[11px]'>
-                    <span className='bg-secondary/60 rounded-md px-1.5 py-0.5'>
+                    <span className='bg-secondary/60 -ml-1 rounded-md px-1.5 py-0.5 text-nowrap'>
                       ({product.quantityPerBox} Adet / {product.unit})
                     </span>
                     <Button variant='link' size='xs' className='text-primary size-auto items-center gap-1 p-0'>
                       <span>Detay</span> <ArrowRightIcon className='size-3.5' />
                     </Button>
                   </div>
-                  <h3 className='text-foreground line-clamp-2 min-h-9 text-sm font-semibold sm:min-h-10'>
+                  <h3 className='text-foreground line-clamp-2 min-h-9 text-xs font-semibold sm:min-h-10'>
                     {product.name}
                   </h3>
                 </div>
 
-                <div className='mt-auto flex w-full flex-col items-end justify-between gap-2 sm:flex-row'>
+                <div className='mt-auto flex w-full flex-wrap items-end justify-between gap-2'>
                   <div className='min-w-0'>
                     {product.hasDiscount ? (
                       <div className='flex items-end gap-1 sm:flex-col sm:items-baseline sm:gap-0'>
@@ -145,15 +146,27 @@ export function SupplyProductCard({
                 <h3 className='text-foreground text-sm font-semibold'>{product.name}</h3>
 
                 <div className='mt-3 grid grid-cols-2 gap-2'>
-                  <div className='bg-secondary/50 border-border/40 rounded-xl border p-2'>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.unit
+                    })}
+                  >
                     <p className='text-muted-foreground text-[10px]'>Birim</p>
                     <p className='text-xs font-medium'>{product.unit}</p>
                   </div>
-                  <div className='bg-secondary/50 border-border/40 rounded-xl border p-2'>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.quantityPerBox
+                    })}
+                  >
                     <p className='text-muted-foreground text-[10px]'>Koli İçeriği</p>
                     <p className='text-xs font-medium'>{product.quantityPerBox} Adet</p>
                   </div>
-                  <div className='bg-secondary/50 border-border/40 rounded-xl border p-2'>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.boxWeight
+                    })}
+                  >
                     <p className='text-muted-foreground text-[10px]'>Koli Ağırlığı</p>
                     <p className='text-xs font-medium'>{product.boxWeight}</p>
                   </div>
@@ -161,7 +174,11 @@ export function SupplyProductCard({
                     <p className='text-muted-foreground text-[10px]'>Kargo</p>
                     <p className='text-xs font-medium'>{product.freeShipping ? 'Ücretsiz' : 'Standart'}</p>
                   </div>
-                  <div className='bg-secondary/50 border-border/40 rounded-xl border p-2'>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.brand.name
+                    })}
+                  >
                     <p className='text-muted-foreground text-[10px]'>Marka</p>
                     <p className='text-xs font-medium'>{product.brand.name}</p>
                   </div>

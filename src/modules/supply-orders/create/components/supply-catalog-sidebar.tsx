@@ -2,8 +2,8 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { SupplySidebarSectionSkeleton } from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { cn } from '@/lib/utils'
+import { SupplySidebarSectionSkeleton } from '@/modules/supply-orders/components/supply-loading-skeletons'
 import { Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 import type { SupplyBrand, SupplyCategory } from '../types'
@@ -45,7 +45,7 @@ function SidebarSection({
         size='sm'
         className='bg-background/70 h-8 text-xs shadow-xs'
       />
-      <div className='flex max-h-[400px] flex-col gap-0.5 overflow-y-auto pr-1'>{children}</div>
+      <div className='flex max-h-64 flex-col gap-0.5 overflow-y-auto pr-1 md:max-h-80 xl:max-h-[400px]'>{children}</div>
     </div>
   )
 }
@@ -182,12 +182,12 @@ export function SupplyCatalogSidebar({
   return (
     <aside
       className={cn(
-        'bg-card/95 text-card-foreground border-border/70 w-full shrink-0 rounded-md border shadow-sm backdrop-blur',
-        'xl:w-56',
+        'bg-card w-full shrink-0 rounded-md border shadow-sm backdrop-blur',
+        'xl:sticky xl:top-24 xl:w-56',
         className
       )}
     >
-      <div className='space-y-6 p-3'>
+      <div className='grid gap-4 p-3 md:grid-cols-2 xl:block xl:space-y-6'>
         {isCategoriesLoading ? (
           <SupplySidebarSectionSkeleton title='Kategoriler' rowCount={7} />
         ) : (
