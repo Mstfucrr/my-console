@@ -159,6 +159,7 @@ export function B2BDeliveryAddressDialog({
                 <FormCommandSelectField
                   name='city.id'
                   required
+                  autoFocus
                   control={form.control}
                   label='İl'
                   formItemClassName='max-sm:col-span-2'
@@ -170,6 +171,7 @@ export function B2BDeliveryAddressDialog({
                 <FormCommandSelectField
                   name='county.id'
                   required
+                  tabIndex={1}
                   control={form.control}
                   label='İlçe'
                   formItemClassName='max-sm:col-span-2'
@@ -182,6 +184,7 @@ export function B2BDeliveryAddressDialog({
                 <FormCommandSelectField
                   name='district.id'
                   required
+                  tabIndex={2}
                   control={form.control}
                   label='Mahalle'
                   formItemClassName='max-sm:col-span-2'
@@ -194,6 +197,7 @@ export function B2BDeliveryAddressDialog({
                 <FormCommandSelectField
                   name='street'
                   required
+                  tabIndex={3}
                   control={form.control}
                   label='Sokak'
                   formItemClassName='max-sm:col-span-2'
@@ -207,6 +211,7 @@ export function B2BDeliveryAddressDialog({
                 <FormInputField
                   name='doorNumber'
                   required
+                  tabIndex={4}
                   control={form.control}
                   label='Kapı No'
                   placeholder='5'
@@ -215,6 +220,7 @@ export function B2BDeliveryAddressDialog({
                 />
                 <FormTextareaField
                   name='fullAddress'
+                  required
                   control={form.control}
                   label='Açık Adres'
                   className='resize-none'
