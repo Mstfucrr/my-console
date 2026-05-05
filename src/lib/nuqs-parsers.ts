@@ -1,4 +1,9 @@
-import { createParser } from 'nuqs'
+import { WELCOME_ONBOARDING_STEP_QUERY_KEYS } from '@/modules/welcome/constants'
+import { createParser, parseAsStringLiteral } from 'nuqs'
+
+export const parseWelcomeOnboardingStep = parseAsStringLiteral(WELCOME_ONBOARDING_STEP_QUERY_KEYS)
+  .withDefault(WELCOME_ONBOARDING_STEP_QUERY_KEYS[0])
+  .withOptions({ history: 'push' })
 
 const parseAsDateTime = createParser({
   type: 'single',

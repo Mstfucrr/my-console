@@ -53,6 +53,9 @@ export const PARTNER_FEATURES = [
   }
 ] as const
 
+/** Query ve enum sırası birebir: `?step=` değeri (ilk adım varsayılan, URL’de yok). */
+export const WELCOME_ONBOARDING_STEP_QUERY_KEYS = ['intro', 'partner', 'application', 'financial'] as const
+
 /** Welcome onboarding akış adımları (sıra değerleri UI ile uyumlu). */
 export enum WelcomeOnboardingStep {
   Intro = 0,

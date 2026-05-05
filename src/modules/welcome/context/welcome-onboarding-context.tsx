@@ -1,6 +1,7 @@
 'use client'
 
 import { useProfile } from '@/context/ProfileProvider'
+import { parseWelcomeOnboardingStep } from '@/lib/nuqs-parsers'
 import {
   defaultWelcomeFinancialValues,
   welcomeFinancialFormSchema,
@@ -10,16 +11,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { useQueryState } from 'nuqs'
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { WelcomeOnboardingStep } from '../constants'
+import { WELCOME_ONBOARDING_STEP_QUERY_KEYS, WelcomeOnboardingStep } from '../constants'
 import { financeService } from '../service/finance.service'
 import { SaveFinancialDetailsRequest, WelcomeDocType } from '../types'
 
 export type WelcomeOnboardingContextValue = {
   step: WelcomeOnboardingStep
-  setStep: React.Dispatch<React.SetStateAction<WelcomeOnboardingStep>>
   goNext: () => void
   goBack: () => void
   goToFinancialStep: () => void
@@ -44,9 +45,13 @@ export function useWelcomeOnboarding() {
 
 export function WelcomeOnboardingProvider({ children }: { children: ReactNode }) {
   const { profile } = useProfile()
-  const [step, setStep] = useState(WelcomeOnboardingStep.Intro)
   const queryClient = useQueryClient()
   const router = useRouter()
+  const [stepQuery, setStepQuery] = useQueryState('step', parseWelcomeOnboardingStep)
+
+  const stepIndex = WELCOME_ONBOARDING_STEP_QUERY_KEYS.indexOf(stepQuery)
+  const step = (stepIndex === -1 ? WelcomeOnboardingStep.Intro : stepIndex) as WelcomeOnboardingStep
+
   const { mutateAsync: createFinance, isPending: isCreatingFinance } = useMutation({
     mutationFn: (data: SaveFinancialDetailsRequest) => financeService.createFinance(data)
   })
@@ -62,20 +67,22 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   })
 
   const goNext = useCallback(() => {
-    setStep(s => Math.min(s + 1, WelcomeOnboardingStep.Application))
-  }, [])
+    if (step >= WelcomeOnboardingStep.Application) return
+    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[step + 1])
+  }, [setStepQuery, step])
 
   const goBack = useCallback(() => {
-    setStep(s => Math.max(s - 1, WelcomeOnboardingStep.Intro))
-  }, [])
+    if (step <= WelcomeOnboardingStep.Intro) return
+    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[step - 1])
+  }, [setStepQuery, step])
 
   const goToFinancialStep = useCallback(() => {
-    setStep(WelcomeOnboardingStep.Financial)
-  }, [])
+    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[WelcomeOnboardingStep.Financial])
+  }, [setStepQuery])
 
   const onFinancialCancel = useCallback(() => {
-    setStep(WelcomeOnboardingStep.Application)
-  }, [])
+    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[WelcomeOnboardingStep.Application])
+  }, [setStepQuery])
 
   const onFinancialSubmit = useCallback(
     (data: WelcomeFinancialFormValues) => {
@@ -105,7 +112,6 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   const value = useMemo<WelcomeOnboardingContextValue>(
     () => ({
       step,
-      setStep,
       goNext,
       goBack,
       goToFinancialStep,
