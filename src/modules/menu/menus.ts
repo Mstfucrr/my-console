@@ -10,10 +10,10 @@ export const menusConfig: MenuItem[] = [
   { title: 'Raporlar', Icon: ModuleIcons.Reports, href: '/reports' },
   {
     title: 'Tedarik',
-    Icon: ModuleIcons.Supply,
+    Icon: ModuleIcons.B2BCommerce,
     children: [
-      { title: 'Sipariş Ver', href: '/supply-orders/create' },
-      { title: 'Siparişlerim', href: '/supply-orders' }
+      { title: 'Sipariş Ver', href: '/b2b-commerce/orders/create' },
+      { title: 'Siparişlerim', href: '/b2b-commerce/orders' }
     ]
   }
 ]

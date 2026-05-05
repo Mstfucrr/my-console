@@ -9,7 +9,7 @@ export const isActiveTenant = process.env.NEXT_PUBLIC_ACTIVE_TENANT === 'true'
 
 export const canSubmitStoreApplication = process.env.NEXT_PUBLIC_ACTIVE_STORE_APPLICATION === 'true'
 
-export const canSupply = process.env.NEXT_PUBLIC_CAN_SUPPLY === 'true'
+export const canB2BCommerce = process.env.NEXT_PUBLIC_CAN_B2B_COMMERCE === 'true'
 
 /** Tenant modülü kapalı mı? (layout'ta URL değiştirmeden bakım göstermek için) */
 export const isTenantModuleAvailable = (profile?: IProfileResponse): boolean => isTenantUser(profile) && isActiveTenant
@@ -18,8 +18,8 @@ const allRoutes: Array<Route> = [
   '/',
   '/orders',
   '/orders/create',
-  '/supply-orders',
-  '/supply-orders/create',
+  '/b2b-commerce/orders',
+  '/b2b-commerce/orders/create',
   '/reconciliation',
   '/login',
   '/forgot-password',
@@ -48,6 +48,8 @@ export const tenantNeedsFinancialOnboarding = (profile?: IProfileResponse): bool
 
 const allowedRoutesForEveryProfile: Array<Route> = ['/login', '/forgot-password', '/reset-password', '/onboarding']
 
+const b2bCommerceRoutes: Array<Route> = ['/b2b-commerce/orders', '/b2b-commerce/orders/create']
+
 type RouteRestriction = {
   include?: Array<Route>
   exclude?: Array<Route>
@@ -67,7 +69,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 
   if (!profile) return true
 
-  // TODO: Supply routes'a erişim izni verilir
+  // if ((!canB2BCommerce || !profile.canB2BCommerce) && b2bCommerceRoutes.includes(route)) return false
 
   // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
   if (isTenantUser(profile)) {

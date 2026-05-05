@@ -1,0 +1,224 @@
+'use client'
+
+import CustomImage from '@/components/image'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/formatCurrency'
+import { cn } from '@/lib/utils'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRightIcon, Package, Plus, Truck } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import { useState } from 'react'
+import type { B2BProduct } from '../../../types'
+import { getB2BUnitPrice } from '../../../utils/b2b-price'
+import { B2BCartQuantityButtons } from './b2b-cart-quantity-buttons'
+
+interface B2BProductCardProps {
+  product: B2BProduct
+  index: number
+  cartQty: number
+  onAddToCart: (product: B2BProduct) => void
+  onIncrementQty: () => void
+  onDecrementQty: () => void
+}
+
+const faceStyle: CSSProperties = {
+  backfaceVisibility: 'hidden',
+  WebkitBackfaceVisibility: 'hidden'
+}
+
+export function B2BProductCard({
+  product,
+  index,
+  cartQty,
+  onAddToCart,
+  onIncrementQty,
+  onDecrementQty
+}: B2BProductCardProps) {
+  const [isFlipped, setIsFlipped] = useState(false)
+  const unitPrice = getB2BUnitPrice(product)
+  const imageSrc = product.image?.trim() ?? ''
+
+  return (
+    <AnimatePresence mode='popLayout'>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ delay: index * 0.02, duration: 0.25 }}
+        className='perspective-distant'
+        layoutId={`product-card-${product.id}`}
+      >
+        <motion.div
+          animate={{ rotateY: isFlipped ? 180 : 0 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          style={{ transformStyle: 'preserve-3d' }}
+          className='group relative h-[325px] cursor-pointer'
+          role='button'
+          tabIndex={0}
+          onClick={() => setIsFlipped(prev => !prev)}
+        >
+          <div style={faceStyle} className='absolute inset-0 h-full'>
+            <Card className='border-border/70 hover:border-primary/25 hover:shadow-primary/10 h-full overflow-hidden rounded-2xl transition-all duration-300 group-hover:-translate-y-0.5 hover:shadow-lg'>
+              <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
+                {imageSrc ? (
+                  <CustomImage
+                    src={imageSrc}
+                    alt={product.name}
+                    className='h-full w-full object-contain object-center p-2 transition-transform duration-300 group-hover:scale-[1.02]'
+                  />
+                ) : (
+                  <div className='bg-background/70 ring-border/60 flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1 transition-transform duration-300 group-hover:scale-105 sm:size-20'>
+                    <Package className='text-muted-foreground/35 size-9 sm:size-11' />
+                  </div>
+                )}
+
+                <div className='absolute top-2 left-2 flex flex-col gap-1'>
+                  {product.hasDiscount && (
+                    <span className='absolute top-0 -left-10 flex h-7 w-28 -rotate-45 items-center justify-center rounded-b-full bg-red-500 px-1.5 py-0.5 text-sm font-medium text-white'>
+                      %{product.discountPercent}
+                    </span>
+                  )}
+                  {product.freeShipping && (
+                    <span className='flex items-center gap-0.5 rounded-md bg-green-500 px-1.5 py-0.5 text-sm font-medium text-white shadow-sm'>
+                      <Truck className='size-4.5' />
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <CardContent className='flex h-3/5 min-h-40 flex-1 flex-col justify-between p-3 sm:h-auto'>
+                <div className='flex flex-col gap-1'>
+                  <div className='text-muted-foreground flex flex-wrap items-start justify-between gap-1 py-0.5 text-[10px] sm:text-[11px]'>
+                    <span className='bg-secondary/60 -ml-1 rounded-md px-1.5 py-0.5 text-nowrap'>
+                      ({product.quantityPerBox} Adet / {product.unit})
+                    </span>
+                    <Button variant='link' size='xs' className='text-primary size-auto items-center gap-1 p-0'>
+                      <span>Detay</span> <ArrowRightIcon className='size-3.5' />
+                    </Button>
+                  </div>
+                  <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10'>
+                    {product.name}
+                  </h3>
+                </div>
+
+                <div className='mt-auto flex w-full flex-wrap items-end justify-between gap-2'>
+                  <div className='min-w-0'>
+                    {product.hasDiscount ? (
+                      <div className='flex items-end gap-1 sm:flex-col sm:items-baseline sm:gap-0'>
+                        <span className='text-primary xs:text-base text-xs font-bold'>{formatCurrency(unitPrice)}</span>
+                        <span className='text-muted-foreground text-sm line-through'>
+                          {formatCurrency(product.price)}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className='text-primary xs:text-base text-sm font-bold'>
+                        {formatCurrency(product.price)}
+                      </span>
+                    )}
+                  </div>
+
+                  {cartQty > 0 ? (
+                    <B2BCartQuantityButtons
+                      quantity={cartQty}
+                      onIncrement={onIncrementQty}
+                      onDecrement={onDecrementQty}
+                    />
+                  ) : (
+                    <Button
+                      size='xs'
+                      onClick={e => {
+                        e.stopPropagation()
+                        onAddToCart(product)
+                      }}
+                      className='gap-1 shadow-xs'
+                    >
+                      <Plus className='size-4' />
+                      <span>Ekle</span>
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div style={{ ...faceStyle, transform: 'rotateY(180deg)' }} className='absolute inset-0 h-full'>
+            <Card className='border-border/70 h-full rounded-2xl shadow-sm'>
+              <CardContent className='flex h-full flex-col overflow-y-auto p-2 sm:p-3'>
+                <h3 className='text-foreground text-xs font-semibold sm:text-sm'>{product.name}</h3>
+
+                <div className='mt-3 grid grid-cols-2 gap-2'>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.unit
+                    })}
+                  >
+                    <p className='text-muted-foreground text-[10px]'>Birim</p>
+                    <p className='text-xs font-medium'>{product.unit}</p>
+                  </div>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.quantityPerBox
+                    })}
+                  >
+                    <p className='text-muted-foreground text-[10px]'>Koli İçeriği</p>
+                    <p className='text-xs font-medium'>{product.quantityPerBox} Adet</p>
+                  </div>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.boxWeight
+                    })}
+                  >
+                    <p className='text-muted-foreground text-[10px]'>Koli Ağırlığı</p>
+                    <p className='text-xs font-medium'>{product.boxWeight}</p>
+                  </div>
+                  <div className='bg-secondary/50 border-border/40 rounded-xl border p-2'>
+                    <p className='text-muted-foreground text-[10px]'>Kargo</p>
+                    <p className='text-xs font-medium'>{product.freeShipping ? 'Ücretsiz' : 'Standart'}</p>
+                  </div>
+                  <div
+                    className={cn('bg-secondary/50 border-border/40 rounded-xl border p-2', {
+                      hidden: !product.brand.name
+                    })}
+                  >
+                    <p className='text-muted-foreground text-[10px]'>Marka</p>
+                    <p className='text-xs font-medium'>{product.brand.name}</p>
+                  </div>
+                </div>
+
+                <div className='mt-auto flex items-end justify-between gap-2'>
+                  <div>
+                    <span className='text-primary text-base font-bold'>{formatCurrency(unitPrice)}</span>
+                    {product.hasDiscount && (
+                      <p className='text-muted-foreground text-xs line-through'>{formatCurrency(product.price)}</p>
+                    )}
+                  </div>
+
+                  {cartQty > 0 ? (
+                    <B2BCartQuantityButtons
+                      quantity={cartQty}
+                      onIncrement={onIncrementQty}
+                      onDecrement={onDecrementQty}
+                    />
+                  ) : (
+                    <Button
+                      size='xs'
+                      onClick={e => {
+                        e.stopPropagation()
+                        onAddToCart(product)
+                      }}
+                      className='gap-1 shadow-xs'
+                    >
+                      <Plus className='size-4' />
+                      <span>Ekle</span>
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
