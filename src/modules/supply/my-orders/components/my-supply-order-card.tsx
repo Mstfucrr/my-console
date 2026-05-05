@@ -5,8 +5,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import type { SupplyOrderSummary } from '@/modules/supply/create/types'
-import { AlertCircle, ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { AlertCircle, ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
 
 interface MySupplyOrderCardProps {
   order: SupplyOrderSummary
@@ -32,7 +32,7 @@ export function MySupplyOrderCard({ order, onSelect }: MySupplyOrderCardProps) {
               ) : (
                 <span className='inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-600'>
                   <AlertCircle className='size-3.5' />
-                  Bekliyor
+                  Ödeme Bekleniyor
                 </span>
               )}
             </div>

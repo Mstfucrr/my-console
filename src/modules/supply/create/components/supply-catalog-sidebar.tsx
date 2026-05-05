@@ -2,6 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { SupplySidebarSectionSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
 import { cn } from '@/lib/utils'
 import { Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
@@ -16,6 +17,8 @@ interface SupplyCatalogSidebarProps {
   onSelectCategories: (categoryIds: string[]) => void
   onSelectBrands: (brandIds: string[]) => void
   className?: string
+  isCategoriesLoading?: boolean
+  isBrandsLoading?: boolean
 }
 
 function SidebarSection({
@@ -42,7 +45,7 @@ function SidebarSection({
         size='sm'
         className='bg-background/70 h-8 text-xs shadow-xs'
       />
-      <div className='flex flex-col gap-0.5'>{children}</div>
+      <div className='flex max-h-[400px] flex-col gap-0.5 overflow-y-auto pr-1'>{children}</div>
     </div>
   )
 }
@@ -134,7 +137,9 @@ export function SupplyCatalogSidebar({
   totalProductCount,
   onSelectCategories,
   onSelectBrands,
-  className
+  className,
+  isCategoriesLoading = false,
+  isBrandsLoading = false
 }: SupplyCatalogSidebarProps) {
   const [categorySearch, setCategorySearch] = useState('')
   const [brandSearch, setBrandSearch] = useState('')
@@ -183,54 +188,61 @@ export function SupplyCatalogSidebar({
       )}
     >
       <div className='space-y-6 p-3'>
-        <SidebarSection
-          title='Kategoriler'
-          searchPlaceholder='Kategori ara...'
-          searchValue={categorySearch}
-          onSearchChange={setCategorySearch}
-        >
-          <SidebarClearButton
-            label='Tüm Kategoriler'
-            count={totalProductCount}
-            isActive={isAllCategoriesSelected}
-            onClick={() => onSelectCategories([])}
-          />
-          {filteredCategories.map(category => (
-            <SidebarRow
-              key={category.id}
-              label={category.name}
-              count={category.productCount ?? 0}
-              isChecked={selectedCategoryIds.includes(category.id)}
-              disabled={(category.productCount ?? 0) === 0}
-              onToggle={() => toggleCategory(category.id)}
-            />
-          ))}
-        </SidebarSection>
-
-        {brands.length > 0 && (
+        {isCategoriesLoading ? (
+          <SupplySidebarSectionSkeleton title='Kategoriler' rowCount={7} />
+        ) : (
           <SidebarSection
-            title='Markalar'
-            searchPlaceholder='Marka ara...'
-            searchValue={brandSearch}
-            onSearchChange={setBrandSearch}
+            title='Kategoriler'
+            searchPlaceholder='Kategori ara...'
+            searchValue={categorySearch}
+            onSearchChange={setCategorySearch}
           >
             <SidebarClearButton
-              label='Tüm Markalar'
-              count={totalBrandScope}
-              isActive={isAllBrandsSelected}
-              onClick={() => onSelectBrands([])}
+              label='Tüm Kategoriler'
+              count={totalProductCount}
+              isActive={isAllCategoriesSelected}
+              onClick={() => onSelectCategories([])}
             />
-            {filteredBrands.map(brand => (
+            {filteredCategories.map(category => (
               <SidebarRow
-                key={brand.id}
-                label={brand.name}
-                count={brand.productCount ?? 0}
-                isChecked={selectedBrandIds.includes(brand.id)}
-                onToggle={() => toggleBrand(brand.id)}
+                key={category.id}
+                label={category.name}
+                count={category.productCount ?? 0}
+                isChecked={selectedCategoryIds.includes(category.id)}
+                disabled={(category.productCount ?? 0) === 0}
+                onToggle={() => toggleCategory(category.id)}
               />
             ))}
           </SidebarSection>
         )}
+
+        {(brands.length > 0 || isBrandsLoading) &&
+          (isBrandsLoading && brands.length === 0 ? (
+            <SupplySidebarSectionSkeleton title='Markalar' rowCount={5} />
+          ) : (
+            <SidebarSection
+              title='Markalar'
+              searchPlaceholder='Marka ara...'
+              searchValue={brandSearch}
+              onSearchChange={setBrandSearch}
+            >
+              <SidebarClearButton
+                label='Tüm Markalar'
+                count={totalBrandScope}
+                isActive={isAllBrandsSelected}
+                onClick={() => onSelectBrands([])}
+              />
+              {filteredBrands.map(brand => (
+                <SidebarRow
+                  key={brand.id}
+                  label={brand.name}
+                  count={brand.productCount ?? 0}
+                  isChecked={selectedBrandIds.includes(brand.id)}
+                  onToggle={() => toggleBrand(brand.id)}
+                />
+              ))}
+            </SidebarSection>
+          ))}
       </div>
     </aside>
   )

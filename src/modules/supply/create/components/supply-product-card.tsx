@@ -1,5 +1,6 @@
 'use client'
 
+import CustomImage from '@/components/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
@@ -35,9 +36,10 @@ export function SupplyProductCard({
 }: SupplyProductCardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
   const unitPrice = getSupplyUnitPrice(product)
+  const imageSrc = product.image?.trim() ?? ''
 
   return (
-    <AnimatePresence mode='wait'>
+    <AnimatePresence mode='popLayout'>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,9 +60,17 @@ export function SupplyProductCard({
           <div style={faceStyle} className='absolute inset-0 h-full'>
             <Card className='border-border/70 hover:border-primary/25 hover:shadow-primary/10 h-full overflow-hidden rounded-2xl transition-all duration-300 group-hover:-translate-y-0.5 hover:shadow-lg'>
               <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
-                <div className='bg-background/70 ring-border/60 flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1 transition-transform duration-300 group-hover:scale-105 sm:size-20'>
-                  <Package className='text-muted-foreground/35 size-9 sm:size-11' />
-                </div>
+                {imageSrc ? (
+                  <CustomImage
+                    src={imageSrc}
+                    alt={product.name}
+                    className='h-full w-full object-contain object-center p-2 transition-transform duration-300 group-hover:scale-[1.02]'
+                  />
+                ) : (
+                  <div className='bg-background/70 ring-border/60 flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1 transition-transform duration-300 group-hover:scale-105 sm:size-20'>
+                    <Package className='text-muted-foreground/35 size-9 sm:size-11' />
+                  </div>
+                )}
 
                 <div className='absolute top-2 left-2 flex flex-col gap-1'>
                   {product.hasDiscount && (

@@ -1,8 +1,9 @@
 'use client'
 
+import { SupplyPaymentBlockSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useSupplyOrderPaymentInformationQuery } from '../hooks/useSupplyOrderDetailQueries'
+import { useSupplyPaymentInformationQuery } from '../hooks/useSupplyOrderDetailQueries'
 import { CheckCircle2 } from 'lucide-react'
 
 interface SupplyOrderResultDialogProps {
@@ -13,7 +14,7 @@ interface SupplyOrderResultDialogProps {
 }
 
 export function SupplyOrderResultDialog({ orderId, message, open, onOpenChange }: SupplyOrderResultDialogProps) {
-  const { data: paymentInformation, isLoading } = useSupplyOrderPaymentInformationQuery(orderId)
+  const { data: paymentInformation, isLoading } = useSupplyPaymentInformationQuery(open)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -28,7 +29,14 @@ export function SupplyOrderResultDialog({ orderId, message, open, onOpenChange }
               <div className='bg-primary/10 text-primary mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full'>
                 <CheckCircle2 className='size-5' />
               </div>
-              <p className='text-sm'>{message ?? 'Siparişiniz başarıyla alındı.'}</p>
+              <div className='space-y-1 text-sm'>
+                {orderId ? (
+                  <p>
+                    <span className='text-muted-foreground'>Sipariş No:</span> {orderId}
+                  </p>
+                ) : null}
+                <p>{message ?? 'Siparişiniz başarıyla alındı.'}</p>
+              </div>
             </CardContent>
           </Card>
 
@@ -36,7 +44,7 @@ export function SupplyOrderResultDialog({ orderId, message, open, onOpenChange }
             <CardContent className='space-y-2 pt-4'>
               <h4 className='text-sm font-semibold'>Ödeme Bilgileri</h4>
               {isLoading ? (
-                <p className='text-muted-foreground text-sm'>Ödeme bilgileri yükleniyor...</p>
+                <SupplyPaymentBlockSkeleton />
               ) : (
                 <>
                   <p className='text-sm'>

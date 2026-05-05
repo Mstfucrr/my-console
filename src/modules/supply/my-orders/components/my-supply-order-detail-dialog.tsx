@@ -6,8 +6,12 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import {
   useSupplyOrderDetailQuery,
-  useSupplyOrderPaymentInformationQuery
+  useSupplyPaymentInformationQuery
 } from '@/modules/supply/create/hooks/useSupplyOrderDetailQueries'
+import {
+  SupplyOrderDetailSkeleton,
+  SupplyPaymentBlockSkeleton
+} from '@/modules/supply/components/supply-loading-skeletons'
 import { AlertCircle, CheckCircle2, CreditCard, Package } from 'lucide-react'
 
 interface MySupplyOrderDetailDialogProps {
@@ -16,9 +20,10 @@ interface MySupplyOrderDetailDialogProps {
 }
 
 export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDetailDialogProps) {
+  const open = Boolean(orderId)
   const { data: detail, isLoading } = useSupplyOrderDetailQuery(orderId)
   const { data: paymentInformation, isLoading: isLoadingPaymentInformation } =
-    useSupplyOrderPaymentInformationQuery(orderId)
+    useSupplyPaymentInformationQuery(open)
 
   return (
     <Dialog open={Boolean(orderId)} onOpenChange={open => !open && onClose()}>
@@ -29,7 +34,7 @@ export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDet
 
         <DialogContentInner className='space-y-4 pb-4'>
           {isLoading || !detail ? (
-            <p className='text-muted-foreground text-sm'>Sipariş detayı yükleniyor...</p>
+            <SupplyOrderDetailSkeleton />
           ) : (
             <>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -65,7 +70,7 @@ export function MySupplyOrderDetailDialog({ orderId, onClose }: MySupplyOrderDet
                   </CardHeader>
                   <CardContent className='space-y-1 text-sm'>
                     {isLoadingPaymentInformation ? (
-                      <p className='text-muted-foreground'>Ödeme bilgileri yükleniyor...</p>
+                      <SupplyPaymentBlockSkeleton />
                     ) : (
                       <>
                         <p>

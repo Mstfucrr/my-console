@@ -4,9 +4,11 @@ import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, StatusSelect, type FilterOption } from '@/components/ui/filter-card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFilter } from '@/hooks/use-filter'
 import { useIsDesktop } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
+import { SupplyProductGridSkeleton } from '@/modules/supply/components/supply-loading-skeletons'
 import { Package, Search, ShoppingCart } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { SupplyCartSheet } from './components/supply-cart-sheet'
@@ -45,6 +47,7 @@ export default function SupplyOrdersCreateView() {
     data: products,
     total: totalProducts,
     isFetching,
+    isLoading: productsLoading,
     filters,
     sorting,
     setSorting,
@@ -70,8 +73,10 @@ export default function SupplyOrdersCreateView() {
 
   const brandsListCategoryId = isDesktop ? filters.categoryId : pendingFilters.categoryId
   const categoriesListBrandId = isDesktop ? filters.brandId : pendingFilters.brandId
-  const { data: categories = [] } = useSupplyCategoriesQuery(categoriesListBrandId)
-  const { data: brands = [] } = useSupplyBrandsQuery(brandsListCategoryId)
+  const { data: categories = [], isLoading: categoriesLoading } = useSupplyCategoriesQuery(categoriesListBrandId)
+  const { data: brands = [], isLoading: brandsLoading } = useSupplyBrandsQuery(brandsListCategoryId)
+
+  const showProductSkeleton = productsLoading || (isFetching && products.length === 0)
 
   const totalCatalogProductCount = useMemo(
     () => categories.reduce((sum, category) => sum + (category.productCount ?? 0), 0),
@@ -169,7 +174,7 @@ export default function SupplyOrdersCreateView() {
       setIsCartSheetOpen(false)
       setOrderResult(result)
     } catch {
-      // Mock akışında hata beklenmiyor; üretim entegrasyonunda global hata middleware'i devreye girer.
+      // Hata: global axios / toast middleware
     }
   }
 
@@ -184,14 +189,23 @@ export default function SupplyOrdersCreateView() {
           totalProductCount={totalCatalogProductCount}
           onSelectCategories={applyDesktopCategorySelection}
           onSelectBrands={applyDesktopBrandSelection}
+          isCategoriesLoading={categoriesLoading}
+          isBrandsLoading={brandsLoading}
         />
       )}
 
       <Card className='border-border/70 min-w-0 flex-1 overflow-hidden shadow-sm'>
-        <CardHeader className='from-card to-secondary/30 flex flex-row items-center justify-between gap-3 bg-linear-to-r'>
+        <CardHeader className='flex flex-row items-center justify-between gap-3 bg-linear-to-r'>
           <div className='min-w-0 space-y-1'>
             <CardTitle className='truncate'>Tedarik ürünleri</CardTitle>
-            <p className='text-muted-foreground text-xs'>{totalProducts} ürün listeleniyor</p>
+
+            {showProductSkeleton ? (
+              <Skeleton className='h-3 w-36 rounded-md' />
+            ) : (
+              <p className='text-muted-foreground flex min-h-4 items-center text-xs'>
+                {totalProducts} ürün listeleniyor
+              </p>
+            )}
           </div>
           <div className='flex flex-row items-center gap-2'>
             <Button
@@ -256,24 +270,28 @@ export default function SupplyOrdersCreateView() {
             />
           </FilterCard>
 
-          <div className={cn('grid gap-4', gridClassName)}>
-            {products.map((product, index) => {
-              const cartQty = getCartQuantity(product.id)
-              return (
-                <SupplyProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  cartQty={cartQty}
-                  onAddToCart={addToCart}
-                  onIncrementQty={() => updateQuantity(product.id, cartQty + 1)}
-                  onDecrementQty={() => updateQuantity(product.id, cartQty - 1)}
-                />
-              )
-            })}
-          </div>
+          {showProductSkeleton ? (
+            <SupplyProductGridSkeleton gridClassName={gridClassName} count={columnCount * 2} />
+          ) : (
+            <div className={cn('grid gap-4', gridClassName)}>
+              {products.map((product, index) => {
+                const cartQty = getCartQuantity(product.id)
+                return (
+                  <SupplyProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                    cartQty={cartQty}
+                    onAddToCart={addToCart}
+                    onIncrementQty={() => updateQuantity(product.id, cartQty + 1)}
+                    onDecrementQty={() => updateQuantity(product.id, cartQty - 1)}
+                  />
+                )
+              })}
+            </div>
+          )}
 
-          {products.length === 0 && !isFetching && (
+          {products.length === 0 && !isFetching && !showProductSkeleton && (
             <div className='bg-secondary/20 border-border/60 rounded-xl border border-dashed py-16 text-center'>
               <div className='bg-background mx-auto mb-4 flex size-16 items-center justify-center rounded-full shadow-sm'>
                 <Package className='text-muted-foreground/35 size-8' />

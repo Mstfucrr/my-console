@@ -11,11 +11,12 @@ export function useSupplyOrderDetailQuery(orderId?: string) {
   })
 }
 
-export function useSupplyOrderPaymentInformationQuery(orderId?: string) {
+/** Havale bilgisi kullanıcıya göre tek kayıt; `orderId` path’i yok (GET /commerce/paymentInfo). */
+export function useSupplyPaymentInformationQuery(enabled = true) {
   return useQuery({
-    queryKey: ['supply-payment-information', orderId],
-    queryFn: () => supplyService.getOrderPaymentInformation(orderId!),
-    enabled: Boolean(orderId),
+    queryKey: ['supply-payment-information'],
+    queryFn: () => supplyService.getPaymentInformation(),
+    enabled,
     staleTime: 1000 * 60 * 60 * 3 // 3 saat
   })
 }

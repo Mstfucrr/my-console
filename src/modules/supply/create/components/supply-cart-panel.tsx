@@ -16,7 +16,7 @@ interface SupplyCartHeaderProps {
 
 export function SupplyCartHeader({ cartItemCount, rightSlot }: SupplyCartHeaderProps) {
   return (
-    <div className='from-card to-secondary/30 border-border flex items-center justify-between gap-3 border-b bg-linear-to-r p-4'>
+    <div className='border-border flex items-center justify-between gap-3 border-b bg-linear-to-r p-4'>
       <div className='flex min-w-0 items-center gap-3'>
         <div className='bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg'>
           <ShoppingCart className='size-5' />
