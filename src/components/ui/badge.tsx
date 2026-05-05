@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'focus:ring-ring inline-flex items-center rounded-md border px-2 py-[2px] text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none',
+  'focus:ring-ring inline-flex items-center gap-1 rounded-md border px-2 py-[2px] text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none',
   {
     variants: {
       color: {
@@ -30,7 +30,7 @@ const badgeVariants = cva(
       {
         variant: 'outline',
         color: 'success',
-        className: 'text-success bg-success/5'
+        className: 'text-success bg-success/10'
       },
       {
         variant: 'outline',
@@ -40,7 +40,7 @@ const badgeVariants = cva(
       {
         variant: 'outline',
         color: 'warning',
-        className: 'text-warning bg-warning/5'
+        className: 'bg-amber-500/10 text-amber-600'
       },
       {
         variant: 'outline',

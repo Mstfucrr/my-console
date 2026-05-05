@@ -21,7 +21,7 @@ export function SupplyOrderCard({ order, onSelect }: SupplyOrderCardProps) {
           <div className='flex items-start justify-between gap-2'>
             <div className='min-w-0'>
               <p className='text-muted-foreground text-xs'>Sipariş No</p>
-              <p className='truncate text-sm font-semibold'>{order.id}</p>
+              <p className='truncate text-xs font-medium'>{order.id}</p>
             </div>
             <div className='shrink-0'>
               {order.isPaymentReceived ? (
@@ -55,10 +55,10 @@ export function SupplyOrderCard({ order, onSelect }: SupplyOrderCardProps) {
             <Button
               variant='link'
               size='xs'
-              className='text-primary -mt-2 items-center gap-1 p-0'
+              className='text-primary h-auto items-center gap-1 p-0'
               onClick={() => onSelect(order.id)}
             >
-              <span>Detay</span> <ArrowRightIcon className='size-3.5' />
+              <span>Detaylar</span> <ArrowRightIcon className='size-3.5' />
             </Button>
           </div>
         </CardContent>
