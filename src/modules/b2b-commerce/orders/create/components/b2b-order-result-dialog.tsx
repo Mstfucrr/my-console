@@ -1,19 +1,18 @@
 'use client'
 
-import { B2BPaymentBlockSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useB2BPaymentInformationQuery } from '../../hooks/useB2BOrderDetailQueries'
+import { B2BPaymentBlockSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { CheckCircle2 } from 'lucide-react'
+import { useB2BPaymentInformationQuery } from '../../hooks/useB2BOrderDetailQueries'
 
 interface B2BOrderResultDialogProps {
-  orderId?: string
   message?: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function B2BOrderResultDialog({ orderId, message, open, onOpenChange }: B2BOrderResultDialogProps) {
+export function B2BOrderResultDialog({ message, open, onOpenChange }: B2BOrderResultDialogProps) {
   const { data: paymentInformation, isLoading } = useB2BPaymentInformationQuery(open)
 
   return (
@@ -30,11 +29,6 @@ export function B2BOrderResultDialog({ orderId, message, open, onOpenChange }: B
                 <CheckCircle2 className='size-5' />
               </div>
               <div className='space-y-1 text-sm'>
-                {orderId ? (
-                  <p>
-                    <span className='text-muted-foreground'>Sipariş No:</span> {orderId}
-                  </p>
-                ) : null}
                 <p>{message ?? 'Siparişiniz başarıyla alındı.'}</p>
               </div>
             </CardContent>

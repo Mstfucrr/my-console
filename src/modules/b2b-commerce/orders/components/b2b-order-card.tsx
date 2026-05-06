@@ -20,10 +20,6 @@ export function B2BOrderCard({ order, onSelect }: B2BOrderCardProps) {
       <Card className='border-border/70 hover:border-primary/20 h-full overflow-hidden transition-all hover:shadow-md'>
         <CardContent className='space-y-4 pt-4'>
           <div className='flex items-start justify-between gap-2'>
-            <div className='min-w-0'>
-              <p className='text-muted-foreground text-xs'>Sipariş No</p>
-              <p className='truncate text-xs font-medium'>{order.id}</p>
-            </div>
             <div className='shrink-0'>
               {order.isPaymentReceived ? (
                 <Badge color='success' variant='outline' className='border-0'>

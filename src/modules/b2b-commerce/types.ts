@@ -72,7 +72,7 @@ export interface CreateB2BOrderPayload {
     productId: string
     quantity: number
   }>
-  fullAddress: string
+  address: string
 }
 
 export interface CreateB2BOrderResponse {

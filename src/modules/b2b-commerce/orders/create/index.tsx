@@ -146,7 +146,7 @@ export default function B2BCommerceOrderCreateView() {
     try {
       const result = await createB2BOrderMutation.mutateAsync({
         items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity })),
-        fullAddress: selectedDeliveryAddress
+        address: selectedDeliveryAddress
       })
 
       clearCart()
@@ -369,7 +369,6 @@ export default function B2BCommerceOrderCreateView() {
 
       <B2BOrderResultDialog
         open={Boolean(orderResult)}
-        orderId={orderResult?.orderId}
         message={orderResult?.message}
         onOpenChange={open => {
           if (!open) setOrderResult(null)
