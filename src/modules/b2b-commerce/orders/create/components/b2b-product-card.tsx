@@ -11,15 +11,12 @@ import type { CSSProperties } from 'react'
 import { useState } from 'react'
 import type { B2BProduct } from '../../../types'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
+import { useB2BCheckout } from '../context/B2BCheckoutContext'
 import { B2BCartQuantityButtons } from './b2b-cart-quantity-buttons'
 
 interface B2BProductCardProps {
   product: B2BProduct
   index: number
-  cartQty: number
-  onAddToCart: (product: B2BProduct) => void
-  onIncrementQty: () => void
-  onDecrementQty: () => void
 }
 
 const faceStyle: CSSProperties = {
@@ -27,17 +24,14 @@ const faceStyle: CSSProperties = {
   WebkitBackfaceVisibility: 'hidden'
 }
 
-export function B2BProductCard({
-  product,
-  index,
-  cartQty,
-  onAddToCart,
-  onIncrementQty,
-  onDecrementQty
-}: B2BProductCardProps) {
+export function B2BProductCard({ product, index }: B2BProductCardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
+  const { addToCart, updateQuantity, getCartQuantity } = useB2BCheckout()
   const unitPrice = getB2BUnitPrice(product)
   const imageSrc = product.image?.trim() ?? ''
+  const cartQty = getCartQuantity(product.id)
+  const handleIncrementQty = () => updateQuantity(product.id, cartQty + 1)
+  const handleDecrementQty = () => updateQuantity(product.id, cartQty - 1)
 
   return (
     <AnimatePresence mode='popLayout'>
@@ -121,15 +115,15 @@ export function B2BProductCard({
                   {cartQty > 0 ? (
                     <B2BCartQuantityButtons
                       quantity={cartQty}
-                      onIncrement={onIncrementQty}
-                      onDecrement={onDecrementQty}
+                      onIncrement={handleIncrementQty}
+                      onDecrement={handleDecrementQty}
                     />
                   ) : (
                     <Button
                       size='xs'
                       onClick={e => {
                         e.stopPropagation()
-                        onAddToCart(product)
+                        addToCart(product)
                       }}
                       className='gap-1 shadow-xs'
                     >
@@ -197,15 +191,15 @@ export function B2BProductCard({
                   {cartQty > 0 ? (
                     <B2BCartQuantityButtons
                       quantity={cartQty}
-                      onIncrement={onIncrementQty}
-                      onDecrement={onDecrementQty}
+                      onIncrement={handleIncrementQty}
+                      onDecrement={handleDecrementQty}
                     />
                   ) : (
                     <Button
                       size='xs'
                       onClick={e => {
                         e.stopPropagation()
-                        onAddToCart(product)
+                        addToCart(product)
                       }}
                       className='gap-1 shadow-xs'
                     >

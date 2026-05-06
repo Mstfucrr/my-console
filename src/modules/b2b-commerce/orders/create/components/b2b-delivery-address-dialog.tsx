@@ -20,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useB2BCheckout } from '../context/B2BCheckoutContext'
 
 type DeliveryAddressMode = 'restaurant' | 'custom'
 
@@ -58,21 +59,23 @@ const defaultDeliveryAddressValues: B2BDeliveryAddressFormData = {
   fullAddress: ''
 }
 
-interface B2BDeliveryAddressDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  restaurantAddress?: string
-  selectedAddress?: string
-  onSelectAddress: (address: string) => void
+export function B2BDeliveryAddressDialog() {
+  const checkout = useB2BCheckout()
+
+  if (!checkout.isAddressDialogOpen) return null
+
+  return <B2BDeliveryAddressDialogContent {...checkout} />
 }
 
-export function B2BDeliveryAddressDialog({
-  open,
-  onOpenChange,
+function B2BDeliveryAddressDialogContent({
+  closeAddressDialog,
   restaurantAddress,
-  selectedAddress,
-  onSelectAddress
-}: B2BDeliveryAddressDialogProps) {
+  selectedDeliveryAddress,
+  selectDeliveryAddress
+}: Pick<
+  ReturnType<typeof useB2BCheckout>,
+  'closeAddressDialog' | 'restaurantAddress' | 'selectedDeliveryAddress' | 'selectDeliveryAddress'
+>) {
   const form = useForm<B2BDeliveryAddressFormData>({
     resolver: zodResolver(b2bDeliveryAddressSchema),
     defaultValues: defaultDeliveryAddressValues
@@ -99,32 +102,31 @@ export function B2BDeliveryAddressDialog({
   })
 
   const [mode, setMode] = useState<DeliveryAddressMode>(
-    selectedAddress && selectedAddress !== restaurantAddress ? 'custom' : 'restaurant'
+    selectedDeliveryAddress && selectedDeliveryAddress !== restaurantAddress ? 'custom' : 'restaurant'
   )
 
   const handleSave = async () => {
     if (mode === 'restaurant') {
       if (!restaurantAddress) return
-      onSelectAddress(restaurantAddress)
-      onOpenChange(false)
+      selectDeliveryAddress(restaurantAddress)
+      closeAddressDialog()
       return
     }
 
     const isValid = await form.trigger()
     if (!isValid) return
 
-    onSelectAddress(form.getValues('fullAddress'))
-    onOpenChange(false)
+    selectDeliveryAddress(form.getValues('fullAddress'))
+    closeAddressDialog()
   }
 
   const handleModeChange = (value: string) => {
-    console.log('value', value)
     setMode(value as DeliveryAddressMode)
     if (value === 'restaurant') form.reset()
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={open => !open && closeAddressDialog()}>
       <DialogContent size='2xl'>
         <DialogHeader>
           <DialogTitle>Teslimat Adresi</DialogTitle>
@@ -235,7 +237,7 @@ export function B2BDeliveryAddressDialog({
         </DialogContentInner>
 
         <DialogFooter>
-          <Button type='button' variant='outline' color='secondary' onClick={() => onOpenChange(false)}>
+          <Button type='button' variant='outline' color='secondary' onClick={closeAddressDialog}>
             Vazgeç
           </Button>
           <Button type='button' onClick={handleSave}>

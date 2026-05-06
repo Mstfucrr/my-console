@@ -7,18 +7,18 @@ import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, Check, MapPin, Package, ShoppingCart } from 'lucide-react'
 import type { ReactNode } from 'react'
-import type { B2BCartItem } from '../../../types'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
 import { MIN_B2B_ORDER_AMOUNT } from '../constants'
+import { useB2BCheckout } from '../context/B2BCheckoutContext'
 import { B2BCartQuantityButtons } from './b2b-cart-quantity-buttons'
 
 interface B2BCartHeaderProps {
-  cartItemCount: number
   compact?: boolean
   rightSlot?: ReactNode
 }
 
-export function B2BCartHeader({ cartItemCount, compact = false, rightSlot }: B2BCartHeaderProps) {
+export function B2BCartHeader({ compact = false, rightSlot }: B2BCartHeaderProps) {
+  const { cartItemCount } = useB2BCheckout()
   return (
     <div className={cn('border-border flex items-center justify-between gap-3 border-b', compact ? 'p-3' : 'p-4')}>
       <div className='flex min-w-0 items-center gap-3'>
@@ -46,20 +46,13 @@ export function B2BCartHeader({ cartItemCount, compact = false, rightSlot }: B2B
 }
 
 interface B2BCartItemsListProps {
-  cart: B2BCartItem[]
-  onUpdateQuantity: (productId: string, quantity: number) => void
   compact?: boolean
   emptyClassName?: string
   thumbClassName?: string
 }
 
-export function B2BCartItemsList({
-  cart,
-  onUpdateQuantity,
-  compact = false,
-  emptyClassName,
-  thumbClassName
-}: B2BCartItemsListProps) {
+export function B2BCartItemsList({ compact = false, emptyClassName, thumbClassName }: B2BCartItemsListProps) {
+  const { cart, updateQuantity } = useB2BCheckout()
   if (cart.length === 0) {
     return (
       <div className={emptyClassName ?? 'py-8 text-center'}>
@@ -112,8 +105,8 @@ export function B2BCartItemsList({
                   <span className='text-primary text-sm font-semibold'>{formatCurrency(unit * item.quantity)}</span>
                   <B2BCartQuantityButtons
                     quantity={item.quantity}
-                    onIncrement={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
-                    onDecrement={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
+                    onIncrement={() => updateQuantity(item.product.id, item.quantity + 1)}
+                    onDecrement={() => updateQuantity(item.product.id, item.quantity - 1)}
                   />
                 </div>
               </div>
@@ -126,30 +119,19 @@ export function B2BCartItemsList({
 }
 
 interface B2BCartCheckoutSectionProps {
-  cart: B2BCartItem[]
-  cartTotal: number
-  canOrder: boolean
-  deliveryAddress?: string
-  onChangeAddress?: () => void
   compact?: boolean
-  isSubmitting?: boolean
   onPlaceOrder?: () => void
 }
 
-export function B2BCartCheckoutSection({
-  cart,
-  cartTotal,
-  canOrder,
-  deliveryAddress,
-  onChangeAddress,
-  compact = false,
-  isSubmitting = false,
-  onPlaceOrder
-}: B2BCartCheckoutSectionProps) {
+export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCartCheckoutSectionProps) {
+  const { cart, cartTotal, canOrder, selectedDeliveryAddress, openAddressDialog, isSubmitting, openOrderConfirm } =
+    useB2BCheckout()
+
   if (cart.length === 0) return null
 
   const remaining = MIN_B2B_ORDER_AMOUNT - cartTotal
-  const canSubmitOrder = canOrder && Boolean(deliveryAddress)
+  const canSubmitOrder = canOrder && Boolean(selectedDeliveryAddress)
+  const handlePlaceOrder = onPlaceOrder ?? openOrderConfirm
 
   return (
     <div className={cn('border-border bg-card border-t', compact ? 'space-y-3 p-3' : 'space-y-4 p-4')}>
@@ -163,14 +145,12 @@ export function B2BCartCheckoutSection({
         <div className='min-w-0 flex-1'>
           <p className='text-muted-foreground text-xs'>Teslimat Adresi</p>
           <p className='text-foreground line-clamp-2 text-xs font-medium'>
-            {deliveryAddress || 'Restoran adresi bekleniyor'}
+            {selectedDeliveryAddress || 'Restoran adresi bekleniyor'}
           </p>
         </div>
-        {onChangeAddress && (
-          <Button type='button' variant='outline' size='xs' className='shrink-0' onClick={onChangeAddress}>
-            Farklı Adres
-          </Button>
-        )}
+        <Button type='button' variant='outline' size='xs' className='shrink-0' onClick={openAddressDialog}>
+          Farklı Adres
+        </Button>
       </div>
 
       <div className='flex items-center justify-between'>
@@ -199,7 +179,7 @@ export function B2BCartCheckoutSection({
           size={compact ? 'default' : 'lg'}
           className='w-full gap-2 shadow-sm'
           disabled={isSubmitting || !canSubmitOrder}
-          onClick={onPlaceOrder}
+          onClick={handlePlaceOrder}
         >
           <Check className={compact ? 'size-4' : 'size-5'} />
           {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}

@@ -4,7 +4,6 @@ import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, type FilterOption } from '@/components/ui/filter-card'
-import { useProfile } from '@/context/ProfileProvider'
 import { useFilter } from '@/hooks/use-filter'
 import { useIsDesktop } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
@@ -13,8 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Package, Search, ShoppingCart, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { parseB2BFilterSelection, serializeB2BFilterSelection } from '../../utils/b2b-filter-selection'
-import { getB2BUnitPrice } from '../../utils/b2b-price'
-import { B2BCartCheckoutSection, B2BCartHeader, B2BCartItemsList } from './components/b2b-cart-panel'
+import { B2BCartAside } from './components/b2b-cart-aside'
 import { B2BCartSheet } from './components/b2b-cart-sheet'
 import { B2BCatalogSidebar } from './components/b2b-catalog-sidebar'
 import { B2BDeliveryAddressDialog } from './components/b2b-delivery-address-dialog'
@@ -22,9 +20,7 @@ import { B2BGridDensityToolbar } from './components/b2b-grid-density-toolbar'
 import { B2BOrderConfirmAlert } from './components/b2b-order-confirm-alert'
 import { B2BOrderResultDialog } from './components/b2b-order-result-dialog'
 import { B2BProductCard } from './components/b2b-product-card'
-import { MIN_B2B_ORDER_AMOUNT } from './constants'
 import { useB2BBrandsQuery } from './hooks/useB2BBrandsQuery'
-import { useB2BCart } from './hooks/useB2BCart'
 import { useB2BCategoriesQuery } from './hooks/useB2BCategoriesQuery'
 import { useB2BGridDensity } from './hooks/useB2BGridDensity'
 import {
@@ -32,24 +28,17 @@ import {
   useB2BProductsListQuery,
   type B2BProductsFilters
 } from './hooks/useB2BProductsListQuery'
-import { useCreateB2BOrderMutation } from './hooks/useCreateB2BOrderMutation'
+import { B2BCheckoutProvider, useB2BCheckout } from './context/B2BCheckoutContext'
 
 const sortByOptions: FilterOption[] = [
   { value: 'name', label: 'Ürün Adı' },
   { value: 'price', label: 'Fiyat' }
 ]
 
-export default function B2BCommerceOrderCreateView() {
-  const [isCartSheetOpen, setIsCartSheetOpen] = useState(false)
-  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false)
-  const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
-  const [customDeliveryAddress, setCustomDeliveryAddress] = useState('')
+function B2BCommerceOrderCreateContent() {
   const [isMobileCatalogOpen, setIsMobileCatalogOpen] = useState(false)
-  const [orderResult, setOrderResult] = useState<{ orderId: string; message: string } | null>(null)
   const isDesktop = useIsDesktop()
-  const { profile } = useProfile()
-
-  const { cart, addToCart, updateQuantity, getCartQuantity, cartItemCount, clearCart } = useB2BCart()
+  const { cartItemCount, openCartSheet, orderResult, closeOrderResult } = useB2BCheckout()
   const { gridClassName, options, columnCount, selectCols } = useB2BGridDensity()
 
   const {
@@ -90,13 +79,9 @@ export default function B2BCommerceOrderCreateView() {
     [categories]
   )
 
-  const createB2BOrderMutation = useCreateB2BOrderMutation()
-
   const selectedCategoryIds = useMemo(() => parseB2BFilterSelection(filters.categoryId), [filters.categoryId])
   const selectedBrandIds = useMemo(() => parseB2BFilterSelection(filters.brandId), [filters.brandId])
   const selectedCatalogFilterCount = selectedCategoryIds.length + selectedBrandIds.length
-  const restaurantAddress = profile?.info?.address?.trim() || ''
-  const selectedDeliveryAddress = customDeliveryAddress || restaurantAddress
 
   useEffect(() => {
     if (selectedBrandIds.length === 0) return
@@ -122,13 +107,6 @@ export default function B2BCommerceOrderCreateView() {
     }
   }, [categories, filters, handleFiltersChange, selectedCategoryIds])
 
-  const cartTotal = useMemo(
-    () => cart.reduce((total, item) => total + getB2BUnitPrice(item.product) * item.quantity, 0),
-    [cart]
-  )
-
-  const canOrder = cartTotal >= MIN_B2B_ORDER_AMOUNT
-
   const applyCategorySelection = (categoryIds: string[]) => {
     const nextCategoryId = serializeB2BFilterSelection(categoryIds)
     updatePendingFilters({ categoryId: nextCategoryId })
@@ -139,30 +117,6 @@ export default function B2BCommerceOrderCreateView() {
     const nextBrandId = serializeB2BFilterSelection(brandIds)
     updatePendingFilters({ brandId: nextBrandId })
     handleFiltersChange({ ...filters, brandId: nextBrandId })
-  }
-
-  const handlePlaceOrder = async () => {
-    if (!canOrder || cart.length === 0 || !selectedDeliveryAddress || createB2BOrderMutation.isPending) return
-
-    try {
-      const result = await createB2BOrderMutation.mutateAsync({
-        items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity })),
-        address: selectedDeliveryAddress
-      })
-
-      clearCart()
-      setIsCartSheetOpen(false)
-      setIsOrderConfirmOpen(false)
-      setOrderResult(result)
-    } catch {
-      // Hata: global axios / toast middleware
-    }
-  }
-
-  const handleOpenOrderConfirm = () => {
-    if (!canOrder || cart.length === 0 || !selectedDeliveryAddress || createB2BOrderMutation.isPending) return
-    setIsCartSheetOpen(false)
-    setIsOrderConfirmOpen(true)
   }
 
   return (
@@ -187,12 +141,7 @@ export default function B2BCommerceOrderCreateView() {
             <CardTitle className='truncate'>Tedarik Ürünleri {totalProducts > 0 && `(${totalProducts})`}</CardTitle>
           </div>
           <div className='flex flex-row items-center gap-2'>
-            <Button
-              variant='outline'
-              size='xs'
-              className='relative gap-2 shadow-xs xl:hidden'
-              onClick={() => setIsCartSheetOpen(true)}
-            >
+            <Button variant='outline' size='xs' className='relative gap-2 shadow-xs xl:hidden' onClick={openCartSheet}>
               <ShoppingCart className='size-4' />
               <span>Sepet</span>
               {cartItemCount > 0 && (
@@ -286,20 +235,9 @@ export default function B2BCommerceOrderCreateView() {
             <B2BProductGridSkeleton gridClassName={gridClassName} count={columnCount * 2} />
           ) : (
             <div className={cn('grid gap-2 sm:gap-4', gridClassName)}>
-              {products.map((product, index) => {
-                const cartQty = getCartQuantity(product.id)
-                return (
-                  <B2BProductCard
-                    key={product.id}
-                    product={product}
-                    index={index}
-                    cartQty={cartQty}
-                    onAddToCart={addToCart}
-                    onIncrementQty={() => updateQuantity(product.id, cartQty + 1)}
-                    onDecrementQty={() => updateQuantity(product.id, cartQty - 1)}
-                  />
-                )
-              })}
+              {products.map((product, index) => (
+                <B2BProductCard key={product.id} product={product} index={index} />
+              ))}
             </div>
           )}
 
@@ -322,70 +260,26 @@ export default function B2BCommerceOrderCreateView() {
         </CardContent>
       </Card>
 
-      <aside className='border-border/70 bg-card sticky top-20 hidden h-auto max-h-[calc(100vh-10rem)] w-80 shrink-0 flex-col overflow-hidden rounded-xl border shadow-sm xl:flex 2xl:w-84'>
-        <B2BCartHeader cartItemCount={cartItemCount} compact />
-        <div className='min-h-0 flex-1 overflow-y-auto p-3'>
-          <B2BCartItemsList cart={cart} onUpdateQuantity={updateQuantity} compact />
-        </div>
-        <div className='shrink-0'>
-          <B2BCartCheckoutSection
-            cart={cart}
-            cartTotal={cartTotal}
-            canOrder={canOrder}
-            deliveryAddress={selectedDeliveryAddress}
-            onChangeAddress={() => setIsAddressDialogOpen(true)}
-            compact
-            isSubmitting={createB2BOrderMutation.isPending}
-            onPlaceOrder={handleOpenOrderConfirm}
-          />
-        </div>
-      </aside>
-
-      <B2BCartSheet
-        open={isCartSheetOpen}
-        onOpenChange={setIsCartSheetOpen}
-        cart={cart}
-        cartItemCount={cartItemCount}
-        cartTotal={cartTotal}
-        canOrder={canOrder}
-        deliveryAddress={selectedDeliveryAddress}
-        onChangeAddress={() => setIsAddressDialogOpen(true)}
-        onUpdateQuantity={updateQuantity}
-        onPlaceOrder={handleOpenOrderConfirm}
-        isSubmitting={createB2BOrderMutation.isPending}
-      />
-
-      <B2BOrderConfirmAlert
-        open={isOrderConfirmOpen}
-        onOpenChange={setIsOrderConfirmOpen}
-        cart={cart}
-        cartItemCount={cartItemCount}
-        cartTotal={cartTotal}
-        canOrder={canOrder}
-        deliveryAddress={selectedDeliveryAddress}
-        onUpdateQuantity={updateQuantity}
-        onChangeAddress={() => setIsAddressDialogOpen(true)}
-        onConfirm={handlePlaceOrder}
-        isSubmitting={createB2BOrderMutation.isPending}
-      />
-
-      {isAddressDialogOpen && (
-        <B2BDeliveryAddressDialog
-          open={isAddressDialogOpen}
-          onOpenChange={setIsAddressDialogOpen}
-          restaurantAddress={restaurantAddress}
-          selectedAddress={selectedDeliveryAddress}
-          onSelectAddress={address => setCustomDeliveryAddress(address === restaurantAddress ? '' : address)}
-        />
-      )}
+      <B2BCartAside />
+      <B2BCartSheet />
+      <B2BOrderConfirmAlert />
+      <B2BDeliveryAddressDialog />
 
       <B2BOrderResultDialog
         open={Boolean(orderResult)}
         message={orderResult?.message}
         onOpenChange={open => {
-          if (!open) setOrderResult(null)
+          if (!open) closeOrderResult()
         }}
       />
     </div>
+  )
+}
+
+export default function B2BCommerceOrderCreateView() {
+  return (
+    <B2BCheckoutProvider>
+      <B2BCommerceOrderCreateContent />
+    </B2BCheckoutProvider>
   )
 }

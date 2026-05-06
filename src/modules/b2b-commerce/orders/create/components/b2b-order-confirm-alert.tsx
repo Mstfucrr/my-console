@@ -11,38 +11,14 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
-import type { B2BCartItem } from '../../../types'
+import { useB2BCheckout } from '../context/B2BCheckoutContext'
 import { B2BCartCheckoutSection, B2BCartHeader, B2BCartItemsList } from './b2b-cart-panel'
 
-interface B2BOrderConfirmAlertProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  cart: B2BCartItem[]
-  cartItemCount: number
-  cartTotal: number
-  canOrder: boolean
-  deliveryAddress?: string
-  isSubmitting?: boolean
-  onUpdateQuantity: (productId: string, quantity: number) => void
-  onChangeAddress: () => void
-  onConfirm: () => void
-}
+export function B2BOrderConfirmAlert() {
+  const { isOrderConfirmOpen, closeOrderConfirm, canOrder, isSubmitting, placeOrder } = useB2BCheckout()
 
-export function B2BOrderConfirmAlert({
-  open,
-  onOpenChange,
-  cart,
-  cartItemCount,
-  cartTotal,
-  canOrder,
-  deliveryAddress,
-  isSubmitting = false,
-  onUpdateQuantity,
-  onChangeAddress,
-  onConfirm
-}: B2BOrderConfirmAlertProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={isOrderConfirmOpen} onOpenChange={open => !open && closeOrderConfirm()}>
       <AlertDialogContent size='2xl' className='overflow-hidden'>
         <AlertDialogHeader className='pr-10'>
           <AlertDialogTitle>Siparişi Onayla</AlertDialogTitle>
@@ -52,23 +28,15 @@ export function B2BOrderConfirmAlert({
         </AlertDialogHeader>
 
         <div className='border-border/70 mx-2 overflow-hidden rounded-xl border sm:mx-4'>
-          <B2BCartHeader cartItemCount={cartItemCount} compact />
+          <B2BCartHeader compact />
           <div className='max-h-[42vh] overflow-y-auto p-3'>
-            <B2BCartItemsList cart={cart} onUpdateQuantity={onUpdateQuantity} compact />
+            <B2BCartItemsList compact />
           </div>
-          <B2BCartCheckoutSection
-            cart={cart}
-            cartTotal={cartTotal}
-            canOrder={canOrder}
-            deliveryAddress={deliveryAddress}
-            onChangeAddress={onChangeAddress}
-            compact
-            isSubmitting={isSubmitting}
-          />
+          <B2BCartCheckoutSection compact />
         </div>
 
         <AlertDialogFooter>
-          <Button size='lg' className='w-full gap-2 shadow-sm' disabled={isSubmitting} onClick={onConfirm}>
+          <Button size='sm' className='w-full gap-2 shadow-sm' disabled={!canOrder} onClick={placeOrder}>
             <Check className='size-5' />
             {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
           </Button>
