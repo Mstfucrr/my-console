@@ -1,7 +1,9 @@
 'use client'
 
 import { useProfile } from '@/context/ProfileProvider'
+import type { AxiosError } from 'axios'
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { toast } from 'react-toastify'
 import type { B2BProduct } from '../../../types'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
 import { MIN_B2B_ORDER_AMOUNT } from '../constants'
@@ -37,7 +39,7 @@ type B2BCheckoutContextValue = {
   openOrderConfirm: () => void
   closeOrderConfirm: () => void
   closeOrderResult: () => void
-  placeOrder: () => Promise<void>
+  submitOrder: () => Promise<void>
 }
 
 const B2BCheckoutContext = createContext<B2BCheckoutContextValue | null>(null)
@@ -87,22 +89,31 @@ export function B2BCheckoutProvider({ children }: { children: ReactNode }) {
     setIsOrderConfirmOpen(true)
   }, [canOrder])
 
-  const placeOrder = useCallback(async () => {
+  const submitOrder = useCallback(async () => {
     if (!canOrder) return
 
-    try {
-      const result = await createB2BOrderMutation.mutateAsync({
-        items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity })),
-        address: selectedDeliveryAddress
-      })
+    const result = await toast.promise(
+      async () =>
+        await createB2BOrderMutation.mutateAsync({
+          items: cart.map(item => ({ productId: item.product.id, quantity: item.quantity })),
+          address: selectedDeliveryAddress
+        }),
+      {
+        pending: 'Sipariş oluşturuluyor...',
+        success: {
+          render: ({ data }: { data: OrderResult }) => data?.message ?? 'Sipariş başarıyla oluşturuldu'
+        },
+        error: {
+          render: ({ data }: { data: AxiosError<{ message?: string }> }) =>
+            data?.response?.data?.message ?? 'Sipariş oluşturulurken bir hata oluştu'
+        }
+      }
+    )
 
-      clearCart()
-      setIsCartSheetOpen(false)
-      setIsOrderConfirmOpen(false)
-      setOrderResult(result)
-    } catch {
-      // Hata: global axios / toast middleware
-    }
+    clearCart()
+    setIsCartSheetOpen(false)
+    setIsOrderConfirmOpen(false)
+    setOrderResult(result)
   }, [canOrder, cart, clearCart, createB2BOrderMutation, selectedDeliveryAddress])
 
   const value = useMemo<B2BCheckoutContextValue>(
@@ -130,7 +141,7 @@ export function B2BCheckoutProvider({ children }: { children: ReactNode }) {
       openOrderConfirm,
       closeOrderConfirm,
       closeOrderResult,
-      placeOrder
+      submitOrder
     }),
     [
       addToCart,
@@ -152,7 +163,7 @@ export function B2BCheckoutProvider({ children }: { children: ReactNode }) {
       openCartSheet,
       openOrderConfirm,
       orderResult,
-      placeOrder,
+      submitOrder,
       restaurantAddress,
       selectDeliveryAddress,
       selectedDeliveryAddress,

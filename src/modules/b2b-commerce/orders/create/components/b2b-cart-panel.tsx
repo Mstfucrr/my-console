@@ -120,10 +120,10 @@ export function B2BCartItemsList({ compact = false, emptyClassName, thumbClassNa
 
 interface B2BCartCheckoutSectionProps {
   compact?: boolean
-  onPlaceOrder?: () => void
+  hidePlaceOrderButton?: boolean
 }
 
-export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCartCheckoutSectionProps) {
+export function B2BCartCheckoutSection({ compact = false, hidePlaceOrderButton = false }: B2BCartCheckoutSectionProps) {
   const { cart, cartTotal, canOrder, selectedDeliveryAddress, openAddressDialog, isSubmitting, openOrderConfirm } =
     useB2BCheckout()
 
@@ -131,7 +131,7 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
 
   const remaining = MIN_B2B_ORDER_AMOUNT - cartTotal
   const canSubmitOrder = canOrder && Boolean(selectedDeliveryAddress)
-  const handlePlaceOrder = onPlaceOrder ?? openOrderConfirm
+  const handlePlaceOrder = () => openOrderConfirm()
 
   return (
     <motion.div
@@ -148,7 +148,7 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
         <div className='min-w-0 flex-1'>
           <p className='text-muted-foreground text-xs'>Teslimat Adresi</p>
           <p className='text-foreground line-clamp-2 text-xs font-medium'>
-            {selectedDeliveryAddress || 'Restoran adresi bekleniyor'}
+            {selectedDeliveryAddress || 'Restoran adresi bulunamadı. Lütfen farklı bir adres seçiniz.'}
           </p>
         </div>
         <Button type='button' variant='outline' size='xs' className='shrink-0' onClick={openAddressDialog}>
@@ -163,7 +163,7 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
         </span>
       </div>
 
-      {!canOrder && (
+      {MIN_B2B_ORDER_AMOUNT > cartTotal && (
         <div className='flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3'>
           <AlertCircle className='size-4 shrink-0 text-amber-600' />
           <motion.p
@@ -177,7 +177,7 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
         </div>
       )}
 
-      {onPlaceOrder && (
+      {!hidePlaceOrderButton && (
         <Button
           size={compact ? 'default' : 'lg'}
           className='w-full gap-2 shadow-sm'
@@ -185,7 +185,7 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
           onClick={handlePlaceOrder}
         >
           <Check className={compact ? 'size-4' : 'size-5'} />
-          {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
+          Sepeti Onayla
         </Button>
       )}
     </motion.div>

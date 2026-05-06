@@ -15,7 +15,7 @@ import { useB2BCheckout } from '../context/B2BCheckoutContext'
 import { B2BCartCheckoutSection, B2BCartHeader, B2BCartItemsList } from './b2b-cart-panel'
 
 export function B2BOrderConfirmAlert() {
-  const { isOrderConfirmOpen, closeOrderConfirm, canOrder, isSubmitting, placeOrder } = useB2BCheckout()
+  const { isOrderConfirmOpen, closeOrderConfirm, canOrder, isSubmitting, submitOrder } = useB2BCheckout()
 
   return (
     <AlertDialog open={isOrderConfirmOpen} onOpenChange={open => !open && closeOrderConfirm()}>
@@ -32,11 +32,11 @@ export function B2BOrderConfirmAlert() {
           <div className='max-h-[42vh] overflow-y-auto p-3'>
             <B2BCartItemsList compact />
           </div>
-          <B2BCartCheckoutSection compact />
+          <B2BCartCheckoutSection compact hidePlaceOrderButton />
         </div>
 
-        <AlertDialogFooter>
-          <Button size='sm' className='w-full gap-2 shadow-sm' disabled={!canOrder} onClick={placeOrder}>
+        <AlertDialogFooter className='flex flex-row gap-2'>
+          <Button size='sm' className='w-full gap-2 shadow-sm' disabled={!canOrder} onClick={submitOrder}>
             <Check className='size-5' />
             {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
           </Button>

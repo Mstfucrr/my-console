@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, type FilterOption } from '@/components/ui/filter-card'
 import { useFilter } from '@/hooks/use-filter'
 import { useIsDesktop } from '@/hooks/use-media-query'
+import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { B2BProductGridSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -38,7 +39,7 @@ const sortByOptions: FilterOption[] = [
 function B2BCommerceOrderCreateContent() {
   const [isMobileCatalogOpen, setIsMobileCatalogOpen] = useState(false)
   const isDesktop = useIsDesktop()
-  const { cartItemCount, openCartSheet, orderResult, closeOrderResult } = useB2BCheckout()
+  const { cartItemCount, openCartSheet, orderResult, cartTotal, closeOrderResult } = useB2BCheckout()
   const { gridClassName, options, columnCount, selectCols } = useB2BGridDensity()
 
   const {
@@ -141,12 +142,22 @@ function B2BCommerceOrderCreateContent() {
             <CardTitle className='truncate'>Tedarik Ürünleri {totalProducts > 0 && `(${totalProducts})`}</CardTitle>
           </div>
           <div className='flex flex-row items-center gap-2'>
-            <Button variant='outline' size='xs' className='relative gap-2 shadow-xs xl:hidden' onClick={openCartSheet}>
+            <Button
+              color={cartTotal > 0 ? 'default' : 'secondary'}
+              size='sm'
+              className='fixed top-12 right-2 z-50 gap-2 shadow-xs md:top-20 xl:hidden'
+              onClick={openCartSheet}
+            >
               <ShoppingCart className='size-4' />
               <span>Sepet</span>
               {cartItemCount > 0 && (
                 <span className='bg-primary text-primary-foreground ring-card absolute -top-2 -right-2 flex min-w-5 items-center justify-center rounded-full px-1 text-sm font-medium ring-2'>
                   {cartItemCount}
+                </span>
+              )}
+              {cartTotal > 0 && (
+                <span className='bg-primary text-primary-foreground ring-card absolute -right-2 -bottom-3 flex min-w-5 items-center justify-center rounded-full px-1 text-xs font-medium ring-2'>
+                  {formatCurrency(cartTotal)}
                 </span>
               )}
             </Button>
@@ -235,7 +246,18 @@ function B2BCommerceOrderCreateContent() {
             <B2BProductGridSkeleton gridClassName={gridClassName} count={columnCount * 2} />
           ) : (
             <div className={cn('grid gap-2 sm:gap-4', gridClassName)}>
-              {products.map((product, index) => (
+              {[
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products,
+                ...products
+              ].map((product, index) => (
                 <B2BProductCard key={product.id} product={product} index={index} />
               ))}
             </div>
