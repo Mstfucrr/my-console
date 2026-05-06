@@ -21,16 +21,18 @@ export function B2BCartHeader({ compact = false, rightSlot }: B2BCartHeaderProps
   const { cartItemCount } = useB2BCheckout()
   return (
     <div className={cn('border-border flex items-center justify-between gap-3 border-b', compact ? 'p-3' : 'p-4')}>
-      <div className='flex min-w-0 items-center gap-3'>
-        <div
-          className={cn(
-            'bg-primary/10 text-primary flex shrink-0 items-center justify-center rounded-lg',
-            compact ? 'size-8' : 'size-9'
-          )}
-        >
-          <ShoppingCart className={compact ? 'size-4' : 'size-5'} />
+      <div className='flex w-full min-w-0 items-center justify-between gap-3'>
+        <div className='flex items-center gap-3'>
+          <div
+            className={cn(
+              'bg-primary/10 text-primary flex shrink-0 items-center justify-center rounded-lg',
+              compact ? 'size-8' : 'size-9'
+            )}
+          >
+            <ShoppingCart className={compact ? 'size-4' : 'size-5'} />
+          </div>
+          <h2 className={cn('text-foreground truncate font-bold', compact ? 'text-base' : 'text-lg')}>Sepetim</h2>
         </div>
-        <h2 className={cn('text-foreground truncate font-bold', compact ? 'text-base' : 'text-lg')}>Sepetim</h2>
         <span
           className={cn(
             'bg-primary/10 text-primary shrink-0 rounded-full px-2 py-0.5 font-medium',

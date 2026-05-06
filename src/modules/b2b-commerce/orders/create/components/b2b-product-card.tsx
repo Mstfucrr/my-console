@@ -14,7 +14,7 @@ import {
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRightIcon, Package, Plus, Truck } from 'lucide-react'
+import { Package, Plus, Truck } from 'lucide-react'
 import type { B2BProduct } from '../../../types'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
 import { useB2BCheckout } from '../context/B2BCheckoutContext'
@@ -89,9 +89,6 @@ export function B2BProductCard({ product, index }: B2BProductCardProps) {
                   <span className='bg-secondary/60 -ml-1 rounded-md px-1.5 py-0.5 text-nowrap'>
                     ({product.quantityPerBox} Adet / {product.unit})
                   </span>
-                  <Button variant='link' size='xs' className='text-primary size-auto items-center gap-1 p-0'>
-                    <span>Detay</span> <ArrowRightIcon className='size-3.5' />
-                  </Button>
                 </div>
                 <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10'>
                   {product.name}

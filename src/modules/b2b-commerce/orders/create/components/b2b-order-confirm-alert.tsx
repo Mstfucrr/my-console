@@ -1,14 +1,13 @@
 'use client'
 
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import { useB2BCheckout } from '../context/B2BCheckoutContext'
@@ -18,14 +17,14 @@ export function B2BOrderConfirmAlert() {
   const { isOrderConfirmOpen, closeOrderConfirm, canOrder, isSubmitting, submitOrder } = useB2BCheckout()
 
   return (
-    <AlertDialog open={isOrderConfirmOpen} onOpenChange={open => !open && closeOrderConfirm()}>
-      <AlertDialogContent size='2xl' className='overflow-hidden'>
-        <AlertDialogHeader className='pr-10'>
-          <AlertDialogTitle>Siparişi Onayla</AlertDialogTitle>
-          <AlertDialogDescription>
+    <Dialog open={isOrderConfirmOpen} onOpenChange={open => !open && closeOrderConfirm()}>
+      <DialogContent size='2xl' className='overflow-hidden'>
+        <DialogHeader className='pr-10'>
+          <DialogTitle>Siparişi Onayla</DialogTitle>
+          <DialogDescription>
             Sepetini ve teslimat adresini kontrol ederek siparişi tamamlayabilirsin.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          </DialogDescription>
+        </DialogHeader>
 
         <div className='border-border/70 mx-2 overflow-hidden rounded-xl border sm:mx-4'>
           <B2BCartHeader compact />
@@ -35,7 +34,7 @@ export function B2BOrderConfirmAlert() {
           <B2BCartCheckoutSection compact hidePlaceOrderButton />
         </div>
 
-        <AlertDialogFooter className='flex flex-row'>
+        <DialogFooter className='flex flex-row'>
           <Button size='sm' className='w-full gap-2 shadow-sm' disabled={!canOrder} onClick={submitOrder}>
             <Check className='size-5' />
             {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
@@ -46,12 +45,12 @@ export function B2BOrderConfirmAlert() {
             variant='outline'
             color='secondary'
             disabled={isSubmitting}
-            asChild
+            onClick={closeOrderConfirm}
           >
-            <AlertDialogCancel>Vazgeç</AlertDialogCancel>
+            Vazgeç
           </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

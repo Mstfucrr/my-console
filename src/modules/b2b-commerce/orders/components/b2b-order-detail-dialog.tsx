@@ -14,7 +14,7 @@ import {
   useB2BOrderDetailQuery,
   useB2BPaymentInformationQuery
 } from '@/modules/b2b-commerce/orders/hooks/useB2BOrderDetailQueries'
-import { AlertCircle, CheckCircle2, CreditCard, MapPin, Package } from 'lucide-react'
+import { AlertCircle, CheckCircle2, MapPin, Package } from 'lucide-react'
 
 interface B2BOrderDetailDialogProps {
   orderId?: string
@@ -107,10 +107,7 @@ export function B2BOrderDetailDialog({ orderId, onClose }: B2BOrderDetailDialogP
                     ) : (
                       <>
                         <div className='flex items-start justify-between gap-2'>
-                          <span className='text-muted-foreground flex items-center gap-1 text-nowrap'>
-                            <CreditCard className='size-4' />
-                            IBAN
-                          </span>
+                          <span className='text-muted-foreground text-nowrap'>IBAN</span>
                           <span className='text-foreground max-w-[70%] text-right break-all'>
                             {paymentInformation?.iban || '-'}
                           </span>
