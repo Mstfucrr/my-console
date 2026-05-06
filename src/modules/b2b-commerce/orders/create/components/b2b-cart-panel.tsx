@@ -134,7 +134,10 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
   const handlePlaceOrder = onPlaceOrder ?? openOrderConfirm
 
   return (
-    <div className={cn('border-border bg-card border-t', compact ? 'space-y-3 p-3' : 'space-y-4 p-4')}>
+    <motion.div
+      layout='position'
+      className={cn('border-border bg-card border-t', compact ? 'space-y-3 p-3' : 'space-y-4 p-4')}
+    >
       <div
         className={cn(
           'bg-secondary/45 border-border/50 flex items-center gap-3 rounded-xl border',
@@ -185,6 +188,6 @@ export function B2BCartCheckoutSection({ compact = false, onPlaceOrder }: B2BCar
           {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
         </Button>
       )}
-    </div>
+    </motion.div>
   )
 }
