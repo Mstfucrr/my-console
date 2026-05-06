@@ -10,7 +10,6 @@ interface B2BCartSheetProps {
   cart: B2BCartItem[]
   cartItemCount: number
   cartTotal: number
-  minOrderAmount: number
   canOrder: boolean
   deliveryAddress?: string
   onChangeAddress?: () => void
@@ -25,7 +24,6 @@ export function B2BCartSheet({
   cart,
   cartItemCount,
   cartTotal,
-  minOrderAmount,
   canOrder,
   deliveryAddress,
   onChangeAddress,
@@ -51,7 +49,6 @@ export function B2BCartSheet({
           <B2BCartCheckoutSection
             cart={cart}
             cartTotal={cartTotal}
-            minOrderAmount={minOrderAmount}
             canOrder={canOrder}
             deliveryAddress={deliveryAddress}
             onChangeAddress={onChangeAddress}

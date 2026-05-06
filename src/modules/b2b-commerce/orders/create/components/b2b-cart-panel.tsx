@@ -9,6 +9,7 @@ import { AlertCircle, Check, MapPin, Package, ShoppingCart } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { B2BCartItem } from '../../../types'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
+import { MIN_B2B_ORDER_AMOUNT } from '../constants'
 import { B2BCartQuantityButtons } from './b2b-cart-quantity-buttons'
 
 interface B2BCartHeaderProps {
@@ -127,7 +128,6 @@ export function B2BCartItemsList({
 interface B2BCartCheckoutSectionProps {
   cart: B2BCartItem[]
   cartTotal: number
-  minOrderAmount: number
   canOrder: boolean
   deliveryAddress?: string
   onChangeAddress?: () => void
@@ -139,7 +139,6 @@ interface B2BCartCheckoutSectionProps {
 export function B2BCartCheckoutSection({
   cart,
   cartTotal,
-  minOrderAmount,
   canOrder,
   deliveryAddress,
   onChangeAddress,
@@ -149,7 +148,8 @@ export function B2BCartCheckoutSection({
 }: B2BCartCheckoutSectionProps) {
   if (cart.length === 0) return null
 
-  const remaining = minOrderAmount - cartTotal
+  const remaining = MIN_B2B_ORDER_AMOUNT - cartTotal
+  const canSubmitOrder = canOrder && Boolean(deliveryAddress)
 
   return (
     <div className={cn('border-border bg-card border-t', compact ? 'space-y-3 p-3' : 'space-y-4 p-4')}>
@@ -189,15 +189,22 @@ export function B2BCartCheckoutSection({
             exit={{ opacity: 0, y: -10 }}
             className='text-xs text-amber-800'
           >
-            Minimum {formatCurrency(minOrderAmount)} tutarina {formatCurrency(remaining)} kaldi
+            Minimum {formatCurrency(MIN_B2B_ORDER_AMOUNT)} tutarına {formatCurrency(remaining)} kaldı
           </motion.p>
         </div>
       )}
 
-      <Button size={compact ? 'default' : 'lg'} className='w-full gap-2 shadow-sm' onClick={onPlaceOrder}>
-        <Check className={compact ? 'size-4' : 'size-5'} />
-        {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
-      </Button>
+      {onPlaceOrder && (
+        <Button
+          size={compact ? 'default' : 'lg'}
+          className='w-full gap-2 shadow-sm'
+          disabled={isSubmitting || !canSubmitOrder}
+          onClick={onPlaceOrder}
+        >
+          <Check className={compact ? 'size-4' : 'size-5'} />
+          {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
+        </Button>
+      )}
     </div>
   )
 }

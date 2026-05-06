@@ -4,7 +4,6 @@ import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterCard, SearchInput, SortSelect, type FilterOption } from '@/components/ui/filter-card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useProfile } from '@/context/ProfileProvider'
 import { useFilter } from '@/hooks/use-filter'
 import { useIsDesktop } from '@/hooks/use-media-query'
@@ -20,6 +19,7 @@ import { B2BCartSheet } from './components/b2b-cart-sheet'
 import { B2BCatalogSidebar } from './components/b2b-catalog-sidebar'
 import { B2BDeliveryAddressDialog } from './components/b2b-delivery-address-dialog'
 import { B2BGridDensityToolbar } from './components/b2b-grid-density-toolbar'
+import { B2BOrderConfirmAlert } from './components/b2b-order-confirm-alert'
 import { B2BOrderResultDialog } from './components/b2b-order-result-dialog'
 import { B2BProductCard } from './components/b2b-product-card'
 import { MIN_B2B_ORDER_AMOUNT } from './constants'
@@ -42,6 +42,7 @@ const sortByOptions: FilterOption[] = [
 export default function B2BCommerceOrderCreateView() {
   const [isCartSheetOpen, setIsCartSheetOpen] = useState(false)
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false)
+  const [isOrderConfirmOpen, setIsOrderConfirmOpen] = useState(false)
   const [customDeliveryAddress, setCustomDeliveryAddress] = useState('')
   const [isMobileCatalogOpen, setIsMobileCatalogOpen] = useState(false)
   const [orderResult, setOrderResult] = useState<{ orderId: string; message: string } | null>(null)
@@ -151,10 +152,17 @@ export default function B2BCommerceOrderCreateView() {
 
       clearCart()
       setIsCartSheetOpen(false)
+      setIsOrderConfirmOpen(false)
       setOrderResult(result)
     } catch {
       // Hata: global axios / toast middleware
     }
+  }
+
+  const handleOpenOrderConfirm = () => {
+    if (!canOrder || cart.length === 0 || !selectedDeliveryAddress || createB2BOrderMutation.isPending) return
+    setIsCartSheetOpen(false)
+    setIsOrderConfirmOpen(true)
   }
 
   return (
@@ -176,15 +184,7 @@ export default function B2BCommerceOrderCreateView() {
       <Card className='border-border/70 min-w-0 flex-1 overflow-hidden shadow-sm'>
         <CardHeader className='flex flex-row items-center justify-between gap-3 bg-linear-to-r'>
           <div className='min-w-0 space-y-1'>
-            <CardTitle className='truncate'>Tedarik ürünleri</CardTitle>
-
-            {showProductSkeleton ? (
-              <Skeleton className='h-3 w-36 rounded-md' />
-            ) : (
-              <p className='text-muted-foreground flex min-h-4 items-center text-xs'>
-                {totalProducts} ürün listeleniyor
-              </p>
-            )}
+            <CardTitle className='truncate'>Tedarik Ürünleri {totalProducts > 0 && `(${totalProducts})`}</CardTitle>
           </div>
           <div className='flex flex-row items-center gap-2'>
             <Button
@@ -331,13 +331,12 @@ export default function B2BCommerceOrderCreateView() {
           <B2BCartCheckoutSection
             cart={cart}
             cartTotal={cartTotal}
-            minOrderAmount={MIN_B2B_ORDER_AMOUNT}
             canOrder={canOrder}
             deliveryAddress={selectedDeliveryAddress}
             onChangeAddress={() => setIsAddressDialogOpen(true)}
             compact
             isSubmitting={createB2BOrderMutation.isPending}
-            onPlaceOrder={handlePlaceOrder}
+            onPlaceOrder={handleOpenOrderConfirm}
           />
         </div>
       </aside>
@@ -348,12 +347,25 @@ export default function B2BCommerceOrderCreateView() {
         cart={cart}
         cartItemCount={cartItemCount}
         cartTotal={cartTotal}
-        minOrderAmount={MIN_B2B_ORDER_AMOUNT}
         canOrder={canOrder}
         deliveryAddress={selectedDeliveryAddress}
         onChangeAddress={() => setIsAddressDialogOpen(true)}
         onUpdateQuantity={updateQuantity}
-        onPlaceOrder={handlePlaceOrder}
+        onPlaceOrder={handleOpenOrderConfirm}
+        isSubmitting={createB2BOrderMutation.isPending}
+      />
+
+      <B2BOrderConfirmAlert
+        open={isOrderConfirmOpen}
+        onOpenChange={setIsOrderConfirmOpen}
+        cart={cart}
+        cartItemCount={cartItemCount}
+        cartTotal={cartTotal}
+        canOrder={canOrder}
+        deliveryAddress={selectedDeliveryAddress}
+        onUpdateQuantity={updateQuantity}
+        onChangeAddress={() => setIsAddressDialogOpen(true)}
+        onConfirm={handlePlaceOrder}
         isSubmitting={createB2BOrderMutation.isPending}
       />
 
