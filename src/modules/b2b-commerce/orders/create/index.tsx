@@ -246,18 +246,7 @@ function B2BCommerceOrderCreateContent() {
             <B2BProductGridSkeleton gridClassName={gridClassName} count={columnCount * 2} />
           ) : (
             <div className={cn('grid gap-2 sm:gap-4', gridClassName)}>
-              {[
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products,
-                ...products
-              ].map((product, index) => (
+              {products.map((product, index) => (
                 <B2BProductCard key={product.id} product={product} index={index} />
               ))}
             </div>
