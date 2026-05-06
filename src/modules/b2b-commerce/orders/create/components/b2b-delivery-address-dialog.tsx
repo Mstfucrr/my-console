@@ -127,7 +127,7 @@ function B2BDeliveryAddressDialogContent({
 
   return (
     <Dialog open onOpenChange={open => !open && closeAddressDialog()}>
-      <DialogContent size='2xl'>
+      <DialogContent size='2xl' className='z-1001' overlayClass='z-1000'>
         <DialogHeader>
           <DialogTitle>Teslimat Adresi</DialogTitle>
         </DialogHeader>

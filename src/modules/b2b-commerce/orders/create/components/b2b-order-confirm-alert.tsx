@@ -35,14 +35,21 @@ export function B2BOrderConfirmAlert() {
           <B2BCartCheckoutSection compact hidePlaceOrderButton />
         </div>
 
-        <AlertDialogFooter className='flex flex-row gap-2'>
+        <AlertDialogFooter className='flex flex-row'>
           <Button size='sm' className='w-full gap-2 shadow-sm' disabled={!canOrder} onClick={submitOrder}>
             <Check className='size-5' />
             {isSubmitting ? 'Sipariş Alınıyor...' : 'Sipariş Ver'}
           </Button>
-          <AlertDialogCancel variant='outline' color='secondary' disabled={isSubmitting}>
-            Vazgeç
-          </AlertDialogCancel>
+          <Button
+            size='sm'
+            className='w-auto gap-2 shadow-sm'
+            variant='outline'
+            color='secondary'
+            disabled={isSubmitting}
+            asChild
+          >
+            <AlertDialogCancel>Vazgeç</AlertDialogCancel>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
