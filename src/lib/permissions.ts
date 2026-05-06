@@ -9,7 +9,7 @@ export const isActiveTenant = process.env.NEXT_PUBLIC_ACTIVE_TENANT === 'true'
 
 export const canSubmitStoreApplication = process.env.NEXT_PUBLIC_ACTIVE_STORE_APPLICATION === 'true'
 
-export const canB2BCommerce = process.env.NEXT_PUBLIC_CAN_B2B_COMMERCE === 'true'
+export const canB2BCommerce = process.env.NEXT_PUBLIC_ACTIVE_B2B_COMMERCE === 'true'
 
 /** Tenant modülü kapalı mı? (layout'ta URL değiştirmeden bakım göstermek için) */
 export const isTenantModuleAvailable = (profile?: IProfileResponse): boolean => isTenantUser(profile) && isActiveTenant
