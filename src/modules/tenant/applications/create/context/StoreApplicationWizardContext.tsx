@@ -8,10 +8,12 @@ import {
 import { track } from '@/lib/analytics'
 import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
 import type { StoreApplicationStepCompletedEvent } from '@/lib/analytics/types'
+import { parseStoreApplicationWizardStep } from '@/lib/nuqs-parsers'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
+import { useQueryState } from 'nuqs'
 import {
   createContext,
   useCallback,
@@ -91,7 +93,8 @@ const rhfStepFormOptions = { mode: 'onSubmit' as const, reValidateMode: 'onChang
 export function StoreApplicationWizardProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const [stepIndex, setStepIndex] = useState<StoreApplicationWizardStepIndex>(StoreApplicationWizardStepIndex.Location)
+  const [stepQuery, setStepQuery] = useQueryState('step', parseStoreApplicationWizardStep)
+  const stepIndex = APPLICATION_STEPS.findIndex(step => step.key === stepQuery)
   const [mapFillsAddressFromPin, setMapFillsAddressFromPin] = useState(true)
 
   const locationForm = useForm<LocationFormData>({
@@ -145,15 +148,15 @@ export function StoreApplicationWizardProvider({ children }: { children: ReactNo
             status: 'success'
           })
         }
-        setStepIndex(i => Math.min(StoreApplicationWizardStepIndex.WorkingHours, i + 1))
+        setStepQuery(APPLICATION_STEPS[stepIndex + 1]?.key ?? APPLICATION_STEPS[0].key)
       },
       () => {}
     )()
-  }, [branchForm, locationForm, stepIndex, workingHoursForm])
+  }, [stepIndex, locationForm, branchForm, workingHoursForm, setStepQuery])
 
   const goBack = useCallback(() => {
-    setStepIndex(i => Math.max(StoreApplicationWizardStepIndex.Location, i - 1))
-  }, [])
+    setStepQuery(APPLICATION_STEPS[stepIndex - 1]?.key ?? APPLICATION_STEPS[0].key)
+  }, [stepIndex, setStepQuery])
 
   const submitFinal = useCallback(async () => {
     await workingHoursForm.handleSubmit(async () => {
