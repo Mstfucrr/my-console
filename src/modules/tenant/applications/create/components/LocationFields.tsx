@@ -76,7 +76,7 @@ export function LocationFields() {
             <Button
               type='button'
               variant='outline'
-              size='sm'
+              size='xs'
               onClick={handleCurrentLocationClick}
               disabled={isDetectingCurrentLocation}
               className='gap-2'
