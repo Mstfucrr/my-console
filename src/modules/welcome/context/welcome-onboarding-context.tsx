@@ -24,7 +24,6 @@ export type WelcomeOnboardingContextValue = {
   goNext: () => void
   goBack: () => void
   goToFinancialStep: () => void
-  showFourthStepperItem: boolean
   form: UseFormReturn<WelcomeFinancialFormValues>
   taxNumberDisplay: string | undefined
   onFinancialSubmit: (data: WelcomeFinancialFormValues) => void
@@ -110,15 +109,12 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
     [createFinance, router, queryClient]
   )
 
-  const showFourthStepperItem = step >= WelcomeOnboardingStep.Financial
-
   const value = useMemo<WelcomeOnboardingContextValue>(
     () => ({
       step,
       goNext,
       goBack,
       goToFinancialStep,
-      showFourthStepperItem,
       form,
       taxNumberDisplay: profile?.data?.taxNumber,
       onFinancialSubmit,
@@ -132,7 +128,6 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
       goNext,
       goBack,
       goToFinancialStep,
-      showFourthStepperItem,
       onFinancialSubmit,
       onFinancialCancel,
       uploadFinancialDocument,

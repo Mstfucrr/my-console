@@ -15,14 +15,11 @@ import {
 } from './welcome-onboarding-steps'
 
 function WelcomeStepper() {
-  const { step, showFourthStepperItem } = useWelcomeOnboarding()
-  const labels = showFourthStepperItem
-    ? WELCOME_ONBOARDING_STEPPER_LABELS
-    : WELCOME_ONBOARDING_STEPPER_LABELS.slice(0, 3)
+  const { step } = useWelcomeOnboarding()
 
   return (
     <nav aria-label='Onboarding adımları' className='mx-auto flex flex-wrap items-center justify-center gap-2'>
-      {labels.map((label, index) => {
+      {WELCOME_ONBOARDING_STEPPER_LABELS.map((label, index) => {
         const isDone = index < step
         const isActive = index === step
 
@@ -52,12 +49,11 @@ function WelcomeStepper() {
 }
 
 function WelcomeFooterDots() {
-  const { step, showFourthStepperItem } = useWelcomeOnboarding()
-  const count = showFourthStepperItem ? WELCOME_ONBOARDING_STEPPER_LABELS.length : 3
+  const { step } = useWelcomeOnboarding()
 
   return (
     <div className='flex items-center gap-2' role='tablist' aria-label='Adım göstergesi'>
-      {Array.from({ length: count }, (_, i) => (
+      {WELCOME_ONBOARDING_STEPPER_LABELS.map((_, i) => (
         <motion.span
           key={i}
           layoutId={`footer-dot-${i}`}
@@ -133,35 +129,17 @@ export function WelcomeOnboardingShell() {
   const isFinancialStep = step === WelcomeOnboardingStep.Financial
 
   return (
-    <div
-      className={cn(
-        'bg-muted/40 flex items-center justify-center px-2 max-sm:items-baseline sm:p-6',
-        isFinancialStep ? 'max-md:h-screen' : 'h-screen min-h-max'
-      )}
-    >
+    <div className='bg-muted/40 flex min-h-screen items-center justify-center px-2 py-4 sm:p-6'>
       <motion.div
-        layout='size'
-        transition={{ layout: { duration: 0.3 } }}
-        className={cn(
-          'bg-card text-card-foreground border-border flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border object-top shadow-md',
-          isFinancialStep ? 'h-auto max-w-3xl' : 'h-[680px] max-md:h-full max-sm:h-full'
-        )}
+        layout
+        transition={{ layout: { duration: 0.2 } }}
+        className='bg-card text-card-foreground border-border flex h-[680px] max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border object-top shadow-md max-sm:max-h-[calc(100vh-1rem)]'
         role='region'
         aria-label='Onboarding'
       >
         <header className='border-border shrink-0 border-b'>
-          <div
-            className={cn(
-              'flex flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-8',
-              isFinancialStep && 'pr-3!'
-            )}
-          >
-            <div
-              className={cn(
-                'text-primary flex shrink-0 items-center justify-center md:-mr-20 lg:justify-start',
-                isFinancialStep && 'mr-0!'
-              )}
-            >
+          <div className='flex flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-8'>
+            <div className='text-primary flex shrink-0 items-center justify-center md:-mr-20 lg:justify-start'>
               <span className='sr-only'>fiyuu</span>
               <SiteLogoBig className='h-7 w-auto sm:h-10' aria-hidden />
             </div>
@@ -170,12 +148,25 @@ export function WelcomeOnboardingShell() {
           <div className='bg-primary h-0.5 w-full' aria-hidden />
         </header>
 
-        <div className='min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-5 sm:px-6 md:content-center lg:px-8'>
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22 }}
+          className={cn(
+            'min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-5 sm:px-6 lg:px-8',
+            !isFinancialStep && 'md:content-center'
+          )}
+        >
           {step === WelcomeOnboardingStep.Intro && <WelcomeStepIntro />}
           {step === WelcomeOnboardingStep.Partner && <WelcomeStepPartner />}
           {step === WelcomeOnboardingStep.Application && <WelcomeStepApplication />}
-          {isFinancialStep && <WelcomeStepFinancial />}
-        </div>
+          {isFinancialStep && (
+            <div className='mx-auto w-full max-w-3xl'>
+              <WelcomeStepFinancial />
+            </div>
+          )}
+        </motion.div>
 
         <WelcomeFooterNav />
       </motion.div>
