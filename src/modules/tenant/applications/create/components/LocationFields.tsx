@@ -4,12 +4,14 @@ import { FormCommandSelectField } from '@/components/form/FormCommandSelectField
 import { FormInputField } from '@/components/form/FormInputField'
 import { FormTextareaField } from '@/components/form/FormTextareaField'
 import { TooltippedElement } from '@/components/tooltipped-element'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { InfoIcon, LocateFixedIcon, MapPinIcon } from 'lucide-react'
+import { InfoIcon, Loader2Icon, LocateFixedIcon, MapPinIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useWatch } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import { useStoreApplicationWizard } from '../context/StoreApplicationWizardContext'
 
 const MapPicker = dynamic(() => import('../components/MapPicker').then(m => m.MapPicker), {
@@ -26,6 +28,8 @@ export function LocationFields() {
     locationForm: form,
     addressFields,
     handleMapPositionChange,
+    handleUseCurrentLocation,
+    isDetectingCurrentLocation,
     mapFillsAddressFromPin,
     setMapFillsAddressFromPin
   } = useStoreApplicationWizard()
@@ -50,6 +54,15 @@ export function LocationFields() {
   const latitude = useWatch({ control: form.control, name: 'latitude' })
   const longitude = useWatch({ control: form.control, name: 'longitude' })
 
+  const handleCurrentLocationClick = async () => {
+    const didApplyLocation = await handleUseCurrentLocation()
+    if (!didApplyLocation) {
+      toast.error('Konum alınamadı. Lütfen tarayıcınızın konum paylaşma izinlerini kontrol edin.', {
+        autoClose: 5000
+      })
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -59,7 +72,22 @@ export function LocationFields() {
               <MapPinIcon className='size-4.5' /> Şube Konum Bilgileri
             </CardTitle>
           </div>
-          <div className='mt-auto flex items-center gap-2 sm:shrink-0'>
+          <div className='mt-auto flex flex-wrap items-center gap-2 sm:shrink-0'>
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              onClick={handleCurrentLocationClick}
+              disabled={isDetectingCurrentLocation}
+              className='gap-2'
+            >
+              {isDetectingCurrentLocation ? (
+                <Loader2Icon className='size-4 animate-spin' />
+              ) : (
+                <LocateFixedIcon className='size-4' />
+              )}
+              Mevcut konum
+            </Button>
             <Switch
               id='map-fills-address-from-pin'
               checked={mapFillsAddressFromPin}

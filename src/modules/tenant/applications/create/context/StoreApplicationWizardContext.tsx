@@ -78,6 +78,8 @@ type StoreApplicationWizardContextValue = {
   isSubmitting: boolean
   addressFields: StoreApplicationAddressFields
   handleMapPositionChange: (lat: number, lng: number) => void
+  handleUseCurrentLocation: () => Promise<boolean>
+  isDetectingCurrentLocation: boolean
   mapFillsAddressFromPin: boolean
   setMapFillsAddressFromPin: Dispatch<SetStateAction<boolean>>
 }
@@ -114,7 +116,11 @@ export function StoreApplicationWizardProvider({ children }: { children: ReactNo
     fullAddressFormat: 'store'
   })
 
-  const { handleMapPositionChange } = useStoreLocationSync(locationForm, address, mapFillsAddressFromPin)
+  const { handleMapPositionChange, handleUseCurrentLocation, isDetectingCurrentLocation } = useStoreLocationSync(
+    locationForm,
+    address,
+    mapFillsAddressFromPin
+  )
 
   const { data: sectors = [], isLoading: isLoadingSectors } = useQuery({
     queryKey: ['store-applications', 'sectors'],
@@ -217,6 +223,8 @@ export function StoreApplicationWizardProvider({ children }: { children: ReactNo
     isSubmitting,
     addressFields: address,
     handleMapPositionChange,
+    handleUseCurrentLocation,
+    isDetectingCurrentLocation,
     mapFillsAddressFromPin,
     setMapFillsAddressFromPin
   }
