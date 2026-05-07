@@ -185,20 +185,20 @@ function B2BProductDetailDialog({
             <DetailTile label='Marka' value={product.brand.name} />
           </div>
 
-          <div className='border-border/60 flex items-end justify-between gap-3 rounded-xl border p-3'>
+          <div className='border-border/60 flex items-center justify-between gap-3 rounded-xl border p-3'>
             <div>
-              <span className='text-primary text-base font-bold'>{formatCurrency(unitPrice)}</span>
+              <span className='text-primary xs:text-xl text-base font-bold'>{formatCurrency(unitPrice)}</span>
               {product.hasDiscount && (
                 <p className='text-muted-foreground text-xs line-through'>{formatCurrency(product.price)}</p>
               )}
             </div>
 
             {cartQty > 0 ? (
-              <div className='flex min-w-32 items-center gap-2'>
+              <div className='flex items-center gap-2 max-sm:min-w-32'>
                 <B2BCartQuantityButtons quantity={cartQty} onIncrement={onIncrementQty} onDecrement={onDecrementQty} />
               </div>
             ) : (
-              <Button size='xs' onClick={onAddToCart} className='gap-1 shadow-xs'>
+              <Button size='sm' onClick={onAddToCart} className='gap-1 shadow-xs'>
                 <Plus className='size-4' />
                 <span>Ekle</span>
               </Button>
