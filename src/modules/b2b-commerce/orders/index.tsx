@@ -2,19 +2,38 @@
 
 import PageError from '@/components/page-error'
 import { Pagination } from '@/components/pagination'
+import { TooltippedElement } from '@/components/tooltipped-element'
+import { Button } from '@/components/ui/button'
+import { ButtonGroup } from '@/components/ui/button-group'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { B2BOrdersGridSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
-import { Package } from 'lucide-react'
+import { useViewModeStore } from '@/store/view-mode'
+import { LayoutGrid, Package, Table } from 'lucide-react'
 import { useState } from 'react'
-import { useB2BOrdersQuery } from './hooks/useB2BOrdersQuery'
 import { B2BOrderCard } from './components/b2b-order-card'
 import { B2BOrderDetailDialog } from './components/b2b-order-detail-dialog'
+import { B2BOrdersTableView } from './components/b2b-orders-table-view'
+import { useB2BOrdersQuery } from './hooks/useB2BOrdersQuery'
+
+const viewModeButtons = [
+  {
+    label: 'Kart Görünümü',
+    Icon: LayoutGrid,
+    value: 'card' as const
+  },
+  {
+    label: 'Tablo Görünümü',
+    Icon: Table,
+    value: 'table' as const
+  }
+]
 
 export default function B2BCommerceOrdersView() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>()
   const { data, total, isLoading, isFetching, error, pagination, handlePageChange, handlePageSizeChange, refetch } =
     useB2BOrdersQuery()
+  const { viewMode, setViewMode } = useViewModeStore()
 
   if (error) {
     return (
@@ -40,9 +59,34 @@ export default function B2BCommerceOrdersView() {
               <p className='text-muted-foreground flex min-h-4 items-center text-xs'>{total} sipariş kaydı</p>
             )}
           </div>
+          <TooltippedElement tooltipContent='Görünüm Modunu Değiştir'>
+            <ButtonGroup className='mb-0'>
+              {viewModeButtons.map(({ label, Icon, value }) => (
+                <Button
+                  key={value}
+                  variant={viewMode === value ? null : 'soft'}
+                  size='icon-sm'
+                  onClick={() => setViewMode(value)}
+                >
+                  <Icon className='size-4.5' />
+                  <span className='sr-only'>{label}</span>
+                </Button>
+              ))}
+            </ButtonGroup>
+          </TooltippedElement>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
-          {isLoading ? (
+          {viewMode === 'table' ? (
+            <B2BOrdersTableView
+              orders={data}
+              isLoading={isLoading}
+              isFetching={isFetching}
+              total={total}
+              page={pagination.page}
+              pageSize={pagination.limit}
+              onSelect={setSelectedOrderId}
+            />
+          ) : isLoading ? (
             <B2BOrdersGridSkeleton />
           ) : data.length === 0 ? (
             <div className='bg-secondary/20 border-border/60 rounded-xl border border-dashed py-16 text-center'>

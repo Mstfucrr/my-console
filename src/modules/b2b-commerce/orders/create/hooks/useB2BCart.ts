@@ -2,8 +2,8 @@
 
 import { getOrDefault, setItem } from '@/lib/local-storage-helper'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { B2B_CART_STORAGE_KEY } from '../constants'
 import type { B2BCartItem, B2BProduct } from '../../../types'
+import { B2B_CART_STORAGE_KEY } from '../constants'
 
 export function useB2BCart() {
   const [cart, setCart] = useState<B2BCartItem[]>([])
