@@ -113,7 +113,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
                       </span>
                     </div>
                   ) : (
-                    <span className='text-primary text-base font-bold'>{formatCurrency(product.price)}</span>
+                    <span className='text-primary text-base font-bold sm:text-lg'>{formatCurrency(product.price)}</span>
                   )}
                 </div>
 
