@@ -247,7 +247,7 @@ function B2BCommerceOrderCreateContent() {
           ) : (
             <div className={cn('grid gap-2 sm:gap-4', gridClassName)}>
               {products.map((product, index) => (
-                <B2BProductCard key={product.id} product={product} index={index} />
+                <B2BProductCard key={product.id} product={product} index={index} columnCount={columnCount} />
               ))}
             </div>
           )}

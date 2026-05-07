@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { useIsMobile } from '@/hooks/use-media-query'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -23,15 +24,19 @@ import { B2BCartQuantityButtons } from './b2b-cart-quantity-buttons'
 interface B2BProductCardProps {
   product: B2BProduct
   index: number
+  columnCount: number
 }
 
-export function B2BProductCard({ product, index }: B2BProductCardProps) {
+export function B2BProductCard({ product, index, columnCount }: B2BProductCardProps) {
   const { addToCart, updateQuantity, getCartQuantity } = useB2BCheckout()
+  const isMobile = useIsMobile()
   const unitPrice = getB2BUnitPrice(product)
   const imageSrc = product.image?.trim() ?? ''
   const cartQty = getCartQuantity(product.id)
   const handleIncrementQty = () => updateQuantity(product.id, cartQty + 1)
   const handleDecrementQty = () => updateQuantity(product.id, cartQty - 1)
+
+  const isMobileAndColumnCountIs1 = isMobile && columnCount === 1
 
   return (
     <AnimatePresence mode='popLayout'>
@@ -40,7 +45,7 @@ export function B2BProductCard({ product, index }: B2BProductCardProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ delay: index * 0.02, duration: 0.25 }}
-        className='h-[280px] sm:h-[325px]'
+        className='h-[290px] sm:h-[325px]'
         layoutId={`product-card-${product.id}`}
       >
         <B2BProductDetailDialog
@@ -52,53 +57,49 @@ export function B2BProductCard({ product, index }: B2BProductCardProps) {
           onDecrementQty={handleDecrementQty}
         >
           <Card className='border-border/70 hover:border-primary/25 hover:shadow-primary/10 group h-full overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg'>
-            <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
-              {imageSrc ? (
-                <CustomImage
-                  src={imageSrc}
-                  alt={product.name}
-                  className='h-full w-full object-contain object-center p-2 transition-transform duration-300 group-hover:scale-[1.02]'
-                />
-              ) : (
-                <div className='bg-background/70 ring-border/60 flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1 transition-transform duration-300 group-hover:scale-105 sm:size-20'>
-                  <Package className='text-muted-foreground/35 size-9 sm:size-11' />
+            <CardContent className={cn('flex h-full flex-1 flex-col justify-between px-0! py-1 max-sm:pt-0!')}>
+              <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
+                {imageSrc ? (
+                  <CustomImage
+                    src={imageSrc}
+                    alt={product.name}
+                    className='h-full w-full object-contain object-center p-2 transition-transform duration-300 group-hover:scale-[1.02]'
+                  />
+                ) : (
+                  <div className='bg-background/70 ring-border/60 flex size-16 items-center justify-center rounded-2xl shadow-sm ring-1 transition-transform duration-300 group-hover:scale-105 sm:size-20'>
+                    <Package className='text-muted-foreground/35 size-9 sm:size-11' />
+                  </div>
+                )}
+
+                <div className='absolute top-2 left-2 flex flex-col gap-1'>
+                  {product.hasDiscount && (
+                    <span className='absolute top-0 -left-10 flex h-7 w-28 -rotate-45 items-center justify-center rounded-b-full bg-red-500 px-1.5 py-0.5 text-sm font-medium text-white'>
+                      %{product.discountPercent}
+                    </span>
+                  )}
+                  {product.freeShipping && (
+                    <span className='flex items-center gap-0.5 rounded-md bg-green-500 px-1.5 py-0.5 text-sm font-medium text-white shadow-sm'>
+                      <Truck className='size-4.5' />
+                    </span>
+                  )}
                 </div>
-              )}
-
-              <div className='absolute top-2 left-2 flex flex-col gap-1'>
-                {product.hasDiscount && (
-                  <span className='absolute top-0 -left-10 flex h-7 w-28 -rotate-45 items-center justify-center rounded-b-full bg-red-500 px-1.5 py-0.5 text-sm font-medium text-white'>
-                    %{product.discountPercent}
-                  </span>
-                )}
-                {product.freeShipping && (
-                  <span className='flex items-center gap-0.5 rounded-md bg-green-500 px-1.5 py-0.5 text-sm font-medium text-white shadow-sm'>
-                    <Truck className='size-4.5' />
-                  </span>
-                )}
               </div>
-            </div>
 
-            <CardContent
-              className={cn(
-                'flex min-h-40 flex-1 flex-col justify-between px-3 py-1 max-sm:px-3! max-sm:pt-0! max-sm:pb-5! sm:h-auto'
-              )}
-            >
-              <div className='flex flex-col gap-1'>
+              <div className='flex flex-col gap-1 px-3'>
                 <div className='text-muted-foreground flex flex-wrap items-start justify-between gap-1 py-0.5 text-[10px] sm:text-[11px]'>
                   <span className='bg-secondary/60 -ml-1 rounded-md px-1.5 py-0.5 text-nowrap'>
                     ({product.quantityPerBox} Adet / {product.unit})
                   </span>
                 </div>
                 <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10'>
-                  {product.name}
+                  {product.name} {product.name}
                 </h3>
               </div>
 
               <div
                 className={cn(
-                  'mt-auto flex w-full flex-wrap items-end justify-between max-sm:items-center sm:gap-2',
-                  cartQty > 0 ? 'max-sm:flex-col' : 'flex-row'
+                  'mt-auto flex w-full flex-wrap items-end justify-between gap-1 px-3 max-sm:items-center sm:gap-2',
+                  isMobileAndColumnCountIs1 ? 'flex-row flex-nowrap gap-4' : 'max-sm:flex-col'
                 )}
               >
                 <div className='min-w-0'>
@@ -110,31 +111,33 @@ export function B2BProductCard({ product, index }: B2BProductCardProps) {
                       </span>
                     </div>
                   ) : (
-                    <span className='text-primary xs:text-base text-sm font-bold'>{formatCurrency(product.price)}</span>
+                    <span className='text-primary text-base font-bold'>{formatCurrency(product.price)}</span>
                   )}
                 </div>
 
-                {cartQty > 0 ? (
-                  <div className='flex items-center gap-2 max-sm:min-w-28'>
-                    <B2BCartQuantityButtons
-                      quantity={cartQty}
-                      onIncrement={handleIncrementQty}
-                      onDecrement={handleDecrementQty}
-                    />
-                  </div>
-                ) : (
-                  <Button
-                    size='xs'
-                    onClick={e => {
-                      e.stopPropagation()
-                      addToCart(product)
-                    }}
-                    className='gap-1 shadow-xs'
-                  >
-                    <Plus className='size-4' />
-                    <span>Ekle</span>
-                  </Button>
-                )}
+                <div className={isMobileAndColumnCountIs1 ? 'max-sm:w-auto' : 'max-sm:w-full'}>
+                  {cartQty > 0 ? (
+                    <div className='flex w-full items-center gap-2'>
+                      <B2BCartQuantityButtons
+                        quantity={cartQty}
+                        onIncrement={handleIncrementQty}
+                        onDecrement={handleDecrementQty}
+                      />
+                    </div>
+                  ) : (
+                    <Button
+                      size='xs'
+                      onClick={e => {
+                        e.stopPropagation()
+                        addToCart(product)
+                      }}
+                      className='w-full gap-1 shadow-xs'
+                    >
+                      <Plus className='size-4' />
+                      <span>Ekle</span>
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
