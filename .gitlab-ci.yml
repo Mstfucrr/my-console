@@ -84,7 +84,7 @@ syntax-check:
   before_script:
     - npm install -g pnpm
   script:
-    - pnpm install --no-strict-peer-dependencies
+    - pnpm install --no-strict-peer-dependencies --no-frozen-lockfile
     - pnpm lint
     - pnpm prettier-check
   rules:
