@@ -63,7 +63,7 @@ export function B2BProductCardSkeleton({ className }: { className?: string }) {
         </div>
         <div className='flex items-end justify-between gap-2 pt-1'>
           <Skeleton className='h-7 w-24 rounded-md' />
-          <Skeleton className='h-9 w-[5.5rem] rounded-md' />
+          <Skeleton className='h-9 w-22 rounded-md' />
         </div>
       </CardContent>
     </Card>
