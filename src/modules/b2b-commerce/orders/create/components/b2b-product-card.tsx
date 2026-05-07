@@ -57,7 +57,9 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
           onDecrementQty={handleDecrementQty}
         >
           <Card className='border-border/70 hover:border-primary/25 hover:shadow-primary/10 group h-full overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg'>
-            <CardContent className={cn('flex h-full flex-1 flex-col justify-between px-0! py-1 max-sm:pt-0!')}>
+            <CardContent
+              className={cn('flex h-full flex-1 flex-col justify-between px-0! py-1 pb-1.5 max-sm:pt-0! sm:pb-2')}
+            >
               <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
                 {imageSrc ? (
                   <CustomImage
@@ -92,7 +94,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
                   </span>
                 </div>
                 <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10'>
-                  {product.name} {product.name}
+                  {product.name}
                 </h3>
               </div>
 
