@@ -3,7 +3,7 @@ import { Clock, CreditCard, LineChart, MessageCircle } from 'lucide-react'
 export const INTRO_STATS = [
   { value: '5 dk', label: 'Ortalama başvuru süresi' },
   { value: '4', label: 'Kolay adım' },
-  { value: '7 gün', label: '21 Saat canlı destek' },
+  { value: '7 gün', label: 'Canlı destek' },
   { value: '40+', label: 'POS firması ile entegre' }
 ] as const
 
@@ -48,7 +48,7 @@ export const PARTNER_FEATURES = [
   {
     icon: MessageCircle,
     title: 'Müşteri Hizmetleri Anında Yanınızda',
-    description: 'Canlı destek ile 7/24 destek alın ve sorunlarınızı anında çözün.',
+    description: 'Canlı destek ile sorunlarınızı anında çözün.',
     boxClass: 'bg-secondary text-secondary-foreground'
   }
 ] as const
