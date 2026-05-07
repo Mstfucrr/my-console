@@ -17,18 +17,21 @@ const columns: ColumnDef<B2BOrderSummaryWithAction>[] = [
   {
     accessorKey: 'orderDate',
     header: 'Tarih',
+    enableSorting: false,
     size: 220,
     cell: ({ row }) => <span className='text-sm font-medium'>{formatDateTR(row.original.orderDate, true)}</span>
   },
   {
     accessorKey: 'productCount',
     header: 'Ürün',
+    enableSorting: false,
     size: 120,
     cell: ({ row }) => <span className='text-sm'>{row.original.productCount} ürün</span>
   },
   {
     accessorKey: 'isPaymentReceived',
     header: 'Ödeme Durumu',
+    enableSorting: false,
     size: 180,
     cell: ({ row }) =>
       row.original.isPaymentReceived ? (
@@ -46,14 +49,15 @@ const columns: ColumnDef<B2BOrderSummaryWithAction>[] = [
   {
     accessorKey: 'totalAmount',
     header: 'Toplam',
+    enableSorting: false,
     meta: { align: 'right' },
     cell: ({ row }) => <span className='text-primary font-bold'>{formatCurrency(row.original.totalAmount)}</span>
   },
   {
     id: 'actions',
     header: '',
-    size: 120,
     enableSorting: false,
+    size: 120,
     cell: ({ row }) => (
       <Button
         variant='link'
