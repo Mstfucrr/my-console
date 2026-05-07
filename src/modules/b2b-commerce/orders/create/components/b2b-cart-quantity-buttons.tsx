@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useIsMobile } from '@/hooks/use-media-query'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 
@@ -14,7 +14,7 @@ interface B2BCartQuantityButtonsProps {
 
 export function B2BCartQuantityButtons({ quantity, onIncrement, onDecrement, className }: B2BCartQuantityButtonsProps) {
   const isRemove = quantity <= 1
-  const isMobile = useIsMobile()
+  const isSmallerThanTablet = useIsSmallerThanTablet()
 
   return (
     <div
@@ -25,7 +25,7 @@ export function B2BCartQuantityButtons({ quantity, onIncrement, onDecrement, cla
     >
       <Button
         type='button'
-        size={isMobile ? 'icon-sm' : 'icon-xs'}
+        size={isSmallerThanTablet ? 'icon-sm' : 'icon-xs'}
         variant='outline'
         color='secondary'
         className={cn(isRemove && 'border-destructive/30 text-destructive hover:text-destructive')}
@@ -42,7 +42,7 @@ export function B2BCartQuantityButtons({ quantity, onIncrement, onDecrement, cla
       </span>
       <Button
         type='button'
-        size={isMobile ? 'icon-sm' : 'icon-xs'}
+        size={isSmallerThanTablet ? 'icon-sm' : 'icon-xs'}
         onClick={e => {
           e.stopPropagation()
           onIncrement()

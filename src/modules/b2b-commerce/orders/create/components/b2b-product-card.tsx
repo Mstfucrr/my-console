@@ -45,7 +45,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ delay: index * 0.02, duration: 0.25 }}
-        className='h-[290px] sm:h-[325px]'
+        className='h-[290px] sm:h-[310px]'
         layoutId={`product-card-${product.id}`}
       >
         <B2BProductDetailDialog
@@ -57,9 +57,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
           onDecrementQty={handleDecrementQty}
         >
           <Card className='border-border/70 hover:border-primary/25 hover:shadow-primary/10 group h-full overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg'>
-            <CardContent
-              className={cn('flex h-full flex-1 flex-col justify-between px-0! py-1 pb-1.5 max-sm:pt-0! sm:pb-2')}
-            >
+            <CardContent className={cn('flex h-full flex-1 flex-col justify-between px-0! py-1 pt-0! pb-1.5 sm:pb-2')}>
               <div className='from-secondary/70 via-muted/60 to-background relative flex h-32 items-center justify-center overflow-hidden bg-linear-to-br sm:h-40'>
                 {imageSrc ? (
                   <CustomImage
@@ -100,7 +98,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
 
               <div
                 className={cn(
-                  'mt-auto flex w-full flex-wrap items-end justify-between gap-1 px-3 max-sm:items-center sm:gap-2',
+                  'mt-auto flex w-full items-end justify-between gap-1 px-2 max-md:flex-wrap max-sm:items-center sm:gap-2',
                   isMobileAndColumnCountIs1 ? 'flex-row flex-nowrap gap-4' : 'max-sm:flex-col'
                 )}
               >
@@ -113,7 +111,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
                       </span>
                     </div>
                   ) : (
-                    <span className='text-primary text-base font-bold sm:text-lg'>{formatCurrency(product.price)}</span>
+                    <span className='text-primary text-base font-bold xl:text-lg'>{formatCurrency(product.price)}</span>
                   )}
                 </div>
 
@@ -128,15 +126,15 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
                     </div>
                   ) : (
                     <Button
-                      size='xs'
+                      size='sm'
                       onClick={e => {
                         e.stopPropagation()
                         addToCart(product)
                       }}
-                      className='w-full gap-1 shadow-xs'
+                      className='w-full gap-1 p-2 shadow-xs'
                     >
                       <Plus className='size-4' />
-                      <span>Ekle</span>
+                      <span className='text-sm'>Ekle</span>
                     </Button>
                   )}
                 </div>
@@ -200,7 +198,7 @@ function B2BProductDetailDialog({
             ) : (
               <Button size='sm' onClick={onAddToCart} className='gap-1 shadow-xs'>
                 <Plus className='size-4' />
-                <span>Ekle</span>
+                <span className='text-sm'>Ekle</span>
               </Button>
             )}
           </div>

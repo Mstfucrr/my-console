@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { B2BProductGridSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, Package, Search, ShoppingCart, SlidersHorizontal } from 'lucide-react'
+import { ChevronDown, Package, Search, ShoppingBasket, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { parseB2BFilterSelection, serializeB2BFilterSelection } from '../../utils/b2b-filter-selection'
 import { B2BCartAside } from './components/b2b-cart-aside'
@@ -121,7 +121,7 @@ function B2BCommerceOrderCreateContent() {
   }
 
   return (
-    <div className='flex flex-col gap-5 pb-6 max-sm:p-0 xl:flex-row xl:items-start'>
+    <div className='flex flex-col gap-5 pb-6 max-sm:p-0 md:flex-row md:items-start'>
       {isDesktop && (
         <B2BCatalogSidebar
           categories={categories}
@@ -145,10 +145,10 @@ function B2BCommerceOrderCreateContent() {
             <Button
               color={cartTotal > 0 ? 'default' : 'secondary'}
               size='sm'
-              className='fixed top-12 right-2 z-50 gap-2 shadow-xs md:top-20 xl:hidden'
+              className='fixed bottom-20 left-[calc(50%-11rem)] z-50 gap-2 text-sm shadow-xs lg:hidden'
               onClick={openCartSheet}
             >
-              <ShoppingCart className='size-4' />
+              <ShoppingBasket className='size-4' />
               <span>Sepet</span>
               {cartItemCount > 0 && (
                 <span className='bg-primary text-primary-foreground ring-card absolute -top-2 -right-2 flex min-w-5 items-center justify-center rounded-full px-1 text-sm font-medium ring-2'>
