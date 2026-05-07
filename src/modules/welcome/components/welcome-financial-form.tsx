@@ -20,7 +20,7 @@ const ACCOUNT_TYPES: { value: WelcomeAccountType; label: string; Icon: LucideIco
 ]
 
 export function WelcomeFinancialForm() {
-  const { form, taxNumberDisplay, onFinancialSubmit, onFinancialCancel, isCreatingFinance } = useWelcomeOnboarding()
+  const { form, onFinancialSubmit, onFinancialCancel, isCreatingFinance } = useWelcomeOnboarding()
   const companyType = form.watch('companyType')
   const {
     field: accountTypeField,
@@ -142,13 +142,16 @@ export function WelcomeFinancialForm() {
                 transition={{ duration: 0.3 }}
                 className='content-end overflow-hidden'
               >
-                <FormInputField
+                <FormMaskedInputField
+                  mask='0 0 0 0 0 0 0 0 0 0'
+                  lazy={false}
+                  type='text'
                   name='vkn'
                   control={form.control}
                   label='VKN'
                   placeholder='10 haneli VKN'
-                  autoFirstLetterUppercase
-                  value={taxNumberDisplay}
+                  tabIndex={-1}
+                  className='font-mono'
                   disabled
                   readOnly
                 />

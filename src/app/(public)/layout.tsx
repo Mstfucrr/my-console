@@ -61,28 +61,31 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
         <div className='flex w-full flex-auto flex-col items-center justify-between gap-5 lg:w-[45%] xl:w-[35%]'>
           <OnboardingProvider>
             <div className='flex size-full min-h-min flex-col items-center pt-10 pb-5 md:pt-28'>
-              <div className='flex w-full max-w-sm flex-col gap-4 px-5'>{children}</div>
+              <div className='flex w-full max-w-sm flex-col gap-4 px-5'>
+                {children}
+
+                {!isLoginPage && isInOnboardingPage && (
+                  <span className='text-muted-foreground text-center text-sm font-medium'>
+                    Zaten hesabınız var mı?{' '}
+                    <Link href='/login' className='text-primary hover:text-primary-700 font-medium underline'>
+                      Giriş Yap
+                    </Link>
+                  </span>
+                )}
+                {isLoginPage && isActiveTenant && (
+                  <div className='bg-primary-pink/10 rounded-md px-2 py-1 text-center text-sm font-medium text-black'>
+                    fiyuu işletmesi değil misin?{' '}
+                    <Link
+                      href='/onboarding'
+                      className='text-primary-pink hover:text-primary-pink-700 font-bold underline transition-colors'
+                    >
+                      fiyuu İşletmesi Ol
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </OnboardingProvider>
-          {!isLoginPage && isInOnboardingPage && (
-            <span className='text-muted-foreground text-sm font-medium'>
-              Zaten hesabınız var mı?{' '}
-              <Link href='/login' className='text-primary hover:text-primary-700 font-medium underline'>
-                Giriş Yap
-              </Link>
-            </span>
-          )}
-          {isLoginPage && isActiveTenant && (
-            <div className='bg-primary-pink/10 rounded-md px-2 py-1 text-sm font-medium text-black'>
-              fiyuu işletmesi değil misin?{' '}
-              <Link
-                href='/onboarding'
-                className='text-primary-pink hover:text-primary-pink-700 font-bold underline transition-colors'
-              >
-                fiyuu İşletmesi Ol
-              </Link>
-            </div>
-          )}
           <div className='bg-primary text-muted flex w-full items-center justify-center gap-2 px-6 py-6 text-sm sm:px-12 xl:px-36'>
             <span>
               Sisteme giriş yaparken bir sorun ile karşılaşıyorsanız lütfen{' '}

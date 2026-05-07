@@ -63,7 +63,10 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
 
   const form = useForm<WelcomeFinancialFormValues>({
     resolver: zodResolver(welcomeFinancialFormSchema),
-    defaultValues: defaultWelcomeFinancialValues
+    defaultValues: {
+      ...defaultWelcomeFinancialValues,
+      vkn: profile?.data?.taxNumber
+    }
   })
 
   const goNext = useCallback(() => {

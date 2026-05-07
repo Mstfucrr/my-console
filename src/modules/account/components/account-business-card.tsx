@@ -86,7 +86,10 @@ export function AccountBusinessCard({ data }: { data: IProfileData | undefined }
                 tabIndex={-1}
               />
 
-              <FormInputField
+              <FormMaskedInputField
+                mask='0 0 0 0 0 0 0 0 0 0'
+                lazy={false}
+                type='text'
                 name='vkn'
                 control={form.control}
                 label='VKN'
