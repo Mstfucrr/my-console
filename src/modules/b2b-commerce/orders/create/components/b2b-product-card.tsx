@@ -93,7 +93,7 @@ export function B2BProductCard({ product, index, columnCount }: B2BProductCardPr
                     ({product.quantityPerBox} Adet / {product.unit})
                   </span>
                 </div>
-                <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10'>
+                <h3 className='text-foreground line-clamp-3 min-h-9 text-xs font-semibold sm:min-h-10 sm:text-sm'>
                   {product.name}
                 </h3>
               </div>
