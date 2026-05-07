@@ -11,7 +11,8 @@ export function useB2BOrdersQuery() {
   const queryRes = useQuery({
     queryKey: ['b2b-commerce', pagination],
     queryFn: () => b2bCommerceService.listOrders({ pagination }),
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 60 * 3 // 3 saat
   })
 
   return {

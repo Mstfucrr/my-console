@@ -5,8 +5,8 @@ import { Pagination } from '@/components/pagination'
 import { TooltippedElement } from '@/components/tooltipped-element'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
+import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { B2BOrdersGridSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { useViewModeStore } from '@/store/view-mode'
 import { LayoutGrid, Package, Table } from 'lucide-react'
@@ -52,28 +52,26 @@ export default function B2BCommerceOrdersView() {
       <Card className='border-border/70 overflow-hidden'>
         <CardHeader className='flex flex-row items-center justify-between bg-linear-to-r'>
           <div className='space-y-1'>
-            <CardTitle>Siparişlerim</CardTitle>
-            {isLoading ? (
-              <Skeleton className='h-3 w-32 rounded-md' />
-            ) : (
-              <p className='text-muted-foreground flex min-h-4 items-center text-xs'>{total} sipariş kaydı</p>
-            )}
+            <CardTitle>Siparişlerim {total > 0 ? `(${total})` : ''}</CardTitle>
           </div>
-          <TooltippedElement tooltipContent='Görünüm Modunu Değiştir'>
-            <ButtonGroup className='mb-0'>
-              {viewModeButtons.map(({ label, Icon, value }) => (
-                <Button
-                  key={value}
-                  variant={viewMode === value ? null : 'soft'}
-                  size='icon-sm'
-                  onClick={() => setViewMode(value)}
-                >
-                  <Icon className='size-4.5' />
-                  <span className='sr-only'>{label}</span>
-                </Button>
-              ))}
-            </ButtonGroup>
-          </TooltippedElement>
+          <div className='flex items-center gap-2'>
+            <RefreshButton onClick={refetch} isIconButton isLoading={isFetching} />
+            <TooltippedElement tooltipContent='Görünüm Modunu Değiştir'>
+              <ButtonGroup className='mb-0'>
+                {viewModeButtons.map(({ label, Icon, value }) => (
+                  <Button
+                    key={value}
+                    variant={viewMode === value ? null : 'soft'}
+                    size='icon-sm'
+                    onClick={() => setViewMode(value)}
+                  >
+                    <Icon className='size-4.5' />
+                    <span className='sr-only'>{label}</span>
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </TooltippedElement>
+          </div>
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
           {viewMode === 'table' ? (
