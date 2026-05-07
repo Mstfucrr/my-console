@@ -8,6 +8,7 @@ import type { AccountType } from '@/types/profile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Mail } from 'lucide-react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { FormProvider, useController, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthTurnstile } from '../components/turnstile'
@@ -31,11 +32,13 @@ interface ForgotPasswordEmailStepProps {
 
 export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepProps) {
   const turnstileState = useTurnstile()
+  const searchParams = useSearchParams()
+  const accountType = searchParams.get('at') === 'tenant' ? 'tenant' : 'store'
 
   const emailForm = useForm<EmailFormType>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
-      accountType: 'store',
+      accountType: accountType,
       email: ''
     }
   })

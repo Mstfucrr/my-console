@@ -155,7 +155,10 @@ export function LoginForm() {
           <AuthTurnstile turnstileState={turnstileState} />
 
           <div className='flex justify-end'>
-            <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
+            <Link
+              href={accountTypeField.value === 'store' ? '/forgot-password' : `/forgot-password?at=tenant`}
+              className='text-primary text-sm hover:underline'
+            >
               Şifremi unuttum
             </Link>
           </div>
