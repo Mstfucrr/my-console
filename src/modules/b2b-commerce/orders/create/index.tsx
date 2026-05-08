@@ -121,7 +121,7 @@ function B2BCommerceOrderCreateContent() {
   }
 
   return (
-    <div className='flex flex-col gap-5 pb-6 max-sm:p-0 md:flex-row md:items-start'>
+    <div className='flex flex-col gap-4 pb-6 max-sm:p-0 md:flex-row md:items-start'>
       {isDesktop && (
         <B2BCatalogSidebar
           categories={categories}
