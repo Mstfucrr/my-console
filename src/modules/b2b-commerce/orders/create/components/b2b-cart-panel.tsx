@@ -35,7 +35,7 @@ export function B2BCartHeader({ compact = false, rightSlot }: B2BCartHeaderProps
         </div>
         <span
           className={cn(
-            'bg-primary/10 text-primary shrink-0 rounded-full px-2 py-0.5 font-medium',
+            'bg-primary/10 text-primary shrink-0 rounded-full px-2 py-0.5 font-medium max-lg:mr-5',
             compact ? 'text-xs' : 'text-sm'
           )}
         >
