@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const welcomeFinancialFormSchema = z
+export const businessInfoFormSchema = z
   .object({
     accountType: z.enum(['platform', 'tenant']).optional(),
     taxOffice: z.string().min(1, '').max(120, 'En fazla 120 karakter'),
@@ -40,9 +40,9 @@ export const welcomeFinancialFormSchema = z
     }
   })
 
-export type WelcomeFinancialFormValues = z.infer<typeof welcomeFinancialFormSchema>
+export type BusinessInfoFormValues = z.infer<typeof businessInfoFormSchema>
 
-export const defaultWelcomeFinancialValues: Partial<WelcomeFinancialFormValues> = {
+export const defaultBusinessInfoValues: Partial<BusinessInfoFormValues> = {
   taxOffice: '',
   companyName: '',
   companyType: 'Bireysel',

@@ -3,10 +3,10 @@
 import { useProfile } from '@/context/ProfileProvider'
 import { parseBusinessSetupStep } from '@/lib/nuqs-parsers'
 import {
-  defaultWelcomeFinancialValues,
-  welcomeFinancialFormSchema,
-  type WelcomeFinancialFormValues
-} from '@/modules/welcome/schemas/welcome-financial-schema'
+  defaultBusinessInfoValues,
+  businessInfoFormSchema,
+  type BusinessInfoFormValues
+} from '@/modules/business-setup/schemas/business-info-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
@@ -16,33 +16,33 @@ import { createContext, useCallback, useContext, useMemo, type ReactNode } from 
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { BUSINESS_SETUP_STEP_QUERY_KEYS, BusinessSetupStep } from '../constants'
-import { financeService } from '../service/finance.service'
-import { SaveFinancialDetailsRequest, WelcomeDocType } from '../types'
+import { businessInfoService } from '../service/business-info.service'
+import { SaveBusinessInfoRequest, BusinessInfoDocType } from '../types'
 
-export type WelcomeOnboardingContextValue = {
+export type BusinessSetupContextValue = {
   step: BusinessSetupStep
   goNext: () => void
   goBack: () => void
   goToBusinessInfoStep: () => void
-  form: UseFormReturn<WelcomeFinancialFormValues>
+  form: UseFormReturn<BusinessInfoFormValues>
   taxNumberDisplay: string | undefined
-  onBusinessInfoSubmit: (data: WelcomeFinancialFormValues) => void
+  onBusinessInfoSubmit: (data: BusinessInfoFormValues) => void
   onBusinessInfoCancel: () => void
-  uploadFinancialDocument: (data: { file: File; docType: WelcomeDocType }) => Promise<string>
-  isCreatingFinance: boolean
+  uploadBusinessInfoDocument: (data: { file: File; docType: BusinessInfoDocType }) => Promise<string>
+  isSavingBusinessInfo: boolean
 }
 
-const WelcomeOnboardingContext = createContext<WelcomeOnboardingContextValue | null>(null)
+const BusinessSetupContext = createContext<BusinessSetupContextValue | null>(null)
 
-export function useWelcomeOnboarding() {
-  const ctx = useContext(WelcomeOnboardingContext)
+export function useBusinessSetup() {
+  const ctx = useContext(BusinessSetupContext)
   if (!ctx) {
-    throw new Error('useWelcomeOnboarding must be used within WelcomeOnboardingProvider')
+    throw new Error('useBusinessSetup must be used within BusinessSetupProvider')
   }
   return ctx
 }
 
-export function WelcomeOnboardingProvider({ children }: { children: ReactNode }) {
+export function BusinessSetupProvider({ children }: { children: ReactNode }) {
   const { profile } = useProfile()
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -51,19 +51,19 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   const stepIndex = BUSINESS_SETUP_STEP_QUERY_KEYS.indexOf(stepQuery)
   const step = (stepIndex === -1 ? BusinessSetupStep.Intro : stepIndex) as BusinessSetupStep
 
-  const { mutateAsync: createFinance, isPending: isCreatingFinance } = useMutation({
-    mutationFn: (data: SaveFinancialDetailsRequest) => financeService.createFinance(data)
+  const { mutateAsync: saveBusinessInfo, isPending: isSavingBusinessInfo } = useMutation({
+    mutationFn: (data: SaveBusinessInfoRequest) => businessInfoService.saveBusinessInfo(data)
   })
 
-  const { mutateAsync: uploadFinancialDocument } = useMutation({
-    mutationFn: ({ file, docType }: { file: File; docType: WelcomeDocType }) =>
-      financeService.uploadDocument(file, docType)
+  const { mutateAsync: uploadBusinessInfoDocument } = useMutation({
+    mutationFn: ({ file, docType }: { file: File; docType: BusinessInfoDocType }) =>
+      businessInfoService.uploadDocument(file, docType)
   })
 
-  const form = useForm<WelcomeFinancialFormValues>({
-    resolver: zodResolver(welcomeFinancialFormSchema),
+  const form = useForm<BusinessInfoFormValues>({
+    resolver: zodResolver(businessInfoFormSchema),
     defaultValues: {
-      ...defaultWelcomeFinancialValues,
+      ...defaultBusinessInfoValues,
       vkn: profile?.data?.taxNumber
     }
   })
@@ -87,10 +87,10 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   }, [setStepQuery])
 
   const onBusinessInfoSubmit = useCallback(
-    (data: WelcomeFinancialFormValues) => {
+    (data: BusinessInfoFormValues) => {
       toast.promise(
         async () => {
-          await createFinance({ ...data, iban: 'TR' + data.iban, vkn: undefined })
+          await saveBusinessInfo({ ...data, iban: 'TR' + data.iban, vkn: undefined })
           queryClient.invalidateQueries({ queryKey: ['profile'] })
           router.push('/applications/new')
         },
@@ -105,10 +105,10 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
         }
       )
     },
-    [createFinance, router, queryClient]
+    [saveBusinessInfo, router, queryClient]
   )
 
-  const value = useMemo<WelcomeOnboardingContextValue>(
+  const value = useMemo<BusinessSetupContextValue>(
     () => ({
       step,
       goNext,
@@ -118,8 +118,8 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
       taxNumberDisplay: profile?.data?.taxNumber,
       onBusinessInfoSubmit,
       onBusinessInfoCancel,
-      uploadFinancialDocument,
-      isCreatingFinance
+      uploadBusinessInfoDocument,
+      isSavingBusinessInfo
     }),
     [
       step,
@@ -129,11 +129,11 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
       goToBusinessInfoStep,
       onBusinessInfoSubmit,
       onBusinessInfoCancel,
-      uploadFinancialDocument,
-      isCreatingFinance,
+      uploadBusinessInfoDocument,
+      isSavingBusinessInfo,
       profile?.data?.taxNumber
     ]
   )
 
-  return <WelcomeOnboardingContext.Provider value={value}>{children}</WelcomeOnboardingContext.Provider>
+  return <BusinessSetupContext.Provider value={value}>{children}</BusinessSetupContext.Provider>
 }

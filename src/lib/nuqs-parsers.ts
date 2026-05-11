@@ -1,5 +1,5 @@
 import { APPLICATION_STEPS } from '@/modules/tenant/applications/create/constants'
-import { BUSINESS_SETUP_STEP_QUERY_KEYS } from '@/modules/welcome/constants'
+import { BUSINESS_SETUP_STEP_QUERY_KEYS } from '@/modules/business-setup/constants'
 import { createParser, parseAsStringLiteral } from 'nuqs'
 
 export const parseBusinessSetupStep = parseAsStringLiteral(BUSINESS_SETUP_STEP_QUERY_KEYS)

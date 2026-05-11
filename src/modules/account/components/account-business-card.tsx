@@ -4,14 +4,14 @@ import { FormInputField } from '@/components/form/FormInputField'
 import { FormMaskedInputField } from '@/components/form/FormMaskedInputField'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
-import { WelcomeCompanyType } from '@/modules/welcome/types'
+import { BusinessInfoCompanyType } from '@/modules/business-setup/types'
 import type { IProfileData } from '@/types/profile'
 import { Building2Icon } from 'lucide-react'
 import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
 type AccountBusinessFormValues = {
-  companyType: WelcomeCompanyType
+  companyType: BusinessInfoCompanyType
   companyName: string
   taxOffice: string
   tckn: string
@@ -23,7 +23,7 @@ export function AccountBusinessCard({ data }: { data: IProfileData | undefined }
   const fd = useMemo(() => data?.financialDetails, [data])
   const form = useForm<AccountBusinessFormValues>({
     defaultValues: {
-      companyType: fd?.companyType as WelcomeCompanyType,
+      companyType: fd?.companyType as BusinessInfoCompanyType,
       companyName: fd?.companyName ?? '',
       taxOffice: fd?.taxOffice ?? '',
       tckn: fd?.tckn ?? '',

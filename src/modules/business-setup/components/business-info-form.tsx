@@ -9,18 +9,18 @@ import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, Building, Building2Icon, LucideIcon, User } from 'lucide-react'
 import { useController } from 'react-hook-form'
-import { useWelcomeOnboarding } from '../context/welcome-onboarding-context'
-import type { WelcomeAccountType, WelcomeCompanyType } from '../types'
-import { WelcomeDocumentUploadSection } from './welcome-document-upload-section'
+import { useBusinessSetup } from '../context/business-setup-context'
+import type { BusinessInfoAccountType, BusinessInfoCompanyType } from '../types'
+import { BusinessInfoDocumentUploadSection } from './business-info-document-upload-section'
 
-const COMPANY_TYPES: WelcomeCompanyType[] = ['Bireysel', 'Kurumsal']
-const ACCOUNT_TYPES: { value: WelcomeAccountType; label: string; Icon: LucideIcon }[] = [
+const COMPANY_TYPES: BusinessInfoCompanyType[] = ['Bireysel', 'Kurumsal']
+const ACCOUNT_TYPES: { value: BusinessInfoAccountType; label: string; Icon: LucideIcon }[] = [
   { value: 'platform', label: 'Platform', Icon: Building2Icon },
   { value: 'tenant', label: 'İşletme', Icon: User }
 ]
 
-export function WelcomeFinancialForm() {
-  const { form, onBusinessInfoSubmit, onBusinessInfoCancel, isCreatingFinance } = useWelcomeOnboarding()
+export function BusinessInfoForm() {
+  const { form, onBusinessInfoSubmit, onBusinessInfoCancel, isSavingBusinessInfo } = useBusinessSetup()
   const companyType = form.watch('companyType')
   const {
     field: accountTypeField,
@@ -31,7 +31,7 @@ export function WelcomeFinancialForm() {
     fieldState: { error: companyTypeError }
   } = useController({ name: 'companyType', control: form.control })
 
-  const setCompanyType = (v: WelcomeCompanyType) => {
+  const setCompanyType = (v: BusinessInfoCompanyType) => {
     companyTypeField.onChange(v)
     form.setValue('tckn', '')
     if (v === 'Bireysel') {
@@ -52,7 +52,7 @@ export function WelcomeFinancialForm() {
                 <Button
                   key={type.value}
                   type='button'
-                  data-testid={`welcome-financial-account-type-${type.value}`}
+                  data-testid={`business-info-account-type-${type.value}`}
                   size='md'
                   variant={accountTypeField.value === type.value ? undefined : 'outline'}
                   onClick={() => accountTypeField.onChange(type.value)}
@@ -173,13 +173,13 @@ export function WelcomeFinancialForm() {
           />
         </div>
 
-        <WelcomeDocumentUploadSection />
+        <BusinessInfoDocumentUploadSection />
 
         <div className='flex gap-3 pt-4'>
           <Button type='button' size='sm' variant='outline' className='flex-1' onClick={onBusinessInfoCancel}>
             İptal
           </Button>
-          <LoadingButton type='submit' size='sm' className='flex-1 gap-2' isLoading={isCreatingFinance}>
+          <LoadingButton type='submit' size='sm' className='flex-1 gap-2' isLoading={isSavingBusinessInfo}>
             Kaydet ve Devam Et
             <ArrowRight className='h-4 w-4' />
           </LoadingButton>

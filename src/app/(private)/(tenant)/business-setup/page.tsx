@@ -1,7 +1,7 @@
 'use client'
 
-import { WelcomeOnboardingView } from '@/modules/welcome'
+import { BusinessSetupView } from '@/modules/business-setup'
 
-export default function WelcomePage() {
-  return <WelcomeOnboardingView />
+export default function BusinessSetupPage() {
+  return <BusinessSetupView />
 }

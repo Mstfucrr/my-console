@@ -2,8 +2,7 @@
 
 import { SupportMessageCircle } from '@/components/svg'
 import { TooltippedElement } from '@/components/tooltipped-element'
-import { ButtonProps } from '@/components/ui/button'
-import { ConfirmButton } from '@/components/ui/confirm-button'
+import { Button } from '@/components/ui/button'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useProfile } from '@/context/ProfileProvider'
@@ -124,21 +123,15 @@ export function SupportDialog({
       >
         {open && showLiveSupportChatFlag && (
           <TooltippedElement tooltipContent='Kapat' className='text-xs'>
-            <ConfirmButton
+            <Button
               className='absolute -top-1 -left-1'
               size='icon-xs'
               color='primary'
               data-testid='support-dialog-close-button'
-              confirmationMessage='Destek İletişimini kapatmak istediğinize emin misiniz?'
-              confirmButtonMessage='Kapat'
-              confirmButtonColor='destructive'
-              confirmButtonProps={{ 'data-testid': 'support-dialog-close-confirm' } as ButtonProps}
-              cancelButtonMessage='İptal'
-              cancelButtonColor='secondary'
-              onConfirm={() => handleOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
             >
               <X className='size-full' />
-            </ConfirmButton>
+            </Button>
           </TooltippedElement>
         )}
 

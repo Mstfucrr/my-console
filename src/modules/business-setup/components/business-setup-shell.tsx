@@ -3,22 +3,22 @@
 import { SiteLogoBig } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BUSINESS_SETUP_STEPPER_LABELS, BusinessSetupStep } from '@/modules/welcome/constants'
-import { useWelcomeOnboarding } from '@/modules/welcome/context/welcome-onboarding-context'
+import { BUSINESS_SETUP_STEPPER_LABELS, BusinessSetupStep } from '@/modules/business-setup/constants'
+import { useBusinessSetup } from '@/modules/business-setup/context/business-setup-context'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import {
-  WelcomeStepApplication,
-  WelcomeStepBusinessInfo,
-  WelcomeStepIntro,
-  WelcomeStepPartner
-} from './welcome-onboarding-steps'
+  BusinessInfoStep,
+  BusinessSetupApplicationProcessStep,
+  BusinessSetupIntroStep,
+  BusinessSetupPartnerBenefitsStep
+} from './business-setup-steps'
 
-function WelcomeStepper() {
-  const { step } = useWelcomeOnboarding()
+function BusinessSetupStepper() {
+  const { step } = useBusinessSetup()
 
   return (
-    <nav aria-label='Onboarding adımları' className='mx-auto flex flex-wrap items-center justify-center gap-2'>
+    <nav aria-label='İşletme kurulum adımları' className='mx-auto flex flex-wrap items-center justify-center gap-2'>
       {BUSINESS_SETUP_STEPPER_LABELS.map((label, index) => {
         const isDone = index < step
         const isActive = index === step
@@ -48,8 +48,8 @@ function WelcomeStepper() {
   )
 }
 
-function WelcomeFooterDots() {
-  const { step } = useWelcomeOnboarding()
+function BusinessSetupFooterDots() {
+  const { step } = useBusinessSetup()
 
   return (
     <div className='flex items-center gap-2' role='tablist' aria-label='Adım göstergesi'>
@@ -66,14 +66,14 @@ function WelcomeFooterDots() {
   )
 }
 
-function WelcomeFooterNav() {
-  const { step, goBack, goNext, goToBusinessInfoStep } = useWelcomeOnboarding()
+function BusinessSetupFooterNav() {
+  const { step, goBack, goNext, goToBusinessInfoStep } = useBusinessSetup()
   const isBusinessInfoStep = step === BusinessSetupStep.BusinessInfo
 
   return (
     <footer className='border-border shrink-0 border-t'>
       <div className='flex flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8'>
-        <WelcomeFooterDots />
+        <BusinessSetupFooterDots />
         <div className='flex flex-wrap items-center justify-end gap-2 sm:gap-3'>
           {!isBusinessInfoStep && (
             <>
@@ -93,7 +93,7 @@ function WelcomeFooterNav() {
               {step < BusinessSetupStep.ApplicationProcess && (
                 <Button
                   type='button'
-                  data-testid='welcome-onboarding-next-button'
+                  data-testid='business-setup-next-button'
                   color='primary'
                   size='sm'
                   onClick={goNext}
@@ -106,7 +106,7 @@ function WelcomeFooterNav() {
               {step === BusinessSetupStep.ApplicationProcess && (
                 <Button
                   type='button'
-                  data-testid='welcome-onboarding-start-button'
+                  data-testid='business-setup-start-button'
                   color='primary'
                   size='sm'
                   onClick={goToBusinessInfoStep}
@@ -124,8 +124,8 @@ function WelcomeFooterNav() {
   )
 }
 
-export function WelcomeOnboardingShell() {
-  const { step } = useWelcomeOnboarding()
+export function BusinessSetupShell() {
+  const { step } = useBusinessSetup()
   const isBusinessInfoStep = step === BusinessSetupStep.BusinessInfo
 
   return (
@@ -135,7 +135,7 @@ export function WelcomeOnboardingShell() {
         transition={{ layout: { duration: 0.2 } }}
         className='bg-card text-card-foreground border-border flex h-[680px] max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border object-top shadow-md max-sm:max-h-[calc(100vh-1rem)]'
         role='region'
-        aria-label='Onboarding'
+        aria-label='İşletme kurulumu'
       >
         <header className='border-border shrink-0 border-b'>
           <div className='flex flex-col gap-4 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-8'>
@@ -143,7 +143,7 @@ export function WelcomeOnboardingShell() {
               <span className='sr-only'>fiyuu</span>
               <SiteLogoBig className='h-7 w-auto sm:h-10' aria-hidden />
             </div>
-            <WelcomeStepper />
+            <BusinessSetupStepper />
           </div>
           <div className='bg-primary h-0.5 w-full' aria-hidden />
         </header>
@@ -158,17 +158,17 @@ export function WelcomeOnboardingShell() {
             !isBusinessInfoStep && 'md:content-center'
           )}
         >
-          {step === BusinessSetupStep.Intro && <WelcomeStepIntro />}
-          {step === BusinessSetupStep.PartnerBenefits && <WelcomeStepPartner />}
-          {step === BusinessSetupStep.ApplicationProcess && <WelcomeStepApplication />}
+          {step === BusinessSetupStep.Intro && <BusinessSetupIntroStep />}
+          {step === BusinessSetupStep.PartnerBenefits && <BusinessSetupPartnerBenefitsStep />}
+          {step === BusinessSetupStep.ApplicationProcess && <BusinessSetupApplicationProcessStep />}
           {isBusinessInfoStep && (
             <div className='mx-auto w-full max-w-3xl'>
-              <WelcomeStepBusinessInfo />
+              <BusinessInfoStep />
             </div>
           )}
         </motion.div>
 
-        <WelcomeFooterNav />
+        <BusinessSetupFooterNav />
       </motion.div>
     </div>
   )
