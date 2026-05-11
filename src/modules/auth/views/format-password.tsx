@@ -32,24 +32,21 @@ export function ForgotPasswordView() {
 
       if (response.requiresAccountId) {
         // Birden fazla hesap bulundu, accountId istenmeli
+        turnstileState.resetToken()
         setRequiresAccountId(true)
         setEmail(data.email)
         setRecoveryAccountType(data.accountType)
-        toast.info("Bu email adresine ait birden fazla hesap bulundu. Lütfen hesap ID'nizi giriniz.")
+        toast.info(response.message ?? "Lütfen hesap ID'nizi giriniz.")
       } else if (response.recoverySessionId) {
         // Tek hesap bulundu, direkt reset-password sayfasına yönlendir
         toast.success('Şifre sıfırlama kodu e-posta adresinize gönderildi.')
         router.push(`/reset-password?recoverySessionId=${response.recoverySessionId}`)
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyiniz.', {
-          autoClose: 15000
-        })
-        return
-      }
-      console.error('forgot password error', error)
-      toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.')
+      turnstileState.resetToken()
+      const axiosError = error as AxiosError<{ message?: string }>
+      console.error('forgot password email error', axiosError)
+      toast.error(axiosError.response?.data?.message ?? 'Bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
   }
 
@@ -67,18 +64,16 @@ export function ForgotPasswordView() {
         router.push(`/reset-password?recoverySessionId=${response.recoverySessionId}`)
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyiniz.')
-        return
-      }
-      console.error('forgot password error', error)
-      toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.')
+      turnstileState.resetToken()
+      const axiosError = error as AxiosError<{ message?: string }>
+      console.error('forgot password account id error', error)
+      toast.error(axiosError.response?.data?.message ?? 'Bir hata oluştu. Lütfen tekrar deneyiniz.')
     }
   }
 
   if (requiresAccountId) {
-    return <ForgotPasswordAccountIdStep email={email} onSubmit={onAccountIdSubmit} />
+    return <ForgotPasswordAccountIdStep email={email} onSubmit={onAccountIdSubmit} turnstileState={turnstileState} />
   }
 
-  return <ForgotPasswordEmailStep onSubmit={onEmailSubmit} />
+  return <ForgotPasswordEmailStep onSubmit={onEmailSubmit} turnstileState={turnstileState} />
 }

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FilterToggleButton } from '@/components/ui/filter-card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { formatDateTR } from '@/lib/utils/date'
 import { PaginatedResponse } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -25,9 +26,11 @@ interface ApplicationsTableProps {
 }
 
 function StoreApplicationStatusBadge({ statusCode }: { statusCode: number }) {
-  const { data: statuses = [] } = useStoreApplicationStatusesQuery()
+  const { data: statuses = [], isLoading } = useStoreApplicationStatusesQuery()
   const label = statuses.find(s => s.code === statusCode)?.value ?? String(statusCode)
   const color = STORE_APPLICATION_STATUS_COLORS[statusCode] ?? 'secondary'
+
+  if (isLoading) return <Skeleton className='h-6 w-28' />
 
   return (
     <Badge variant='outline' color={color}>
@@ -41,13 +44,13 @@ const columns: ColumnDef<StoreApplicationRecord>[] = [
     accessorKey: 'CreatedOn',
     header: 'Başvuru Tarihi',
     minSize: 120,
-    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'), true)
+    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'), true, { timeZone: 'Europe/Istanbul' })
   },
   {
-    accessorKey: 'RestaurantName',
+    accessorKey: 'restaurantName',
     header: 'Şube Adı',
     minSize: 150,
-    cell: ({ row }) => <div className='ph-sensitive font-medium'>{row.getValue('RestaurantName')}</div>
+    cell: ({ row }) => <div className='ph-sensitive font-medium'>{row.getValue('restaurantName')}</div>
   },
   {
     accessorKey: 'City',

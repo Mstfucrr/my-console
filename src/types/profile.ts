@@ -36,6 +36,7 @@ export interface IProfileFinancialDetails {
   signatureCircularUrl: string | null
   idFrontUrl: string | null
   idBackUrl: string | null
+  tradeRegistryGazetteUrl?: string | null
 }
 
 export interface IProfileInfo {

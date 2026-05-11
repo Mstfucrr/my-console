@@ -2,7 +2,11 @@ import { formatDuration as formatDurationFns, intervalToDuration, isSameDay, isS
 import { tr } from 'date-fns/locale'
 import type { DateRange } from 'react-day-picker'
 
-export function formatDateTR(dateString: string | undefined, includeTime = false) {
+export function formatDateTR(
+  dateString: string | undefined,
+  includeTime = false,
+  options: Intl.DateTimeFormatOptions = { timeZone: 'UTC' }
+) {
   if (!dateString) return ''
   return new Date(dateString).toLocaleString('tr-TR', {
     day: '2-digit',
@@ -10,7 +14,7 @@ export function formatDateTR(dateString: string | undefined, includeTime = false
     year: 'numeric',
     hour: includeTime ? '2-digit' : undefined,
     minute: includeTime ? '2-digit' : undefined,
-    timeZone: 'UTC'
+    ...options
   })
 }
 
