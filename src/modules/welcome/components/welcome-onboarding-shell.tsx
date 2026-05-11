@@ -135,7 +135,7 @@ export function WelcomeOnboardingShell() {
   return (
     <div
       className={cn(
-        'flex items-center justify-center px-2 max-sm:items-baseline sm:p-6',
+        'bg-muted/40 flex items-center justify-center px-2 max-sm:items-baseline sm:p-6',
         isFinancialStep ? 'max-md:h-screen' : 'h-screen min-h-max'
       )}
     >

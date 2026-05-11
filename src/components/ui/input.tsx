@@ -181,7 +181,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           {...props}
-          autoComplete={props.autoComplete ?? 'off'}
           type={type}
           className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
           ref={ref}

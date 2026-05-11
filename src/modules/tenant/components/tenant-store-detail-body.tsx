@@ -10,8 +10,7 @@ import { STORE_APPLICATION_STATUS_COLORS } from '../applications/constants'
 import { StoreApplicationDetailRecord } from '../applications/types'
 import { workingHoursApiToFe } from '../applications/utils/working-hours-map'
 import { useStoreApplicationStatusesQuery } from '../hooks/useStoreApplicationStatusesQuery'
-import { STORE_STATUS_COLORS } from '../stores/constants'
-import { useStoreStatusesQuery } from '../stores/hooks/useStoreStatusesQuery'
+import { getStoreStatusColor, getStoreStatusLabel } from '../stores/constants'
 import { StoreDetailRecord } from '../stores/types'
 import { TenantStoreWorkingHoursTable } from './tenant-store-working-hours-table'
 
@@ -31,7 +30,7 @@ export function TenantStoreDetailSkeleton() {
 
 function ApplicationStatusBadge({ statusCode, className }: { statusCode: number; className?: string }) {
   const { data: statuses = [] } = useStoreApplicationStatusesQuery()
-  const label = statuses.find(s => s.code === statusCode)?.value ?? String(statusCode)
+  const label = statuses.find(s => s.code === statusCode)?.value ?? statusCode
   const color = STORE_APPLICATION_STATUS_COLORS[statusCode] ?? 'secondary'
 
   return (
@@ -42,9 +41,8 @@ function ApplicationStatusBadge({ statusCode, className }: { statusCode: number;
 }
 
 function StoreRecordStatusBadge({ statusCode, className }: { statusCode: number; className?: string }) {
-  const { data: statuses = [] } = useStoreStatusesQuery()
-  const label = statuses.find(s => s.code === statusCode)?.value ?? String(statusCode)
-  const color = STORE_STATUS_COLORS[statusCode] ?? 'secondary'
+  const label = getStoreStatusLabel(statusCode)
+  const color = getStoreStatusColor(statusCode)
   return (
     <Badge variant='outline' color={color} className={cn('shrink-0', className)}>
       {label}
@@ -121,9 +119,7 @@ export function TenantStoreDetailBody({
             <Separator />
             <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
               <span className='text-muted-foreground text-sm'>{dateLabel}</span>
-              <span className='text-sm max-sm:ml-2 max-sm:text-xs'>
-                {formatDateTR(data.CreatedOn, true, { timeZone: 'Europe/Istanbul' })}
-              </span>
+              <span className='text-sm max-sm:ml-2 max-sm:text-xs'>{formatDateTR(data.CreatedOn, true)}</span>
             </div>
             <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
               <span className='text-muted-foreground text-sm'>Durum</span>

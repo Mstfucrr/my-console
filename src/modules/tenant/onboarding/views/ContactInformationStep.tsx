@@ -29,14 +29,21 @@ export function ContactInformationStep() {
   const hasAnyEmptyField = isSubmitted && Object.values(errors).some(error => error?.message === '')
 
   const onSubmit = async (data: OnboardingContactFormValues) => {
-    const response = await requestApplicationSession(data, turnstileState.token ?? undefined)
-    if (response) {
-      track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
-        step: 'contact',
-        status: 'success'
-      })
-      goToVerification()
-    } else {
+    try {
+      const response = await requestApplicationSession(data, turnstileState.token ?? undefined)
+      if (response) {
+        track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
+          step: 'contact',
+          status: 'success'
+        })
+        goToVerification()
+      } else {
+        track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
+          step: 'contact',
+          status: 'failed'
+        })
+      }
+    } catch {
       turnstileState.resetToken()
       track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
         step: 'contact',

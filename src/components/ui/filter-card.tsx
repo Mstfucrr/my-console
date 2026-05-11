@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { isSameDateRange } from '@/lib/utils/date'
 import { SelectTriggerProps } from '@radix-ui/react-select'
@@ -175,8 +174,7 @@ export function StatusSelect<T extends string | number>({
   onChange,
   placeholder = 'Durum',
   showLabel = false,
-  onEnterPress,
-  isLoading = false
+  onEnterPress
 }: {
   options?: FilterOption[]
   groupedOptions?: GroupedFilterOption[]
@@ -185,7 +183,6 @@ export function StatusSelect<T extends string | number>({
   placeholder?: string
   showLabel?: boolean
   onEnterPress?: () => void
-  isLoading?: boolean
 }) {
   const isActive = value && value !== 'all'
   const hasOptions = groupedOptions ? groupedOptions.some(g => g.items.length > 0) : (options?.length ?? 0) > 0
@@ -211,47 +208,43 @@ export function StatusSelect<T extends string | number>({
     <div className='max-sm:w-full'>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>}
       <div className='flex flex-wrap items-center gap-2'>
-        {isLoading ? (
-          <Skeleton className='h-8 w-full min-w-[180px]' />
-        ) : (
-          <Select value={value?.toString()} onValueChange={value => onChange(value as T)}>
-            <SelectTrigger
-              className='min-w-[180px]'
-              size='sm'
-              color={isActive ? 'info' : undefined}
-              variant={isActive ? 'faded' : 'bordered'}
-              onKeyDown={handleKeyDown}
-            >
-              <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {hasOptions ? (
-                <div className='max-h-48 overflow-y-auto pr-0.5'>
-                  {groupedOptions
-                    ? groupedOptions.map((group, index) => (
-                        <SelectGroup key={`${group.groupLabel}-${index}`}>
-                          {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
-                          {group.items.map(option => (
-                            <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ))
-                    : options?.map(option => (
-                        <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                </div>
-              ) : (
-                <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
-                  Bir sonuç bulunamadı.
-                </div>
-              )}
-            </SelectContent>
-          </Select>
-        )}
+        <Select value={value?.toString()} onValueChange={value => onChange(value as T)}>
+          <SelectTrigger
+            className='min-w-[180px]'
+            size='sm'
+            color={isActive ? 'info' : undefined}
+            variant={isActive ? 'faded' : 'bordered'}
+            onKeyDown={handleKeyDown}
+          >
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {hasOptions ? (
+              <div className='max-h-48 overflow-y-auto pr-0.5'>
+                {groupedOptions
+                  ? groupedOptions.map((group, index) => (
+                      <SelectGroup key={`${group.groupLabel}-${index}`}>
+                        {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
+                        {group.items.map(option => (
+                          <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))
+                  : options?.map(option => (
+                      <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+              </div>
+            ) : (
+              <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
+                Bir sonuç bulunamadı.
+              </div>
+            )}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   )

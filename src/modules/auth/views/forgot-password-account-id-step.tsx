@@ -20,10 +20,11 @@ export type AccountIdFormType = z.infer<typeof accountIdSchema>
 interface ForgotPasswordAccountIdStepProps {
   email: string
   onSubmit: (data: AccountIdFormType) => Promise<void>
-  turnstileState: ReturnType<typeof useTurnstile>
 }
 
-export function ForgotPasswordAccountIdStep({ email, onSubmit, turnstileState }: ForgotPasswordAccountIdStepProps) {
+export function ForgotPasswordAccountIdStep({ email, onSubmit }: ForgotPasswordAccountIdStepProps) {
+  const turnstileState = useTurnstile()
+
   const accountIdForm = useForm<AccountIdFormType>({
     resolver: zodResolver(accountIdSchema),
     defaultValues: {
@@ -35,7 +36,7 @@ export function ForgotPasswordAccountIdStep({ email, onSubmit, turnstileState }:
   return (
     <>
       <OnboardingHeading
-        description="Bu e-posta adresine ait birden fazla hesap bulundu. Lütfen hesap ID'nizi giriniz."
+        description="Bu email adresine ait birden fazla hesap bulundu. Lütfen hesap ID'nizi giriniz."
         variant='page'
         title='Şifremi Unuttum'
       />
