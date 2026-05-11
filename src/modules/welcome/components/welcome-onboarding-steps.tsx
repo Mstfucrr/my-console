@@ -164,6 +164,6 @@ export function WelcomeStepApplication() {
   )
 }
 
-export function WelcomeStepFinancial() {
+export function WelcomeStepBusinessInfo() {
   return <WelcomeFinancialForm />
 }

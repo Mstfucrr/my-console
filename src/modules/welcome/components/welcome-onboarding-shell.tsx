@@ -3,13 +3,13 @@
 import { SiteLogoBig } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { WELCOME_ONBOARDING_STEPPER_LABELS, WelcomeOnboardingStep } from '@/modules/welcome/constants'
+import { BUSINESS_SETUP_STEPPER_LABELS, BusinessSetupStep } from '@/modules/welcome/constants'
 import { useWelcomeOnboarding } from '@/modules/welcome/context/welcome-onboarding-context'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import {
   WelcomeStepApplication,
-  WelcomeStepFinancial,
+  WelcomeStepBusinessInfo,
   WelcomeStepIntro,
   WelcomeStepPartner
 } from './welcome-onboarding-steps'
@@ -19,7 +19,7 @@ function WelcomeStepper() {
 
   return (
     <nav aria-label='Onboarding adımları' className='mx-auto flex flex-wrap items-center justify-center gap-2'>
-      {WELCOME_ONBOARDING_STEPPER_LABELS.map((label, index) => {
+      {BUSINESS_SETUP_STEPPER_LABELS.map((label, index) => {
         const isDone = index < step
         const isActive = index === step
 
@@ -53,7 +53,7 @@ function WelcomeFooterDots() {
 
   return (
     <div className='flex items-center gap-2' role='tablist' aria-label='Adım göstergesi'>
-      {WELCOME_ONBOARDING_STEPPER_LABELS.map((_, i) => (
+      {BUSINESS_SETUP_STEPPER_LABELS.map((_, i) => (
         <motion.span
           key={i}
           layoutId={`footer-dot-${i}`}
@@ -67,17 +67,17 @@ function WelcomeFooterDots() {
 }
 
 function WelcomeFooterNav() {
-  const { step, goBack, goNext, goToFinancialStep } = useWelcomeOnboarding()
-  const isFinancialStep = step === WelcomeOnboardingStep.Financial
+  const { step, goBack, goNext, goToBusinessInfoStep } = useWelcomeOnboarding()
+  const isBusinessInfoStep = step === BusinessSetupStep.BusinessInfo
 
   return (
     <footer className='border-border shrink-0 border-t'>
       <div className='flex flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8'>
         <WelcomeFooterDots />
         <div className='flex flex-wrap items-center justify-end gap-2 sm:gap-3'>
-          {!isFinancialStep && (
+          {!isBusinessInfoStep && (
             <>
-              {step > WelcomeOnboardingStep.Intro && (
+              {step > BusinessSetupStep.Intro && (
                 <Button
                   type='button'
                   variant='outline'
@@ -90,7 +90,7 @@ function WelcomeFooterNav() {
                   Geri
                 </Button>
               )}
-              {step < WelcomeOnboardingStep.Application && (
+              {step < BusinessSetupStep.ApplicationProcess && (
                 <Button
                   type='button'
                   data-testid='welcome-onboarding-next-button'
@@ -103,14 +103,14 @@ function WelcomeFooterNav() {
                   <ArrowRight className='size-4' />
                 </Button>
               )}
-              {step === WelcomeOnboardingStep.Application && (
+              {step === BusinessSetupStep.ApplicationProcess && (
                 <Button
                   type='button'
                   data-testid='welcome-onboarding-start-button'
                   color='primary'
                   size='sm'
-                  onClick={goToFinancialStep}
-                  aria-label='Finansal bilgiler adımına geç'
+                  onClick={goToBusinessInfoStep}
+                  aria-label='İşletme bilgileri adımına geç'
                 >
                   Hadi Başlayalım
                   <ArrowRight className='size-4' />
@@ -126,7 +126,7 @@ function WelcomeFooterNav() {
 
 export function WelcomeOnboardingShell() {
   const { step } = useWelcomeOnboarding()
-  const isFinancialStep = step === WelcomeOnboardingStep.Financial
+  const isBusinessInfoStep = step === BusinessSetupStep.BusinessInfo
 
   return (
     <div className='bg-muted/40 flex min-h-screen items-center justify-center px-2 py-4 sm:p-6'>
@@ -155,15 +155,15 @@ export function WelcomeOnboardingShell() {
           transition={{ duration: 0.22 }}
           className={cn(
             'min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-5 sm:px-6 lg:px-8',
-            !isFinancialStep && 'md:content-center'
+            !isBusinessInfoStep && 'md:content-center'
           )}
         >
-          {step === WelcomeOnboardingStep.Intro && <WelcomeStepIntro />}
-          {step === WelcomeOnboardingStep.Partner && <WelcomeStepPartner />}
-          {step === WelcomeOnboardingStep.Application && <WelcomeStepApplication />}
-          {isFinancialStep && (
+          {step === BusinessSetupStep.Intro && <WelcomeStepIntro />}
+          {step === BusinessSetupStep.PartnerBenefits && <WelcomeStepPartner />}
+          {step === BusinessSetupStep.ApplicationProcess && <WelcomeStepApplication />}
+          {isBusinessInfoStep && (
             <div className='mx-auto w-full max-w-3xl'>
-              <WelcomeStepFinancial />
+              <WelcomeStepBusinessInfo />
             </div>
           )}
         </motion.div>

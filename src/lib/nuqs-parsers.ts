@@ -1,9 +1,9 @@
 import { APPLICATION_STEPS } from '@/modules/tenant/applications/create/constants'
-import { WELCOME_ONBOARDING_STEP_QUERY_KEYS } from '@/modules/welcome/constants'
+import { BUSINESS_SETUP_STEP_QUERY_KEYS } from '@/modules/welcome/constants'
 import { createParser, parseAsStringLiteral } from 'nuqs'
 
-export const parseWelcomeOnboardingStep = parseAsStringLiteral(WELCOME_ONBOARDING_STEP_QUERY_KEYS)
-  .withDefault(WELCOME_ONBOARDING_STEP_QUERY_KEYS[0])
+export const parseBusinessSetupStep = parseAsStringLiteral(BUSINESS_SETUP_STEP_QUERY_KEYS)
+  .withDefault(BUSINESS_SETUP_STEP_QUERY_KEYS[0])
   .withOptions({ history: 'push' })
 
 export const parseStoreApplicationWizardStep = parseAsStringLiteral(APPLICATION_STEPS.map(step => step.key))

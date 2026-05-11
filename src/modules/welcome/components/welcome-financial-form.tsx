@@ -20,7 +20,7 @@ const ACCOUNT_TYPES: { value: WelcomeAccountType; label: string; Icon: LucideIco
 ]
 
 export function WelcomeFinancialForm() {
-  const { form, onFinancialSubmit, onFinancialCancel, isCreatingFinance } = useWelcomeOnboarding()
+  const { form, onBusinessInfoSubmit, onBusinessInfoCancel, isCreatingFinance } = useWelcomeOnboarding()
   const companyType = form.watch('companyType')
   const {
     field: accountTypeField,
@@ -41,7 +41,7 @@ export function WelcomeFinancialForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onFinancialSubmit)} className='flex flex-col gap-x-4 gap-y-2'>
+      <form onSubmit={form.handleSubmit(onBusinessInfoSubmit)} className='flex flex-col gap-x-4 gap-y-2'>
         <div className='grid gap-x-4 gap-y-2 sm:grid-cols-2'>
           <FormItem>
             <FormLabel className={cn('mb-1 text-sm font-medium', accountTypeError && 'text-red-500')}>
@@ -176,7 +176,7 @@ export function WelcomeFinancialForm() {
         <WelcomeDocumentUploadSection />
 
         <div className='flex gap-3 pt-4'>
-          <Button type='button' size='sm' variant='outline' className='flex-1' onClick={onFinancialCancel}>
+          <Button type='button' size='sm' variant='outline' className='flex-1' onClick={onBusinessInfoCancel}>
             İptal
           </Button>
           <LoadingButton type='submit' size='sm' className='flex-1 gap-2' isLoading={isCreatingFinance}>

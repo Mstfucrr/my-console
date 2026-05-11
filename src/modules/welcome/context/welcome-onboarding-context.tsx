@@ -1,7 +1,7 @@
 'use client'
 
 import { useProfile } from '@/context/ProfileProvider'
-import { parseWelcomeOnboardingStep } from '@/lib/nuqs-parsers'
+import { parseBusinessSetupStep } from '@/lib/nuqs-parsers'
 import {
   defaultWelcomeFinancialValues,
   welcomeFinancialFormSchema,
@@ -15,19 +15,19 @@ import { useQueryState } from 'nuqs'
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { WELCOME_ONBOARDING_STEP_QUERY_KEYS, WelcomeOnboardingStep } from '../constants'
+import { BUSINESS_SETUP_STEP_QUERY_KEYS, BusinessSetupStep } from '../constants'
 import { financeService } from '../service/finance.service'
 import { SaveFinancialDetailsRequest, WelcomeDocType } from '../types'
 
 export type WelcomeOnboardingContextValue = {
-  step: WelcomeOnboardingStep
+  step: BusinessSetupStep
   goNext: () => void
   goBack: () => void
-  goToFinancialStep: () => void
+  goToBusinessInfoStep: () => void
   form: UseFormReturn<WelcomeFinancialFormValues>
   taxNumberDisplay: string | undefined
-  onFinancialSubmit: (data: WelcomeFinancialFormValues) => void
-  onFinancialCancel: () => void
+  onBusinessInfoSubmit: (data: WelcomeFinancialFormValues) => void
+  onBusinessInfoCancel: () => void
   uploadFinancialDocument: (data: { file: File; docType: WelcomeDocType }) => Promise<string>
   isCreatingFinance: boolean
 }
@@ -46,10 +46,10 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   const { profile } = useProfile()
   const queryClient = useQueryClient()
   const router = useRouter()
-  const [stepQuery, setStepQuery] = useQueryState('step', parseWelcomeOnboardingStep)
+  const [stepQuery, setStepQuery] = useQueryState('step', parseBusinessSetupStep)
 
-  const stepIndex = WELCOME_ONBOARDING_STEP_QUERY_KEYS.indexOf(stepQuery)
-  const step = (stepIndex === -1 ? WelcomeOnboardingStep.Intro : stepIndex) as WelcomeOnboardingStep
+  const stepIndex = BUSINESS_SETUP_STEP_QUERY_KEYS.indexOf(stepQuery)
+  const step = (stepIndex === -1 ? BusinessSetupStep.Intro : stepIndex) as BusinessSetupStep
 
   const { mutateAsync: createFinance, isPending: isCreatingFinance } = useMutation({
     mutationFn: (data: SaveFinancialDetailsRequest) => financeService.createFinance(data)
@@ -69,26 +69,25 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
   })
 
   const goNext = useCallback(() => {
-    if (step >= WelcomeOnboardingStep.Application) return
-    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[step + 1])
+    if (step >= BusinessSetupStep.ApplicationProcess) return
+    void setStepQuery(BUSINESS_SETUP_STEP_QUERY_KEYS[step + 1])
   }, [setStepQuery, step])
 
   const goBack = useCallback(() => {
-    if (step <= WelcomeOnboardingStep.Intro) return
-    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[step - 1])
+    if (step <= BusinessSetupStep.Intro) return
+    void setStepQuery(BUSINESS_SETUP_STEP_QUERY_KEYS[step - 1])
   }, [setStepQuery, step])
 
-  const goToFinancialStep = useCallback(() => {
-    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[WelcomeOnboardingStep.Financial])
+  const goToBusinessInfoStep = useCallback(() => {
+    void setStepQuery(BUSINESS_SETUP_STEP_QUERY_KEYS[BusinessSetupStep.BusinessInfo])
   }, [setStepQuery])
 
-  const onFinancialCancel = useCallback(() => {
-    void setStepQuery(WELCOME_ONBOARDING_STEP_QUERY_KEYS[WelcomeOnboardingStep.Application])
+  const onBusinessInfoCancel = useCallback(() => {
+    void setStepQuery(BUSINESS_SETUP_STEP_QUERY_KEYS[BusinessSetupStep.ApplicationProcess])
   }, [setStepQuery])
 
-  const onFinancialSubmit = useCallback(
+  const onBusinessInfoSubmit = useCallback(
     (data: WelcomeFinancialFormValues) => {
-      // Gerçek uygulamada API çağrısı
       toast.promise(
         async () => {
           await createFinance({ ...data, iban: 'TR' + data.iban, vkn: undefined })
@@ -114,11 +113,11 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
       step,
       goNext,
       goBack,
-      goToFinancialStep,
+      goToBusinessInfoStep,
       form,
       taxNumberDisplay: profile?.data?.taxNumber,
-      onFinancialSubmit,
-      onFinancialCancel,
+      onBusinessInfoSubmit,
+      onBusinessInfoCancel,
       uploadFinancialDocument,
       isCreatingFinance
     }),
@@ -127,9 +126,9 @@ export function WelcomeOnboardingProvider({ children }: { children: ReactNode })
       form,
       goNext,
       goBack,
-      goToFinancialStep,
-      onFinancialSubmit,
-      onFinancialCancel,
+      goToBusinessInfoStep,
+      onBusinessInfoSubmit,
+      onBusinessInfoCancel,
       uploadFinancialDocument,
       isCreatingFinance,
       profile?.data?.taxNumber
