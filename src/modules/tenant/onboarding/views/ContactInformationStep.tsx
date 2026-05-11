@@ -96,7 +96,7 @@ export function ContactInformationStep() {
             required
             Icon={Phone}
             name='phoneNumber'
-            customMask='(500) 000-0000'
+            customMask='({5}00) 000-0000'
             control={form.control}
             placeholder='(532) 123-4567'
             size='lg'

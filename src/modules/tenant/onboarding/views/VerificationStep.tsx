@@ -212,7 +212,7 @@ export function VerificationStep() {
       <VerificationItem
         Icon={Phone}
         title='Telefon Numaranı Doğrula'
-        value={phoneLabel('5' + contactData.phoneNumber)}
+        value={phoneLabel(contactData.phoneNumber)}
         isVerified={phoneVerified}
         onVerify={() => openVerifyModal('phoneNumber')}
       />
