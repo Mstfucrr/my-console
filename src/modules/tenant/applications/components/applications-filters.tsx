@@ -31,7 +31,7 @@ export function ApplicationsFilters({
   onClearFilters: () => void
 }) {
   const { data: provinces } = useQueryProvinces()
-  const { data: statuses = [] } = useStoreApplicationStatusesQuery()
+  const { data: statuses = [], isPending: statusesLoading } = useStoreApplicationStatusesQuery()
 
   const provinceOptions: FilterOption[] = useMemo(
     () => [{ value: 'all', label: 'Tüm iller' }, ...(provinces ?? []).map(p => ({ value: p.il_adi, label: p.il_adi }))],
@@ -79,6 +79,7 @@ export function ApplicationsFilters({
         value={pendingFilters.status ?? 'all'}
         onChange={value => updatePendingFilters({ status: value })}
         placeholder='Durum seçin'
+        isLoading={statusesLoading}
       />
     </FilterCard>
   )

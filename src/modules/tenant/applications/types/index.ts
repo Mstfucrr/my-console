@@ -3,7 +3,7 @@ export type { StoreWorkingHourInterval, StoreWorkingHoursDay, StoreWorkingHoursF
 export interface StoreApplicationRecord {
   StoreApplicationId: string
   Status: number
-  RestaurantName: string
+  restaurantName: string
   City: string
   Sector: string | null
   SubSector: string | null
@@ -29,6 +29,7 @@ export interface DocumentUrls {
   signatureCircularUrl?: string | null
   idFrontUrl?: string | null
   idBackUrl?: string | null
+  tradeRegistryGazetteUrl?: string | null
 }
 
 export interface StoreApplicationPayload {

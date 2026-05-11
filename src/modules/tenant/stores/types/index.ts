@@ -34,6 +34,7 @@ export interface DocumentUrls {
   signatureCircularUrl: string
   idFrontUrl: string
   idBackUrl: string
+  tradeRegistryGazetteUrl?: string | null
 }
 
 export interface Payload {
