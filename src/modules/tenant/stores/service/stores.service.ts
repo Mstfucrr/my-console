@@ -4,11 +4,9 @@ import { PaginatedResponse, PaginationOptions } from '@/types'
 import type { ColumnSort } from '@tanstack/react-table'
 import { appendMerchantStoreFilterParams } from '../../shared/merchant-store-list-filters'
 import type { StoresFilterProperties } from '../components/stores-filters'
-import { STORE_STATUS_OPTIONS } from '../constants'
 import type { StoreDetailRecord, StoreListRecord } from '../types'
 
-export type StoreStatusItem = { code: number; value: string }
-
+/** Onaylı restoranları listeler — GET /merchant/store/restaurants */
 class StoresService {
   async getStores(
     filters?: StoresFilterProperties,
@@ -44,10 +42,6 @@ class StoresService {
       `/merchant/store/restaurants/${storeId}/application`
     )
     return data
-  }
-
-  getStoresStatuses(): readonly StoreStatusItem[] {
-    return STORE_STATUS_OPTIONS
   }
 }
 

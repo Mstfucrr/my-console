@@ -1,6 +1,6 @@
 'use client'
 
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { storeApplicationsService } from '../service/applications.service'
 
 /**
@@ -12,7 +12,6 @@ export function useStoreApplicationStatusesQuery() {
     queryKey: ['merchant', 'store', 'application-statuses'],
     queryFn: () => storeApplicationsService.fetchStoreApplicationStatuses(),
     staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 1000 * 60 * 60 * 24,
-    placeholderData: keepPreviousData
+    gcTime: 1000 * 60 * 60 * 24
   })
 }

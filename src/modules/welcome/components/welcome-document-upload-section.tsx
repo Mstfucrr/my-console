@@ -2,70 +2,38 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AxiosError } from 'axios'
-import { FileSignature, IdCard, Landmark, Newspaper, ScanFace, type LucideIcon } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FileSignature, IdCard, Landmark, ScanFace, type LucideIcon } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useWelcomeOnboarding } from '../context/welcome-onboarding-context'
-import type { WelcomeCompanyType, WelcomeDocType } from '../types'
+import type { WelcomeDocType } from '../types'
 import { WelcomeDocumentUploadItem } from './welcome-document-upload-item'
 
-const MAX_SIZE = 10
+const MAX_SIZE = 2.5
 
 const MAX_BYTES = Math.floor(MAX_SIZE * 1024 * 1024)
 const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/bmp', 'application/pdf'])
 
-type SlotField = 'taxDocumentKey' | 'idFrontKey' | 'idBackKey' | 'signatureCircularKey' | 'tradeRegistryGazetteKey'
-
 type SlotConfig = {
   docType: WelcomeDocType
   label: string
-  field: SlotField
+  field: 'taxDocumentKey' | 'idFrontKey' | 'idBackKey' | 'signatureCircularKey'
   Icon: LucideIcon
   required: boolean
 }
 
-function slotsForCompanyType(companyType: WelcomeCompanyType): SlotConfig[] {
-  const isBireysel = companyType === 'Bireysel'
-  const tax: SlotConfig = {
-    docType: 'taxDocument',
-    label: 'Vergi levhası',
-    field: 'taxDocumentKey',
-    Icon: Landmark,
-    required: true
-  }
-  const idFront: SlotConfig = {
-    docType: 'idFront',
-    label: 'Kimlik ön yüz',
-    field: 'idFrontKey',
-    Icon: ScanFace,
-    required: isBireysel
-  }
-  const idBack: SlotConfig = {
-    docType: 'idBack',
-    label: 'Kimlik arka yüz',
-    field: 'idBackKey',
-    Icon: IdCard,
-    required: isBireysel
-  }
-  const signature: SlotConfig = {
+const SLOTS: SlotConfig[] = [
+  { docType: 'taxDocument', label: 'Vergi levhası', field: 'taxDocumentKey', Icon: Landmark, required: true },
+  { docType: 'idFront', label: 'Kimlik ön yüz', field: 'idFrontKey', Icon: ScanFace, required: true },
+  { docType: 'idBack', label: 'Kimlik arka yüz', field: 'idBackKey', Icon: IdCard, required: true },
+  {
     docType: 'signatureCircular',
     label: 'İmza sirküsü',
     field: 'signatureCircularKey',
     Icon: FileSignature,
-    required: !isBireysel
-  }
-  const tradeRegistry: SlotConfig = {
-    docType: 'tradeRegistryGazette',
-    label: 'Ticaret Sicil Gazetesi',
-    field: 'tradeRegistryGazetteKey',
-    Icon: Newspaper,
     required: true
   }
-
-  if (isBireysel) return [tax, idFront, idBack, signature]
-
-  return [tax, signature, idFront, idBack, tradeRegistry]
-}
+]
 
 function getFileValidationError(file: File) {
   if (file.size > MAX_BYTES) return `Dosya boyutu en fazla ${MAX_SIZE} MB olmalıdır.`
@@ -86,7 +54,7 @@ export function WelcomeDocumentUploadSection() {
   const [localPreview, setLocalPreview] = useState<Partial<Record<WelcomeDocType, LocalPreviewEntry>>>({})
   const previewRef = useRef(localPreview)
 
-  const slots = useMemo(() => slotsForCompanyType(companyType), [companyType])
+  const isKurumsal = companyType === 'Kurumsal'
 
   useEffect(() => {
     previewRef.current = localPreview
@@ -112,10 +80,7 @@ export function WelcomeDocumentUploadSection() {
 
   useEffect(() => {
     if (companyType !== 'Bireysel') return
-    requestAnimationFrame(() => {
-      revokePreview('signatureCircular')
-      revokePreview('tradeRegistryGazette')
-    })
+    requestAnimationFrame(() => revokePreview('signatureCircular'))
   }, [companyType, revokePreview])
 
   const handleFile = async (slot: SlotConfig, file: File) => {
@@ -152,10 +117,10 @@ export function WelcomeDocumentUploadSection() {
       </CardHeader>
       <CardContent className='flex flex-col gap-y-2'>
         <div className='grid gap-x-4 gap-y-2 sm:grid-cols-2'>
-          {slots.map(slot => (
+          {SLOTS.map(slot => (
             <WelcomeDocumentUploadItem
               key={`${slot.docType}-${slot.label}`}
-              required={slot.required}
+              required={!isKurumsal && slot.docType === 'signatureCircular' ? false : slot.required}
               label={slot.label}
               Icon={slot.Icon}
               control={control}

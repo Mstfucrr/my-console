@@ -27,10 +27,11 @@ export type EmailFormType = z.infer<typeof emailSchema>
 
 interface ForgotPasswordEmailStepProps {
   onSubmit: (data: EmailFormType) => Promise<void>
-  turnstileState: ReturnType<typeof useTurnstile>
 }
 
-export function ForgotPasswordEmailStep({ onSubmit, turnstileState }: ForgotPasswordEmailStepProps) {
+export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepProps) {
+  const turnstileState = useTurnstile()
+
   const emailForm = useForm<EmailFormType>({
     resolver: zodResolver(emailSchema),
     defaultValues: {

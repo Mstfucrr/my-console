@@ -48,12 +48,6 @@ export function AccountDocumentsCard({
         <DocRow label='Kimlik arka yüz' url={financialDetails?.idBackUrl} />
         <Separator />
         <DocRow label='İmza sirküsü' url={financialDetails?.signatureCircularUrl} />
-        {financialDetails?.companyType === 'Kurumsal' ? (
-          <>
-            <Separator />
-            <DocRow label='Ticaret Sicil Gazetesi' url={financialDetails?.tradeRegistryGazetteUrl} />
-          </>
-        ) : null}
       </CardContent>
     </Card>
   )
