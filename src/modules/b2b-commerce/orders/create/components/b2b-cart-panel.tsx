@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, Check, MapPin, Package, ShoppingBasket, ShoppingCart } from 'lucide-react'
+import { AlertCircle, Check, MapPin, Package, ShoppingBasket } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
 import { MIN_B2B_ORDER_AMOUNT } from '../constants'
@@ -59,7 +59,7 @@ export function B2BCartItemsList({ compact = false, emptyClassName, thumbClassNa
     return (
       <div className={emptyClassName ?? 'py-8 text-center'}>
         <div className='bg-secondary/40 mx-auto mb-3 flex size-12 items-center justify-center rounded-full'>
-          <ShoppingCart className='text-muted-foreground/35 size-6' />
+          <ShoppingBasket className='text-muted-foreground/35 size-6' />
         </div>
         <p className='text-muted-foreground text-sm'>Sepetiniz boş</p>
       </div>

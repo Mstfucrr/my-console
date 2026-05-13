@@ -145,7 +145,7 @@ function B2BCommerceOrderCreateContent() {
             <Button
               color={cartTotal > 0 ? 'default' : 'secondary'}
               size='sm'
-              className='fixed bottom-20 left-[calc(50%-11rem)] z-50 gap-2 text-sm shadow-xs lg:hidden'
+              className='fixed bottom-20 left-[calc(50%-10rem)] z-50 gap-2 text-sm shadow-xs lg:hidden'
               onClick={openCartSheet}
             >
               <ShoppingBasket className='size-4' />
