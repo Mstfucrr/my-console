@@ -7,7 +7,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import type { B2BOrderSummary } from '@/modules/b2b-commerce/types'
 import { motion } from 'framer-motion'
-import { AlertCircle, ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
+import { ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
 
 interface B2BOrderCardProps {
   order: B2BOrderSummary
@@ -21,7 +21,7 @@ export function B2BOrderCard({ order, onSelect }: B2BOrderCardProps) {
         <CardContent className='space-y-4 pt-4'>
           <div className='flex items-start justify-between gap-2'>
             <div className='shrink-0'>
-              {order.isPaymentReceived ? (
+              {/* {order.isPaymentReceived ? (
                 <Badge color='success' variant='outline' className='border-0'>
                   <CheckCircle2 className='size-3.5' />
                   Alındı
@@ -31,7 +31,11 @@ export function B2BOrderCard({ order, onSelect }: B2BOrderCardProps) {
                   <AlertCircle className='size-3.5' />
                   Ödeme Bekleniyor
                 </Badge>
-              )}
+              )} */}
+              <Badge color='success' variant='outline' className='border-0'>
+                <CheckCircle2 className='size-3.5' />
+                Sipariş Alındı
+              </Badge>
             </div>
           </div>
           <div className='bg-secondary/30 border-border/50 grid grid-cols-2 gap-3 rounded-xl border p-3 text-sm'>

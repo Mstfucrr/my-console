@@ -14,7 +14,7 @@ import {
   useB2BOrderDetailQuery,
   useB2BPaymentInformationQuery
 } from '@/modules/b2b-commerce/orders/hooks/useB2BOrderDetailQueries'
-import { AlertCircle, CheckCircle2, MapPin, Package } from 'lucide-react'
+import { CheckCircle2, MapPin, Package } from 'lucide-react'
 
 interface B2BOrderDetailDialogProps {
   orderId?: string
@@ -59,7 +59,7 @@ export function B2BOrderDetailDialog({ orderId, onClose }: B2BOrderDetailDialogP
                     <div className='flex items-center justify-between gap-y-1 max-md:flex-col max-md:items-start'>
                       <span className='text-muted-foreground'>Ödeme Durumu</span>
                       <span className='flex items-center gap-1 max-sm:ml-2'>
-                        {detail.isPaymentReceived ? (
+                        {/* {detail.isPaymentReceived ? (
                           <Badge color='success' variant='outline' className='border-0'>
                             <CheckCircle2 className='size-3.5' />
                             Alındı
@@ -69,7 +69,11 @@ export function B2BOrderDetailDialog({ orderId, onClose }: B2BOrderDetailDialogP
                             <AlertCircle className='size-3.5' />
                             Bekleniyor
                           </Badge>
-                        )}
+                        )} */}
+                        <Badge color='success' variant='outline' className='border-0'>
+                          <CheckCircle2 className='size-3.5' />
+                          Sipariş Alındı
+                        </Badge>
                       </span>
                     </div>
 

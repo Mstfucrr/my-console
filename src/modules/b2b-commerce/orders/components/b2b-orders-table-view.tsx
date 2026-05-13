@@ -7,7 +7,7 @@ import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
 import type { B2BOrderSummary } from '@/modules/b2b-commerce/types'
 import type { ColumnDef } from '@tanstack/react-table'
-import { AlertCircle, ArrowRightIcon, CheckCircle2 } from 'lucide-react'
+import { ArrowRightIcon, CheckCircle2 } from 'lucide-react'
 
 type B2BOrderSummaryWithAction = B2BOrderSummary & {
   onSelect?: (orderId: string) => void
@@ -33,18 +33,24 @@ const columns: ColumnDef<B2BOrderSummaryWithAction>[] = [
     header: 'Ödeme Durumu',
     enableSorting: false,
     size: 180,
-    cell: ({ row }) =>
-      row.original.isPaymentReceived ? (
-        <Badge color='success' variant='outline' className='border-0'>
-          <CheckCircle2 className='size-3.5' />
-          Alındı
-        </Badge>
-      ) : (
-        <Badge color='warning' variant='outline' className='border-0'>
-          <AlertCircle className='size-3.5' />
-          Ödeme Bekleniyor
-        </Badge>
-      )
+    cell: ({ row }) => (
+      // row.original.isPaymentReceived ? (
+      //   <Badge color='success' variant='outline' className='border-0'>
+      //     <CheckCircle2 className='size-3.5' />
+      //     Alındı
+      //   </Badge>
+      // ) : (
+      //   <Badge color='warning' variant='outline' className='border-0'>
+      //     <AlertCircle className='size-3.5' />
+      //     Sipariş Alındı
+      //   </Badge>
+      // )
+
+      <Badge color='success' variant='outline' className='border-0'>
+        <CheckCircle2 className='size-3.5' />
+        Sipariş Alındı
+      </Badge>
+    )
   },
   {
     accessorKey: 'totalAmount',
