@@ -18,7 +18,7 @@ export const onboardingContactFormSchema = z.object({
     .string()
     .min(1, '')
     .default('')
-    .refine(value => value.length === 9, { message: '' }),
+    .refine(value => value.length === 10, { message: '' }),
   email: z
     .string()
     .min(1, '')
