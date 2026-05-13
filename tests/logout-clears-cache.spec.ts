@@ -103,7 +103,6 @@ test('logout sonrası restoran bilgisi değişir (cache temiz)', async ({ page }
 
     // Logout (test id ile)
     await page.getByTestId('logout-button').click()
-    await page.getByTestId('logout-confirm').click()
     await expect(page).toHaveURL(/\/login(\?|$)/, { timeout: 10000 })
   }
 
