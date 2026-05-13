@@ -19,7 +19,7 @@ export function Topbar() {
   const activeApp = getActiveMenuApp(profile, pathname)
   const tenant = isTenantUser(profile)
 
-  const appMenuLayoutId = `menu-item-${activeApp?.title.toLowerCase()}-${activeApp?.href.toLowerCase()}`
+  // const appMenuLayoutId = `menu-item-${activeApp?.title.toLowerCase()}-${activeApp?.href.toLowerCase()}`
 
   const alwaysShowMenus = activeApp ? menus?.filter(item => item.type === 'link' && item.alwaysShow === true) : null
 

@@ -33,7 +33,7 @@ const columns: ColumnDef<B2BOrderSummaryWithAction>[] = [
     header: 'Ödeme Durumu',
     enableSorting: false,
     size: 180,
-    cell: ({ row }) => (
+    cell: () => (
       // row.original.isPaymentReceived ? (
       //   <Badge color='success' variant='outline' className='border-0'>
       //     <CheckCircle2 className='size-3.5' />
