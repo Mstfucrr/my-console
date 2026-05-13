@@ -4,10 +4,10 @@ import { SiteLogoNoText } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { useProfile } from '@/context/ProfileProvider'
 import { usePermission } from '@/hooks/use-permission'
-import { getMenuConfig } from '@/lib/get-menu-config'
+import { getActiveMenuApp, getMenuConfig } from '@/lib/get-menu-config'
 import { isTenantUser } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import type { Route } from 'next'
 import Link from 'next/link'
@@ -56,71 +56,53 @@ type MobileMenuItem = {
   title: string
   href: Route
   Icon: MenuItem['Icon']
+  menuType: MenuItem['type']
 }
-type MobileMenuWithChildren = MobileMenuItem & { children?: Array<{ key: string; title: string; href: Route }> }
 
 const buildMobileMenuItems = (
   menus: MenuItem[] | null,
   checkRoute: (route: Route) => boolean,
   excludedRoutes: Set<Route>
-): MobileMenuWithChildren[] => {
+): MobileMenuItem[] => {
   if (!menus) return []
 
-  const items: MobileMenuWithChildren[] = []
+  const items: MobileMenuItem[] = []
 
   for (const menu of menus) {
-    if ('href' in menu) {
-      if (!checkRoute(menu.href) || excludedRoutes.has(menu.href)) continue
-      items.push({
-        key: `single-${menu.href}`,
-        title: menu.title,
-        href: menu.href,
-        Icon: menu.Icon
-      })
-      continue
-    }
-
-    const visibleChildren = menu.children
-      .filter(child => checkRoute(child.href) && !excludedRoutes.has(child.href))
-      .map(child => ({
-        key: `multi-child-${menu.title}-${child.href}`,
-        title: child.title,
-        href: child.href
-      }))
-
-    if (visibleChildren.length === 0) continue
-
+    if (!checkRoute(menu.href) || excludedRoutes.has(menu.href)) continue
     items.push({
-      key: `multi-${menu.title}`,
+      key: `${menu.type}-${menu.href}`,
       title: menu.title,
-      href: visibleChildren[0]!.href,
+      href: menu.href,
       Icon: menu.Icon,
-      children: visibleChildren
+      menuType: menu.type
     })
   }
 
   return items
 }
 
-const isMenuActive = (item: MobileMenuWithChildren, pathname: string | null) =>
-  isLocationMatch(item.href, pathname) || item.children?.some(child => isLocationMatch(child.href, pathname)) === true
+const isMenuActive = (item: MobileMenuItem, pathname: string | null) => isLocationMatch(item.href, pathname)
 
 export function BottomNavigation() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
-  const [expandedPrimaryKey, setExpandedPrimaryKey] = useState<string | null>(null)
   const { profile } = useProfile()
   const tenant = isTenantUser(profile)
-  const menus = getMenuConfig(profile)
+  const menus = getMenuConfig(profile, pathname)
+  const activeApp = getActiveMenuApp(profile, pathname)
 
   const handleToggleMenu = () => {
-    setExpandedPrimaryKey(null)
     setIsOpen(prev => !prev)
+  }
+
+  const handleCloseMenu = () => {
+    setIsOpen(false)
   }
 
   const { checkRoute, canCreateOrder } = usePermission()
 
-  const showCreateOrder = !tenant && canCreateOrder
+  const showCreateOrder = !tenant && canCreateOrder && !activeApp
   const showNewApplication = !!tenant
   const excludedRoutes = new Set<Route>()
   if (showCreateOrder) excludedRoutes.add('/orders/create')
@@ -128,6 +110,10 @@ export function BottomNavigation() {
 
   const visibleMenus = buildMobileMenuItems(menus, checkRoute, excludedRoutes)
   const primaryMenus = (() => {
+    if (activeApp) {
+      return visibleMenus.slice(0, 3)
+    }
+
     if (tenant) {
       const activeMenuIndex = visibleMenus.findIndex(item => isMenuActive(item, pathname))
       const tenantPrimary = [...visibleMenus.slice(0, 3)]
@@ -137,11 +123,10 @@ export function BottomNavigation() {
       return tenantPrimary
     }
 
-    const restaurantPrimaryOrder: Array<Route> = ['/', '/orders', '/reconciliation']
-    const lockedToOverflow = (item: MobileMenuWithChildren) =>
-      item.href === '/reports' || Boolean(item.children?.length)
+    const restaurantPrimaryOrder: Array<Route> = ['/', '/orders', '/b2b-commerce/orders/create']
+    const lockedToOverflow = (item: MobileMenuItem) => item.href === '/reports' || item.href === '/reconciliation'
 
-    const picked: MobileMenuWithChildren[] = []
+    const picked: MobileMenuItem[] = []
     const pickedKeys = new Set<string>()
 
     for (const route of restaurantPrimaryOrder) {
@@ -166,151 +151,68 @@ export function BottomNavigation() {
 
   const primaryMenuKeySet = new Set(primaryMenus.map(item => item.key))
   const overflowTopLevel = visibleMenus.filter(item => !primaryMenuKeySet.has(item.key))
-  const overflowQuickItems: BottomMenuItem[] = overflowTopLevel
-    .filter(item => !item.children || item.children.length === 0)
-    .map(item => ({
-      key: item.key,
-      title: item.title,
-      href: item.href,
-      Icon: item.Icon
-    }))
-  const overflowSections: BottomMenuSection[] = overflowTopLevel
-    .filter(item => item.children && item.children.length > 0)
-    .map(item => ({
-      key: `section-${item.key}`,
-      title: item.title,
-      Icon: item.Icon,
-      items: item.children!.map(child => ({
-        key: child.key,
-        title: child.title,
-        href: child.href
-      }))
-    }))
+  const overflowQuickItems: BottomMenuItem[] = overflowTopLevel.map(item => ({
+    key: item.key,
+    title: item.title,
+    href: item.href,
+    Icon: item.Icon
+  }))
+  const overflowSections: BottomMenuSection[] = []
+  const isOverflowOpen = isOpen
 
   if (primaryMenus.length === 0 && !showCreateOrder && !showNewApplication) return null
 
-  const expandedPrimary = primaryMenus.find(item => item.key === expandedPrimaryKey && item.children?.length)
-
   return (
     <>
-      {(isOpen || expandedPrimary) && (
+      {isOverflowOpen && (
         <div
           className='bg-default-950/20 fixed inset-0 z-40 backdrop-blur-sm'
           onClick={() => {
             setIsOpen(false)
-            setExpandedPrimaryKey(null)
           }}
         />
       )}
 
-      <nav className='border-border bg-muted/40 ring-accent fixed bottom-1 left-1/2 z-50 mb-1 w-[95%] max-w-max -translate-x-1/2 rounded-3xl border-t py-0.5 pr-0.5 pl-1 ring-2 backdrop-blur-2xl'>
-        {expandedPrimary?.children && (
-          <div className='bg-background border-border absolute bottom-[calc(100%+8px)] left-1/2 w-[95%] -translate-x-1/2 rounded-xl border p-2 shadow-lg'>
-            <div className='flex flex-col gap-1'>
-              {expandedPrimary.children.map(child => (
-                <Link
-                  key={child.key}
-                  href={child.href}
+      <nav
+        className={cn(
+          'border-border bg-muted/40 ring-accent fixed bottom-1 left-1/2 z-50 mb-1 w-[95%] max-w-max -translate-x-1/2 rounded-3xl border-t py-0.5 pr-0.5 pl-1 ring-2 backdrop-blur-2xl',
+          activeApp && 'border-border bg-background/90'
+        )}
+      >
+        <AnimatePresence mode='wait'>
+          {isOverflowOpen && (
+            <BottomMenu onClick={handleCloseMenu} quickItems={overflowQuickItems} sections={overflowSections} />
+          )}
+        </AnimatePresence>
+        {activeApp && (
+          <div className='bg-primary absolute -top-1 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full' aria-hidden />
+        )}
+        <motion.div layout transition={{ duration: 0.2 }}>
+          {activeApp ? (
+            <motion.div
+              key='mobile-app-menu'
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.18 }}
+              className='grid min-w-[320px] grid-cols-[1fr_1fr_1fr_auto] items-center gap-1 pr-0.5'
+            >
+              {primaryMenus.map(item => (
+                <BottomNavigationItem
+                  key={item.key}
+                  href={item.href}
+                  label={item.title}
+                  icon={item.Icon}
+                  isActive={isMenuActive(item, pathname)}
+                  className='min-w-0 px-2'
                   onClick={() => {
-                    setExpandedPrimaryKey(null)
                     setIsOpen(false)
                   }}
-                >
-                  <Button
-                    variant='ghost'
-                    size='xs'
-                    className={cn(
-                      'hover:bg-primary hover:text-primary-foreground w-full justify-start rounded-lg text-xs',
-                      isLocationMatch(child.href, pathname) && 'bg-primary text-primary-foreground'
-                    )}
-                  >
-                    {child.title}
-                  </Button>
-                </Link>
+                />
               ))}
-            </div>
-          </div>
-        )}
-
-        <div>
-          <div className='xs:gap-x-3 relative flex items-center justify-between gap-x-2'>
-            {/* Sol taraf - İlk 2 item */}
-            {primaryMenus.slice(0, 2).length > 0 && (
-              <div className='xs:gap-x-3 flex flex-1 items-center justify-around gap-x-2'>
-                {primaryMenus.slice(0, 2).map(item =>
-                  item.children?.length ? (
-                    <BottomNavigationItem
-                      key={item.key}
-                      label={item.title}
-                      icon={item.Icon}
-                      isActive={isMenuActive(item, pathname)}
-                      hasChildren
-                      isExpanded={expandedPrimaryKey === item.key}
-                      onToggleChildren={() => {
-                        setExpandedPrimaryKey(prev => (prev === item.key ? null : item.key))
-                        setIsOpen(false)
-                      }}
-                    />
-                  ) : (
-                    <BottomNavigationItem
-                      key={item.key}
-                      href={item.href}
-                      label={item.title}
-                      icon={item.Icon}
-                      isActive={isMenuActive(item, pathname)}
-                      onClick={() => {
-                        setExpandedPrimaryKey(null)
-                        setIsOpen(false)
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            )}
-
-            {/* Ortadaki Add Button: restoran → Yeni Sipariş, tenant → Yeni Başvuru */}
-            {(showCreateOrder || showNewApplication) && (
-              <CenterActionButton showCreateOrder={!!showCreateOrder} onClose={() => setIsOpen(false)} />
-            )}
-
-            {/* Sağ taraf - Son 2 item */}
-            <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
-              {primaryMenus.slice(2, 3).map(item =>
-                item.children?.length ? (
-                  <BottomNavigationItem
-                    key={item.key}
-                    label={item.title}
-                    icon={item.Icon}
-                    isActive={isMenuActive(item, pathname)}
-                    hasChildren
-                    isExpanded={expandedPrimaryKey === item.key}
-                    onToggleChildren={() => {
-                      setExpandedPrimaryKey(prev => (prev === item.key ? null : item.key))
-                      setIsOpen(false)
-                    }}
-                  />
-                ) : (
-                  <BottomNavigationItem
-                    key={item.key}
-                    href={item.href}
-                    label={item.title}
-                    icon={item.Icon}
-                    isActive={isMenuActive(item, pathname)}
-                    onClick={() => {
-                      setExpandedPrimaryKey(null)
-                      setIsOpen(false)
-                    }}
-                  />
-                )
-              )}
-              <AnimatePresence mode='wait'>
-                {isOpen && (
-                  <BottomMenu onClick={handleToggleMenu} quickItems={overflowQuickItems} sections={overflowSections} />
-                )}
-              </AnimatePresence>
               <div className='flex items-center justify-center'>
                 <Button
-                  color={isOpen ? 'light' : 'secondary'}
+                  color={isOverflowOpen ? 'light' : 'secondary'}
                   size='icon'
                   className='size-14 rounded-full p-1 pt-0 pb-1'
                   onClick={handleToggleMenu}
@@ -319,9 +221,64 @@ export function BottomNavigation() {
                   <SiteLogoNoText className='text-primary size-full' />
                 </Button>
               </div>
+            </motion.div>
+          ) : (
+            <div className='xs:gap-x-3 relative flex items-center justify-between gap-x-2'>
+              {/* Sol taraf - İlk 2 item */}
+              {primaryMenus.slice(0, 2).length > 0 && (
+                <div className='xs:gap-x-3 flex flex-1 items-center justify-around gap-x-2'>
+                  {primaryMenus.slice(0, 2).map(item => (
+                    <BottomNavigationItem
+                      key={item.key}
+                      href={item.href}
+                      label={item.title}
+                      icon={item.Icon}
+                      isActive={isMenuActive(item, pathname)}
+                      onClick={() => {
+                        setIsOpen(false)
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Ortadaki Add Button: restoran → Yeni Sipariş, tenant → Yeni Başvuru */}
+              {(showCreateOrder || showNewApplication) && (
+                <CenterActionButton showCreateOrder={!!showCreateOrder} onClose={() => setIsOpen(false)} />
+              )}
+
+              {/* Sağ taraf - Son 2 item */}
+              <div className='xs:gap-x-3 relative z-10 flex flex-1 items-center justify-around pr-1'>
+                {primaryMenus.slice(2, 3).map(item => (
+                  <BottomNavigationItem
+                    key={item.key}
+                    href={item.href}
+                    label={item.title}
+                    icon={item.Icon}
+                    isActive={isMenuActive(item, pathname)}
+                    className={cn(item.menuType === 'app' && 'border-primary/20 bg-primary/5 text-primary shadow-sm')}
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                  />
+                ))}
+                {!activeApp && (
+                  <div className='flex items-center justify-center'>
+                    <Button
+                      color={isOverflowOpen ? 'light' : 'secondary'}
+                      size='icon'
+                      className='size-14 rounded-full p-1 pt-0 pb-1'
+                      onClick={handleToggleMenu}
+                      aria-label='Menüyu Aç ve Kapat'
+                    >
+                      <SiteLogoNoText className='text-primary size-full' />
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </motion.div>
       </nav>
     </>
   )

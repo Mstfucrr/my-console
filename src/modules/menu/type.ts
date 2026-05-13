@@ -1,21 +1,24 @@
 import { LucideIcon } from 'lucide-react'
 import { Route } from 'next'
 
-type SingleMenuItem = {
+type LinkMenuItem = {
+  type: 'link'
   title: string
   href: Route
   Icon: LucideIcon
+  alwaysShow?: boolean
 }
 
-type MultiMenuItem = {
+type AppMenuItem = {
+  type: 'app'
   title: string
+  appTitle: string
+  href: Route
+  activePathPrefix: string
   Icon: LucideIcon
-  children: Array<{
-    title: string
-    href: Route
-  }>
+  appMenuItems: LinkMenuItem[]
 }
 
-type MenuItem = SingleMenuItem | MultiMenuItem
+type MenuItem = LinkMenuItem | AppMenuItem
 
-export type { MenuItem, MultiMenuItem, SingleMenuItem }
+export type { AppMenuItem, LinkMenuItem, MenuItem }

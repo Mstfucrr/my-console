@@ -84,19 +84,20 @@ export function BottomMenu({ onClick, quickItems, sections }: BottomMenuProps) {
                 exit={{ opacity: 0, y: 8, x: 8, scale: 0.98 }}
                 transition={{ duration: 0.24, delay: 0.04 + index * 0.03, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Link href={item.href} onClick={onClick}>
-                  <Button
-                    variant='ghost'
-                    size='xs'
-                    className={cn(
-                      'hover:bg-primary hover:text-primary-foreground w-full justify-start gap-2 rounded-lg text-xs',
-                      isActive && 'bg-primary text-primary-foreground'
-                    )}
-                  >
+                <Button
+                  asChild
+                  variant='ghost'
+                  size='xs'
+                  className={cn(
+                    'hover:bg-primary hover:text-primary-foreground w-full justify-start gap-2 rounded-lg text-xs',
+                    isActive && 'bg-primary text-primary-foreground'
+                  )}
+                >
+                  <Link href={item.href} onClick={onClick}>
                     {Icon && <Icon className='size-4' />}
                     <span className='truncate'>{item.title}</span>
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </motion.div>
             )
           })}
@@ -154,15 +155,16 @@ export function BottomMenu({ onClick, quickItems, sections }: BottomMenuProps) {
                               exit={{ opacity: 0, x: -6 }}
                               transition={{ duration: 0.18, delay: itemIndex * 0.025, ease: [0.22, 1, 0.36, 1] }}
                             >
-                              <Link href={item.href} onClick={onClick}>
-                                <Button
-                                  variant='ghost'
-                                  size='xs'
-                                  className={cn('w-full', isActive && 'bg-primary text-primary-foreground')}
-                                >
+                              <Button
+                                asChild
+                                variant='ghost'
+                                size='xs'
+                                className={cn('w-full', isActive && 'bg-primary text-primary-foreground')}
+                              >
+                                <Link href={item.href} onClick={onClick}>
                                   <span className='truncate'>{item.title}</span>
-                                </Button>
-                              </Link>
+                                </Link>
+                              </Button>
                             </motion.div>
                           )
                         })}

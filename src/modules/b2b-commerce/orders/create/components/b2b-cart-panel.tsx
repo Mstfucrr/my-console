@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, Check, MapPin, Package, ShoppingCart } from 'lucide-react'
+import { AlertCircle, Check, MapPin, Package, ShoppingBasket, ShoppingCart } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { getB2BUnitPrice } from '../../../utils/b2b-price'
 import { MIN_B2B_ORDER_AMOUNT } from '../constants'
@@ -29,7 +29,7 @@ export function B2BCartHeader({ compact = false, rightSlot }: B2BCartHeaderProps
               compact ? 'size-8' : 'size-9'
             )}
           >
-            <ShoppingCart className={compact ? 'size-4' : 'size-5'} />
+            <ShoppingBasket className={compact ? 'size-4' : 'size-5'} />
           </div>
           <h2 className={cn('text-foreground truncate font-bold', compact ? 'text-base' : 'text-lg')}>Sepetim</h2>
         </div>
