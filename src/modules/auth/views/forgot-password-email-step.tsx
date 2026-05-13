@@ -28,10 +28,10 @@ export type EmailFormType = z.infer<typeof emailSchema>
 
 interface ForgotPasswordEmailStepProps {
   onSubmit: (data: EmailFormType) => Promise<void>
+  turnstileState: ReturnType<typeof useTurnstile>
 }
 
-export function ForgotPasswordEmailStep({ onSubmit }: ForgotPasswordEmailStepProps) {
-  const turnstileState = useTurnstile()
+export function ForgotPasswordEmailStep({ onSubmit, turnstileState }: ForgotPasswordEmailStepProps) {
   const searchParams = useSearchParams()
   const accountType = searchParams.get('at') === 'tenant' ? 'tenant' : 'store'
 

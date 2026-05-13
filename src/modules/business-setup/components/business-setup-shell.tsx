@@ -129,7 +129,7 @@ export function BusinessSetupShell() {
   const isBusinessInfoStep = step === BusinessSetupStep.BusinessInfo
 
   return (
-    <div className='bg-muted/40 flex min-h-screen items-center justify-center px-2 py-4 sm:p-6'>
+    <div className='flex items-center justify-center px-2 max-sm:items-baseline sm:p-6'>
       <motion.div
         layout
         transition={{ layout: { duration: 0.2 } }}
