@@ -13,7 +13,7 @@ export function buildStoreApplicationPayload(values: CreateStoreApplicationFormD
     authEmail: trimmedValues.authEmail,
     authFirstName: trimmedValues.authFirstName,
     authSurname: trimmedValues.authSurname,
-    authPhoneNumber: '5' + trimmedValues.authPhoneNumber,
+    authPhoneNumber: trimmedValues.authPhoneNumber,
     city: trimmedValues.city.name,
     dailyPackageEstimate: Number.parseInt(trimmedValues.dailyPackageEstimate, 10),
     district: trimmedValues.county.name,

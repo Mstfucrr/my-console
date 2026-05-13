@@ -254,7 +254,7 @@ export function StoreDetailsFields() {
               />
               <FormPhoneField
                 name='authPhoneNumber'
-                customMask='(500) 000-0000'
+                customMask='({5}00) 000-0000'
                 required
                 control={form.control}
                 label='Cep Telefonu'

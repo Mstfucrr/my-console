@@ -36,6 +36,10 @@ export function WelcomeFinancialForm() {
     form.setValue('tckn', '')
     if (v === 'Bireysel') {
       form.setValue('signatureCircularKey', '', { shouldDirty: true, shouldValidate: true })
+      form.setValue('tradeRegistryGazetteKey', '', { shouldDirty: true, shouldValidate: true })
+    } else {
+      form.setValue('idFrontKey', '', { shouldDirty: true, shouldValidate: true })
+      form.setValue('idBackKey', '', { shouldDirty: true, shouldValidate: true })
     }
   }
 

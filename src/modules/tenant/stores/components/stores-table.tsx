@@ -8,7 +8,8 @@ import { formatDateTR } from '@/lib/utils/date'
 import { PaginatedResponse } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useState } from 'react'
-import { getStoreStatusColor, getStoreStatusLabel } from '../constants'
+import { STORE_STATUS_COLORS } from '../constants'
+import { useStoreStatusesQuery } from '../hooks/useStoreStatusesQuery'
 import type { StoreListRecord } from '../types'
 import { StoreDetailModal } from './stores-detail-modal'
 import { type StoresFilterProperties, StoresFilters } from './stores-filters'
@@ -24,9 +25,12 @@ interface StoresTableProps {
 }
 
 function StoreStatusBadge({ status }: { status: number }) {
+  const { data: statuses = [] } = useStoreStatusesQuery()
+  const label = statuses.find(s => s.code === status)?.value ?? String(status)
+  const color = STORE_STATUS_COLORS[status] ?? 'secondary'
   return (
-    <Badge variant='outline' color={getStoreStatusColor(status)}>
-      {getStoreStatusLabel(status)}
+    <Badge variant='outline' color={color}>
+      {label}
     </Badge>
   )
 }
@@ -38,7 +42,7 @@ const columns: ColumnDef<StoreListRecord>[] = [
     minSize: 120,
     cell: ({ row }) => {
       const value = row.getValue('CreatedOn') as string | undefined
-      return value ? formatDateTR(value, true) : '—'
+      return value ? formatDateTR(value, true, { timeZone: 'Europe/Istanbul' }) : '—'
     }
   },
   {
@@ -57,7 +61,7 @@ const columns: ColumnDef<StoreListRecord>[] = [
     accessorKey: 'Status',
     header: 'Durum',
     minSize: 100,
-    cell: ({ row }) => <StoreStatusBadge status={row.getValue('Status')} />
+    cell: ({ row }) => <StoreStatusBadge status={row.original.Status} />
   },
   {
     id: 'actions',

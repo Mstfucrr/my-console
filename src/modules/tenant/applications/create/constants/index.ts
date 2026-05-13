@@ -173,7 +173,7 @@ export const branchFormSchema = z.object({
     .regex(ONLY_LETTERS_REGEX, 'Yalnızca harf kullanılabilir'),
   authPhoneNumber: z
     .string()
-    .length(9, '')
+    .length(10, '')
     .refine(v => PHONE_REGEX.test(v), 'Geçerli bir cep telefonu giriniz'),
   authEmail: z.string().min(1, '').email('Geçerli e-posta giriniz')
 })

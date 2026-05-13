@@ -10,8 +10,9 @@ export const welcomeFinancialFormSchema = z
     vkn: z.string().optional().default(''),
     iban: z.string().min(24, '').max(26, 'IBAN en fazla 26 karakter'),
     taxDocumentKey: z.string().min(1, ''),
-    idFrontKey: z.string().min(1, ''),
-    idBackKey: z.string().min(1, ''),
+    idFrontKey: z.string().optional().default(''),
+    idBackKey: z.string().optional().default(''),
+    tradeRegistryGazetteKey: z.string().optional().default(''),
     signatureCircularKey: z.string().optional().default('')
   })
   .superRefine((data, ctx) => {
@@ -24,12 +25,35 @@ export const welcomeFinancialFormSchema = z
           path: ['tckn']
         })
       }
-    } else if (!data.signatureCircularKey?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '',
-        path: ['signatureCircularKey']
-      })
+      if (!data.idFrontKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['idFrontKey']
+        })
+      }
+      if (!data.idBackKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['idBackKey']
+        })
+      }
+    } else {
+      if (!data.signatureCircularKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['signatureCircularKey']
+        })
+      }
+      if (!data.tradeRegistryGazetteKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['tradeRegistryGazetteKey']
+        })
+      }
     }
     if (!data.accountType) {
       ctx.addIssue({
@@ -52,5 +76,6 @@ export const defaultWelcomeFinancialValues: Partial<WelcomeFinancialFormValues> 
   taxDocumentKey: '',
   idFrontKey: '',
   idBackKey: '',
+  tradeRegistryGazetteKey: '',
   signatureCircularKey: ''
 }

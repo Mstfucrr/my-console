@@ -85,7 +85,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
             await submitApplication({
               ...data,
               kvkkAccepted: undefined,
-              phoneNumber: '5' + data.phoneNumber,
+              phoneNumber: data.phoneNumber,
               turnstileToken: turnstileToken
             }),
           {

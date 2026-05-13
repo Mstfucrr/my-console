@@ -29,21 +29,14 @@ export function ContactInformationStep() {
   const hasAnyEmptyField = isSubmitted && Object.values(errors).some(error => error?.message === '')
 
   const onSubmit = async (data: OnboardingContactFormValues) => {
-    try {
-      const response = await requestApplicationSession(data, turnstileState.token ?? undefined)
-      if (response) {
-        track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
-          step: 'contact',
-          status: 'success'
-        })
-        goToVerification()
-      } else {
-        track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
-          step: 'contact',
-          status: 'failed'
-        })
-      }
-    } catch {
+    const response = await requestApplicationSession(data, turnstileState.token ?? undefined)
+    if (response) {
+      track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
+        step: 'contact',
+        status: 'success'
+      })
+      goToVerification()
+    } else {
       turnstileState.resetToken()
       track<OnboardingStepCompletedEvent>(ANALYTICS_EVENTS.onboardingStepCompleted, {
         step: 'contact',
@@ -96,7 +89,7 @@ export function ContactInformationStep() {
             required
             Icon={Phone}
             name='phoneNumber'
-            customMask='(500) 000-0000'
+            customMask='({5}00) 000-0000'
             control={form.control}
             placeholder='(532) 123-4567'
             size='lg'
