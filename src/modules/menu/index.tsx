@@ -13,8 +13,8 @@ export function TopbarAndMobileMenu() {
   const pathname = usePathname()
   const isSmallerThanTablet = useIsSmallerThanTablet()
 
-  const isWelcomePage = pathname === '/welcome'
-  const isMinimalChrome = isWelcomePage || (isTenantUser(profile) && !isActiveTenant)
+  const isBusinessSetupPage = pathname === '/business-setup'
+  const isMinimalChrome = isBusinessSetupPage || (isTenantUser(profile) && !isActiveTenant)
 
   if (isMinimalChrome)
     return (

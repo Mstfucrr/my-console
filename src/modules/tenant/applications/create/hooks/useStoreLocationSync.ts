@@ -2,11 +2,12 @@
 
 import type { AppliedAddressSelection } from '@/hooks/useTurkishAddressCascade'
 import {
+  getCurrentLocationInfo,
   reverseGeocodeCoordinates,
   searchCoordinatesByAddress,
   type NominatimAddress
 } from '@/service/geocoding.service'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useWatch } from 'react-hook-form'
 import type { LocationFormData } from '../constants'
@@ -85,8 +86,10 @@ export function useStoreLocationSync(
   const suppressedQueryRef = useRef<string | null>(null)
   const geocodeAbortRef = useRef<AbortController | null>(null)
   const reverseAbortRef = useRef<AbortController | null>(null)
+  const currentLocationAbortRef = useRef<AbortController | null>(null)
   const reverseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const latestReverseRequestIdRef = useRef(0)
+  const [isDetectingCurrentLocation, setIsDetectingCurrentLocation] = useState(false)
 
   useEffect(() => {
     if (!syncAddressFromMap) {
@@ -139,6 +142,7 @@ export function useStoreLocationSync(
     return () => {
       geocodeAbortRef.current?.abort()
       reverseAbortRef.current?.abort()
+      currentLocationAbortRef.current?.abort()
       if (reverseTimerRef.current) clearTimeout(reverseTimerRef.current)
     }
   }, [])
@@ -192,5 +196,41 @@ export function useStoreLocationSync(
     [addressFields, form, syncAddressFromMap]
   )
 
-  return { handleMapPositionChange }
+  const handleUseCurrentLocation = useCallback(async () => {
+    const abortController = new AbortController()
+    currentLocationAbortRef.current?.abort()
+    currentLocationAbortRef.current = abortController
+    setIsDetectingCurrentLocation(true)
+
+    try {
+      const location = await getCurrentLocationInfo(abortController.signal)
+      if (!location) return false
+
+      form.setValue('latitude', location.latitude, { shouldDirty: true })
+      form.setValue('longitude', location.longitude, { shouldDirty: true })
+
+      if (!syncAddressFromMap) return true
+
+      const appliedAddress = await addressFields.applyAddressSelection(
+        extractReverseAddressCandidates(location.address)
+      )
+      const suppressedQuery = buildSuppressedQuery(appliedAddress, form.getValues('doorNumber') ?? '')
+
+      if (suppressedQuery) {
+        suppressedQueryRef.current = suppressedQuery
+        lastAppliedQueryRef.current = null
+      }
+
+      return true
+    } catch {
+      return false
+    } finally {
+      if (currentLocationAbortRef.current === abortController) {
+        currentLocationAbortRef.current = null
+      }
+      setIsDetectingCurrentLocation(false)
+    }
+  }, [addressFields, form, syncAddressFromMap])
+
+  return { handleMapPositionChange, handleUseCurrentLocation, isDetectingCurrentLocation }
 }

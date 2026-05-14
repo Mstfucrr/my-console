@@ -3,7 +3,7 @@ import { Clock, CreditCard, LineChart, MessageCircle } from 'lucide-react'
 export const INTRO_STATS = [
   { value: '5 dk', label: 'Ortalama başvuru süresi' },
   { value: '4', label: 'Kolay adım' },
-  { value: '7 gün', label: '21 Saat canlı destek' },
+  { value: '7 gün', label: 'Canlı destek' },
   { value: '40+', label: 'POS firması ile entegre' }
 ] as const
 
@@ -48,30 +48,38 @@ export const PARTNER_FEATURES = [
   {
     icon: MessageCircle,
     title: 'Müşteri Hizmetleri Anında Yanınızda',
-    description: 'Canlı destek ile 7/24 destek alın ve sorunlarınızı anında çözün.',
+    description: 'Canlı destek ile sorunlarınızı anında çözün.',
     boxClass: 'bg-secondary text-secondary-foreground'
   }
 ] as const
 
-/** Welcome onboarding akış adımları (sıra değerleri UI ile uyumlu). */
-export enum WelcomeOnboardingStep {
+/** Query ve enum sırası birebir: `?step=` değeri (ilk adım varsayılan, URL’de yok). */
+export const BUSINESS_SETUP_STEP_QUERY_KEYS = [
+  'intro',
+  'partner-benefits',
+  'application-process',
+  'business-info'
+] as const
+
+/** İşletme kurulum akış adımları (sıra değerleri UI ile uyumlu). */
+export enum BusinessSetupStep {
   Intro = 0,
-  Partner = 1,
-  Application = 2,
-  Financial = 3
+  PartnerBenefits = 1,
+  ApplicationProcess = 2,
+  BusinessInfo = 3
 }
 
-const WELCOME_ONBOARDING_STEP_LABELS: Record<WelcomeOnboardingStep, string> = {
-  [WelcomeOnboardingStep.Intro]: 'Hoş Geldin',
-  [WelcomeOnboardingStep.Partner]: 'Partner',
-  [WelcomeOnboardingStep.Application]: 'Başvuru Süreci',
-  [WelcomeOnboardingStep.Financial]: 'İşletme Bilgileri'
+const BUSINESS_SETUP_STEP_LABELS: Record<BusinessSetupStep, string> = {
+  [BusinessSetupStep.Intro]: 'Hoş Geldin',
+  [BusinessSetupStep.PartnerBenefits]: 'Partner',
+  [BusinessSetupStep.ApplicationProcess]: 'Başvuru Süreci',
+  [BusinessSetupStep.BusinessInfo]: 'İşletme Bilgileri'
 }
 
 /** Stepper’da gösterilecek etiketler (enum sırasıyla). */
-export const WELCOME_ONBOARDING_STEPPER_LABELS = [
-  WELCOME_ONBOARDING_STEP_LABELS[WelcomeOnboardingStep.Intro],
-  WELCOME_ONBOARDING_STEP_LABELS[WelcomeOnboardingStep.Partner],
-  WELCOME_ONBOARDING_STEP_LABELS[WelcomeOnboardingStep.Application],
-  WELCOME_ONBOARDING_STEP_LABELS[WelcomeOnboardingStep.Financial]
+export const BUSINESS_SETUP_STEPPER_LABELS = [
+  BUSINESS_SETUP_STEP_LABELS[BusinessSetupStep.Intro],
+  BUSINESS_SETUP_STEP_LABELS[BusinessSetupStep.PartnerBenefits],
+  BUSINESS_SETUP_STEP_LABELS[BusinessSetupStep.ApplicationProcess],
+  BUSINESS_SETUP_STEP_LABELS[BusinessSetupStep.BusinessInfo]
 ] as const

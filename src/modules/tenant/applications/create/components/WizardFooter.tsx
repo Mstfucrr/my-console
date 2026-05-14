@@ -27,6 +27,7 @@ export function WizardFooter({
       <Button
         type={primaryType}
         color='success'
+        tabIndex={20}
         size='sm'
         disabled={isPrimaryLoading}
         onClick={primaryType === 'button' ? onPrimary : undefined}

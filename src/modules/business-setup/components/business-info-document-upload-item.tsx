@@ -3,26 +3,26 @@
 import { FormFileDropzoneField } from '@/components/form/FormFileDropzoneField'
 import type { LucideIcon } from 'lucide-react'
 import type { Control, FieldPath } from 'react-hook-form'
-import type { WelcomeFinancialFormValues } from '../schemas/welcome-financial-schema'
+import type { BusinessInfoFormValues } from '../schemas/business-info-schema'
 
 const ACCEPT = 'image/jpeg,image/png,image/bmp,application/pdf'
 
-export type WelcomeDocumentUploadItemProps = {
+export type BusinessInfoDocumentUploadItemProps = {
   label: string
   Icon: LucideIcon
   previewUrl?: string
   previewMimeType?: string
   isBusy: boolean
   disabled: boolean
-  control: Control<WelcomeFinancialFormValues>
-  name: FieldPath<WelcomeFinancialFormValues>
+  control: Control<BusinessInfoFormValues>
+  name: FieldPath<BusinessInfoFormValues>
   required: boolean
   onPickFile: (file: File) => void
   onClear: () => void
   maxSize: number
 }
 
-export function WelcomeDocumentUploadItem({
+export function BusinessInfoDocumentUploadItem({
   label,
   Icon,
   previewUrl,
@@ -35,7 +35,7 @@ export function WelcomeDocumentUploadItem({
   onPickFile,
   onClear,
   maxSize
-}: WelcomeDocumentUploadItemProps) {
+}: BusinessInfoDocumentUploadItemProps) {
   return (
     <FormFileDropzoneField
       name={name}

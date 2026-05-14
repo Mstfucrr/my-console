@@ -1,17 +1,20 @@
-import { Button } from '@/components/ui/button'
+'use client'
+
 import { useIsMobile } from '@/hooks/use-media-query'
-import { Plus } from 'lucide-react'
-import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { isLocationMatch } from '../utils'
+import { MenuPrimaryActionLink } from './menu-primary-action-link'
 
 export function NewApplicationButton() {
   const isMobile = useIsMobile()
+  const pathname = usePathname()
 
   return (
-    <Link href='/applications/new'>
-      <Button className='font-extrabold' color='success' size={!isMobile ? 'xs' : 'icon-sm'}>
-        <Plus className='size-5' />
-        <span className='ml-2 max-md:sr-only'>Şube Başvurusu</span>
-      </Button>
-    </Link>
+    <MenuPrimaryActionLink
+      href='/applications/new'
+      label='Şube Başvurusu'
+      isOnRoute={isLocationMatch('/applications/new', pathname)}
+      size={!isMobile ? 'xs' : 'icon-sm'}
+    />
   )
 }

@@ -29,12 +29,12 @@ const allRoutes: Array<Route> = [
   '/applications',
   '/applications/new',
   '/stores',
-  '/welcome',
+  '/business-setup',
   '/account'
 ]
 
 const tenantRoutes: Array<Route> = [
-  '/welcome',
+  '/business-setup',
   '/applications',
   '/applications/new',
   '/stores',
@@ -42,8 +42,8 @@ const tenantRoutes: Array<Route> = [
   '/account'
 ]
 
-/** Tenant’ta finans adımı zorunlu: yalnızca API açıkça false döndürdüğünde; undefined = eski yanıtlar, kısıtlama yok */
-export const tenantNeedsFinancialOnboarding = (profile?: IProfileResponse): boolean =>
+/** Tenant’ta işletme bilgileri zorunlu: companyType yoksa kurulum tamamlanmamış sayılır */
+export const tenantNeedsBusinessSetup = (profile?: IProfileResponse): boolean =>
   !profile?.data?.financialDetails?.companyType
 
 const allowedRoutesForEveryProfile: Array<Route> = ['/login', '/forgot-password', '/reset-password', '/onboarding']
@@ -79,13 +79,13 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
     // route tenant'a ait değilse izin verme
     if (!tenantRoutes.includes(route)) return false
 
-    const isFinancialRequired = tenantNeedsFinancialOnboarding(profile)
+    const needsBusinessSetup = tenantNeedsBusinessSetup(profile)
 
-    // Finansal onboarding GEREKİYORSA, sadece /welcome'a erişilebilir
-    if (isFinancialRequired && route !== '/welcome') return false
+    // İşletme bilgileri gerekiyorsa sadece /business-setup'a erişilebilir
+    if (needsBusinessSetup && route !== '/business-setup') return false
 
-    // Finansal onboarding GEREKMiYORSA, /welcome'a erişim kapalı olmalı
-    if (!isFinancialRequired && route === '/welcome') return false
+    // İşletme bilgileri tamamlandıysa /business-setup erişimi kapalı olmalı
+    if (!needsBusinessSetup && route === '/business-setup') return false
   } else {
     if (tenantRoutes.includes(route)) return false
   }
@@ -105,7 +105,7 @@ export const getFirstAllowedRoute = (profile: IProfileResponse | undefined): Rou
   if (!profile) return '/'
 
   if (isTenantUser(profile)) {
-    return tenantNeedsFinancialOnboarding(profile) ? '/welcome' : '/applications'
+    return tenantNeedsBusinessSetup(profile) ? '/business-setup' : '/applications'
   }
 
   for (const [propKey, restriction] of Object.entries(profileRouteRestrictions)) {

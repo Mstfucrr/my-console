@@ -36,7 +36,7 @@ export function ProfileButton({ className, onClick }: { className?: string; onCl
 
   const isTenant = isTenantUser(profile)
 
-  const isWelcomePage = pathname === '/welcome'
+  const isBusinessSetupPage = pathname === '/business-setup'
 
   if (!profile) return null
 
@@ -58,7 +58,7 @@ export function ProfileButton({ className, onClick }: { className?: string; onCl
             <PopoverClose asChild>
               <Button
                 color='primary'
-                hidden={isWelcomePage || !isActiveTenant}
+                hidden={isBusinessSetupPage || !isActiveTenant}
                 asChild
                 className='flex w-full items-center gap-2'
                 size='sm'

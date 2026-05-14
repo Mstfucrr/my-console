@@ -2,12 +2,12 @@
 
 import CustomImage from '@/components/image'
 import { cn } from '@/lib/utils'
-import { APPLICATION_STEPS, INTRO_STATS, PARTNER_FEATURES } from '@/modules/welcome/constants'
+import { APPLICATION_STEPS, INTRO_STATS, PARTNER_FEATURES } from '@/modules/business-setup/constants'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { WelcomeFinancialForm } from './welcome-financial-form'
+import { BusinessInfoForm } from './business-info-form'
 
-function WelcomeStepHeading({
+function BusinessSetupStepHeading({
   title,
   description,
   titleClassName
@@ -38,7 +38,7 @@ function WelcomeStepHeading({
   )
 }
 
-function WelcomeStepLayout({
+function BusinessSetupStepLayout({
   imageSrc,
   imageAlt,
   children
@@ -66,10 +66,10 @@ function WelcomeStepLayout({
   )
 }
 
-export function WelcomeStepIntro() {
+export function BusinessSetupIntroStep() {
   return (
-    <WelcomeStepLayout imageSrc='/images/welcome/Image-1.png' imageAlt='Welcome Step Intro'>
-      <WelcomeStepHeading
+    <BusinessSetupStepLayout imageSrc='/images/business-setup/Image-1.png' imageAlt='İşletme kurulum giriş adımı'>
+      <BusinessSetupStepHeading
         titleClassName='sm:text-3xl'
         title={"fiyuu'ya Hoş Geldin"}
         description='fiyuu ile markanızı birlikte büyütelim. Bu kısa turda, markanızı binlerce müşteriye ulaştıracak platformumuzu ve başvuru sürecini keşfedin.'
@@ -90,14 +90,14 @@ export function WelcomeStepIntro() {
           </div>
         ))}
       </motion.div>
-    </WelcomeStepLayout>
+    </BusinessSetupStepLayout>
   )
 }
 
-export function WelcomeStepPartner() {
+export function BusinessSetupPartnerBenefitsStep() {
   return (
-    <WelcomeStepLayout imageSrc='/images/welcome/Image-2.png' imageAlt='Welcome Step Partner'>
-      <WelcomeStepHeading
+    <BusinessSetupStepLayout imageSrc='/images/business-setup/Image-2.png' imageAlt='Partner faydaları adımı'>
+      <BusinessSetupStepHeading
         titleClassName='sm:text-3xl'
         title='Tüm Operasyonların Tek Yerde'
         description="Şube başvuru adımlarını tamamla. fiyuu'nun kurye ağıyla teslimatları hızlı ve güvenli şekilde biz yönetelim."
@@ -124,14 +124,14 @@ export function WelcomeStepPartner() {
           </motion.li>
         ))}
       </ul>
-    </WelcomeStepLayout>
+    </BusinessSetupStepLayout>
   )
 }
 
-export function WelcomeStepApplication() {
+export function BusinessSetupApplicationProcessStep() {
   return (
-    <WelcomeStepLayout imageSrc='/images/welcome/Image-3.png' imageAlt='Welcome Step Application'>
-      <WelcomeStepHeading
+    <BusinessSetupStepLayout imageSrc='/images/business-setup/Image-3.png' imageAlt='Başvuru süreci adımı'>
+      <BusinessSetupStepHeading
         titleClassName='sm:text-3xl'
         title='Başvuru İçin Sadece 4 Adım'
         description='Ortalama 5 dakika içinde tamamlayabileceğiniz kolay bir süreç.'
@@ -160,10 +160,10 @@ export function WelcomeStepApplication() {
           </motion.li>
         ))}
       </ol>
-    </WelcomeStepLayout>
+    </BusinessSetupStepLayout>
   )
 }
 
-export function WelcomeStepFinancial() {
-  return <WelcomeFinancialForm />
+export function BusinessInfoStep() {
+  return <BusinessInfoForm />
 }

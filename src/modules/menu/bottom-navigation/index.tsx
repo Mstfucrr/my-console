@@ -1,7 +1,7 @@
 'use client'
 
 import { SiteLogoNoText } from '@/components/svg'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { useProfile } from '@/context/ProfileProvider'
 import { usePermission } from '@/hooks/use-permission'
 import { getActiveMenuApp, getMenuConfig } from '@/lib/get-menu-config'
@@ -23,28 +23,43 @@ type CenterActionButtonProps = {
   onClose: () => void
 }
 
+function CenterActionButtonContent(props: ButtonProps) {
+  return (
+    <Button
+      color='success'
+      size='icon'
+      className={cn(
+        'relative z-11',
+        'flex size-14 items-center justify-center rounded-full',
+        'transition-all hover:scale-105 hover:shadow-xl active:scale-95',
+        'ring-background -mt-6 ring-4'
+      )}
+      {...props}
+    >
+      <Plus className='size-7' strokeWidth={2.5} />
+    </Button>
+  )
+}
 function CenterActionButton({ showCreateOrder, onClose }: CenterActionButtonProps) {
   const pathname = usePathname()
 
   const href = showCreateOrder ? '/orders/create' : '/applications/new'
   const ariaLabel = showCreateOrder ? 'Yeni Sipariş Oluştur' : 'Şube Başvurusu'
   const isActive = isLocationMatch(href, pathname)
+  const isDisabled = isLocationMatch('/applications/new', pathname) || isLocationMatch('/orders/create', pathname)
+
+  if (isDisabled) {
+    return (
+      <div className='relative flex flex-col items-center justify-center'>
+        <CenterActionButtonContent disabled={isDisabled} />
+      </div>
+    )
+  }
 
   return (
     <div className='relative flex flex-col items-center justify-center'>
-      <Link
-        href={href}
-        className={cn(
-          'relative z-11',
-          'flex size-14 items-center justify-center rounded-full',
-          'bg-success text-primary-foreground shadow-lg',
-          'transition-all hover:scale-105 hover:shadow-xl active:scale-95',
-          'ring-background -mt-6 ring-4'
-        )}
-        aria-label={ariaLabel}
-        onClick={onClose}
-      >
-        <Plus className='size-7' strokeWidth={2.5} />
+      <Link href={href} aria-label={ariaLabel} onClick={onClose}>
+        <CenterActionButtonContent disabled={isDisabled} />
       </Link>
       {isActive && <div className='bg-primary absolute -bottom-3 h-0.5 w-full' />}
     </div>

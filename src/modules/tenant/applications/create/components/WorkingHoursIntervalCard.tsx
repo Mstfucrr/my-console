@@ -70,6 +70,7 @@ export function WorkingHoursIntervalCard({
               placeholder='00:00'
               type='time'
               tabIndex={inputTabIndex}
+              autoFocus={intervalIndex === 0}
               formItemClassName='space-y-1'
               className='h-9 w-max font-mono'
               preValidateDigits={isValidPartialWorkingHourDigits}

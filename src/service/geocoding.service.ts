@@ -27,6 +27,15 @@ type NominatimReverseResponse = {
   address?: NominatimAddress
 }
 
+type Coordinates = {
+  latitude: number
+  longitude: number
+}
+
+export type BrowserLocationInfo = Coordinates & {
+  address: NominatimAddress
+}
+
 function buildHeaders() {
   return {
     Accept: 'application/json'
@@ -73,4 +82,34 @@ export async function reverseGeocodeCoordinates(latitude: number, longitude: num
 
   const data = (await response.json()) as NominatimReverseResponse
   return data.address ?? null
+}
+
+function getBrowserCoordinates(): Promise<Coordinates | null> {
+  return new Promise(resolve => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      resolve(null)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        })
+      },
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    )
+  })
+}
+
+export async function getCurrentLocationInfo(signal?: AbortSignal): Promise<BrowserLocationInfo | null> {
+  const coordinates = await getBrowserCoordinates()
+  if (!coordinates || signal?.aborted) return null
+
+  const address = await reverseGeocodeCoordinates(coordinates.latitude, coordinates.longitude, signal)
+  if (!address) return null
+
+  return { ...coordinates, address }
 }

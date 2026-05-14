@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   if (!mounted) return <LayoutLoader />
 
-  const isWelcomePage = pathname === '/welcome'
+  const isBusinessSetupPage = pathname === '/business-setup'
 
   return (
     <AuthProvider>
@@ -32,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <TopbarAndMobileMenu />
               <div
                 className={cn('pt-4 pb-24 transition-all duration-300 lg:pt-20 lg:pb-16', {
-                  'max-sm:pt-8 max-sm:pb-16 sm:pb-10 md:pt-0! md:pb-0!': isWelcomePage
+                  'max-sm:pt-8 max-sm:pb-16 sm:pb-10 md:pt-0! md:pb-0!': isBusinessSetupPage
                 })}
               >
                 <div className='flex flex-col gap-4 pb-0'>

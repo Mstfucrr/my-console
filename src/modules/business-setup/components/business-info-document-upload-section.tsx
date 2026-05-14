@@ -5,9 +5,9 @@ import { AxiosError } from 'axios'
 import { FileSignature, IdCard, Landmark, Newspaper, ScanFace, type LucideIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useWelcomeOnboarding } from '../context/welcome-onboarding-context'
-import type { WelcomeCompanyType, WelcomeDocType } from '../types'
-import { WelcomeDocumentUploadItem } from './welcome-document-upload-item'
+import { useBusinessSetup } from '../context/business-setup-context'
+import type { BusinessInfoCompanyType, BusinessInfoDocType } from '../types'
+import { BusinessInfoDocumentUploadItem } from './business-info-document-upload-item'
 
 const MAX_SIZE = 10
 
@@ -17,14 +17,14 @@ const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/bmp', 'applica
 type SlotField = 'taxDocumentKey' | 'idFrontKey' | 'idBackKey' | 'signatureCircularKey' | 'tradeRegistryGazetteKey'
 
 type SlotConfig = {
-  docType: WelcomeDocType
+  docType: BusinessInfoDocType
   label: string
   field: SlotField
   Icon: LucideIcon
   required: boolean
 }
 
-function slotsForCompanyType(companyType: WelcomeCompanyType): SlotConfig[] {
+function slotsForCompanyType(companyType: BusinessInfoCompanyType): SlotConfig[] {
   const isBireysel = companyType === 'Bireysel'
   const tax: SlotConfig = {
     docType: 'taxDocument',
@@ -79,11 +79,11 @@ function buildPreviewEntry(file: File): LocalPreviewEntry {
   return { url: URL.createObjectURL(file), mime: file.type }
 }
 
-export function WelcomeDocumentUploadSection() {
-  const { form, uploadFinancialDocument } = useWelcomeOnboarding()
+export function BusinessInfoDocumentUploadSection() {
+  const { form, uploadBusinessInfoDocument } = useBusinessSetup()
   const companyType = form.watch('companyType')
   const { control, setValue } = form
-  const [localPreview, setLocalPreview] = useState<Partial<Record<WelcomeDocType, LocalPreviewEntry>>>({})
+  const [localPreview, setLocalPreview] = useState<Partial<Record<BusinessInfoDocType, LocalPreviewEntry>>>({})
   const previewRef = useRef(localPreview)
 
   const slots = useMemo(() => slotsForCompanyType(companyType), [companyType])
@@ -92,7 +92,7 @@ export function WelcomeDocumentUploadSection() {
     previewRef.current = localPreview
   }, [localPreview])
 
-  const revokePreview = useCallback((docType: WelcomeDocType) => {
+  const revokePreview = useCallback((docType: BusinessInfoDocType) => {
     setLocalPreview(prev => {
       const entry = prev[docType]
       if (entry?.url) URL.revokeObjectURL(entry.url)
@@ -127,7 +127,7 @@ export function WelcomeDocumentUploadSection() {
     revokePreview(slot.docType)
     setLocalPreview(prev => ({ ...prev, [slot.docType]: buildPreviewEntry(file) }))
     try {
-      const key = await uploadFinancialDocument({ file, docType: slot.docType })
+      const key = await uploadBusinessInfoDocument({ file, docType: slot.docType })
       setValue(slot.field, key, { shouldValidate: true, shouldDirty: true })
     } catch (error: unknown) {
       const axiosError = error as AxiosError<{ message?: string }>
@@ -153,7 +153,7 @@ export function WelcomeDocumentUploadSection() {
       <CardContent className='flex flex-col gap-y-2'>
         <div className='grid gap-x-4 gap-y-2 sm:grid-cols-2'>
           {slots.map(slot => (
-            <WelcomeDocumentUploadItem
+            <BusinessInfoDocumentUploadItem
               key={`${slot.docType}-${slot.label}`}
               required={slot.required}
               label={slot.label}

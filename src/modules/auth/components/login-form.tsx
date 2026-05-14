@@ -16,13 +16,13 @@ import { useTurnstile } from '../hooks/useTurnstile'
 import { AuthTurnstile } from './turnstile'
 
 const ACCOUNT_TYPES: Array<{ value: AccountType; label: string; tooltip: string }> = [
-  { value: 'tenant', label: 'İşletme', tooltip: 'Tüm şubelerini yönet' },
-  { value: 'store', label: 'Şube', tooltip: 'Şubenin siparişlerini takip et' }
+  { value: 'store', label: 'Şube', tooltip: 'Şubenin siparişlerini takip et' },
+  { value: 'tenant', label: 'İşletme', tooltip: 'Tüm şubelerini yönet' }
 ]
 
 const schema = z
   .object({
-    accountType: z.enum(['tenant', 'store'], { required_error: 'Hesap türü zorunludur.' }),
+    accountType: z.enum(['tenant', 'store'], { required_error: 'Hesap türü zorunludur.' }).default('store'),
     accountId: z.string().optional(),
     identifier: z.string().min(1, { message: 'E-posta zorunludur.' }),
     password: z.string().min(1, { message: 'Şifre zorunludur.' })
@@ -47,6 +47,7 @@ export function LoginForm() {
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
+      accountType: 'store',
       accountId: '',
       identifier: '',
       password: ''
@@ -154,7 +155,10 @@ export function LoginForm() {
           <AuthTurnstile turnstileState={turnstileState} />
 
           <div className='flex justify-end'>
-            <Link href='/forgot-password' className='text-primary text-sm hover:underline'>
+            <Link
+              href={accountTypeField.value === 'store' ? '/forgot-password' : `/forgot-password?at=tenant`}
+              className='text-primary text-sm hover:underline'
+            >
               Şifremi unuttum
             </Link>
           </div>
