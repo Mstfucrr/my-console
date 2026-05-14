@@ -3,11 +3,10 @@ import { Open_Sans } from 'next/font/google'
 
 import { AppErrorBoundary } from '@/components/app-error-boundary'
 import { InstanaEum } from '@/components/instana-eum'
-import { TooltippedElement } from '@/components/tooltipped-element'
+import { VersionView } from '@/components/version-view'
 import { cn } from '@/lib/utils'
 import { AnalyticsProvider } from '@/provider/AnalyticsProvider'
 import { QueryProvider } from '@/provider/QueryProvider'
-import { APP_VERSION } from '@/version'
 import type { Metadata, Viewport } from 'next'
 import { ToastContainer } from 'react-toastify'
 
@@ -54,13 +53,7 @@ export default function RootLayout({
           </AppErrorBoundary>
         </QueryProvider>
         <ToastContainer autoClose={3000} pauseOnFocusLoss={false} limit={6} stacked />
-        {APP_VERSION && APP_VERSION.trim() !== '' && (
-          <TooltippedElement tooltipContent='Versiyon' className='p-0.5 text-[10px]'>
-            <span className='bg-background fixed bottom-0 left-1/2 z-500 rounded-full p-1 py-0.5 text-[10px] max-sm:-translate-x-1/2 sm:bottom-2 sm:left-3'>
-              {APP_VERSION}
-            </span>
-          </TooltippedElement>
-        )}
+        <VersionView />
       </body>
     </html>
   )

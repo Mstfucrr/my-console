@@ -86,7 +86,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
               </div>
             </div>
           </OnboardingProvider>
-          <div className='bg-primary text-muted flex w-full items-center justify-center gap-2 px-6 py-6 text-sm sm:px-12 xl:px-36'>
+          <div className='bg-primary text-muted flex w-full items-center justify-center gap-2 px-6 py-6 text-sm sm:px-12 xl:px-22'>
             <span>
               Sisteme giriş yaparken bir sorun ile karşılaşıyorsanız lütfen{' '}
               <a href='tel:08508006061' className='underline'>

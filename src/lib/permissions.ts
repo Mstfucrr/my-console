@@ -42,7 +42,12 @@ const tenantRoutes: Array<Route> = [
 export const tenantNeedsBusinessSetup = (profile?: IProfileResponse): boolean =>
   !profile?.data?.financialDetails?.companyType
 
-const allowedRoutesForEveryProfile: Array<Route> = ['/login', '/forgot-password', '/reset-password', '/onboarding']
+export const allowedRoutesForEveryProfile: Array<Route> = [
+  '/login',
+  '/forgot-password',
+  '/reset-password',
+  '/onboarding'
+]
 
 type RouteRestriction = {
   include?: Array<Route>
