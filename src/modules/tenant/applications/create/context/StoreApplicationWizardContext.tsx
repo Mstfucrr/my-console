@@ -18,6 +18,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type Dispatch,
   type ReactNode,
@@ -118,6 +119,13 @@ export function StoreApplicationWizardProvider({ children }: { children: ReactNo
   const address = useTurkishAddressCascade(locationForm, {
     fullAddressFormat: 'store'
   })
+
+  useEffect(() => {
+    if (locationForm.formState.isValid) return
+    if (stepQuery === 'location' || stepIndex === StoreApplicationWizardStepIndex.Location) return
+
+    void setStepQuery('location')
+  }, [stepIndex, locationForm.formState.isValid, setStepQuery, stepQuery])
 
   const { handleMapPositionChange, handleUseCurrentLocation, isDetectingCurrentLocation } = useStoreLocationSync(
     locationForm,
