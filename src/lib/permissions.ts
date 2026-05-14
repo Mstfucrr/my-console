@@ -77,7 +77,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
     if (needsBusinessSetup && route !== '/business-setup') return false
 
     // İşletme bilgileri tamamlandıysa /business-setup erişimi kapalı olmalı
-    // if (!needsBusinessSetup && route === '/business-setup') return false
+    if (!needsBusinessSetup && route === '/business-setup') return false
   } else {
     if (tenantRoutes.includes(route)) return false
   }
