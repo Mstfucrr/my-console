@@ -137,6 +137,11 @@ const buttonVariants = cva(
         variant: 'ghost',
         color: 'destructive',
         className: 'text-destructive hover:text-destructive-foreground'
+      },
+      {
+        variant: undefined,
+        color: 'success',
+        className: 'bg-success text-success-foreground hover:bg-success/80 disabled:bg-success/80 focus:bg-success/80'
       }
     ],
 
