@@ -163,6 +163,7 @@ export function FormMaskedInputField<T extends FieldValues>({
             // native input props
             type={type === 'time' ? 'time' : 'text'} // IMaskInput ile her zaman text
             inputMode={resolvedInputMode}
+            autoComplete={imaskPropsWithInputMode.autoComplete ?? 'off'}
             className={cn(
               inputVariants({ color, size, radius, variant, shadow }),
               Icon && 'pl-10',
