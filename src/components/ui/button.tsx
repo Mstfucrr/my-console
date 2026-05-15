@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground hover:bg-primary/80',
         primary: 'bg-primary text-primary-foreground hover:bg-primary/80',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        success: 'bg-success text-success-foreground hover:bg-success/80 disabled:bg-success/80 focus:bg-success/80',
+        success: 'bg-success text-success-foreground hover:bg-success/80',
         info: 'bg-info text-info-foreground hover:bg-info/80',
         warning: 'bg-warning text-warning-foreground hover:bg-warning/80',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
@@ -139,6 +139,11 @@ const buttonVariants = cva(
         variant: 'ghost',
         color: 'destructive',
         className: 'text-destructive hover:text-destructive-foreground'
+      },
+      {
+        variant: undefined,
+        color: 'success',
+        className: 'bg-success text-success-foreground hover:bg-success/80 disabled:bg-success/80 focus:bg-success/80'
       }
     ],
 
