@@ -101,7 +101,7 @@ export function LocationFields() {
             </Label>
             <TooltippedElement
               className='max-w-52'
-              tooltipContent='Adresinizi aşağıdaki alanlardan girebilir veya harita üzerinden pin ile seçebilirsiniz.'
+              tooltipContent='Adresinizi aşağıdaki alanlardan girebilir, harita üzerinden pin ile seçebilir veya cihazınızın mevcut konumunu kullanabilirsiniz'
               side='bottom'
             >
               <InfoIcon className='size-4.5' />
