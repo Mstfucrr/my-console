@@ -73,11 +73,11 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
                   </span>
                 )}
                 {isLoginPage && isActiveTenant && (
-                  <div className='bg-primary-pink/10 rounded-md px-2 py-1 text-center text-sm font-medium text-black'>
+                  <div className='bg-primary-pink/10 rounded-md px-2 py-1 text-center text-xs font-medium text-black'>
                     fiyuu işletmesi değil misin?{' '}
                     <Link
                       href='/onboarding'
-                      className='text-primary-pink hover:text-primary-pink-700 font-bold underline transition-colors'
+                      className='text-primary-pink hover:text-primary-pink-700 text-sm font-bold underline transition-colors'
                     >
                       fiyuu İşletmesi Ol
                     </Link>
