@@ -19,7 +19,7 @@ export function VersionView() {
             className={cn(
               'bg-background fixed bottom-0 z-500 rounded-full p-1 py-0.5 text-[10px]',
               isPublicUrl
-                ? 'right-1/2 translate-x-1/2 sm:bottom-0 lg:right-[22%] xl:right-[16%]'
+                ? 'right-1/2 translate-x-1/2 sm:bottom-0 lg:right-[22%] xl:right-[19%]'
                 : 'left-1/2 max-sm:-translate-x-1/2 sm:bottom-2 sm:left-3'
             )}
           >
