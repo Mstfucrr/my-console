@@ -27,8 +27,7 @@ export function VerifyForm() {
   return (
     <div className='w-full'>
       <div className='mb-6'>
-        <p className='text-lg font-medium text-gray-800'>{otpState.maskedPhoneNumber}</p>
-        <p className='mt-1 text-sm text-gray-600'>Numarasına gelen 6 haneli kodu giriniz.</p>
+        <p className='text-sm text-gray-600'>{otpState.maskedPhoneNumber} numarasına gelen 6 haneli kodu giriniz.</p>
       </div>
 
       <form className='space-y-4'>
