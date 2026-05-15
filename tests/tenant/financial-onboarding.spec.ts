@@ -79,9 +79,7 @@ test.describe('Tenant finansal onboarding', () => {
     await expect(fileInputs).toHaveCount(4)
     await fileInputs.nth(0).setInputFiles({ name: 'vergi.pdf', mimeType: 'application/pdf', buffer: tinyPdfFile })
     await fileInputs.nth(1).setInputFiles({ name: 'kimlik-on.pdf', mimeType: 'application/pdf', buffer: tinyPdfFile })
-    await fileInputs
-      .nth(2)
-      .setInputFiles({ name: 'kimlik-arka.pdf', mimeType: 'application/pdf', buffer: tinyPdfFile })
+    await fileInputs.nth(2).setInputFiles({ name: 'kimlik-arka.pdf', mimeType: 'application/pdf', buffer: tinyPdfFile })
 
     await page.getByRole('button', { name: 'Kaydet ve Devam Et' }).click()
 
