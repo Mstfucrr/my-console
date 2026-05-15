@@ -12,7 +12,7 @@ type MenuPrimaryActionLinkProps = {
 
 function MenuPrimaryActionButtonInner({ label, ...props }: { label: string } & ButtonProps) {
   return (
-    <Button className='font-extrabold' color='success' {...props}>
+    <Button className='disabled:bg-success/80 font-extrabold' color='success' {...props}>
       <Plus className='size-5' />
       <span className='ml-2 max-md:sr-only'>{label}</span>
     </Button>
