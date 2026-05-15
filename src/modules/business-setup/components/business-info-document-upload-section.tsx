@@ -110,14 +110,6 @@ export function BusinessInfoDocumentUploadSection() {
     }
   }, [])
 
-  useEffect(() => {
-    if (companyType !== 'Bireysel') return
-    requestAnimationFrame(() => {
-      revokePreview('signatureCircular')
-      revokePreview('tradeRegistryGazette')
-    })
-  }, [companyType, revokePreview])
-
   const handleFile = async (slot: SlotConfig, file: File) => {
     const validationError = getFileValidationError(file)
     if (validationError) {

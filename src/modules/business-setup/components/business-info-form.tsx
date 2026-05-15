@@ -33,14 +33,8 @@ export function BusinessInfoForm() {
 
   const setCompanyType = (v: BusinessInfoCompanyType) => {
     companyTypeField.onChange(v)
-    form.setValue('tckn', '')
-    if (v === 'Bireysel') {
-      form.setValue('signatureCircularKey', '', { shouldDirty: true, shouldValidate: true })
-      form.setValue('tradeRegistryGazetteKey', '', { shouldDirty: true, shouldValidate: true })
-    } else {
-      form.setValue('idFrontKey', '', { shouldDirty: true, shouldValidate: true })
-      form.setValue('idBackKey', '', { shouldDirty: true, shouldValidate: true })
-    }
+    if (v !== 'Bireysel') form.setValue('tckn', '')
+    void form.trigger(['idFrontKey', 'idBackKey', 'signatureCircularKey', 'tradeRegistryGazetteKey'])
   }
 
   return (
