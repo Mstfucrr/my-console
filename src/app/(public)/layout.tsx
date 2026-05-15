@@ -65,9 +65,9 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
                 {children}
 
                 {!isLoginPage && isInOnboardingPage && (
-                  <span className='text-muted-foreground text-center text-sm font-medium'>
+                  <span className='text-muted-foreground text-center text-xs font-medium'>
                     Zaten hesabınız var mı?{' '}
-                    <Link href='/login' className='text-primary hover:text-primary-700 font-medium underline'>
+                    <Link href='/login' className='text-primary hover:text-primary-700 text-sm font-medium underline'>
                       Giriş Yap
                     </Link>
                   </span>
