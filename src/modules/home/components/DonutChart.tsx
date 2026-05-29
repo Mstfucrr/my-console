@@ -6,6 +6,7 @@ export type DashboardDonutProps = {
 }
 
 export function DashboardDonut({ data, height = 320 }: DashboardDonutProps) {
+  if (!data || data.length === 0) return null
   const series: BasicDonutProps['series'] = data.map(d => d.value)
   const labels: BasicDonutProps['labels'] = data.map(d => d.label)
   const colors: BasicDonutProps['colors'] = data.map(d => d.color)

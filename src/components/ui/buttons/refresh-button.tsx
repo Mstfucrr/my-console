@@ -1,3 +1,4 @@
+import { TooltippedElement } from '@/components/tooltipped-element'
 import { Button, type ButtonProps } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { RefreshCw } from 'lucide-react'
@@ -10,9 +11,18 @@ type RefreshButtonProps = ButtonProps & {
 
 export function RefreshButton({ onClick, isLoading = false, isIconButton = false, ...props }: RefreshButtonProps) {
   return (
-    <Button variant='soft' color='info' onClick={onClick} disabled={isLoading} {...props}>
-      <RefreshCw className={cn('h-4 w-4', { 'mr-2': !isIconButton }, isLoading && 'animate-spin')} />
-      {!isIconButton && 'Yenile'}
-    </Button>
+    <TooltippedElement tooltipContent='Yenile'>
+      <Button
+        variant='soft'
+        color='info'
+        onClick={onClick}
+        disabled={isLoading}
+        size={isIconButton ? 'icon-sm' : 'sm'}
+        {...props}
+      >
+        <RefreshCw className={cn('size-4.5', isLoading && 'animate-spin')} />
+        {!isIconButton && <span className='ml-2'>Yenile</span>}
+      </Button>
+    </TooltippedElement>
   )
 }

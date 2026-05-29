@@ -1,10 +1,13 @@
 import '@/styles/globals.css'
 import { Open_Sans } from 'next/font/google'
-import Script from 'next/script'
 
+import { AppErrorBoundary } from '@/components/app-error-boundary'
+import { InstanaEum } from '@/components/instana-eum'
+import { VersionView } from '@/components/version-view'
 import { cn } from '@/lib/utils'
-import QueryProvider from '@/provider/QueryProvider'
-import type { Metadata } from 'next'
+import { AnalyticsProvider } from '@/provider/AnalyticsProvider'
+import { QueryProvider } from '@/provider/QueryProvider'
+import type { Metadata, Viewport } from 'next'
 import { ToastContainer } from 'react-toastify'
 
 // Initialize Poppins font
@@ -21,6 +24,13 @@ export const metadata: Metadata = {
     'Partner yönetim platformu. Sipariş takibi, mutabakat, raporlama ve daha fazlası için modern ve kullanıcı dostu arayüz.'
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false
+}
+
 export default function RootLayout({
   children
 }: Readonly<{
@@ -29,13 +39,21 @@ export default function RootLayout({
   return (
     <html lang='tr'>
       <head>
-        {process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_APP_ENV !== 'test' && (
-          <Script src='//unpkg.com/react-scan/dist/auto.global.js' crossOrigin='anonymous' />
+        <InstanaEum />
+
+        {process.env.NODE_ENV === 'development' && (
+          /* eslint-disable-next-line @next/next/no-sync-scripts */
+          <script crossOrigin='anonymous' src='//unpkg.com/react-scan/dist/auto.global.js' />
         )}
       </head>
       <body className={cn(openSans.className, 'antialiased')}>
-        <QueryProvider>{children}</QueryProvider>
-        <ToastContainer autoClose={2500} />
+        <QueryProvider>
+          <AppErrorBoundary>
+            <AnalyticsProvider>{children}</AnalyticsProvider>
+          </AppErrorBoundary>
+        </QueryProvider>
+        <ToastContainer autoClose={3000} pauseOnFocusLoss={false} limit={6} stacked />
+        <VersionView />
       </body>
     </html>
   )

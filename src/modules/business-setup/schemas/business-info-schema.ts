@@ -1,0 +1,81 @@
+import { z } from 'zod'
+
+export const businessInfoFormSchema = z
+  .object({
+    accountType: z.enum(['platform', 'tenant']).optional(),
+    taxOffice: z.string().min(1, '').max(120, 'En fazla 120 karakter'),
+    companyName: z.string().min(1, '').max(254, 'En fazla 254 karakter'),
+    companyType: z.enum(['Bireysel', 'Kurumsal']),
+    tckn: z.string().optional().default(''),
+    vkn: z.string().optional().default(''),
+    iban: z.string().min(24, '').max(26, 'IBAN en fazla 26 karakter'),
+    taxDocumentKey: z.string().min(1, ''),
+    idFrontKey: z.string().optional().default(''),
+    idBackKey: z.string().optional().default(''),
+    tradeRegistryGazetteKey: z.string().optional().default(''),
+    signatureCircularKey: z.string().optional().default('')
+  })
+  .superRefine((data, ctx) => {
+    const digits = data.tckn?.replace(/\D/g, '') ?? ''
+    if (data.companyType === 'Bireysel') {
+      if (digits.length !== 11) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: data.tckn?.length ? 'T.C. kimlik numarası 11 haneli olmalıdır' : '',
+          path: ['tckn']
+        })
+      }
+      if (!data.idFrontKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['idFrontKey']
+        })
+      }
+      if (!data.idBackKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['idBackKey']
+        })
+      }
+    } else {
+      if (!data.signatureCircularKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['signatureCircularKey']
+        })
+      }
+      if (!data.tradeRegistryGazetteKey?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '',
+          path: ['tradeRegistryGazetteKey']
+        })
+      }
+    }
+    if (!data.accountType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '',
+        path: ['accountType']
+      })
+    }
+  })
+
+export type BusinessInfoFormValues = z.infer<typeof businessInfoFormSchema>
+
+export const defaultBusinessInfoValues: Partial<BusinessInfoFormValues> = {
+  taxOffice: '',
+  companyName: '',
+  companyType: 'Bireysel',
+  tckn: '',
+  vkn: '',
+  iban: '',
+  taxDocumentKey: '',
+  idFrontKey: '',
+  idBackKey: '',
+  tradeRegistryGazetteKey: '',
+  signatureCircularKey: ''
+}

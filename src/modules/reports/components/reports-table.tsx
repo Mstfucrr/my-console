@@ -1,32 +1,73 @@
 import { AnimatedFilters } from '@/components/animated-filters'
-import { BasicDataTable } from '@/components/basic-data-table'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { BasicDataTable, BasicDataTableProps } from '@/components/basic-data-table'
 import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { FilterToggleButton } from '@/components/ui/filter-card'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
+import { formatDateTR } from '@/lib/utils/date'
+import { OrderStatusBadge, PaymentMethodBadge } from '@/modules/orders/components/Badges'
+import { OrderStatusesGroups, PaginatedResponse } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Filter, FilterX } from 'lucide-react'
 import { useState } from 'react'
-import { STATUS_COLORS, STATUS_TEXT } from '../constants'
 import type { ReportRecord } from '../types'
 import { ReportsFilters, type ReportsFilterProperties } from './reports-filters'
+import { SendEmailButton } from './send-email-button'
 
 interface ReportsTableProps {
-  data: ReportRecord[]
+  data: PaginatedResponse<ReportRecord>['data']
   isLoading: boolean
   filters: ReportsFilterProperties
   onFiltersChange: (f: ReportsFilterProperties) => void
   onClearFilters: () => void
   onRefresh: () => void
+  total: number | undefined
+  handleSendEmail: () => void
+  isSending: boolean
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('tr-TR')
-}
-
-const formatCurrency = (amount: number) => {
-  return `₺${amount.toFixed(2)}`
-}
+const columns: ColumnDef<ReportRecord>[] = [
+  {
+    accessorKey: 'OrderId',
+    header: 'Sipariş ID',
+    enableSorting: false,
+    minSize: 100,
+    cell: ({ row }) => <div className='ph-sensitive text-xs'>{row.getValue('OrderId')}</div>
+  },
+  {
+    accessorKey: 'CreatedOn',
+    header: 'Oluşturulma Tarihi',
+    cell: ({ row }) => formatDateTR(row.getValue('CreatedOn'), true)
+  },
+  {
+    accessorKey: 'customer_name',
+    header: 'Müşteri',
+    minSize: 150,
+    cell: ({ row }) => <div className='ph-sensitive font-medium'>{row.getValue('customer_name')}</div>
+  },
+  {
+    accessorKey: 'Status',
+    header: 'Durum',
+    cell: ({ row }) => {
+      const status = row.getValue('Status') === 1 ? OrderStatusesGroups.DELIVERED : OrderStatusesGroups.CANCELLED
+      return <OrderStatusBadge status={status} />
+    }
+  },
+  {
+    accessorKey: 'Name',
+    header: 'Ödeme Yöntemi',
+    cell: ({ row }) => {
+      const { IsPrepaid, Name: paymentMethod } = row.original
+      return <PaymentMethodBadge className='text-nowrap' showIcon paymentMethod={paymentMethod} IsPrepaid={IsPrepaid} />
+    }
+  },
+  {
+    accessorKey: 'TotalAmount',
+    header: 'Tutar (₺)',
+    meta: { align: 'right' },
+    size: 100,
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrencyTRY(row.getValue('TotalAmount'), false)}</span>
+  }
+]
 
 export default function ReportsTable({
   data,
@@ -34,95 +75,22 @@ export default function ReportsTable({
   filters,
   onFiltersChange,
   onClearFilters,
-  onRefresh
-}: ReportsTableProps) {
-  const [showFilters, setShowFilters] = useState(false)
-
-  const columns: ColumnDef<ReportRecord>[] = [
-    {
-      accessorKey: 'orderId',
-      header: 'Sipariş No',
-      cell: ({ row }) => <div className='font-medium'>{row.getValue('orderId')}</div>
-    },
-    {
-      accessorKey: 'customerName',
-      header: 'Müşteri Adı',
-      cell: ({ row }) => <div className='font-medium'>{row.getValue('customerName')}</div>
-    },
-    {
-      accessorKey: 'customerPhone',
-      header: 'Telefon',
-      cell: ({ row }) => <div className='text-sm text-gray-600'>{row.getValue('customerPhone')}</div>
-    },
-    {
-      accessorKey: 'orderDate',
-      header: 'Sipariş Tarihi',
-      cell: ({ row }) => formatDate(row.getValue('orderDate'))
-    },
-    {
-      accessorKey: 'deliveryDate',
-      header: 'Teslimat Tarihi',
-      cell: ({ row }) => formatDate(row.getValue('deliveryDate'))
-    },
-    {
-      accessorKey: 'totalAmount',
-      header: 'Toplam Tutar',
-      meta: { align: 'right' },
-      cell: ({ row }) => formatCurrency(row.getValue('totalAmount'))
-    },
-    {
-      accessorKey: 'platformFee',
-      header: 'Platform Komisyonu',
-      meta: { align: 'right' },
-      cell: ({ row }) => formatCurrency(row.getValue('platformFee'))
-    },
-    {
-      accessorKey: 'netAmount',
-      header: 'Net Tutar',
-      meta: { align: 'right' },
-      cell: ({ row }) => <div className='font-medium'>{formatCurrency(row.getValue('netAmount'))}</div>
-    },
-    {
-      accessorKey: 'status',
-      header: 'Durum',
-      cell: ({ row }) => {
-        const status = row.getValue('status') as string
-        return (
-          <Badge variant='outline' className='text-nowrap' color={STATUS_COLORS[status] || 'secondary'}>
-            {STATUS_TEXT[status as keyof typeof STATUS_TEXT] || status}
-          </Badge>
-        )
-      }
-    },
-    {
-      accessorKey: 'paymentMethod',
-      header: 'Ödeme Yöntemi',
-      cell: ({ row }) => <div className='text-sm'>{row.getValue('paymentMethod')}</div>
-    },
-    {
-      accessorKey: 'deliveryAddress',
-      header: 'Teslimat Adresi',
-      cell: ({ row }) => {
-        const address = row.getValue('deliveryAddress') as string
-        return (
-          <div className='max-w-[200px] truncate text-sm text-gray-600' title={address}>
-            {address.length > 20 ? address.slice(0, 20) + '...' : address}
-          </div>
-        )
-      }
-    }
-  ]
+  onRefresh,
+  total,
+  handleSendEmail,
+  isSending,
+  ...props
+}: ReportsTableProps & Omit<BasicDataTableProps<ReportRecord>, 'columns' | 'data'>) {
+  const [showFilters, setShowFilters] = useState(true)
 
   return (
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Eski Sipariş Raporları ({data.length})</CardTitle>
+        <CardTitle>Tamamlanan Siparişler ({total})</CardTitle>
         <div className='flex flex-row items-center gap-2'>
+          <SendEmailButton sendEmail={handleSendEmail} isSending={isSending} hasData={total ? total > 0 : false} />
           <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
-          <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-            {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-            <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-          </Button>
+          <FilterToggleButton showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} color='primary' />
         </div>
       </CardHeader>
       <CardContent className='flex flex-col gap-4'>
@@ -135,6 +103,8 @@ export default function ReportsTable({
           isLoading={isLoading}
           emptyLabel='Rapor kaydı bulunamadı'
           loadingLabel='Rapor kayıtları yükleniyor...'
+          total={total}
+          {...props}
         />
       </CardContent>
     </Card>

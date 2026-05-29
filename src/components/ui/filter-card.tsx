@@ -1,17 +1,36 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button, ButtonProps } from '@/components/ui/button'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Check, LucideIcon, XCircle } from 'lucide-react'
-import { ReactNode } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import { isSameDateRange } from '@/lib/utils/date'
+import { SelectTriggerProps } from '@radix-ui/react-select'
+import { ColumnSort } from '@tanstack/react-table'
+import { ArrowDown, ArrowUp, Check, ChevronDown, Filter, LucideIcon, XCircle } from 'lucide-react'
+import { Children, cloneElement, isValidElement, ReactNode } from 'react'
 import type { DateRange } from 'react-day-picker'
+import { TooltippedElement } from '../tooltipped-element'
+import { ButtonGroup } from './button-group'
 
 export interface FilterOption {
   value: string | number
   label: string | number
+}
+
+export interface GroupedFilterOption {
+  groupLabel?: string
+  items: FilterOption[]
 }
 
 export interface FilterProperties {
@@ -21,15 +40,7 @@ export interface FilterProperties {
   dateTo?: string
 }
 
-export interface FilterConfig {
-  title: string
-  icon: LucideIcon
-  statusOptions?: FilterOption[]
-  showDateFilters?: boolean
-}
-
 export interface FilterCardProps<T> {
-  config: FilterConfig
   filters: T
   onFiltersChange: (filters: T) => void
   onClearFilters: () => void
@@ -41,7 +52,6 @@ export interface FilterCardProps<T> {
 }
 
 export function FilterCard<T>({
-  config,
   onClearFilters,
   onApply,
   hasActiveFilters,
@@ -49,32 +59,53 @@ export function FilterCard<T>({
   children,
   className
 }: FilterCardProps<T>) {
-  const { title, icon: Icon } = config
+  // Children'a otomatik olarak onEnterPress ekle
+  const enhancedChildren = Children.map(children, child => {
+    if (!isValidElement(child)) return child
+
+    // SearchInput veya StatusSelect ise onEnterPress ekle
+    const componentName = child.type?.toString() || ''
+    const isSearchInput = componentName.includes('SearchInput') || child.type === SearchInput
+    const isStatusSelect = componentName.includes('StatusSelect') || child.type === StatusSelect
+
+    if ((isSearchInput || isStatusSelect) && hasPendingChanges && onApply) {
+      const existingProps = child.props as Record<string, unknown>
+      return cloneElement(child, {
+        ...existingProps,
+        onEnterPress: onApply
+      } as Partial<typeof existingProps & { onEnterPress: () => void }>)
+    }
+
+    return child
+  })
 
   return (
-    <Card className={className}>
-      <CardHeader className='flex flex-row items-center justify-between space-y-0'>
-        <div className='flex items-center gap-2'>
-          <Icon className='text-primary' />
-          <CardTitle className='text-base'>{title}</CardTitle>
-        </div>
-        <div className='flex items-center gap-2'>
-          {hasPendingChanges && onApply && (
-            <Button size='xs' onClick={onApply}>
-              <Check className='mr-1 h-4 w-4' />
-              Uygula
-            </Button>
-          )}
-          {hasActiveFilters && (
-            <Button size='xs' variant='outline' onClick={onClearFilters}>
-              <XCircle className='mr-1 h-4 w-4' />
-              Temizle
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <div className={cn('flex w-full justify-end gap-2 pt-2 max-lg:flex-wrap-reverse', className)}>
+      <div className='flex w-full flex-wrap justify-end gap-2'>
+        {enhancedChildren}
+
+        {(hasPendingChanges || hasActiveFilters) && (
+          <div className='flex items-center gap-2'>
+            {hasPendingChanges && onApply && (
+              <TooltippedElement tooltipContent='Filtreleri Uygula'>
+                <Button size='icon-sm' onClick={onApply}>
+                  <Check className='size-4.5' />
+                  <span className='sr-only'>Uygula</span>
+                </Button>
+              </TooltippedElement>
+            )}
+            {hasActiveFilters && (
+              <TooltippedElement tooltipContent='Filtreleri Temizle'>
+                <Button size='icon-sm' variant='outline' onClick={onClearFilters}>
+                  <XCircle className='size-4.5' />
+                  <span className='sr-only'>Temizle</span>
+                </Button>
+              </TooltippedElement>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -82,9 +113,11 @@ export function SearchInput({
   placeholder,
   value,
   onChange,
-  showLabel = true,
+  showLabel = false,
   className,
-  Icon
+  Icon,
+  onEnterPress,
+  defaultValue
 }: {
   placeholder: string
   value: string
@@ -92,11 +125,20 @@ export function SearchInput({
   showLabel?: boolean
   className?: string
   Icon: LucideIcon
+  onEnterPress?: () => void
+  defaultValue?: string
 }) {
   const isActive = value && value.length > 0
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onEnterPress) {
+      e.preventDefault()
+      onEnterPress()
+    }
+  }
+
   return (
-    <div className={className}>
+    <div className={cn('flex-1', className)}>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Arama</label>}
       <div className='relative'>
         <Input
@@ -104,18 +146,20 @@ export function SearchInput({
           placeholder={placeholder}
           value={value}
           onChange={e => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
           size='sm'
           color={isActive ? 'info' : undefined}
           variant={isActive ? 'faded' : 'bordered'}
+          className='w-full min-w-[180px]'
         />
         {value && value.length > 0 && (
           <Button
             size='icon-xs'
             variant='ghost'
-            onClick={() => onChange(undefined)}
-            className='absolute top-0 right-0 h-full'
+            onClick={() => onChange(defaultValue ?? undefined)}
+            className='absolute top-1/2 right-0 -translate-y-1/2'
           >
-            <XCircle className='h-4 w-4' />
+            <XCircle className='size-5' />
             <span className='sr-only'>Temizle</span>
           </Button>
         )}
@@ -124,42 +168,90 @@ export function SearchInput({
   )
 }
 
-export function StatusSelect<T extends string>({
+export function StatusSelect<T extends string | number>({
   options,
+  groupedOptions,
   value,
   onChange,
   placeholder = 'Durum',
-  showLabel = true
+  showLabel = false,
+  onEnterPress,
+  isLoading = false
 }: {
-  options: FilterOption[]
-  value: T
+  options?: FilterOption[]
+  groupedOptions?: GroupedFilterOption[]
+  value: T | undefined
   onChange: (value: T) => void
   placeholder?: string
   showLabel?: boolean
+  onEnterPress?: () => void
+  isLoading?: boolean
 }) {
   const isActive = value && value !== 'all'
+  const hasOptions = groupedOptions ? groupedOptions.some(g => g.items.length > 0) : (options?.length ?? 0) > 0
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Select açık değilse ve Enter basıldıysa filtreleri uygula
+    if (e.key === 'Enter' && onEnterPress) {
+      // Select açık mı kontrol et
+      const selectContent = document.querySelector('[role="listbox"]')
+      const isSelectOpen = selectContent?.getAttribute('data-state') === 'open'
+
+      if (!isSelectOpen) {
+        // Select kapalıyken Enter basıldığında filtreleri uygula ve Select'in açılmasını engelle
+        e.preventDefault()
+        e.stopPropagation()
+        onEnterPress()
+      }
+      // Select açıksa normal davranışına izin ver (seçim yapılabilir)
+    }
+  }
 
   return (
-    <div>
+    <div className='max-sm:w-full'>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Durum</label>}
       <div className='flex flex-wrap items-center gap-2'>
-        <Select value={value} onValueChange={onChange}>
-          <SelectTrigger
-            className='min-w-[180px]'
-            size='sm'
-            color={isActive ? 'info' : undefined}
-            variant={isActive ? 'faded' : 'bordered'}
-          >
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map(option => (
-              <SelectItem key={option.value} value={option.value.toString()}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {isLoading ? (
+          <Skeleton className='h-8 w-full min-w-[180px]' />
+        ) : (
+          <Select value={value?.toString()} onValueChange={value => onChange(value as T)}>
+            <SelectTrigger
+              className='min-w-[180px]'
+              size='sm'
+              color={isActive ? 'info' : undefined}
+              variant={isActive ? 'faded' : 'bordered'}
+              onKeyDown={handleKeyDown}
+            >
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {hasOptions ? (
+                <div className='max-h-48 overflow-y-auto pr-0.5'>
+                  {groupedOptions
+                    ? groupedOptions.map((group, index) => (
+                        <SelectGroup key={`${group.groupLabel}-${index}`}>
+                          {group.groupLabel && <SelectLabel>{group.groupLabel}</SelectLabel>}
+                          {group.items.map(option => (
+                            <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ))
+                    : options?.map(option => (
+                        <SelectItem key={`${option.value}-${option.label}`} value={option.value?.toString()}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                </div>
+              ) : (
+                <div className='text-muted-foreground flex items-center justify-center p-2 text-sm'>
+                  Bir sonuç bulunamadı.
+                </div>
+              )}
+            </SelectContent>
+          </Select>
+        )}
       </div>
     </div>
   )
@@ -169,26 +261,109 @@ export function DateFilters({
   dateRange,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
-  showLabel = true
+  showLabel = false,
+  defaultDateRange,
+  ...props
 }: {
   dateRange?: DateRange
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   showLabel?: boolean
-}) {
-  const isActive = dateRange && (dateRange.from || dateRange.to)
+  defaultDateRange?: DateRange
+} & React.ComponentProps<typeof DateRangePicker>) {
+  const isDefaultDateRange = isSameDateRange(dateRange, defaultDateRange)
+  const isActive = dateRange && (dateRange.from || dateRange.to) && !isDefaultDateRange
 
   return (
     <div>
       {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Tarih Aralığı</label>}
       <DateRangePicker
         dateRange={dateRange}
+        defaultDateRange={defaultDateRange}
         onDateRangeChange={onDateRangeChange}
         placeholder={placeholder}
         size='xs'
         color={isActive ? 'info' : undefined}
         variant={isActive ? 'soft' : 'outline'}
+        {...props}
       />
+    </div>
+  )
+}
+
+export function FilterToggleButton({
+  showFilters,
+  onToggle,
+  ...props
+}: {
+  showFilters: boolean
+  onToggle: () => void
+} & ButtonProps) {
+  return (
+    <TooltippedElement tooltipContent={`Filtreleri ${showFilters ? 'gizle' : 'göster'}`}>
+      <Button className='relative' onClick={onToggle} size='icon-sm' {...props}>
+        <Filter className='mr-1 size-4.5' />
+        <ChevronDown className={cn('absolute right-0 bottom-0 size-4.5', showFilters ? 'rotate-180' : 'rotate-0')} />
+      </Button>
+    </TooltippedElement>
+  )
+}
+
+export function SortSelect({
+  sortByOptions,
+  sorting,
+  onSortingChange,
+  placeholder = 'Sıralama',
+  showLabel = false,
+  ...selectTriggerProps
+}: {
+  sortByOptions: FilterOption[]
+  sorting: ColumnSort
+  onSortingChange: (sorting: ColumnSort) => void
+  placeholder?: string
+  showLabel?: boolean
+} & Omit<SelectTriggerProps, 'value' | 'onChange' | 'color'>) {
+  const { id, desc } = sorting ?? {}
+
+  const handleSortByChange = (value: string) => {
+    onSortingChange({ id: value, desc })
+  }
+
+  const handleSortOrderToggle = () => {
+    onSortingChange({ id, desc: !desc })
+  }
+
+  const currentSortByOption = sortByOptions.find(opt => opt.value === id)
+  const SortOrderIcon = desc ? ArrowDown : ArrowUp
+
+  return (
+    <div className='max-sm:w-full'>
+      {showLabel && <label className='text-muted-foreground mb-1 block text-xs'>Sıralama</label>}
+      <TooltippedElement tooltipContent='Sıralama' className='text-xs'>
+        <ButtonGroup orientation='horizontal' className='max-sm:w-full'>
+          <Select value={id} onValueChange={handleSortByChange}>
+            <SelectTrigger
+              {...selectTriggerProps}
+              className={cn('min-w-[140px]', selectTriggerProps.className)}
+              size='sm'
+              variant='bordered'
+              data-slot='select-trigger'
+            >
+              <SelectValue placeholder={placeholder}>{currentSortByOption?.label}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {sortByOptions.map(option => (
+                <SelectItem key={option.value} value={option.value.toString()}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button size='icon-sm' variant='soft' className='border-default-300 group' onClick={handleSortOrderToggle}>
+            <SortOrderIcon className='text-primary group-hover:text-primary-foreground h-4 w-4 transition-colors' />
+          </Button>
+        </ButtonGroup>
+      </TooltippedElement>
     </div>
   )
 }

@@ -1,37 +1,141 @@
 'use client'
 
+import { SupportMessageCircle } from '@/components/svg'
+import { TooltippedElement } from '@/components/tooltipped-element'
 import { Button } from '@/components/ui/button'
+import { LoadingButton } from '@/components/ui/loading-button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { MessageCircle } from 'lucide-react'
+import { useProfile } from '@/context/ProfileProvider'
+import { cn } from '@/lib/utils'
+import { useGetChatTokenQuery, useInvalidateChatTokenMutation } from '@/modules/chat/hooks/useChatService'
+import { useIsChatFeatureFlagActive } from '@/modules/chat/hooks/useIsChatFeatureFlagActive'
+import { Order } from '@/types'
+import { Loader2, X } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-export function SupportDialog() {
+const ChatLoading = () => {
+  const showLiveSupportChatFlag = useIsChatFeatureFlagActive()
+  if (!showLiveSupportChatFlag) return null
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          size='icon'
-          className='bg-primary/90 hover:bg-primary relative text-white shadow-lg'
-          title='Destek Ekibine Mail Gönder'
-        >
-          <MessageCircle className='size-6' />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className='w-80 border-0 bg-transparent p-0 shadow-none'>
-        <div className='dark:bg-primary-10 border-primary/20 flex flex-col items-center gap-3 rounded-xl border bg-white p-6 shadow-xl'>
-          <div className='bg-primary/10 mb-2 flex size-12 items-center justify-center rounded-full'>
-            <MessageCircle className='text-primary size-7' />
-          </div>
-          <span className='text-primary text-lg font-bold'>Destek Mail Adresi</span>
-          <a
-            href='mailto:support@example.com'
-            className='text-primary hover:text-primary-700 font-medium break-all underline underline-offset-2 transition'
+    <div className='flex items-center justify-center gap-2 p-4'>
+      <Loader2 className='size-4 animate-spin' />
+      <span className='text-sm'>Chat hazırlanıyor...</span>
+    </div>
+  )
+}
+
+const SupportDialogChat = dynamic(() => import('./support-dialog-chat').then(m => m.SupportDialogChat), {
+  ssr: false,
+  loading: () => <ChatLoading />
+})
+
+export function SupportDialog({
+  order,
+  onOpenStateChange,
+  showText = false,
+  contentClassName,
+  ...props
+}: React.ComponentProps<typeof LoadingButton> & {
+  order?: Order
+  onOpenStateChange?: (open: boolean) => void
+  showText?: boolean
+  contentClassName?: string
+}) {
+  const showLiveSupportChatFlag = useIsChatFeatureFlagActive()
+  const activeTokenRef = useRef<string | null>(null)
+  const [open, setOpen] = useState(false)
+  const { mutate: invalidateChatToken } = useInvalidateChatTokenMutation()
+  const { profile } = useProfile()
+
+  const invalidateActiveToken = useCallback(() => {
+    const token = activeTokenRef.current
+    if (!token) return
+    // Aynı token için close/unmount/rotate tetiklenirse tekrar invalidate etmesin.
+    activeTokenRef.current = null
+    invalidateChatToken(token)
+  }, [invalidateChatToken])
+
+  const { isFetching, data } = useGetChatTokenQuery(
+    {
+      orderId: order?.orderId,
+      hubId: profile?.info?.hubId
+    },
+    {
+      enabled: open && !!showLiveSupportChatFlag,
+      gcTime: 0,
+      staleTime: 0
+    }
+  )
+
+  // Token değiştiğinde (order/hub değişimi vs) eski token'ı invalidate etmeye çalış.
+  useEffect(() => {
+    if (!open || isFetching) return
+    const nextToken = data?.token ?? null
+    if (!nextToken) return
+    if (activeTokenRef.current && activeTokenRef.current !== nextToken) invalidateChatToken(activeTokenRef.current)
+    activeTokenRef.current = nextToken
+  }, [data?.token, invalidateChatToken, isFetching, open])
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && open) invalidateActiveToken()
+    setOpen(nextOpen)
+    onOpenStateChange?.(nextOpen)
+  }
+
+  useEffect(() => {
+    onOpenStateChange?.(open && !isFetching)
+  }, [open, isFetching, onOpenStateChange])
+
+  useEffect(() => {
+    // Component unmount olursa açık token'ı invalidate etmeyi dene.
+    return () => invalidateActiveToken()
+  }, [invalidateActiveToken])
+
+  return (
+    <Popover open={open && !isFetching} modal={showLiveSupportChatFlag} onOpenChange={handleOpenChange}>
+      <TooltippedElement tooltipContent='Canlı Destek' hidden={!showLiveSupportChatFlag} className='text-xs'>
+        <PopoverTrigger asChild>
+          <LoadingButton
+            isLoading={isFetching}
+            size='icon'
+            title='Canlı Destek'
+            showContentWhenLoading={showText}
+            data-testid='support-dialog-button'
+            {...props}
+            className={cn('relative p-2', props?.className)}
           >
-            support@example.com
-          </a>
-          <span className='text-muted-foreground mt-2 text-center text-xs'>
-            Destek ekibimize e-posta göndererek ulaşabilirsiniz.
-          </span>
-        </div>
+            <SupportMessageCircle className='size-full max-w-7 text-white' />
+            {showText && 'Canlı Destek'}
+          </LoadingButton>
+        </PopoverTrigger>
+      </TooltippedElement>
+
+      <PopoverContent
+        onPointerDownOutside={e => (showLiveSupportChatFlag ? e.preventDefault() : undefined)}
+        onOpenAutoFocus={e => e.preventDefault()}
+        onCloseAutoFocus={e => e.preventDefault()}
+        className={cn(
+          'relative left-1/2! max-h-max min-h-[400px] w-80 -translate-x-1/2! border-0! bg-transparent p-0 shadow-none',
+          showLiveSupportChatFlag ? 'h-[500px]' : 'h-max',
+          contentClassName
+        )}
+      >
+        {open && showLiveSupportChatFlag && (
+          <TooltippedElement tooltipContent='Kapat' className='text-xs'>
+            <Button
+              className='absolute -top-1 -left-1'
+              size='icon-xs'
+              color='primary'
+              data-testid='support-dialog-close-button'
+              onClick={() => handleOpenChange(false)}
+            >
+              <X className='size-full' />
+            </Button>
+          </TooltippedElement>
+        )}
+
+        <SupportDialogChat token={data?.token ?? ''} order={order} />
       </PopoverContent>
     </Popover>
   )

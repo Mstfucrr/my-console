@@ -49,7 +49,7 @@ const checkboxVariants = cva(
       {
         variant: 'outline',
         color: 'destructive',
-        className: '[&_svg]:stroke-destructive border-destructive border-destructive'
+        className: '[&_svg]:stroke-destructive border-destructive'
       },
       {
         variant: 'outline',
@@ -92,7 +92,7 @@ const checkboxVariants = cva(
   }
 )
 
-type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> &
+export type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> &
   VariantProps<typeof checkboxVariants> & {
     lineThrough?: boolean
     icon?: React.ReactNode

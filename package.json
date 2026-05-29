@@ -1,15 +1,15 @@
 {
-  "name": "partners",
+  "name": "partner-frontend",
   "version": "1.0.0",
   "private": true,
   "engines": {
     "node": "22.21.1"
   },
   "scripts": {
-    "start": "next start",
     "dev": "env-cmd -f .env.local next dev",
-    "build:dev": "env-cmd -f .env.local next build",
-    "build": "next build",
+    "build:dev": "env-cmd -f .env.dev next build",
+    "build": "env-cmd -f .env.prod next build",
+    "build:preprod": "env-cmd -f .env.preprod next build",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prettier-check": "prettier --check .",
@@ -44,13 +44,19 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.553.0",
     "next": "16.0.10",
-    "react": "19.2.0",
+    "next-turnstile": "^1.0.7",
+    "nuqs": "^2.8.0",
+    "posthog-js": "^1.361.0",
+    "react": "19.2.3",
     "react-apexcharts": "^1.7.0",
     "react-day-picker": "^9.8.1",
-    "react-dom": "19.2.0",
+    "react-dom": "19.2.3",
     "react-hook-form": "^7.54.2",
+    "react-imask": "^7.6.1",
     "react-leaflet": "5.0.0",
+    "react-leaflet-cluster": "^4.0.0",
     "react-toastify": "^11.0.5",
+    "socket.io-client": "^4.8.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -61,27 +67,30 @@
     "@tanstack/react-query-devtools": "^5.67.2",
     "@types/leaflet": "^1.9.20",
     "@types/node": "^20.17.24",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
     "axios-auth-refresh": "^3.3.6",
+    "dotenv": "^17.2.3",
     "env-cmd": "10.1.0",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.1",
+    "eslint-config-next": "16.0.10",
     "eslint-config-prettier": "^10.1.8",
     "postcss": "^8",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.7.1",
+    "react-scan": "^0.4.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.16",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.8.2",
     "typescript-eslint": "^8.46.3",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.9"
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2"
+      "@types/react": "19.2.7",
+      "@types/react-dom": "19.2.3"
     }
-  }
+  },
+  "packageManager": "pnpm@10.33.4"
 }

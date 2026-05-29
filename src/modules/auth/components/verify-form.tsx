@@ -1,205 +1,97 @@
 'use client'
+import { OtpCodeInput } from '@/components/form/OtpCodeInput'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { LoadingButton } from '@/components/ui/loading-button'
 import { cn } from '@/lib/utils'
-import { useMutation } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { RefreshCcw } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import {
-  type ChangeEvent,
-  type KeyboardEvent,
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react'
-import { toast } from 'react-toastify'
-import { authService, ISetCookieRequest, IVerifyOtpRequest } from '../service/auth.service'
+import { ArrowLeft, RefreshCcw } from 'lucide-react'
+import { useAuth } from '../context/auth-context'
 
-const VerfiyForm = () => {
-  const loginData = {
-    otpTimeout: 30,
-    phoneNumber: '1234567890',
-    installationId: '1234567890'
-  }
+const OTP_TIMEOUT = 60
 
-  const verifyOtpMutation = useMutation({
-    mutationFn: (request: IVerifyOtpRequest) => authService.verifyOtp(request)
-  })
+export function VerifyForm() {
+  const {
+    otpState,
+    loadingState,
+    handleOtpChange,
+    handleOtpKeyDown,
+    handleOtpPaste,
+    handleVerifyOtp,
+    handleResendOtp,
+    otpInputRefs,
+    backToLoginForm
+  } = useAuth()
 
-  const setCookieMutation = useMutation({
-    mutationFn: (request: ISetCookieRequest) => authService.setCookie(request)
-  })
-
-  const totalOtpField = 6
-  const otpArray: string[] = Array.from({ length: totalOtpField }, () => '')
-  const [otp, setOtp] = useState<string[]>(otpArray)
-  const otpFields = Array.from({ length: totalOtpField }, (_, index) => index)
-  const inputRefs = useRef<Array<HTMLInputElement | null>>([])
-
-  const [timer, setTimer] = useState(loginData.otpTimeout)
-
-  const { mutateAsync: verifyOtp, isPending: isVerifyOtpPending } = verifyOtpMutation
-  const { mutateAsync: setCookie, isPending: isSetCookiePending } = setCookieMutation
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (timer === 0) return
-      setTimer(prev => prev - 1)
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [timer])
-
-  const isTimerComplete = useMemo(() => timer === 0, [timer])
-
-  const resetOtp = useCallback(() => {
-    startTransition(() => setOtp(otpArray))
-    setTimeout(() => inputRefs.current[0]?.focus(), 0)
-  }, [otpArray])
-
-  useEffect(() => {
-    if (!isTimerComplete) return
-    resetOtp()
-  }, [isTimerComplete, resetOtp])
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    const digit = e.target.value.replace(/[^0-9]/g, '').slice(0, 1)
-    const newOtp = [...otp]
-    newOtp[index] = digit
-    setOtp(newOtp)
-    if (digit && index < totalOtpField - 1) {
-      inputRefs.current[index + 1]?.focus()
-    }
-  }
-
-  const handleKeyDown = (index: number, event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Backspace' && otp[index] === '' && index > 0) {
-      setOtp(prevOtp => {
-        const newOtp = [...prevOtp]
-        newOtp[index - 1] = ''
-        return newOtp
-      })
-      inputRefs.current[index - 1]?.focus()
-    } else if (event.key === 'ArrowLeft' && index > 0) {
-      inputRefs.current[index - 1]?.focus()
-    } else if (event.key === 'ArrowRight' && index < totalOtpField - 1) {
-      inputRefs.current[index + 1]?.focus()
-    } else if (event.key === 'Enter') {
-      handleSubmit()
-    }
-  }
-
-  const router = useRouter()
-
-  async function verifyOtpAndSetCookie() {
-    const enteredOtp = otp.join('')
-    const { action_cookie, isOtpValid } = await verifyOtp({
-      installationId: loginData.installationId,
-      otp: enteredOtp,
-      phoneNumber: loginData.phoneNumber
-    })
-
-    if (!isOtpValid) throw new Error('Invalid OTP')
-
-    await setCookie({ action_cookie })
-  }
-
-  const handleSubmit = async () => {
-    if (!loginData || loginData.otpTimeout === 0) return
-    setOtp(otpArray)
-
-    toast
-      .promise(verifyOtpAndSetCookie, {
-        pending: 'Kod doğrulanıyor...',
-        success: 'Başarılıyla giriş yaptınız.',
-        error: 'Kod geçersiz. Lütfen tekrar deneyiniz.'
-      })
-      .then(() => router.push('/'))
-      .catch(() => setTimeout(() => inputRefs.current[0]?.focus(), 0))
-  }
-
-  const handleResendOtp = () => {
-    setTimer(loginData.otpTimeout)
-    resetOtp()
-  }
-
-  const isOtpComplete = otp.every(digit => digit !== '')
-  const maskedPhoneNumber = `**** *** ${loginData.phoneNumber.slice(-4)}`
+  const isTimerComplete = otpState.timer === 0
 
   return (
     <div className='w-full'>
-      <div className='mb-6 text-center'>
-        <p className='text-lg font-medium text-gray-800'>{maskedPhoneNumber}</p>
-        <p className='mt-1 text-sm text-gray-600'>Numarasına gelen 6 haneli kodu giriniz.</p>
+      <div className='mb-6'>
+        <p className='text-sm text-gray-600'>{otpState.maskedPhoneNumber} numarasına gelen 6 haneli kodu giriniz.</p>
       </div>
 
-      <form className='space-y-6'>
-        <div className='flex justify-center gap-2'>
-          {otpFields.map(index => (
-            <Input
-              key={`otp-code-${index}`}
-              type='text'
-              id={`otp${index}`}
-              name={`otp${index}`}
-              value={otp[index]}
-              onChange={e => handleChange(e, index)}
-              onKeyDown={event => handleKeyDown(index, event)}
-              disabled={isTimerComplete || isVerifyOtpPending || isSetCookiePending}
-              autoFocus={index === 0}
-              maxLength={1}
-              className='focus:border-primary no-spin h-12 w-12 rounded-lg border-2 text-center text-xl font-semibold'
-              ref={(ref: HTMLInputElement | null) => {
-                inputRefs.current[index] = ref
-              }}
-              inputMode='numeric'
-              pattern='[0-9]*'
-            />
-          ))}
-        </div>
+      <form className='space-y-4'>
+        <OtpCodeInput
+          values={otpState.values}
+          inputRefs={otpInputRefs}
+          onChange={handleOtpChange}
+          onPaste={handleOtpPaste}
+          onKeyDown={handleOtpKeyDown}
+          disabled={isTimerComplete || loadingState.verify || loadingState.resend}
+        />
         <div className='mt-6'>
           <div className='relative z-1'>
             <motion.div
               className='bg-primary absolute z-[-1] h-full w-full rounded-xl'
               initial={{ width: '100%' }}
               animate={{
-                width: isVerifyOtpPending || isSetCookiePending ? '100%' : `${(timer / loginData.otpTimeout) * 100}%`
+                width: loadingState.verify ? '100%' : `${(otpState.timer / OTP_TIMEOUT) * 100}%`
               }}
               transition={{ duration: 1 }}
             />
-            {!isTimerComplete || isVerifyOtpPending || isSetCookiePending ? (
+            {!isTimerComplete || loadingState.verify ? (
               <LoadingButton
                 type='button'
                 variant='outline'
                 className='w-full bg-transparent! text-white'
-                size='lg'
-                onClick={handleSubmit}
-                disabled={!isOtpComplete}
-                isLoading={isVerifyOtpPending || isSetCookiePending}
+                size='md'
+                onClick={handleVerifyOtp}
+                disabled={!otpState.isComplete}
+                isLoading={loadingState.verify}
                 loadingText='Doğrulanıyor...'
               >
-                <Badge className='text-lg'>
-                  <span className={cn('flex items-center gap-2', { 'text-gray-100': !isOtpComplete })}>
-                    Gönder <small className='text-xs'>({timer})</small>
+                <Badge className='pr-0 text-lg'>
+                  <span className={cn('flex items-center gap-2', { 'text-gray-100': !otpState.isComplete })}>
+                    Doğrula <small className='text-xs'>({otpState.timer})</small>
                   </span>
                 </Badge>
               </LoadingButton>
             ) : (
-              <Button type='button' className='w-full' size='lg' onClick={handleResendOtp}>
+              <LoadingButton
+                type='button'
+                className='w-full'
+                size='md'
+                onClick={handleResendOtp}
+                isLoading={loadingState.resend}
+                loadingText='Tekrar Gönderiliyor...'
+              >
                 <RefreshCcw className='mr-2 size-4' />
                 <span className='text-white'>Tekrar Gönder</span>
-              </Button>
+              </LoadingButton>
             )}
           </div>
+        </div>
+        <div className='text-center'>
+          <button
+            type='button'
+            onClick={backToLoginForm}
+            className='text-primary flex w-fit items-center justify-center gap-1 justify-self-center text-sm hover:underline'
+          >
+            <ArrowLeft className='h-4 w-4' />
+            Geri Dön
+          </button>
         </div>
       </form>
     </div>
   )
 }
-
-export default VerfiyForm

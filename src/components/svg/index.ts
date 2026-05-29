@@ -4,3 +4,5 @@ export { default as DeliveryCheckList } from './duel-tone/fiyuu-icon-set/Deliver
 export { default as DeliveryShipmentPackagesAdd } from './duel-tone/fiyuu-icon-set/Delivery, Shipment, Packages, Add.svg'
 export { default as SiteLogoBig } from './duel-tone/logo-big.svg'
 export { default as SiteLogoMin } from './duel-tone/logo-min.svg'
+export { default as SiteLogoNoText } from './duel-tone/logo-no-text.svg'
+export { default as SupportMessageCircle } from './duel-tone/support-message-circle.svg'

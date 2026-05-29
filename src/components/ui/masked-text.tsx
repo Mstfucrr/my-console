@@ -1,15 +1,18 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
 import { Eye, EyeOff } from 'lucide-react'
+import { Route } from 'next'
+import Link from 'next/link'
 import { useState } from 'react'
 
 interface MaskedTextProps {
   /**
    * The value to display (will be masked or shown based on state)
    */
-  value: string
+  value?: string
   /**
    * Function to mask the value
    */
@@ -30,7 +33,7 @@ interface MaskedTextProps {
   /**
    * href for the link (required if asLink is true)
    */
-  href?: string
+  href?: Route
   /**
    * Additional className for the text/link element
    */
@@ -38,7 +41,7 @@ interface MaskedTextProps {
   /**
    * Size of the toggle button
    */
-  buttonSize?: 'xs' | 'sm' | 'default'
+  buttonSize?: ButtonProps['size']
 }
 
 /**
@@ -52,42 +55,60 @@ export function MaskedText({
   asLink = false,
   href,
   textClassName,
-  buttonSize = 'xs'
+  buttonSize = 'icon-xs'
 }: MaskedTextProps) {
+  const isSmallerThanTablet = useIsSmallerThanTablet()
   const [isMasked, setIsMasked] = useState(defaultMasked)
 
   // Hold-to-show handlers
   const showUnmasked = () => setIsMasked(false)
   const hideMasked = () => setIsMasked(true)
 
-  const displayValue = isMasked ? maskFn(value) : value
+  const displayValue = isMasked ? maskFn(value ?? '') : value
 
-  const content =
-    asLink && href ? (
-      <a href={href} className={textClassName}>
-        {displayValue}
-      </a>
-    ) : (
-      <span className={textClassName}>{displayValue}</span>
-    )
+  if (!displayValue?.length) return null
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {content}
-      <Button
-        size={buttonSize}
-        variant='ghost'
-        className='h-6 w-6 p-0'
-        aria-label={isMasked ? 'Göster' : 'Gizle'}
-        type='button'
-        onMouseDown={showUnmasked}
-        onTouchStart={showUnmasked}
-        onMouseUp={hideMasked}
-        onTouchEnd={hideMasked}
-        tabIndex={0}
-      >
-        {isMasked ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
-      </Button>
+      {asLink && href ? (
+        <Link href={href} className={textClassName}>
+          {displayValue}
+        </Link>
+      ) : (
+        <span className={textClassName}>{displayValue}</span>
+      )}
+      {isSmallerThanTablet ? (
+        <Button
+          size={buttonSize}
+          variant='ghost'
+          className='size-6! min-h-6 min-w-6 p-0'
+          aria-label={isMasked ? 'Göster' : 'Gizle'}
+          type='button'
+          onClick={e => {
+            e.stopPropagation()
+            setIsMasked(masked => !masked)
+          }}
+          tabIndex={0}
+        >
+          {isMasked ? <EyeOff className='size-4.5' /> : <Eye className='size-4.5' />}
+        </Button>
+      ) : (
+        <span
+          aria-label={isMasked ? 'Göster' : 'Gizle'}
+          className='hover:bg-primary hover:text-primary-foreground text-primary rounded-md p-1'
+          onMouseEnter={e => {
+            e.stopPropagation()
+            showUnmasked()
+          }}
+          onMouseLeave={e => {
+            e.stopPropagation()
+            hideMasked()
+          }}
+          tabIndex={0}
+        >
+          {isMasked ? <EyeOff className='size-4' /> : <Eye className='size-4' />}
+        </span>
+      )}
     </div>
   )
 }

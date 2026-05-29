@@ -3,23 +3,28 @@
 import CustomImage from '@/components/image'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { ORDER_STATUS_COLORS } from '@/constants'
+import { ORDER_STATUS_BADGE_CLASSES, OrderStatusGroup } from '@/constants/orders'
 import { cn } from '@/lib/utils'
-import type { OrderChannel, OrderStatus } from '@/modules/types'
-import { OrderStatusLabel } from '@/modules/types'
-import { CreditCard } from 'lucide-react'
-import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS, PAYMENT_METHOD_LABELS } from '../utils'
+import type { OrderChannel, OrderStatusesGroups } from '@/types'
+import { Globe, Wallet } from 'lucide-react'
+import { CHANNEL_IMAGES, CHANNEL_LABELS, PAYMENT_METHOD_COLORS } from '../constants'
 
 interface StatusBadgeProps {
-  status: OrderStatus
+  status: OrderStatusesGroups
   variant?: 'outline' | 'soft'
   className?: string
+  diff?: string
 }
 
-export function StatusBadge({ status, variant = 'outline', className }: StatusBadgeProps) {
+export function OrderStatusBadge({ status, variant = 'soft', className, diff }: StatusBadgeProps) {
+  const groupInfo = OrderStatusGroup[status]
+
   return (
-    <Badge className={cn(ORDER_STATUS_COLORS[status], 'shrink-0', className)} variant={variant}>
-      {OrderStatusLabel[status]}
+    <Badge className={cn(ORDER_STATUS_BADGE_CLASSES[status], 'shrink-0', className)} variant={variant}>
+      <div className='flex items-center gap-1 text-center text-nowrap'>
+        {groupInfo.label}
+        {diff && <span className='text-[10px]'>({diff})</span>}
+      </div>
     </Badge>
   )
 }
@@ -28,9 +33,15 @@ interface PaymentMethodBadgeProps {
   paymentMethod: string
   showIcon?: boolean
   className?: string
+  IsPrepaid?: boolean
 }
 
-export function PaymentMethodBadge({ paymentMethod, showIcon = false, className }: PaymentMethodBadgeProps) {
+export function PaymentMethodBadge({
+  paymentMethod,
+  showIcon = false,
+  className,
+  IsPrepaid = false // sipariş online ödeme ise true, kapıda ödeme ise false
+}: PaymentMethodBadgeProps) {
   return (
     <Badge
       className={cn(
@@ -39,8 +50,8 @@ export function PaymentMethodBadge({ paymentMethod, showIcon = false, className 
         className
       )}
     >
-      {showIcon && <CreditCard className='mr-1 h-3 w-3' />}
-      {PAYMENT_METHOD_LABELS[paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] || paymentMethod}
+      {showIcon && (IsPrepaid ? <Globe className='mr-1 h-3 w-3' /> : <Wallet className='mr-1 h-3 w-3' />)}
+      {paymentMethod}
     </Badge>
   )
 }
@@ -48,26 +59,40 @@ export function PaymentMethodBadge({ paymentMethod, showIcon = false, className 
 interface ChannelBadgeProps {
   channel: OrderChannel
   className?: string
+  showText?: boolean
 }
 
-export function ChannelBadge({ channel, className }: ChannelBadgeProps) {
+export function ChannelBadge({ channel, showText = false, className }: ChannelBadgeProps) {
   const channelLabel = CHANNEL_LABELS[channel] || channel
   const channelImage = CHANNEL_IMAGES[channel] || 'no-channel.png'
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
+      {showText ? (
+        <div className='flex items-center gap-1'>
           <CustomImage
             src={`/images/order/channels/${channelImage}`}
             alt={channelLabel}
             height={22}
-            width={channel === 'fiyuu' ? 30 : 22}
+            width={channelImage === 'fiyuu.png' ? 30 : 22}
             className={className}
           />
-        </TooltipTrigger>
-        <TooltipContent>{channelLabel}</TooltipContent>
-      </Tooltip>
+          <span className='text-sm'>{channelLabel}</span>
+        </div>
+      ) : (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <CustomImage
+              src={`/images/order/channels/${channelImage}`}
+              alt={channelLabel}
+              height={20}
+              width={channelImage === 'fiyuu.png' ? 30 : 22}
+              className={className}
+            />
+          </TooltipTrigger>
+          <TooltipContent>{channelLabel}</TooltipContent>
+        </Tooltip>
+      )}
     </TooltipProvider>
   )
 }

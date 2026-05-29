@@ -1,46 +1,48 @@
 import { expect, test } from '@playwright/test'
 
-test('OTP doğrulamalı giriş akışı', async ({ page }) => {
+// Environment variable'lardan login bilgilerini al
+const TEST_ACCOUNT_ID = process.env.TEST_ACCOUNT_ID || ''
+const TEST_IDENTIFIER = process.env.TEST_IDENTIFIER || ''
+const TEST_PASSWORD = process.env.TEST_PASSWORD || ''
+
+test('OTP olmadan giriş akışı', async ({ page }) => {
+  // Login API endpoint'ini mock'la - requiresOtp: false döndür
+  await page.route('**/auth/login', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        accessToken: 'mock-access-token-12345',
+        userId: 'user-12345',
+        accountId: '9742949',
+        requiresOtp: false
+      })
+    })
+  })
+
   // Login sayfasına git
   await page.goto('/login')
 
-  // Login formunun göründüğünü kontrol et
-  await expect(page.getByRole('heading', { name: /Partner'a Hoşgeldiniz/i })).toBeVisible()
-  await expect(page.getByPlaceholder('Hesap ID giriniz')).toBeVisible()
-  await expect(page.getByPlaceholder('E-posta veya kullanıcı adı giriniz')).toBeVisible()
-  await expect(page.getByPlaceholder('Şifrenizi giriniz')).toBeVisible()
+  await expect(page.getByTestId('login-form-account-type-button-tenant')).toBeVisible()
+  await expect(page.getByTestId('login-form-account-type-button-store')).toBeVisible()
+  await expect(page.getByPlaceholder('E-posta')).toBeVisible()
+  await expect(page.getByPlaceholder('Şifre')).toBeVisible()
+
+  await page.getByTestId('login-form-account-type-button-tenant').click()
+  await expect(page.getByPlaceholder('Hesap ID')).not.toBeVisible()
+
+  await page.getByTestId('login-form-account-type-button-store').click()
+  const hesapIdInput = page.getByPlaceholder('Hesap ID')
+  await expect(hesapIdInput).toBeVisible()
+  await hesapIdInput.fill(TEST_ACCOUNT_ID)
+  await page.getByPlaceholder('E-posta').fill(TEST_IDENTIFIER)
+  await page.getByPlaceholder('Şifre').fill(TEST_PASSWORD)
 
   // Giriş Yap butonuna bas
   await page.getByRole('button', { name: /Giriş Yap/i }).click()
 
-  // OTP ekranına geçiş yapıldığını kontrol et
-  await expect(page.getByRole('heading', { name: /Doğrulama Kodu/i })).toBeVisible()
-
-  // OTP alanlarına yanlış kod gir (123123)
-  const otpInputs = page.locator('input[type="text"][inputmode="numeric"]')
-  const wrongOtp = '123123'
-  for (let i = 0; i < 6; i++) {
-    await otpInputs.nth(i).fill(wrongOtp[i])
-  }
-
-  // Gönder butonuna bas
-  await page.getByRole('button', { name: /Gönder/i }).click()
-
-  // Hata mesajının göründüğünü kontrol et (toast notification)
-  await expect(page.locator('.Toastify__toast--error').getByText(/Kod geçersiz/i)).toBeVisible({ timeout: 5000 })
-
-  // OTP alanlarını temizle ve doğru kod gir (123456)
-  for (let i = 0; i < 6; i++) {
-    await otpInputs.nth(i).clear()
-  }
-
-  const correctOtp = '123456'
-  for (let i = 0; i < 6; i++) {
-    await otpInputs.nth(i).fill(correctOtp[i])
-  }
-
-  // Gönder butonuna bas
-  await page.getByRole('button', { name: /Gönder/i }).click()
+  // Masked phone number'ın görünmediğini kontrol et
+  await expect(page.getByText(/Numarasına gelen 6 haneli kodu giriniz/i)).not.toBeVisible()
 
   // Başarılı giriş mesajını kontrol et (toast notification)
   await expect(page.locator('.Toastify__toast--success').getByText(/Başarılıyla giriş yaptınız/i)).toBeVisible({

@@ -10,8 +10,8 @@ Card.displayName = 'Card'
 const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'card-header border-border flex flex-col space-y-1.5 border-b px-4 py-4',
-      '[:has(+.card-content)]:mb-6', // eğer card-content varsa mb-6
+      'card-header border-border flex flex-col space-y-1 border-b px-4 py-4',
+      '[:has(+.card-content)]:mb-3', // eğer card-content varsa mb-6
       '[:not(:has(+.card-content))]:mb-0', // eğer card-content yoksa mb-0
       className
     )}
@@ -21,17 +21,17 @@ const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <h3 className={cn('text-xl leading-none font-medium', className)} {...props} />
+  <h3 className={cn('text-base leading-none font-medium sm:text-lg md:text-xl', className)} {...props} />
 )
 CardTitle.displayName = 'CardTitle'
 
 const CardDescription = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <p className={cn('text-muted-foreground mt-2 text-sm', className)} {...props} />
+  <p className={cn('text-muted-foreground text-sm', className)} {...props} />
 )
 CardDescription.displayName = 'CardDescription'
 
 const CardContent = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('card-content p-4 pt-0', className)} {...props} />
+  <div className={cn('card-content max-xs:p-2 p-4 pt-0', className)} {...props} />
 )
 CardContent.displayName = 'CardContent'
 

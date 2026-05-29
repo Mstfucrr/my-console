@@ -1,20 +1,16 @@
-import type { OrderStatus } from '@/modules/types'
+import type { OrderStatusesGroups } from '@/types'
 
 export interface ReportRecord {
-  id: string
-  orderId: string
-  customerName: string
-  customerPhone: string
-  orderDate: string
-  createdDate: string
-  deliveryDate: string
-  totalAmount: number
-  platformFee: number
-  netAmount: number
-  status: OrderStatus
-  paymentMethod: string
-  deliveryAddress: string
-  notes?: string
+  RestaurantId: string
+  RestaurantName: string
+  OrderId: string
+  TotalAmount: number
+  Name: string
+  IsPrepaid: boolean
+  Status: OrderStatusesGroups
+  CarrierId: string
+  CreatedOn: string
+  customer_name: string
 }
 
 export interface ReportsFilters {
@@ -27,9 +23,7 @@ export interface ReportsFilters {
   paymentMethod: string
 }
 
-export interface ReportsStats {
-  totalOrders: number
-  totalRevenue: number
-  totalFees: number
-  netRevenue: number
+export interface SendEmailResponse {
+  accepted: boolean
+  message: string
 }

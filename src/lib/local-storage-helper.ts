@@ -8,42 +8,46 @@ export function getItem(key: string) {
   return ''
 }
 
+const TOKEN_KEY = 'user'
+
 interface TokenType {
-  accessToken: string
-  refreshToken: string
+  accessToken: string | null
+  refreshToken: string | null
 }
 
 export function getToken(): TokenType {
-  const user = localStorage.getItem('user')
+  const user = localStorage.getItem(TOKEN_KEY)
   if (user) {
     const userData: TokenType = JSON.parse(user)
 
     return userData
   }
 
-  throw new Error('Token not found')
+  return { accessToken: null, refreshToken: null }
+}
+
+export function setToken(token: TokenType) {
+  localStorage.setItem(TOKEN_KEY, JSON.stringify(token))
+}
+
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY)
 }
 
 export function getItemJson(key: string) {
   const item = localStorage.getItem(key)
-  if (item) {
-    return JSON.parse(item)
-  }
-
-  return null
+  if (!item) return null
+  return JSON.parse(item)
 }
 
 export function getOrDefault<T>(key: string, defaultObject: T) {
   const item = localStorage.getItem(key)
-  if (item) {
-    return JSON.parse(item) as T
-  }
-
-  return defaultObject
+  if (!item) return defaultObject
+  return JSON.parse(item) as T
 }
 
-export function setItem(key: string, value: string) {
-  localStorage.setItem(key, value)
+export function setItem(key: string, value: string | object) {
+  localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : value)
 }
 
 export function removeItem(key: string) {

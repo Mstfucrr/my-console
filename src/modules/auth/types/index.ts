@@ -1,0 +1,72 @@
+import type { AccountType } from '@/types/profile'
+
+// Backend LoginDto'ya uygun
+export interface ILoginRequest {
+  accountType: AccountType
+  accountId?: string
+  identifier: string
+  password: string
+  turnstileToken?: string
+}
+
+// Backend LoginResponse'a uygun
+export interface ILoginResponse {
+  accessToken: string
+  userId: string
+  accountId: string
+  requiresOtp?: boolean
+  otpSessionId?: string
+  maskedPhoneNumber?: string
+}
+
+// Backend OtpVerifyDto'ya uygun
+export interface IVerifyOtpRequest {
+  otpSessionId: string
+  otpCode: string
+}
+
+// Backend OtpVerifyResponse'a uygun
+export interface IVerifyOtpResponse {
+  accessToken: string
+  userId: string
+  accountId: string
+}
+
+// Backend RefreshTokenDto'ya uygun
+export interface IRefreshTokenRequest {
+  refreshToken: string
+}
+
+// Backend RefreshTokenResponse'a uygun
+export interface IRefreshTokenResponse {
+  accessToken: string
+  refreshToken?: string
+}
+
+// Backend PasswordRecoveryDto'ya uygun
+export interface IPasswordRecoveryRequest {
+  accountType: AccountType
+  accountId?: string
+  email: string
+  turnstileToken?: string
+}
+
+// Backend PasswordRecoveryResponse'a uygun
+export interface IPasswordRecoveryResponse {
+  recoverySessionId?: string
+  message: string
+  requiresAccountId?: boolean
+}
+
+// Backend ConfirmCodeDto'ya uygun
+export interface IConfirmCodeRequest {
+  recoverySessionId: string
+  code: string
+  newPassword: string
+  turnstileToken?: string
+}
+
+// Backend ConfirmCodeResponse'a uygun
+export interface IConfirmCodeResponse {
+  message: string
+}

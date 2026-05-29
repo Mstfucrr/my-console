@@ -1,16 +1,19 @@
 'use client'
 
 import StatCard from '@/components/StatCard'
-import { ORDER_STATUS_TEXT_COLORS } from '@/constants'
 import { OrderStatusIcons, StatCardIcons } from '@/constants/icons'
-import { OrderStatusLabel } from '@/modules/types'
+import { ORDER_STATUS_TEXT_COLORS, OrderStatusGroup } from '@/constants/orders'
+import { cn } from '@/lib/utils'
+import { OrderStatusesGroups } from '@/types'
 import { LucideIcon } from 'lucide-react'
-import { useMemo } from 'react'
-import { OrdersContextType, useOrders } from '../../context/OrdersContext'
+import { memo, useCallback, useMemo } from 'react'
+import { ACTIVE_ORDER_STATUS_GROUPS, COMPLETED_ORDER_STATUS_GROUPS } from '../../constants'
+import { useOrders } from '../../context/OrdersContext'
+import { useOrdersStats } from '../../hooks/useOrdersStats'
 
 interface Stat {
   title: string
-  id: keyof OrdersContextType['stats']
+  id: 'total' | OrderStatusesGroups
   Icon: LucideIcon
   color: string
   value: number
@@ -25,45 +28,59 @@ const statsList: Array<Stat> = [
     value: 0
   },
   {
-    title: OrderStatusLabel.created,
-    id: 'created',
-    Icon: OrderStatusIcons.created,
-    color: ORDER_STATUS_TEXT_COLORS['created'],
+    title: OrderStatusGroup[OrderStatusesGroups.CREATED].label,
+    id: OrderStatusesGroups.CREATED,
+    Icon: OrderStatusIcons[OrderStatusesGroups.CREATED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CREATED],
     value: 0
   },
   {
-    title: OrderStatusLabel.shipped,
-    id: 'shipped',
-    Icon: OrderStatusIcons.shipped,
-    color: ORDER_STATUS_TEXT_COLORS['shipped'],
+    title: OrderStatusGroup[OrderStatusesGroups.SHIPPED].label,
+    id: OrderStatusesGroups.SHIPPED,
+    Icon: OrderStatusIcons[OrderStatusesGroups.SHIPPED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.SHIPPED],
     value: 0
   },
   {
-    title: OrderStatusLabel.delivered,
-    id: 'delivered',
-    Icon: OrderStatusIcons.delivered,
-    color: ORDER_STATUS_TEXT_COLORS['delivered'],
+    title: OrderStatusGroup[OrderStatusesGroups.DELIVERED].label,
+    id: OrderStatusesGroups.DELIVERED,
+    Icon: OrderStatusIcons[OrderStatusesGroups.DELIVERED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.DELIVERED],
     value: 0
   },
   {
-    title: OrderStatusLabel.cancelled,
-    id: 'cancelled',
-    Icon: OrderStatusIcons.cancelled,
-    color: ORDER_STATUS_TEXT_COLORS['cancelled'],
+    title: OrderStatusGroup[OrderStatusesGroups.CANCELLED].label,
+    id: OrderStatusesGroups.CANCELLED,
+    Icon: OrderStatusIcons[OrderStatusesGroups.CANCELLED],
+    color: ORDER_STATUS_TEXT_COLORS[OrderStatusesGroups.CANCELLED],
     value: 0
   }
 ]
 
-export function OrdersStats() {
-  const { stats: statsData, isStatsLoading } = useOrders()
+export const OrdersStats = memo(function OrdersStats() {
+  const { stats: statsData, isStatsLoading } = useOrdersStats()
 
-  const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData[stat.id] || 0 })), [statsData])
+  const { activeTab } = useOrders()
+
+  const stats = useMemo(() => statsList.map(stat => ({ ...stat, value: statsData?.[stat.id] || 0 })), [statsData])
+
+  const getStatClassName = useCallback(
+    (statId: string) =>
+      cn('size-full max-sm:first:col-span-2 max-sm:first:w-1/2 max-sm:first:justify-self-center', {
+        'opacity-50':
+          statId !== 'total' &&
+          ((activeTab === 'completed' && ACTIVE_ORDER_STATUS_GROUPS.includes(statId as OrderStatusesGroups)) ||
+            (activeTab === 'active' && COMPLETED_ORDER_STATUS_GROUPS.includes(statId as OrderStatusesGroups))),
+        'border-l-4 border-l-red-500': statId === OrderStatusesGroups.CREATED
+      }),
+    [activeTab]
+  )
 
   return (
     <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5'>
       {stats.map(stat => (
-        <StatCard {...stat} key={stat.id} className='size-full' isLoading={isStatsLoading} />
+        <StatCard {...stat} key={stat.id} className={getStatClassName(stat.id)} isLoading={isStatsLoading} />
       ))}
     </div>
   )
-}
+})

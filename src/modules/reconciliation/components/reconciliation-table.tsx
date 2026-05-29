@@ -1,107 +1,143 @@
-import { AnimatedFilters } from '@/components/animated-filters'
 import { BasicDataTable } from '@/components/basic-data-table'
-import { Badge, BadgeProps } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { RefreshButton } from '@/components/ui/buttons/refresh-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Filter, FilterX } from 'lucide-react'
+import type { ColumnDef, ColumnSort } from '@tanstack/react-table'
 import { useState } from 'react'
-import type { ReconciliationFilterProperties, ReconciliationRecord } from '../types'
+import type { DateRange } from 'react-day-picker'
+import { ReconciliationStatus, type ReconciliationRecord } from '../types'
 import { ReconciliationDetailsModal } from './reconciliation-details-modal'
-import { ReconciliationFilters } from './reconciliation-filters'
+import { ReconciliationFilter } from './reconciliation-filter'
 
 interface ReconciliationTableProps {
   data: ReconciliationRecord[]
   isLoading: boolean
-
-  filters: ReconciliationFilterProperties
-  onFiltersChange: (f: ReconciliationFilterProperties) => void
-  onClearFilters: () => void
-  onRefresh: () => void
+  sorting?: ColumnSort
+  onSortingChange?: (sorting: ColumnSort) => void
+  dateRange?: DateRange
+  onDateRangeChange?: (range: DateRange | undefined) => void
+  page?: number
+  pageSize?: number
+  total?: number
+  onPageChange?: (page: number) => void
+  onPageSizeChange?: (size: number) => void
 }
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData = unknown> {
-    handleToggleModal?: (record: TData) => void
+    handleOpenModal?: (page: 'approve' | 'report', record: TData) => void
   }
 }
 
-const STATUS_COLORS: Record<string, BadgeProps['color']> = {
-  pending: 'warning',
-  problematic: 'destructive',
-  approved: 'success'
-} as const
-
-const STATUS_TEXT = {
-  pending: 'Beklemede',
-  problematic: 'Onaylanmadı',
-  approved: 'Onaylandı'
-} as const
+/** Şu anki ay veya bir önceki takvim ayı. */
+function isWithinLastTwoMonths(record: ReconciliationRecord): boolean {
+  const toMonth = (y: number, m: number) => y * 12 + m
+  const now = new Date()
+  const cur = toMonth(now.getFullYear(), now.getMonth() + 1)
+  const row = toMonth(record.RecordYear, record.RecordMonth)
+  return row === cur || row === cur - 1
+}
 
 const columns: ColumnDef<ReconciliationRecord>[] = [
   {
     accessorKey: 'period',
-    header: 'Mutabakat Dönemi',
-    cell: ({ row }) => <span className='font-medium'>{row.getValue('period')}</span>
+    header: 'Dönem',
+    cell: ({ row }) => <span className='font-medium'>{row.original.period}</span>
   },
   {
     accessorKey: 'totalOrderAmount',
     header: 'Toplam Sipariş Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('totalOrderAmount'), false)
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalOrderAmount, false)}</span>
   },
   {
     accessorKey: 'distributionCount',
     header: 'Dağıtım Adedi',
     meta: { align: 'right' },
-    cell: ({ row }) => row.getValue('distributionCount')
+    cell: ({ row }) => <span className='ph-sensitive'>{row.original.distributionCount}</span>
   },
   {
-    accessorKey: 'debtBalance',
-    header: 'Borç Bakiye (₺)',
+    accessorKey: 'totalDeliveryAmount',
+    header: 'Ata Express Dağıtım Fatura Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('debtBalance'), false)
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalDeliveryAmount, false)}</span>
   },
   {
-    accessorKey: 'creditBalance',
-    header: 'Alacak Bakiye (₺)',
+    accessorKey: 'totalBillAmount',
+    header: 'Düzenleyeceğiniz Fatura Tutarı (₺)',
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('creditBalance'), false)
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalBillAmount, false)}</span>
   },
   {
-    accessorKey: 'netAmount',
-    header: 'Net Tutar (₺)',
+    accessorKey: 'totalFoodCouponAmount',
+    header: "Yemek Kartı (Tahsilatı Ata'da) (₺)",
     meta: { align: 'right' },
-    cell: ({ row }) => formatCurrency(row.getValue('netAmount'), false)
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalFoodCouponAmount, false)}</span>
   },
   {
-    accessorKey: 'status',
-    header: 'Durum',
-    size: 20,
-    maxSize: 20,
-    cell: ({ row }) => {
-      const status = row.getValue('status') as string
-      return (
-        <Badge variant='outline' color={STATUS_COLORS[status] || 'secondary'}>
-          {STATUS_TEXT[status as keyof typeof STATUS_TEXT] || status}
-        </Badge>
-      )
-    }
+    accessorKey: 'totalPrePaidFoodCouponAmount',
+    header: 'Yemek Kartı (Tahsilatı Firmanızda) (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => (
+      <span className='ph-sensitive'>{formatCurrency(row.original.totalPrePaidFoodCouponAmount, false)}</span>
+    )
+  },
+  {
+    accessorKey: 'totalPrePaidAmount',
+    header: 'Online Ödeme Tutarı (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => <span className='ph-sensitive'>{formatCurrency(row.original.totalPrePaidAmount, false)}</span>
+  },
+  {
+    accessorKey: 'restaurantPaymentAmount',
+    header: 'Restoran Ödeme Tutarı (₺)',
+    meta: { align: 'right' },
+    cell: ({ row }) => (
+      <span className='ph-sensitive'>{formatCurrency(row.original.restaurantPaymentAmount, false)}</span>
+    )
   },
   {
     id: 'actions',
     header: 'İşlemler',
+    minSize: 230,
+    size: 230,
+    meta: { align: 'right' },
     cell: ({ row, table }) => {
-      const handleToggleModal = table.options.meta?.handleToggleModal as
-        | ((record: ReconciliationRecord) => void)
+      const handleOpenModal = table.options.meta?.handleOpenModal as
+        | ((page: 'approve' | 'report', record: ReconciliationRecord) => void)
         | undefined
 
+      const status = row.original.status
+      const canAct = isWithinLastTwoMonths(row.original)
+
+      if (status === ReconciliationStatus.APPROVED) return <span className='text-success'>Onaylandı</span>
+
+      const isReportable = status === ReconciliationStatus.PENDING
+
+      if (isReportable && !canAct) return '-'
+
       return (
-        <Button variant='outline' color='primary' onClick={() => handleToggleModal?.(row.original)}>
-          Detay
-        </Button>
+        <div className='flex flex-row items-center justify-end gap-2'>
+          {status === ReconciliationStatus.FAILED && <span className='text-destructive'>Onaylanmadı</span>}
+          <Button
+            size='xs'
+            variant='outline'
+            color='success'
+            onClick={() => handleOpenModal?.('approve', row.original)}
+          >
+            Onayla
+          </Button>
+          {isReportable && (
+            <Button
+              size='xs'
+              variant='outline'
+              color='destructive'
+              onClick={() => handleOpenModal?.('report', row.original)}
+            >
+              Kontrole Gönder
+            </Button>
+          )}
+        </div>
       )
     }
   }
@@ -109,57 +145,58 @@ const columns: ColumnDef<ReconciliationRecord>[] = [
 
 export default function ReconciliationTable({
   data,
-  filters,
-  onFiltersChange,
-  onClearFilters,
   isLoading,
-  onRefresh
+  sorting,
+  onSortingChange,
+  dateRange,
+  onDateRangeChange,
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  onPageSizeChange
 }: ReconciliationTableProps) {
-  const [selectedRecord, setSelectedRecord] = useState<ReconciliationRecord | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
+  const [selected, setSelected] = useState<{ page: 'approve' | 'report'; record: ReconciliationRecord } | null>(null)
 
-  const handleToggleModal = (record: ReconciliationRecord): void => {
-    setSelectedRecord(prev => (prev ? null : record))
+  const handleOpenModal = (page: 'approve' | 'report', record: ReconciliationRecord): void => {
+    setSelected({ page, record })
   }
 
   return (
     <>
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Mutabakat Kayıtları ({data.length})</CardTitle>
-          <div className='flex flex-row items-center gap-2'>
-            <RefreshButton onClick={onRefresh} isIconButton isLoading={isLoading} />
-            <Button color='primary' onClick={() => setShowFilters(!showFilters)}>
-              {showFilters ? <FilterX className='size-4' /> : <Filter className='size-4' />}
-              <span className='ml-2'>{showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster'}</span>
-            </Button>
-          </div>
+          <CardTitle>Kayıtlar ({total ?? data.length})</CardTitle>
+          <ReconciliationFilter dateRange={dateRange} onDateRangeChange={onDateRangeChange} />
         </CardHeader>
         <CardContent className='flex flex-col gap-4'>
-          <AnimatedFilters isOpen={showFilters}>
-            <ReconciliationFilters
-              filters={filters}
-              onFiltersChange={onFiltersChange}
-              onClearFilters={onClearFilters}
-            />
-          </AnimatedFilters>
           <BasicDataTable
             columns={columns}
             data={data}
             isLoading={isLoading}
             emptyLabel='Mutabakat kaydı bulunamadı'
             loadingLabel='Mutabakat kayıtları yükleniyor...'
-            meta={{ handleToggleModal }}
+            meta={{ handleOpenModal }}
             enableColumnVisibility={false}
+            sorting={sorting}
+            onSortingChange={onSortingChange}
+            enableMultiSort={false}
+            manualSorting
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
           />
         </CardContent>
       </Card>
 
-      {selectedRecord && (
+      {selected && (
         <ReconciliationDetailsModal
-          record={selectedRecord}
-          isOpen={!!selectedRecord}
-          onClose={() => setSelectedRecord(null)}
+          page={selected.page}
+          record={selected.record}
+          isOpen={!!selected}
+          onClose={() => setSelected(null)}
         />
       )}
     </>

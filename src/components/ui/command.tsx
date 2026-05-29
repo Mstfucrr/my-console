@@ -14,16 +14,16 @@ const commandTriggerVariants = cva(
     variants: {
       color: {
         default:
-          'border-default-300 text-default-500 focus:border-default-500/50 disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
+          'border-default-300 text-default-500 focus:border-primary disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
         primary:
           'border-primary text-primary focus:border-primary-700 disabled:bg-primary/30 disabled:placeholder:text-primary placeholder:text-primary/70 [&>svg]:stroke-primary focus:outline-none',
-        info: 'border-info/50 text-info focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
+        info: 'border-info/50 focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
         warning:
-          'border-warning/50 text-warning focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
+          'border-warning/50 focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
         success:
-          'border-success/50 text-success focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
+          'border-success/50 focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
         destructive:
-          'border-destructive/50 text-destructive focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
+          'border-destructive/50 focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
       },
       variant: {
         flat: 'read-only:bg-default-500/10',

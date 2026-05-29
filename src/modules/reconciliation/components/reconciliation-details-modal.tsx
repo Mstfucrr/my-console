@@ -1,101 +1,106 @@
 'use client'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useMutation } from '@tanstack/react-query'
-import { useRef, useState } from 'react'
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { DialogContentInner } from '@/components/ui/dialog'
+import { track } from '@/lib/analytics'
+import { ANALYTICS_EVENTS } from '@/lib/analytics/events'
+import { ReconciliationActionEvent } from '@/lib/analytics/types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { reconciliationService } from '../service'
+import { reconciliationService } from '../service/reconciliation.service'
 import type { ReconciliationRecord } from '../types'
 import { ApprovePage } from './approve-page'
-import { MainPage } from './main-page'
 import { ReportPage } from './report-page'
 
-type ModalPage = 'main' | 'approve' | 'report'
+type ModalPage = 'approve' | 'report'
 
 const PAGE_TITLES: Record<ModalPage, string> = {
-  main: 'Mutabakat Detayları',
   approve: 'Mutabakat Onayı',
   report: 'Kontrole Gönder'
 }
 
 interface ReconciliationDetailsModalProps {
+  page: ModalPage
   record: ReconciliationRecord
   isOpen: boolean
   onClose: () => void
 }
 
-export function ReconciliationDetailsModal({ record, isOpen, onClose }: ReconciliationDetailsModalProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [currentPage, setCurrentPage] = useState<ModalPage>('main')
+export function ReconciliationDetailsModal({ page, record, isOpen, onClose }: ReconciliationDetailsModalProps) {
+  const queryClient = useQueryClient()
 
-  // Upload Invoice Mutation
-  const { mutateAsync: uploadInvoice, isPending: isUploading } = useMutation({
-    mutationFn: ({ recordId, file }: { recordId: string; file: File }) =>
-      reconciliationService.uploadInvoice(recordId, file),
-    mutationKey: ['uploadInvoice']
+  // Upload File Mutation
+  const { mutateAsync: uploadFile, isPending: isUploading } = useMutation({
+    mutationFn: (file: File) => reconciliationService.uploadFile(file),
+    mutationKey: ['uploadFile']
   })
 
   // Approve Reconciliation Mutation
   const { mutateAsync: approveReconciliation, isPending: isApproving } = useMutation({
-    mutationFn: reconciliationService.approveReconciliation,
-    mutationKey: ['approveReconciliation']
+    mutationFn: ({
+      recordId,
+      confirmRecordId,
+      fileName
+    }: {
+      recordId: string
+      confirmRecordId: string | undefined
+      fileName?: string
+    }) => reconciliationService.approveReconciliation(recordId, confirmRecordId, fileName),
+    mutationKey: ['approveReconciliation'],
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['reconciliation'] })
+      queryClient.invalidateQueries({ queryKey: ['reconciliation-stats'] })
+    }
   })
 
   // Report Issue Mutation
   const { mutateAsync: reportIssue, isPending: isReporting } = useMutation({
     mutationFn: ({
       recordId,
+      confirmRecordId,
       description,
-      statementFile
+      fileName
     }: {
       recordId: string
+      confirmRecordId: string | undefined
       description: string
-      statementFile?: File
-    }) => reconciliationService.reportIssue(recordId, description, statementFile),
-    mutationKey: ['reportIssue']
+      fileName?: string
+    }) => reconciliationService.reportIssue(recordId, confirmRecordId, description, fileName),
+    mutationKey: ['reportIssue'],
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['reconciliation'] })
+      queryClient.invalidateQueries({ queryKey: ['reconciliation-stats'] })
+    }
   })
 
-  const handleInvoiceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file || !record) return
-
-    toast.promise(
-      async () => {
-        await uploadInvoice({ recordId: record.id, file })
-        onClose()
-      },
-      {
-        pending: 'Fatura yükleniyor...',
-        success: 'Fatura başarıyla yüklendi',
-        error: 'Fatura yüklenirken bir hata oluştu'
-      }
-    )
-  }
-
-  const resetPageState = () => {
-    setCurrentPage('main')
-  }
-
   const handleClose = () => {
-    resetPageState()
     onClose()
-  }
-
-  const handleViewInvoice = () => {
-    if (!record) return
-
-    const invoiceUrl = `/invoices/${record.id}.pdf`
-    window.open(invoiceUrl, '_blank')
   }
 
   const handleApprove = async (data: { invoiceFile: File }) => {
     if (!record) return
 
+    track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+      action: 'approve',
+      status: 'attempt',
+      period: record.period,
+      record_status: record.status
+    })
+
     try {
       await toast.promise(
         async () => {
-          await uploadInvoice({ recordId: record.id, file: data.invoiceFile })
-          await approveReconciliation(record.id)
+          // First upload the file to S3
+          const uploadData = await uploadFile(data.invoiceFile)
+          if (!uploadData) throw new Error('Fatura yüklenemedi')
+          // Then approve with the file name
+          await approveReconciliation({
+            recordId: record.RecordID,
+            confirmRecordId: record.ConfirmID,
+            fileName: uploadData.url
+          })
         },
         {
           pending: 'Fatura yükleniyor ve mutabakat onaylanıyor...',
@@ -103,9 +108,20 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
           error: 'İşlem sırasında bir hata oluştu'
         }
       )
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'approve',
+        status: 'success',
+        period: record.period,
+        record_status: record.status
+      })
       handleClose()
     } catch {
-      // Error is handled by toast
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'approve',
+        status: 'failed',
+        period: record.period,
+        record_status: record.status
+      })
     }
   }
 
@@ -113,9 +129,24 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
     if (!record) return
 
     try {
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'attempt',
+        period: record.period,
+        record_status: record.status
+      })
       await toast.promise(
         async () => {
-          await reportIssue({ recordId: record.id, description: data.description, statementFile: data.statementFile })
+          // First upload the statement file to S3
+          const uploadData = await uploadFile(data.statementFile)
+          if (!uploadData) throw new Error('Fatura yüklenemedi')
+          // Then report issue with description and file name
+          await reportIssue({
+            recordId: record.RecordID,
+            confirmRecordId: record.ConfirmID,
+            description: data.description,
+            fileName: uploadData.url
+          })
         },
         {
           pending: 'Mutabık olmadığınızın bildirimi yapılıyor...',
@@ -123,55 +154,36 @@ export function ReconciliationDetailsModal({ record, isOpen, onClose }: Reconcil
           error: 'Mutabık olmadığınızın bildirimi yapılırken bir hata oluştu'
         }
       )
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'success',
+        period: record.period,
+        record_status: record.status
+      })
       handleClose()
     } catch {
       // Error is handled by toast
+      track<ReconciliationActionEvent>(ANALYTICS_EVENTS.reconciliationAction, {
+        action: 'report',
+        status: 'failed',
+        period: record.period,
+        record_status: record.status
+      })
     }
   }
 
-  const handleGoToApprovePage = () => {
-    setCurrentPage('approve')
-  }
-
-  const handleGoToReportPage = () => {
-    setCurrentPage('report')
-  }
-
-  const handleBackToMain = () => {
-    resetPageState()
-  }
-
   return (
-    <>
-      <input
-        ref={fileInputRef}
-        type='file'
-        accept='.pdf,.jpg,.jpeg,.png'
-        onChange={handleInvoiceFileChange}
-        className='hidden'
-      />
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent size={currentPage === 'main' ? '3xl' : 'lg'} className='max-h-[90vh] overflow-y-auto'>
-          <DialogHeader>
-            <DialogTitle className='text-xl font-semibold'>{PAGE_TITLES[currentPage]}</DialogTitle>
-          </DialogHeader>
+    <AlertDialog open={isOpen} onOpenChange={handleClose}>
+      <AlertDialogContent size='lg' className='p-2 sm:p-4'>
+        <AlertDialogHeader>
+          <AlertDialogTitle className='text-xl font-semibold'>{PAGE_TITLES[page]}</AlertDialogTitle>
+        </AlertDialogHeader>
 
-          {currentPage === 'main' && (
-            <MainPage
-              record={record}
-              onViewInvoice={handleViewInvoice}
-              onGoToApprovePage={handleGoToApprovePage}
-              onGoToReportPage={handleGoToReportPage}
-            />
-          )}
-          {currentPage === 'approve' && (
-            <ApprovePage onBack={handleBackToMain} onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />
-          )}
-          {currentPage === 'report' && (
-            <ReportPage onBack={handleBackToMain} onSubmit={handleReportIssue} isSubmitting={isReporting} />
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+        <DialogContentInner>
+          {page === 'approve' && <ApprovePage onSubmit={handleApprove} isSubmitting={isApproving || isUploading} />}
+          {page === 'report' && <ReportPage onSubmit={handleReportIssue} isSubmitting={isReporting} />}
+        </DialogContentInner>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

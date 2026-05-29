@@ -1,11 +1,12 @@
+import { isSameDateRange } from '@/lib/utils/date'
 import { useEffect, useMemo, useState } from 'react'
+import { DateRange } from 'react-day-picker'
 
 // Generic filter properties interface
 export interface BaseFilterProperties {
-  status?: string
+  status?: string | number | undefined
   search?: string
-  dateFrom?: string
-  dateTo?: string
+  dateRange?: DateRange
 }
 
 // Generic useFilter hook that works with any filter properties
@@ -18,35 +19,50 @@ export function useFilter<T extends BaseFilterProperties>(
   // Local state for pending changes
   const [pendingFilters, setPendingFilters] = useState<T>(filters)
 
-  // Update pending filters when external filters change
   useEffect(() => {
     setPendingFilters(filters)
   }, [filters])
 
+  useEffect(() => {
+    if (JSON.stringify(pendingFilters) === JSON.stringify(defaultFilters)) {
+      onClearFilters()
+    }
+  }, [pendingFilters, defaultFilters, onClearFilters])
+
   // Generic active filters check - checks all properties dynamically
-  const hasActiveFilters = useMemo(() => {
-    return Object.entries(filters).some(([, value]) => {
-      // Skip undefined values
-      if (value === undefined || value === null) return false
+  const hasActiveFilters = useMemo(
+    () =>
+      Object.entries(filters).some(([key, value]) => {
+        // Skip undefined values
+        if (value === undefined || value === null) return false
 
-      // Check for non-empty strings (excluding 'all' for select fields)
-      if (typeof value === 'string') {
-        return value !== '' && value !== 'all'
-      }
+        // Check for non-empty strings (excluding 'all' for select fields)
+        if (typeof value === 'string') {
+          return value !== '' && value !== 'all'
+        }
 
-      // Check for truthy values
-      return Boolean(value)
-    })
-  }, [filters])
+        // is Default Date Range
+        if (key === 'dateRange') {
+          return !isSameDateRange(value, defaultFilters.dateRange)
+        }
+
+        // Check for truthy values
+        return Boolean(value)
+      }),
+    [filters, defaultFilters]
+  )
 
   // Generic pending changes check - compares all properties
-  const hasPendingChanges = useMemo(() => {
-    return Object.keys(pendingFilters).some(key => {
-      const pendingValue = pendingFilters[key as keyof T]
-      const currentValue = filters[key as keyof T]
-      return pendingValue !== currentValue
-    })
-  }, [pendingFilters, filters])
+  const hasPendingChanges = useMemo(
+    () =>
+      Object.keys(pendingFilters).some(key => {
+        const pendingValue = pendingFilters[key as keyof T]
+        const currentValue = filters[key as keyof T]
+        if (key === 'dateRange') return !isSameDateRange(pendingValue as DateRange, filters.dateRange)
+        return pendingValue !== currentValue
+      }),
+    [pendingFilters, filters]
+  )
 
   // Apply filters
   const handleApplyFilters = () => {
@@ -56,6 +72,7 @@ export function useFilter<T extends BaseFilterProperties>(
   // Clear filters using default values
   const handleClearFilters = () => {
     setPendingFilters(defaultFilters)
+    updateHotFilters(defaultFilters)
     onClearFilters()
   }
 
@@ -64,12 +81,17 @@ export function useFilter<T extends BaseFilterProperties>(
     setPendingFilters(prev => ({ ...prev, ...updates }))
   }
 
+  const updateHotFilters = (updates: Partial<T>) => {
+    onFiltersChange({ ...filters, ...updates })
+  }
+
   return {
     pendingFilters,
     hasActiveFilters,
     hasPendingChanges,
     handleApplyFilters,
     handleClearFilters,
-    updatePendingFilters
+    updatePendingFilters,
+    updateHotFilters
   }
 }

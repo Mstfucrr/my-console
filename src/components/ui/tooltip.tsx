@@ -13,6 +13,12 @@ const tooltipVariants = cva(
         info: 'border-info bg-info text-info-foreground border',
         success: 'border-success bg-success text-success-foreground border',
         destructive: 'border-destructive bg-destructive text-destructive-foreground border'
+      },
+      size: {
+        xs: 'px-2 py-1',
+        sm: 'px-3 py-1.5',
+        md: 'px-4 py-2',
+        lg: 'px-5 py-3'
       }
     },
     defaultVariants: {
@@ -37,9 +43,13 @@ const Tooltip = TooltipPrimitive.Root
 const TooltipTrigger = TooltipPrimitive.Trigger
 const TooltipArrow = TooltipPrimitive.Arrow
 
-function TooltipContent({ className, sideOffset = 4, color, children, ...props }: TooltipProps) {
+function TooltipContent({ className, sideOffset = 4, color, size = 'xs', children, ...props }: TooltipProps) {
   return (
-    <TooltipPrimitive.Content sideOffset={sideOffset} className={cn(tooltipVariants({ color }), className)} {...props}>
+    <TooltipPrimitive.Content
+      sideOffset={sideOffset}
+      className={cn(tooltipVariants({ color, size }), className)}
+      {...props}
+    >
       {children}
     </TooltipPrimitive.Content>
   )

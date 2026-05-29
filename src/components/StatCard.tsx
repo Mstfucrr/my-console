@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { formatCurrencyTRY } from '@/modules/orders/utils'
+import { formatCurrencyTRY } from '@/lib/utils/currency'
 import type { LucideIcon } from 'lucide-react'
 import type { HTMLAttributes } from 'react'
 import { Skeleton } from './ui/skeleton'
@@ -8,7 +8,7 @@ import { Skeleton } from './ui/skeleton'
 export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
   title: string
-  value: number
+  value: number | undefined
   Icon: LucideIcon | string
   color: string
   type?: 'number' | 'currency'
@@ -26,28 +26,30 @@ export default function StatCard({
 }: StatCardProps) {
   if (isLoading) return <Skeleton className='h-24 w-full' />
 
+  if (!value && value !== 0) return null
+
   return (
     <Card
       {...props}
       className={cn(
-        'border-border/50 hover:border-border/80 rounded-lg border p-4 transition-colors duration-200',
+        'border-border/50 hover:border-border/80 rounded-lg border p-2 transition-colors duration-200 sm:p-4',
         className
       )}
     >
-      <CardContent className='flex items-start justify-between gap-4 p-0'>
-        <div>
-          <p className='text-muted-foreground mb-3 text-sm font-medium'>{title}</p>
-          <span className={`text-foreground text-xl font-semibold max-xl:text-lg`}>
-            {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
-          </span>
+      <CardContent className='flex h-full flex-col justify-between p-0 sm:gap-2'>
+        <div className='flex justify-between gap-4'>
+          <p className='text-muted-foreground text-sm font-medium'>{title}</p>
+          <div className='opacity-30'>
+            {typeof Icon === 'string' ? (
+              <span className={`text-2xl ${color}`}>{Icon}</span>
+            ) : (
+              <Icon className={`size-7 ${color}`} />
+            )}
+          </div>
         </div>
-        <div className='opacity-30'>
-          {typeof Icon === 'string' ? (
-            <span className={`text-2xl ${color}`}>{Icon}</span>
-          ) : (
-            <Icon className={`size-7 ${color}`} />
-          )}
-        </div>
+        <span className={`text-foreground ph-sensitive text-xl font-semibold max-xl:text-lg max-sm:text-base`}>
+          {type === 'currency' ? formatCurrencyTRY(value) : `${value} Adet`}
+        </span>
       </CardContent>
     </Card>
   )

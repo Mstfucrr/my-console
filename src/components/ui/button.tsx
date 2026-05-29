@@ -5,7 +5,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'ring-offset-background inline-flex items-center justify-center rounded-md text-sm font-semibold whitespace-nowrap transition-colors focus-visible:ring-0 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-70',
+  'ring-offset-background inline-flex items-center justify-center rounded-md text-sm font-semibold whitespace-nowrap transition-all duration-200 focus-visible:scale-105 focus-visible:ring-0 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-70',
   {
     variants: {
       color: {
@@ -16,7 +16,9 @@ const buttonVariants = cva(
         info: 'bg-info text-info-foreground hover:bg-info/80',
         warning: 'bg-warning text-warning-foreground hover:bg-warning/80',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        dark: 'bg-accent-foreground text-accent hover:bg-accent-foreground/80'
+        dark: 'bg-accent-foreground text-accent hover:bg-accent-foreground/80',
+        light: 'bg-background text-foreground hover:bg-background/80',
+        'primary-pink': 'bg-primary-pink hover:bg-primary-pink/80 text-white'
       },
       variant: {
         outline: 'hover:text-primary-foreground border border-current bg-transparent',
@@ -26,14 +28,14 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-10 px-4 py-[10px]',
-        sm: 'h-9 rounded-md px-3',
+        sm: 'h-8.5 rounded-md px-3 text-[13px]',
         lg: 'h-11 rounded-md px-[18px] py-[10px] text-base',
         xl: 'h-12 rounded-md px-6 py-3 text-base',
-        md: 'h-9 rounded-md px-4 py-2',
+        md: 'h-10 rounded-md px-4 py-2 text-base',
         xs: 'h-8 rounded-md px-[12px] py-[4px] text-xs',
         icon: 'h-10 w-10',
-        'icon-sm': 'h-8 w-8',
-        'icon-xs': 'h-6 w-6'
+        'icon-sm': 'size-8',
+        'icon-xs': 'size-6'
       }
     },
     compoundVariants: [
@@ -81,32 +83,32 @@ const buttonVariants = cva(
       {
         variant: 'soft',
         color: 'info',
-        className: 'text-info hover:text-info-foreground'
+        className: 'text-default bg-info/10 border-info/50 hover:text-info-foreground border'
       },
       {
         variant: 'soft',
         color: 'warning',
-        className: 'text-warning hover:text-warning-foreground'
+        className: 'text-default bg-warning/10 border-warning/50 hover:text-warning-foreground border'
       },
       {
         variant: 'soft',
         color: 'destructive',
-        className: 'text-destructive hover:text-destructive-foreground'
+        className: 'text-default bg-destructive/10 border-destructive/50 hover:text-destructive-foreground border'
       },
       {
         variant: 'soft',
         color: 'success',
-        className: 'text-success hover:text-success-foreground'
+        className: 'text-default bg-success/10 border-success/50 hover:text-success-foreground border'
       },
       {
         variant: 'soft',
         color: 'secondary',
-        className: 'text-muted-foreground dark:bg-opacity-50 hover:bg-default-500/50 dark:hover:bg-opacity-100'
+        className: 'text-default bg-secondary/10 border-secondary/50 hover:text-secondary-foreground border'
       },
       {
         variant: 'soft',
         color: 'default',
-        className: 'text-primary'
+        className: 'text-primary bg-default/10 border-default/50 border'
       },
       {
         variant: 'ghost',
@@ -155,7 +157,17 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark'
+  color?:
+    | 'primary'
+    | 'primary-pink'
+    | 'secondary'
+    | 'success'
+    | 'info'
+    | 'warning'
+    | 'destructive'
+    | 'default'
+    | 'dark'
+    | 'light'
 }
 
 const Button = ({ className, variant, size, color, asChild = false, ...props }: ButtonProps) => {

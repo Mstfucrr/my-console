@@ -1,16 +1,27 @@
-import type { DateRange } from 'react-day-picker'
-import { mockDashboardStats } from '../data'
-import type { DashboardStats } from '../types'
+import { privateAxiosInstance } from '@/lib/axios'
+import { formatDateForApi } from '@/lib/utils/date'
+import { LatestOrder, OrderStatusStats } from '@/types'
+import { DateRange } from 'react-day-picker'
 
 class DashboardService {
-  async getStats(dateRange: DateRange | undefined): Promise<DashboardStats> {
-    // Simulated API: return a single source of truth after 2000ms
-    await new Promise(resolve => setTimeout(resolve, 1000))
+  async getStats(dateRange?: DateRange): Promise<OrderStatusStats> {
+    const { data } = await privateAxiosInstance.get('/dashboard/order-stats', {
+      params: {
+        startDate: formatDateForApi(dateRange?.from),
+        endDate: formatDateForApi(dateRange?.to)
+      }
+    })
+    return data
+  }
 
-    console.log('dateRange', dateRange)
-    // In a real implementation, you would use the dateRange to filter data
-    // For now, we'll return mock data regardless of the date range
-    return mockDashboardStats
+  async getLatestOrders(dateRange?: DateRange): Promise<Array<LatestOrder>> {
+    const { data } = await privateAxiosInstance.get('/dashboard/latest-orders', {
+      params: {
+        startDate: formatDateForApi(dateRange?.from),
+        endDate: formatDateForApi(dateRange?.to)
+      }
+    })
+    return data.orders
   }
 }
 

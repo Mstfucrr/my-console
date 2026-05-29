@@ -1,8 +1,8 @@
 'use client'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
-import { startTransition, useEffect, useMemo, useState } from 'react'
+import { CalendarIcon, FilterX } from 'lucide-react'
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
 import { Button, ButtonProps } from '@/components/ui/button'
@@ -10,34 +10,64 @@ import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useIsSmallerThanTablet } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
+import { isSameDateRange } from '@/lib/utils/date'
+import { ButtonGroup, ButtonGroupSeparator } from './button-group'
 
-interface DateRangePickerProps {
+export interface DateRangePickerProps {
   dateRange: DateRange | undefined
+  defaultDateRange?: DateRange
+  defaultText?: string
   onDateRangeChange: (range: DateRange | undefined) => void
   placeholder?: string
   className?: string
   enableTimeSelection?: boolean
   onApply?: () => void
+  calendarProps?: React.ComponentProps<typeof Calendar>
+  quickClearable?: boolean
+  quickClearableButtonProps?: ButtonProps
+  quickApplyable?: boolean
+  customDisplayText?: string
+  /** Takvim ilk açıldığında hangi tarihin ayını göstersin (varsayılan: başlangıç) */
+  initialCalendarMonth?: 'from' | 'to'
+}
+
+function setDateTimeToLocal(date: Date, hours: number, minutes: number) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0, 0)
+}
+
+function getDisplayDate(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), 0, 0)
 }
 
 export function DateRangePicker({
   dateRange,
+  defaultDateRange,
+  defaultText,
   onDateRangeChange,
   placeholder = 'Tarih aralığı seçin',
   className,
   enableTimeSelection = false,
   onApply,
+  calendarProps,
+  quickClearable = false,
+  quickApplyable = false,
+  quickClearableButtonProps,
+  customDisplayText,
+  initialCalendarMonth = 'from',
   ...props
 }: DateRangePickerProps & ButtonProps) {
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
 
-  // Sync tempDateRange when dateRange prop changes
+  const isDefaultDateRange = isSameDateRange(dateRange, defaultDateRange)
+
+  const isSmallerThanTablet = useIsSmallerThanTablet()
+
   useEffect(() => {
     startTransition(() => setTempDateRange(dateRange))
   }, [dateRange])
 
-  // Derive time strings from dateRange
   const derivedFromTime = useMemo(() => {
     if (!dateRange || !dateRange.from) return ''
     const fromHours = dateRange.from.getHours().toString().padStart(2, '0')
@@ -55,7 +85,6 @@ export function DateRangePicker({
   const [fromTime, setFromTime] = useState<string>(derivedFromTime)
   const [toTime, setToTime] = useState<string>(derivedToTime)
 
-  // Sync time inputs when dateRange changes
   useEffect(() => {
     startTransition(() => setFromTime(derivedFromTime))
   }, [derivedFromTime])
@@ -68,76 +97,97 @@ export function DateRangePicker({
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setTempDateRange(range)
+    if (quickApplyable && range) {
+      handleApply(range)
+    }
   }
 
-  const handleApply = () => {
+  const handleApply = (range?: DateRange) => {
     if (tempDateRange) {
-      const finalRange: DateRange = { ...tempDateRange }
+      const finalRange: DateRange = range ? range : { ...tempDateRange }
 
       if (enableTimeSelection && fromTime && tempDateRange.from) {
         const [hours, minutes] = fromTime.split(':').map(Number)
-        finalRange.from = new Date(tempDateRange.from)
-        finalRange.from.setHours(hours, minutes, 0, 0)
+        finalRange.from = setDateTimeToLocal(tempDateRange.from, hours, minutes)
       }
 
       if (enableTimeSelection && toTime && tempDateRange.to) {
         const [hours, minutes] = toTime.split(':').map(Number)
-        finalRange.to = new Date(tempDateRange.to)
-        finalRange.to.setHours(hours, minutes, 0, 0)
+        finalRange.to = setDateTimeToLocal(tempDateRange.to, hours, minutes)
       }
 
       onDateRangeChange(finalRange)
     }
     onApply?.()
-    setIsOpen(false)
+    if (!quickApplyable) setIsOpen(false)
   }
 
-  const formatDisplayDate = (date: Date) => {
-    if (enableTimeSelection) {
-      return format(date, 'dd MMM yyyy HH:mm', { locale: tr })
-    }
-    return format(date, 'dd MMM yyyy', { locale: tr })
+  const formatDisplayDate = useCallback(
+    (date: Date) => {
+      const displayDate = getDisplayDate(date)
+      if (enableTimeSelection) return format(displayDate, 'dd MMM yyyy HH:mm', { locale: tr })
+
+      return format(displayDate, 'dd MMM yyyy', { locale: tr })
+    },
+    [enableTimeSelection]
+  )
+
+  const handleClear = () => {
+    setTempDateRange(defaultDateRange)
+    onDateRangeChange(defaultDateRange)
   }
+
+  const displayText = useMemo(() => {
+    if (customDisplayText) return customDisplayText
+
+    if (isDefaultDateRange) return defaultText ?? placeholder
+
+    if (dateRange?.from) {
+      if (dateRange?.to) return `${formatDisplayDate(dateRange.from)} - ${formatDisplayDate(dateRange.to)}`
+      return formatDisplayDate(dateRange.from)
+    }
+    return placeholder
+  }, [customDisplayText, dateRange, defaultText, formatDisplayDate, isDefaultDateRange, placeholder])
 
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            id='date'
-            variant='outline'
-            size='sm'
-            className={cn('w-full justify-start text-left font-normal', !dateRange && 'text-muted-foreground')}
-            {...props}
-          >
-            <CalendarIcon className='mr-2 h-4 w-4' />
-            {dateRange?.from ? (
-              dateRange.to ? (
-                <>
-                  {formatDisplayDate(dateRange.from)} - {formatDisplayDate(dateRange.to)}
-                </>
-              ) : (
-                formatDisplayDate(dateRange.from)
-              )
-            ) : (
-              <span>{placeholder}</span>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <ButtonGroup>
+          <PopoverTrigger asChild>
+            <Button id='date' variant='outline' className='font-normal' size='sm' {...props}>
+              <CalendarIcon className='mr-2 h-4 w-4' />
+              <span>{displayText}</span>
+            </Button>
+          </PopoverTrigger>
+          {dateRange && !isDefaultDateRange && quickClearable && (
+            <>
+              <ButtonGroupSeparator />
+              <Button
+                onClick={handleClear}
+                className='size-9 p-0 font-normal'
+                {...props}
+                {...quickClearableButtonProps}
+              >
+                <FilterX className='size-4.5' />
+              </Button>
+            </>
+          )}
+        </ButtonGroup>
         <PopoverContent className='w-auto p-0'>
           <div className='p-3'>
             <Calendar
-              mode='range'
-              defaultMonth={tempDateRange?.from}
-              selected={tempDateRange}
-              onSelect={handleDateSelect}
-              numberOfMonths={2}
+              numberOfMonths={isSmallerThanTablet ? 1 : 2}
+              defaultMonth={initialCalendarMonth === 'to' && tempDateRange?.to ? tempDateRange.to : tempDateRange?.from}
               locale={tr}
+              {...calendarProps}
+              selected={tempDateRange}
+              mode='range'
+              onSelect={handleDateSelect}
             />
 
             {enableTimeSelection && (
               <div className='mt-4 space-y-3 border-t pt-3'>
-                <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+                <div className='grid grid-cols-2 gap-3 sm:grid-cols-2'>
                   <div>
                     <Label htmlFor='from-time' className='text-xs'>
                       Başlangıç Saati
@@ -167,12 +217,19 @@ export function DateRangePicker({
             )}
 
             <div className='mt-4 flex justify-end gap-2'>
+              {dateRange && !isDefaultDateRange && (
+                <Button variant='outline' size='xs' onClick={handleClear}>
+                  Temizle
+                </Button>
+              )}
               <Button variant='outline' size='xs' onClick={() => setIsOpen(false)}>
-                İptal
+                Kapat
               </Button>
-              <Button size='xs' onClick={handleApply}>
-                Uygula
-              </Button>
+              {!quickApplyable && (
+                <Button size='xs' onClick={() => handleApply()}>
+                  Uygula
+                </Button>
+              )}
             </div>
           </div>
         </PopoverContent>

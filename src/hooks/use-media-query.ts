@@ -23,3 +23,11 @@ export function useMediaQuery(query: string) {
 export function useIsDesktop() {
   return useMediaQuery('(min-width: 1280px)')
 }
+
+export function useIsSmallerThanTablet() {
+  return useMediaQuery('(max-width: 1023px)')
+}
+
+export function useIsMobile() {
+  return useMediaQuery('(max-width: 767px)')
+}

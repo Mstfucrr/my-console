@@ -10,16 +10,16 @@ const selectVariants = cva(
     variants: {
       color: {
         default:
-          'border-default-300 text-default-900 focus:border-default-500/50 disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
+          'border-default-300 text-default-900 focus:border-primary disabled:bg-default-200 placeholder:text-accent-foreground/50 [&>svg]:stroke-default-600 focus:outline-none',
         primary:
           'border-primary text-primary focus:border-primary-700 disabled:bg-primary/30 disabled:placeholder:text-primary placeholder:text-primary/70 [&>svg]:stroke-primary focus:outline-none',
-        info: 'border-info/50 text-info focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
+        info: 'border-info/50 focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
         warning:
-          'border-warning/50 text-warning focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
+          'border-warning/50 focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
         success:
-          'border-success/50 text-success focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
+          'border-success/50 focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
         destructive:
-          'border-destructive/50 text-destructive focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
+          'border-destructive/50 focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
       },
       variant: {
         flat: 'read-only:bg-default-500/10',
@@ -177,28 +177,24 @@ const SelectContent = ({
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectLabel = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>) => (
-  <SelectPrimitive.Label
-    className={cn('py-1.5 text-sm font-semibold ltr:pr-2 ltr:pl-8 rtl:pr-8 rtl:pl-2', className)}
-    {...props}
-  />
+  <SelectPrimitive.Label className={cn('py-1.5 pr-2 pl-8 text-sm font-semibold', className)} {...props} />
 )
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
 const SelectItem = ({ className, children, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>) => (
   <SelectPrimitive.Item
     className={cn(
-      'focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-default items-center rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50',
+      'focus:bg-accent focus:text-accent-foreground hover:bg-accent/50 relative flex w-full cursor-default items-center justify-between gap-x-2 rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50',
       className
     )}
     {...props}
   >
-    <span className='absolute flex h-3.5 w-3.5 items-center justify-center ltr:right-2 rtl:left-2'>
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    <span className='flex h-3.5 w-3.5 items-center justify-center'>
       <SelectPrimitive.ItemIndicator>
         <Check className='h-4 w-4' />
       </SelectPrimitive.ItemIndicator>
     </span>
-
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 )
 SelectItem.displayName = SelectPrimitive.Item.displayName

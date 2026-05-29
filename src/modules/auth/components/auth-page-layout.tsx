@@ -17,7 +17,6 @@ const AuthPageLayout = ({ children }: AuthPageLayoutProps) => {
             <div className='mb-4 text-center'>
               <SiteLogoMin className='text-primary mx-auto w-32' />
             </div>
-
             {children}
           </Card>
         </div>

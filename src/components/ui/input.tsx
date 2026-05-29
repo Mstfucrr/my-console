@@ -13,13 +13,13 @@ export const inputVariants = cva(
           'border-default-300 text-default-900 focus:border-primary disabled:bg-default-200 placeholder:text-accent-foreground/50 focus:outline-none',
         primary:
           'border-primary text-primary focus:border-primary-700 disabled:bg-primary/30 disabled:placeholder:text-primary placeholder:text-primary/70 focus:outline-none',
-        info: 'border-info/50 text-info focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
+        info: 'border-info/50 focus:border-info-700 disabled:bg-info/30 disabled:placeholder:text-info placeholder:text-info/70 focus:outline-none',
         warning:
-          'border-warning/50 text-warning focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
+          'border-warning/50 focus:border-warning-700 disabled:bg-warning/30 disabled:placeholder:text-info placeholder:text-warning/70 focus:outline-none',
         success:
-          'border-success/50 text-success focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
+          'border-success/50 focus:border-success-700 disabled:bg-success/30 disabled:placeholder:text-info placeholder:text-success/70 focus:outline-none',
         destructive:
-          'border-destructive/50 text-destructive focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
+          'border-destructive/50 focus:border-destructive-700 disabled:bg-destructive/30 disabled:placeholder:text-destructive placeholder:text-destructive/70 focus:outline-none'
       },
       variant: {
         flat: 'bg-default-100 read-only:bg-default-100',
@@ -116,61 +116,82 @@ export const inputVariants = cva(
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof inputVariants> {
-  removeWrapper?: boolean
   color?: InputColor
   variant?: InputVariant
   radius?: Radius
   shadow?: Shadow
   size?: 'sm' | 'md' | 'lg' | 'xl' | null
   Icon?: LucideIcon
+  regexPattern?: string | RegExp
+  allowRegexMatch?: boolean
+  autoFirstLetterUppercase?: boolean
 }
 
-const Input = ({
-  className,
-  type,
-  size,
-  color,
-  radius,
-  variant,
-  shadow,
-  removeWrapper = false,
-  Icon,
-  ref,
-  ...props
-}: InputProps & { ref?: React.Ref<HTMLInputElement> }) => {
-  if (removeWrapper)
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      className,
+      type,
+      size,
+      color,
+      radius,
+      variant,
+      shadow,
+      Icon,
+      regexPattern,
+      allowRegexMatch = true,
+      onChange,
+      autoFirstLetterUppercase = false,
+      ...props
+    },
+    ref
+  ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (autoFirstLetterUppercase && e.target.value?.length > 0) {
+        e.target.value = e.target.value
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+      }
+      if (!regexPattern || !allowRegexMatch) {
+        onChange?.(e)
+        return
+      }
+
+      const regex = typeof regexPattern === 'string' ? new RegExp(regexPattern) : regexPattern
+      const value = e.target.value
+
+      if (value === '' || regex.test(value)) {
+        onChange?.(e)
+      }
+    }
+
+    const patternValue = regexPattern
+      ? typeof regexPattern === 'string'
+        ? regexPattern
+        : regexPattern.source
+      : undefined
+
     return (
-      <div className='relative'>
+      <div className='relative w-full flex-1'>
         {Icon && (
           <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
             <Icon className='size-4' />
           </div>
         )}
         <input
+          {...props}
+          autoComplete={props.autoComplete ?? 'off'}
           type={type}
           className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
           ref={ref}
-          {...props}
+          onChange={handleChange}
+          pattern={patternValue}
         />
       </div>
     )
-
-  return (
-    <div className='relative w-full flex-1'>
-      {Icon && (
-        <div className='text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2'>
-          <Icon className='size-4' />
-        </div>
-      )}
-      <input
-        type={type}
-        className={cn(inputVariants({ color, size, radius, variant, shadow }), Icon && 'pl-10', className)}
-        ref={ref}
-        {...props}
-      />
-    </div>
-  )
-}
+  }
+)
 Input.displayName = 'Input'
 
 export { Input }
