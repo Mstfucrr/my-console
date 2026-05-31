@@ -1,3 +1,6 @@
+'use client'
+
+import { motion } from 'framer-motion'
 import { ImgHTMLAttributes } from 'react'
 
 export interface CustomImageProps extends ImgHTMLAttributes<HTMLImageElement> {
@@ -28,4 +31,7 @@ const CustomImage = (props: CustomImageProps) => {
 
 CustomImage.displayName = 'CustomImage'
 
+export const MotionCustomImage = motion(CustomImage)
+
 export default CustomImage
+
