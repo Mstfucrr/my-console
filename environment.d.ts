@@ -16,5 +16,6 @@ namespace NodeJS {
     NEXT_PUBLIC_ALOTECH_WIDGET_KEY: string
     NEXT_PUBLIC_APP_VERSION: string
     NEXT_PUBLIC_CHAT_ACTIVE: string
+    NEXT_PUBLIC_ACTIVE_B2B_COMMERCE: string
   }
 }

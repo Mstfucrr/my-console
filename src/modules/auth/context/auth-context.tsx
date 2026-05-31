@@ -160,7 +160,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           requires_otp: false
         })
         toast.success('Başarılıyla giriş yaptınız.')
-        router.push('/')
+        router.push('/dashboard')
       }
     } catch (error) {
       console.error('login error', error)
@@ -208,7 +208,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         method: 'otp',
         requires_otp: true
       })
-      router.push('/')
+      router.push('/dashboard')
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>
       track<UserLoginEvent>(ANALYTICS_EVENTS.userLogin, {

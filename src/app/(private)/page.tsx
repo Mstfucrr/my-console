@@ -1,5 +1,5 @@
-import HomeView from '@/modules/home'
+import { redirect } from 'next/navigation'
 
-export default function HomePage() {
-  return <HomeView />
+export default function PrivatePage() {
+  redirect('/dashboard')
 }

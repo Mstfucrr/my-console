@@ -9,13 +9,17 @@ export const isActiveTenant = process.env.NEXT_PUBLIC_ACTIVE_TENANT === 'true'
 
 export const canSubmitStoreApplication = process.env.NEXT_PUBLIC_ACTIVE_STORE_APPLICATION === 'true'
 
+export const canB2BCommerce = process.env.NEXT_PUBLIC_ACTIVE_B2B_COMMERCE === 'true'
+
 /** Tenant modülü kapalı mı? (layout'ta URL değiştirmeden bakım göstermek için) */
 export const isTenantModuleAvailable = (profile?: IProfileResponse): boolean => isTenantUser(profile) && isActiveTenant
 
 const allRoutes: Array<Route> = [
-  '/',
+  '/dashboard',
   '/orders',
   '/orders/create',
+  '/b2b-commerce/orders',
+  '/b2b-commerce/orders/create',
   '/reconciliation',
   '/login',
   '/forgot-password',
@@ -49,6 +53,8 @@ export const allowedRoutesForEveryProfile: Array<Route> = [
   '/onboarding'
 ]
 
+const b2bCommerceRoutes: Array<Route> = ['/b2b-commerce/orders', '/b2b-commerce/orders/create']
+
 type RouteRestriction = {
   include?: Array<Route>
   exclude?: Array<Route>
@@ -67,6 +73,8 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
   if (allowedRoutesForEveryProfile.includes(route)) return true
 
   if (!profile) return true
+
+  if (!canB2BCommerce && b2bCommerceRoutes.includes(route)) return false
 
   // Tenant kullanıcılar için erişim: Her koşul ayrı kontrol edilerek daha anlaşılır şekilde işleniyor
   if (isTenantUser(profile)) {
@@ -99,7 +107,7 @@ export const checkProfileRouteAccess = (profile: IProfileResponse | undefined, r
 }
 
 export const getFirstAllowedRoute = (profile: IProfileResponse | undefined): Route => {
-  if (!profile) return '/'
+  if (!profile) return '/dashboard'
 
   if (isTenantUser(profile)) {
     return tenantNeedsBusinessSetup(profile) ? '/business-setup' : '/applications'
@@ -115,9 +123,9 @@ export const getFirstAllowedRoute = (profile: IProfileResponse | undefined): Rou
       const allowedRoute = allRoutes.find(route => !restriction.exclude?.includes(route))
       if (allowedRoute) return allowedRoute
       // If all routes are excluded, fallback to home
-      return '/'
+      return '/dashboard'
     }
   }
 
-  return '/'
+  return '/dashboard'
 }

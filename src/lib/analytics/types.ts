@@ -1,4 +1,4 @@
-import { ReconciliationStatusType } from '@/modules/reconciliation/types'
+import { ReconciliationStatusType } from '@/modules/store/reconciliation/types'
 import type { ANALYTICS_EVENTS, AnalyticsEventName } from './events'
 
 export type EventStatus = 'attempt' | 'success' | 'failed'

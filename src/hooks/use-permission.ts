@@ -19,7 +19,7 @@ export const usePermission = () => {
   )
 
   useEffect(() => {
-    if (pathname === '/orders/create' && canCreateOrder === false) router.push('/')
+    if (pathname === '/orders/create' && canCreateOrder === false) router.push('/dashboard')
   }, [pathname, canCreateOrder, router])
 
   return { checkRoute, firstAllowedRoute, canCreateOrder }

@@ -6,6 +6,7 @@ export interface IProfileResponse {
   email: string
   restaurantId: string
   omsRestaurantId: string
+  canB2BCommerce?: boolean
   tab_fr?: boolean
   hubName?: string
   accountType: AccountType
@@ -50,6 +51,7 @@ export interface IProfileInfo {
   id: string
   lat: number
   name: string
+  address?: string
   state: string
   isAtaExpressActive: boolean
   hubId: string

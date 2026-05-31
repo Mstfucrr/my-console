@@ -23,11 +23,20 @@ export function useFilter<T extends BaseFilterProperties>(
     setPendingFilters(filters)
   }, [filters])
 
+  const isPendingDefault = useMemo(
+    () => JSON.stringify(pendingFilters) === JSON.stringify(defaultFilters),
+    [pendingFilters, defaultFilters]
+  )
+  const isCurrentDefault = useMemo(
+    () => JSON.stringify(filters) === JSON.stringify(defaultFilters),
+    [filters, defaultFilters]
+  )
+
   useEffect(() => {
-    if (JSON.stringify(pendingFilters) === JSON.stringify(defaultFilters)) {
+    if (isPendingDefault && !isCurrentDefault) {
       onClearFilters()
     }
-  }, [pendingFilters, defaultFilters, onClearFilters])
+  }, [isPendingDefault, isCurrentDefault, onClearFilters])
 
   // Generic active filters check - checks all properties dynamically
   const hasActiveFilters = useMemo(
