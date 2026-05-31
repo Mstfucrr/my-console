@@ -2,8 +2,8 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { B2BPaymentBlockSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { CheckCircle2 } from 'lucide-react'
+import { B2BPaymentBlockSkeleton } from '../../../components/b2b-commerce-loading-skeletons'
 import { useB2BPaymentInformationQuery } from '../../hooks/useB2BOrderDetailQueries'
 
 interface B2BOrderResultDialogProps {

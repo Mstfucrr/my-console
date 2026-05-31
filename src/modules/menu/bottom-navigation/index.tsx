@@ -138,7 +138,7 @@ export function BottomNavigation() {
       return tenantPrimary
     }
 
-    const restaurantPrimaryOrder: Array<Route> = ['/', '/orders', '/b2b-commerce/orders/create']
+    const restaurantPrimaryOrder: Array<Route> = ['/dashboard', '/orders', '/b2b-commerce/orders/create']
     const lockedToOverflow = (item: MobileMenuItem) => item.href === '/reports' || item.href === '/reconciliation'
 
     const picked: MobileMenuItem[] = []

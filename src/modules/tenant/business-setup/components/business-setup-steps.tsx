@@ -2,9 +2,9 @@
 
 import CustomImage from '@/components/image'
 import { cn } from '@/lib/utils'
-import { APPLICATION_STEPS, INTRO_STATS, PARTNER_FEATURES } from '@/modules/business-setup/constants'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { APPLICATION_STEPS, INTRO_STATS, PARTNER_FEATURES } from '../constants'
 import { BusinessInfoForm } from './business-info-form'
 
 function BusinessSetupStepHeading({

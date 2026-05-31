@@ -5,9 +5,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
-import type { B2BOrderSummary } from '@/modules/b2b-commerce/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowRightIcon, CheckCircle2 } from 'lucide-react'
+import type { B2BOrderSummary } from '../../types'
 
 type B2BOrderSummaryWithAction = B2BOrderSummary & {
   onSelect?: (orderId: string) => void

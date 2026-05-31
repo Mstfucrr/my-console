@@ -3,10 +3,10 @@
 import { SiteLogoBig } from '@/components/svg'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BUSINESS_SETUP_STEPPER_LABELS, BusinessSetupStep } from '@/modules/business-setup/constants'
-import { useBusinessSetup } from '@/modules/business-setup/context/business-setup-context'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { BUSINESS_SETUP_STEPPER_LABELS, BusinessSetupStep } from '../constants'
+import { useBusinessSetup } from '../context/business-setup-context'
 import {
   BusinessInfoStep,
   BusinessSetupApplicationProcessStep,

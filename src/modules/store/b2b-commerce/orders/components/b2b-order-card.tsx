@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
-import type { B2BOrderSummary } from '@/modules/b2b-commerce/types'
 import { motion } from 'framer-motion'
 import { ArrowRightIcon, CheckCircle2, Package } from 'lucide-react'
+import type { B2BOrderSummary } from '../../types'
 
 interface B2BOrderCardProps {
   order: B2BOrderSummary

@@ -6,15 +6,9 @@ import { Dialog, DialogContent, DialogContentInner, DialogHeader, DialogTitle } 
 import { Separator } from '@/components/ui/separator'
 import { formatCurrency } from '@/lib/formatCurrency'
 import { formatDateTR } from '@/lib/utils/date'
-import {
-  B2BOrderDetailSkeleton,
-  B2BPaymentBlockSkeleton
-} from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
-import {
-  useB2BOrderDetailQuery,
-  useB2BPaymentInformationQuery
-} from '@/modules/b2b-commerce/orders/hooks/useB2BOrderDetailQueries'
 import { CheckCircle2, MapPin, Package } from 'lucide-react'
+import { B2BOrderDetailSkeleton, B2BPaymentBlockSkeleton } from '../../components/b2b-commerce-loading-skeletons'
+import { useB2BOrderDetailQuery, useB2BPaymentInformationQuery } from '../hooks/useB2BOrderDetailQueries'
 
 interface B2BOrderDetailDialogProps {
   orderId?: string

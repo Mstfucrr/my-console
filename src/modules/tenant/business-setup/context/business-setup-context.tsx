@@ -2,11 +2,6 @@
 
 import { useProfile } from '@/context/ProfileProvider'
 import { parseBusinessSetupStep } from '@/lib/nuqs-parsers'
-import {
-  defaultBusinessInfoValues,
-  businessInfoFormSchema,
-  type BusinessInfoFormValues
-} from '@/modules/business-setup/schemas/business-info-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
@@ -16,8 +11,13 @@ import { createContext, useCallback, useContext, useMemo, type ReactNode } from 
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { BUSINESS_SETUP_STEP_QUERY_KEYS, BusinessSetupStep } from '../constants'
+import {
+  businessInfoFormSchema,
+  defaultBusinessInfoValues,
+  type BusinessInfoFormValues
+} from '../schemas/business-info-schema'
 import { businessInfoService } from '../service/business-info.service'
-import { SaveBusinessInfoRequest, BusinessInfoDocType } from '../types'
+import { BusinessInfoDocType, SaveBusinessInfoRequest } from '../types'
 
 export type BusinessSetupContextValue = {
   step: BusinessSetupStep

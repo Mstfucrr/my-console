@@ -3,9 +3,9 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { B2BSidebarSectionSkeleton } from '@/modules/b2b-commerce/components/b2b-commerce-loading-skeletons'
 import { Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
+import { B2BSidebarSectionSkeleton } from '../../../components/b2b-commerce-loading-skeletons'
 import type { B2BBrand, B2BCategory } from '../../../types'
 
 interface B2BCatalogSidebarProps {

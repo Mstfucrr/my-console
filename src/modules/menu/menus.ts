@@ -4,7 +4,7 @@ import { MenuItem } from './type'
 
 /** Restoran (hesap ID’li) kullanıcı menüsü */
 export const menusConfig: MenuItem[] = [
-  { type: 'link', title: 'Ana Sayfa', Icon: ModuleIcons.Home, href: '/', alwaysShow: true },
+  { type: 'link', title: 'Ana Sayfa', Icon: ModuleIcons.Home, href: '/dashboard', alwaysShow: true },
   { type: 'link', title: 'Siparişler', Icon: ModuleIcons.Orders, href: '/orders' },
   { type: 'link', title: 'Mutabakat', Icon: ModuleIcons.Reconciliation, href: '/reconciliation' },
   { type: 'link', title: 'Raporlar', Icon: ModuleIcons.Reports, href: '/reports' },

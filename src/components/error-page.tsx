@@ -23,7 +23,7 @@ export default function ErrorPage({
   image,
   title,
   description,
-  action = { label: 'Anasayfaya Git', href: '/' },
+  action = { label: 'Anasayfaya Git', href: '/dashboard' },
   multipleActions = []
 }: ErrorPageProps) {
   return (
