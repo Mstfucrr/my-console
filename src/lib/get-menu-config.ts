@@ -1,5 +1,5 @@
-import { menusConfig, tenantMenusConfig } from '@/modules/menu/menus'
-import type { AppMenuItem, MenuItem } from '@/modules/menu/type'
+import { menusConfig, tenantMenusConfig } from '@/modules/shell/menu/menus'
+import type { AppMenuItem, MenuItem } from '@/modules/shell/menu/type'
 import { IProfileResponse } from '@/types/profile'
 import { isTenantUser } from './permissions'
 

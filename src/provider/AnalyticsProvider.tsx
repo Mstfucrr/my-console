@@ -8,8 +8,8 @@ import React, { Suspense, useEffect } from 'react'
 
 import { isPosthogReady } from '@/lib/analytics'
 import { maskString } from '@/lib/utils/mask'
-import { usePosthogConsentGate } from '@/modules/analytics/hooks/usePosthogConsentGate'
-import { PosthogFeatureFlagsRefreshProvider } from '@/modules/analytics/hooks/usePosthogFeatureFlagsRefresh'
+import { usePosthogConsentGate } from '@/modules/shell/analytics/hooks/usePosthogConsentGate'
+import { PosthogFeatureFlagsRefreshProvider } from '@/modules/shell/analytics/hooks/usePosthogFeatureFlagsRefresh'
 import { APP_VERSION } from '@/version'
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY
@@ -18,7 +18,7 @@ export const isPosthogEnabled = Boolean(hasPosthogKey && process.env.NEXT_PUBLIC
 const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST
 
 const AnalyticsConsentBanner = dynamic(
-  () => import('@/modules/analytics/components/AnalyticsConsentBanner').then(m => m.AnalyticsConsentBanner),
+  () => import('@/modules/shell/analytics/components/AnalyticsConsentBanner').then(m => m.AnalyticsConsentBanner),
   { ssr: false }
 )
 

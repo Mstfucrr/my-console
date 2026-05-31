@@ -1,4 +1,4 @@
-import { AccountView } from '@/modules/account'
+import { AccountView } from '@/modules/tenant/account'
 
 export default function AccountPage() {
   return <AccountView />

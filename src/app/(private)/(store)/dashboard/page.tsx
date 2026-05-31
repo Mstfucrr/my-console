@@ -1,5 +1,5 @@
-import HomeView from '@/modules/store/dashboard'
+import DashboardView from '@/modules/store/dashboard'
 
-export default function HomePage() {
-  return <HomeView />
+export default function DashboardPage() {
+  return <DashboardView />
 }

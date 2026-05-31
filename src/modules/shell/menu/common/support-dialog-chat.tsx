@@ -2,8 +2,8 @@
 
 import { useAuth } from '@/context/AuthContext'
 import { useProfile } from '@/context/ProfileProvider'
-import { useAlotechWidget } from '@/modules/chat/hooks/useAlotechWidget'
-import { useIsChatFeatureFlagActive } from '@/modules/chat/hooks/useIsChatFeatureFlagActive'
+import { useAlotechWidget } from '@/modules/shell/chat/hooks/useAlotechWidget'
+import { useIsChatFeatureFlagActive } from '@/modules/shell/chat/hooks/useIsChatFeatureFlagActive'
 import { Order } from '@/types'
 import { Loader2 } from 'lucide-react'
 import { SupportDialogContact } from './support-dialog-contact'
